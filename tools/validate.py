@@ -31,9 +31,9 @@ def main():
     by_id = {entry['id']: entry for entry in CATALOG['games']}
     for game_id in CATALOG.get('featured', []):
         media = by_id[game_id]['media']
-        for name in ('opening', 'levels'):
+        for name in ('play', 'levels'):
             assert (ROOT / 'docs' / media[name]).is_file(), f'{game_id}: missing featured {name} picture'
-    for entry in CATALOG['support_files']:
+    for entry in CATALOG.get('support_files', []):
         assert hashlib.sha256((ROOT / entry['path']).read_bytes()).hexdigest() == entry['sha256']
     report = {'checked': len(CATALOG['games']), 'failures': failures,
               'scope': 'File hashes, preview presence, module import, real engine RESET and one advertised action. Not a solvability or full-game test.'}

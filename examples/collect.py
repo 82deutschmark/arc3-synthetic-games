@@ -16,7 +16,7 @@ from runtime import CATALOG, frame_record, load_game, perform
 
 def main():
     parser = argparse.ArgumentParser(description='Collect random exploration, NOT expert demonstrations.')
-    parser.add_argument('--game', default='g001', choices=[row['id'] for row in CATALOG['games']])
+    parser.add_argument('--game', default='wb01', choices=[row['id'] for row in CATALOG['games']])
     parser.add_argument('--steps', type=int, default=16)
     parser.add_argument('--seed', type=int, default=0, help='Seeds exploration actions, not game generation.')
     parser.add_argument('--output', type=Path, required=True)

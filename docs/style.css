@@ -21,3 +21,11 @@ Updated 30-October-2026, Claude Sonnet 5.5 Medium: lead section and featured car
 .game.is-featured h3::after{content:'FEATURED';font:700 10px Arial,sans-serif;letter-spacing:.1em;color:var(--paper);background:var(--accent);padding:3px 7px;margin-left:10px;vertical-align:middle}
 @media(max-width:850px){.feature{grid-template-columns:1fr;gap:18px;padding:16px 0}.screen{max-width:380px;margin:0 auto;padding:14px}}
 @media(max-width:600px){.feature h2{font-size:48px}.facts{grid-template-columns:1fr;gap:2px 0}.facts dd{margin-bottom:10px}.strip{gap:3px}}
+.lead-line{margin:10px 0;font:15px/1.4 Arial,sans-serif;color:var(--muted)}#count{color:var(--ink);font-weight:700}
+#featured{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.pick{display:grid;grid-template-columns:256px 1fr;gap:12px;background:#183b35;color:var(--paper);padding:8px}.pick img,.game img{display:block;width:100%;height:auto;image-rendering:pixelated;background:#000}
+.pick .facts dt{color:#e9b9a8}.pick .strip{gap:2px;max-width:none}
+.info{min-width:0}.name{font:700 26px/1 'Courier New',monospace;text-decoration:none;display:block;margin-bottom:6px}.pick .facts,.game .facts{font:12px/1.35 Arial,sans-serif;gap:2px 8px;margin:0 0 8px}.facts dt{font-size:10px;letter-spacing:.06em}
+#games.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px 10px}.game{padding:0;border:0}.game .name{font-size:17px;margin:4px 0}.game .facts{display:block}.game .facts dt{display:none}.game .facts dd{margin:0}
+main>.fine{margin:12px 0 18px;max-width:none}
+@media(max-width:1000px){#featured{grid-template-columns:1fr}}@media(max-width:520px){.pick{grid-template-columns:128px 1fr}#games.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

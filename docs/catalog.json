@@ -1,651 +1,1171 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "snapshot_date": "2026-10-30",
-  "source_repository": "82deutschmark/arc-explainer",
-  "source_commit": "076566cf2480d4ec0d8982d9941d9ff21cb7a9ab",
-  "license": "MIT",
+  "featured": [
+    "wb01",
+    "li01",
+    "dz01",
+    "hc01",
+    "wf01",
+    "eh01",
+    "ng01",
+    "fr01"
+  ],
   "games": [
     {
-      "id": "g001",
-      "class_name": "G001",
-      "path": "games/g001.py",
-      "sha256": "a3a964821a1760890d43e79fe1fd950ec342938ce664c0c626b6bbeb4eb49c67",
-      "upstream_sha256": "0f155eaeccfd0edf6d46549fccf376dacf1f90ba1343f493b2faaa1ef4b8b237",
-      "upstream_path": "server/data/arc3-games/g001.py",
-      "preview": "previews/g001.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g001.py",
-      "category": "authored"
+      "id": "wb01",
+      "class_name": "Wb01",
+      "path": "games/wb01.py",
+      "sha256": "8e361117444a96a045c806129802b6a18cecbd03e165828744c7a5dee7faca40",
+      "by": "GPT-6 Astra Ultra",
+      "levels": 8,
+      "human": {
+        "actions": 224,
+        "levels": 8
+      },
+      "preview": "previews/wb01.png",
+      "media": {
+        "play": "previews/wb01-play.gif",
+        "levels": "previews/wb01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
     },
     {
-      "id": "g005",
-      "class_name": "G005",
-      "path": "games/g005.py",
-      "sha256": "d5353b76a01846bed26b798d8ccb6517a6c6dd654fd8129a1becc8731edcf129",
-      "upstream_sha256": "459bada0a3e2e6cd5610b86ff74974859c31786f10a11530c95194253badc45e",
-      "upstream_path": "server/data/arc3-games/g005.py",
-      "preview": "previews/g005.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g005.py",
-      "category": "authored"
+      "id": "tl01",
+      "class_name": "Tl01",
+      "path": "games/tl01.py",
+      "sha256": "f43bdf46ab871d0d6246003573371e761830aa5dcc7888471aa60a6e2a83703e",
+      "by": "GPT-5",
+      "levels": 9,
+      "human": {
+        "actions": 122,
+        "levels": 3
+      },
+      "preview": "previews/tl01.png",
+      "media": {
+        "play": "previews/tl01-play.gif",
+        "levels": "previews/tl01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
-      "id": "g006",
-      "class_name": "G006",
-      "path": "games/g006.py",
-      "sha256": "211f66228c62bab656d36c42450cf571a87a59956620e5e25b2ca09110f47d67",
-      "upstream_sha256": "4772ba1b8eb3667624a7848f9bd9d634a62fcc062c216ae5d1434dc3956b8ea7",
-      "upstream_path": "server/data/arc3-games/g006.py",
-      "preview": "previews/g006.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g006.py",
-      "category": "authored"
+      "id": "ng01",
+      "class_name": "Ng01",
+      "path": "games/ng01.py",
+      "sha256": "ef8636966cda4dba9baaeb38a05eae99813e9a60f6972a8a88699b29d3eb59af",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 104,
+        "levels": 3
+      },
+      "preview": "previews/ng01.png",
+      "media": {
+        "play": "previews/ng01-play.gif",
+        "levels": "previews/ng01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
     },
     {
-      "id": "g007",
-      "class_name": "G007",
-      "path": "games/g007.py",
-      "sha256": "c46db1772f3318c2126d163cbeecf071a3235e0ef1047cd4d673d29c413e9fa2",
-      "upstream_sha256": "994dd7212acc7ea3c375c479af81f71d7ceb09b6238058cb6f84937b6f29492b",
-      "upstream_path": "server/data/arc3-games/g007.py",
-      "preview": "previews/g007.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g007.py",
-      "category": "authored"
+      "id": "li01",
+      "class_name": "G010",
+      "path": "games/li01.py",
+      "sha256": "8201e3d81fa3a6782a93e9c4f1d9339eb9616696d80fe70a42fde8e18d0e618b",
+      "by": "cellensinc",
+      "levels": 6,
+      "human": {
+        "actions": 144,
+        "levels": 2
+      },
+      "preview": "previews/li01.png",
+      "media": {
+        "play": "previews/li01-play.gif",
+        "levels": "previews/li01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
-      "id": "g008",
-      "class_name": "TwoSkins",
-      "path": "games/g008.py",
-      "sha256": "798f04257f0b294f2ab7d7a231ef525090ce36a07f70823c89bab225a149da28",
-      "upstream_sha256": "76712125b94a5073eaafbcbf19e02570d40a34a67a921e9d45479dc265ce5e2f",
-      "upstream_path": "server/data/arc3-games/g008.py",
-      "preview": "previews/g008.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g008.py",
-      "category": "authored"
-    },
-    {
-      "id": "g009",
-      "class_name": "PrismRun",
-      "path": "games/g009.py",
-      "sha256": "f5dc2bee8f6017f6e45209d05b8862ebc0d82fb8122e30df687f38aa8d9cb4e3",
-      "upstream_sha256": "65b92a4e2e6cf254b0ed785486f1dbae9163252401220e4d051915cc3c91f424",
-      "upstream_path": "server/data/arc3-games/g009.py",
-      "preview": "previews/g009.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g009.py",
-      "category": "authored"
-    },
-    {
-      "id": "g010",
-      "class_name": "LanternLedger",
-      "path": "games/g010.py",
-      "sha256": "50a7d2d898de5e5d7cc8a5576eaf2edb2a4025e302ae4be97c923114ca33d7a9",
-      "upstream_sha256": "de2cd4c188298c74f82d704f2d9317c0b670927f63d581682789fa8d5b0d4ebb",
-      "upstream_path": "server/data/arc3-games/g010.py",
-      "preview": "previews/g010.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g010.py",
-      "category": "authored"
-    },
-    {
-      "id": "g011",
-      "class_name": "Slick",
-      "path": "games/g011.py",
-      "sha256": "1c8c0d2c017060f808e4b428a5e5ddb4547bfe089bf2c86768de6d95afab0c57",
-      "upstream_sha256": "f46229839a5affb6ac895ba2d8b3a569d449b9e96718f2e2d7ef883f49df1f09",
-      "upstream_path": "server/data/arc3-games/g011.py",
-      "preview": "previews/g011.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g011.py",
-      "category": "authored"
-    },
-    {
-      "id": "g012",
-      "class_name": "KeeperRound",
-      "path": "games/g012.py",
-      "sha256": "875ad843e43edec6e8876b112902c2e8a948f4722febb90092cb87387bbdd702",
-      "upstream_sha256": "06ca4cde7730fbef4bb4485cd7de8b264c0868cb5ecb88aa5597189809006d31",
-      "upstream_path": "server/data/arc3-games/g012.py",
-      "preview": "previews/g012.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g012.py",
-      "category": "authored"
-    },
-    {
-      "id": "g013",
-      "class_name": "RotGarden",
-      "path": "games/g013.py",
-      "sha256": "69e5e422b79aa62b5fa2f520e6786a9880850747bdfe015ec8387fce368ea162",
-      "upstream_sha256": "71d41e42cb63fed43aa2d69a776f5e7c4cc512f4c2b92514d447812ad0754969",
-      "upstream_path": "server/data/arc3-games/g013.py",
-      "preview": "previews/g013.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g013.py",
-      "category": "authored"
-    },
-    {
-      "id": "g014",
-      "class_name": "LongShadow",
-      "path": "games/g014.py",
-      "sha256": "2924b3914608d31ce23821f59719359c560bbe663f2e04a4ce6fe3a2a04c0d8c",
-      "upstream_sha256": "28013c968db94b760d5b39c88362afbffa58feb8f6b1174da885ea79197b68ca",
-      "upstream_path": "server/data/arc3-games/g014.py",
-      "preview": "previews/g014.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g014.py",
-      "category": "authored"
-    },
-    {
-      "id": "g015",
-      "class_name": "KitBash",
-      "path": "games/g015.py",
-      "sha256": "9dcb65dc4c753fc94fcff7e46cba01462c48ac7717543c997e383ee6f9a45487",
-      "upstream_sha256": "6d38e6f756893765a0062aedc7b64197c4e3d7199e02528d159f9621baafcfd2",
-      "upstream_path": "server/data/arc3-games/g015.py",
-      "preview": "previews/g015.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g015.py",
-      "category": "authored"
-    },
-    {
-      "id": "g016",
-      "class_name": "SlowPost",
-      "path": "games/g016.py",
-      "sha256": "d145f800414eaff4976cd955ab01036ccad07a599ebc31686950deafa0446254",
-      "upstream_sha256": "9aab8a4d9f134aee8ba6c3cdef4b7c3a1816927b695f9356bdfbf3075feac683",
-      "upstream_path": "server/data/arc3-games/g016.py",
-      "preview": "previews/g016.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g016.py",
-      "category": "authored"
-    },
-    {
-      "id": "g017",
-      "class_name": "Interest",
-      "path": "games/g017.py",
-      "sha256": "8477df25702a3394b11c58f53cdfdf5b81cb3d0e845858fc632acdc939568ce1",
-      "upstream_sha256": "7a488b78b6511a1ccdf741cd9d943a7d597aad834c10b06b03729ee93ff6cf68",
-      "upstream_path": "server/data/arc3-games/g017.py",
-      "preview": "previews/g017.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g017.py",
-      "category": "authored"
-    },
-    {
-      "id": "g018",
-      "class_name": "TideLedger",
-      "path": "games/g018.py",
-      "sha256": "d83ff79b48a0008f86a7dace60bdd23b02e693f96b4b656d82818024620c9e6b",
-      "upstream_sha256": "e0ee9030179b8d3d2e98236fd66fab9ea92d4ff50c1b8c94673b4e15ce954136",
-      "upstream_path": "server/data/arc3-games/g018.py",
-      "preview": "previews/g018.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g018.py",
-      "category": "authored"
-    },
-    {
-      "id": "g019",
-      "class_name": "SlowBell",
-      "path": "games/g019.py",
-      "sha256": "483e904fc06015dd65b16060e1057b620e88f3be7d05f8bd9ca8c9e2620dbaed",
-      "upstream_sha256": "c6def50f90082c697624b27b65b66026483f9c1bb82a77747dc293f89c984537",
-      "upstream_path": "server/data/arc3-games/g019.py",
-      "preview": "previews/g019.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g019.py",
-      "category": "authored"
-    },
-    {
-      "id": "g020",
-      "class_name": "Ping",
-      "path": "games/g020.py",
-      "sha256": "dbd457795a9dcd41bd0a44aab94f56180842a5f422eb1fbba7721b5fd3aa7bf0",
-      "upstream_sha256": "e7e7015c9066e963ab97cf0db75036a7ef612079852e633322af4ac88473b81c",
-      "upstream_path": "server/data/arc3-games/g020.py",
-      "preview": "previews/g020.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g020.py",
-      "category": "authored"
-    },
-    {
-      "id": "g021",
-      "class_name": "WeighStation",
-      "path": "games/g021.py",
-      "sha256": "fa67feb07ec21bb971fefecc268f1f267bc0f5fc361bfb6ad7c4342959b07651",
-      "upstream_sha256": "bb4f27b52e659583a8a4ab5bf463e5527c7cac2fcac8a961a290af8e9f7b447d",
-      "upstream_path": "server/data/arc3-games/g021.py",
-      "preview": "previews/g021.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g021.py",
-      "category": "authored"
-    },
-    {
-      "id": "g022",
-      "class_name": "Ember",
-      "path": "games/g022.py",
-      "sha256": "b41d91c75f66121d1128dcdb26ee36bbb79eeab46de73809b074df7e2cc0958c",
-      "upstream_sha256": "8517240ff62dfc3a7521d89583081e359728c4d2e86333c52f71f2dbeebec9b7",
-      "upstream_path": "server/data/arc3-games/g022.py",
-      "preview": "previews/g022.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g022.py",
-      "category": "authored"
-    },
-    {
-      "id": "g023",
-      "class_name": "G023",
-      "path": "games/g023.py",
-      "sha256": "bb5d43c96ef8fa7aef98c2ce2c96ff1066d97073b41529fc12b5e5f7a27d3b1e",
-      "upstream_sha256": "70895cd41d1b9dabaa110b4bf33962ea3809f1f7b5c2497f12c9891ac6a200e0",
-      "upstream_path": "server/data/arc3-games/g023.py",
-      "preview": "previews/g023.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g023.py",
-      "category": "authored"
-    },
-    {
-      "id": "g024",
-      "class_name": "Cuff",
-      "path": "games/g024.py",
-      "sha256": "6a4e9601851622b27c4f3a2edd5d7b19ee17c1cdb5840054d9a8838912a54a67",
-      "upstream_sha256": "c9c28c42acc0f48a705c9c29dc8720547feec2d27321ecfa0919b420ea540989",
-      "upstream_path": "server/data/arc3-games/g024.py",
-      "preview": "previews/g024.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g024.py",
-      "category": "authored"
-    },
-    {
-      "id": "g025",
-      "class_name": "G025",
-      "path": "games/g025.py",
-      "sha256": "696c977ee4b3bd37ddbdf0f77c9834af0a78b8372d6717f0727fac894b57503a",
-      "upstream_sha256": "e16aa6d7ec8db0803e0b0ded7bc435d07a9377eada05d7ddae7a955a0607d8a2",
-      "upstream_path": "server/data/arc3-games/g025.py",
-      "preview": "previews/g025.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g025.py",
-      "category": "authored"
-    },
-    {
-      "id": "g026",
-      "class_name": "Chorus",
-      "path": "games/g026.py",
-      "sha256": "5236fb8088492a37527a04f773cf0f535dd323dfdb1d03f94c50b0180002be7f",
-      "upstream_sha256": "8e1a59c49e6f7a8482b4a8f51edee11778d4c7fba4c32f962da5986aa6796555",
-      "upstream_path": "server/data/arc3-games/g026.py",
-      "preview": "previews/g026.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g026.py",
-      "category": "authored"
-    },
-    {
-      "id": "g027",
-      "class_name": "Cue",
-      "path": "games/g027.py",
-      "sha256": "98fabe163fd555cbacab4008fe08a2a8510304bdc1e8d6225c5763f0879819c5",
-      "upstream_sha256": "173bf7b181b12063b645af91dace686500428b55f8c0473cb1faabd97e7ed285",
-      "upstream_path": "server/data/arc3-games/g027.py",
-      "preview": "previews/g027.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g027.py",
-      "category": "authored"
-    },
-    {
-      "id": "g029",
-      "class_name": "G029",
-      "path": "games/g029.py",
-      "sha256": "f70ec657ae110cebc501deb4c6fb52b5096a3d7acc9a71bc033ca2345ac3d49f",
-      "upstream_sha256": "83880ff643868e96f97255cdb9b1581a918e4ed63173d3e2dd45fac0c4485ba0",
-      "upstream_path": "server/data/arc3-games/g029.py",
-      "preview": "previews/g029.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g029.py",
-      "category": "authored"
-    },
-    {
-      "id": "g030",
-      "class_name": "G030",
-      "path": "games/g030.py",
-      "sha256": "c14dfb5d675ca33c5b50dec8f1375c36f9c4ac5ee238006c74e205ed087cb098",
-      "upstream_sha256": "268792412c4ca5cb7d0355f25679625494bb7c8c94f1af9f1c38ef5430de8d2f",
-      "upstream_path": "server/data/arc3-games/g030.py",
-      "preview": "previews/g030.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g030.py",
-      "category": "authored"
-    },
-    {
-      "id": "g031",
-      "class_name": "G031",
-      "path": "games/g031.py",
-      "sha256": "f9fc696bbf0c7e92b904d14bcfee37abb02e598d00fac8ef130c5e838e082491",
-      "upstream_sha256": "16ba1e66a2ed1ab98108af979e58fe9e491dc5d6cad0d2fdc2c36f349c54d2da",
-      "upstream_path": "server/data/arc3-games/g031.py",
-      "preview": "previews/g031.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g031.py",
-      "category": "authored"
-    },
-    {
-      "id": "g032",
-      "class_name": "G032",
-      "path": "games/g032.py",
-      "sha256": "920ac33e8895f9e649785cae74ca93d79edf8a154c24f2723f620c6427b1b335",
-      "upstream_sha256": "dcef7ad53535cfdffc1956662954fa3e9f174b6ad6e7b1f8ee96f8990bbfc41a",
-      "upstream_path": "server/data/arc3-games/g032.py",
-      "preview": "previews/g032.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g032.py",
-      "category": "authored"
-    },
-    {
-      "id": "g033",
-      "class_name": "G033",
-      "path": "games/g033.py",
-      "sha256": "e09ef665596aaa63beeb18ca99fbfb776027e3ff13be160c065d0921cd7302bf",
-      "upstream_sha256": "8dde33290bb05d44d46b6348b48f91dde4f58d6f9e729a972c0c34b97c33da2a",
-      "upstream_path": "server/data/arc3-games/g033.py",
-      "preview": "previews/g033.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g033.py",
-      "category": "authored"
-    },
-    {
-      "id": "g034",
-      "class_name": "SecondCoat",
-      "path": "games/g034.py",
-      "sha256": "eac03e593e8e77d92be07ab5aef2bf317badd957b164ab354bd60197197261dd",
-      "upstream_sha256": "1dffa36a2b04bd5c8ca226da2e3c559fb9202caa0ea7891b0282bcbfba151069",
-      "upstream_path": "server/data/arc3-games/g034.py",
-      "preview": "previews/g034.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g034.py",
-      "category": "authored"
-    },
-    {
-      "id": "g035",
-      "class_name": "DressCode",
-      "path": "games/g035.py",
-      "sha256": "cc0ad3e5ac09905a147e32446176d5a06b815acc835e2685a9e3b72e8d75e979",
-      "upstream_sha256": "7a3e0026c2de638b7dbb6e1e82ab34211653a5c4238bbe3d1f1be989381067ae",
-      "upstream_path": "server/data/arc3-games/g035.py",
-      "preview": "previews/g035.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g035.py",
-      "category": "authored"
-    },
-    {
-      "id": "g036",
-      "class_name": "Shoelace",
-      "path": "games/g036.py",
-      "sha256": "0c3b72dcace7794314ca67871725456c4206de80504fc61b2f8d11ef87a17dcc",
-      "upstream_sha256": "9ccfc3f1965727d4b95625df1d6bd8008052f727c7876179574632ece7a0be2a",
-      "upstream_path": "server/data/arc3-games/g036.py",
-      "preview": "previews/g036.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g036.py",
-      "category": "authored"
-    },
-    {
-      "id": "g037",
-      "class_name": "G037",
-      "path": "games/g037.py",
-      "sha256": "ef6308d3ecc040c248e69e261fc84ccba3a890e2d658a75fc7374306a27524b6",
-      "upstream_sha256": "a160625bf331b40d540efce11ddce064302c8f4622b375b691378751762a1e91",
-      "upstream_path": "server/data/arc3-games/g037.py",
-      "preview": "previews/g037.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g037.py",
-      "category": "authored"
-    },
-    {
-      "id": "g038",
-      "class_name": "G038",
-      "path": "games/g038.py",
-      "sha256": "e2d73bfa90d26fc2f46a6ff5b93f70e9dd20f77b5444d9ff9139a06f013a04a2",
-      "upstream_sha256": "14e7d0c0eb30b329706c113f80dd95ab6af2b429a4f0a93c5f5dcdb6d3cfa157",
-      "upstream_path": "server/data/arc3-games/g038.py",
-      "preview": "previews/g038.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g038.py",
-      "category": "authored"
-    },
-    {
-      "id": "g039",
-      "class_name": "G039",
-      "path": "games/g039.py",
-      "sha256": "0783cc0c3a835d8699159ef11fd58f35337cf15cbd4ae526d7178ee4d33a2832",
-      "upstream_sha256": "d90f9607dff2c968bb120135ad45f17788182159332986fcf506d03efe746355",
-      "upstream_path": "server/data/arc3-games/g039.py",
-      "preview": "previews/g039.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g039.py",
-      "category": "authored"
-    },
-    {
-      "id": "g040",
-      "class_name": "G040",
-      "path": "games/g040.py",
-      "sha256": "f37a95896e3877b90b779e702e9372789c8e6e608c436012679bc416a34d334f",
-      "upstream_sha256": "b97ef1ec7eb411ca9719258cc6ac3fda425361c538bcd3bc2fa2327238c98bfb",
-      "upstream_path": "server/data/arc3-games/g040.py",
-      "preview": "previews/g040.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g040.py",
-      "category": "authored"
-    },
-    {
-      "id": "g041",
-      "class_name": "G041",
-      "path": "games/g041.py",
-      "sha256": "b0643417dd7627aaa777c349f24da070088920dfc8fbbef0dcdcda07e1ae779b",
-      "upstream_sha256": "c72f7e1a165d0a96c73912d7643f4f6391cfc877bb279114396f3684768e3170",
-      "upstream_path": "server/data/arc3-games/g041.py",
-      "preview": "previews/g041.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g041.py",
-      "category": "authored"
-    },
-    {
-      "id": "g042",
-      "class_name": "G042",
-      "path": "games/g042.py",
-      "sha256": "fa785d2ae024a17ef2bb7f4604c1f53f3995350938bd14327830aa69eb160921",
-      "upstream_sha256": "2fcc6dc1da40cff30f915653752dc9612c7e628c6207fc0c668fbbe4350d21a3",
-      "upstream_path": "server/data/arc3-games/g042.py",
-      "preview": "previews/g042.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g042.py",
-      "category": "authored"
-    },
-    {
-      "id": "g043",
-      "class_name": "Shunt",
-      "path": "games/g043.py",
-      "sha256": "ed70a9005cdbeb1ad014aafcc335e9a08c67adca3572a19b3280e8b426dfaf7a",
-      "upstream_sha256": "5a1a74a9d9f55784f5222e03254228fc80219e1e0d30f499a88613d864195027",
-      "upstream_path": "server/data/arc3-games/g043.py",
-      "preview": "previews/g043.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g043.py",
-      "category": "authored"
-    },
-    {
-      "id": "g044",
-      "class_name": "Rind",
-      "path": "games/g044.py",
-      "sha256": "9ebef10fc4053da86dff4abbf7a4e2a802dc568a67fa19538a33355564e86834",
-      "upstream_sha256": "4e8e5e792d15b4fab9d1f4b131fab0d1d1d979e3b609636f72b19c3700855e8c",
-      "upstream_path": "server/data/arc3-games/g044.py",
-      "preview": "previews/g044.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g044.py",
-      "category": "authored"
-    },
-    {
-      "id": "g045",
-      "class_name": "Ferry",
-      "path": "games/g045.py",
-      "sha256": "045ab29de67212b2e478590b63b5d40b76720d5e25344b08ef83762044df588f",
-      "upstream_sha256": "0cf32057e48edd346d60ae6968461fbbabf9637c39eeb09f47e8baaf25e36b16",
-      "upstream_path": "server/data/arc3-games/g045.py",
-      "preview": "previews/g045.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g045.py",
-      "category": "authored"
-    },
-    {
-      "id": "g046",
-      "class_name": "StaleSight",
-      "path": "games/g046.py",
-      "sha256": "e1bcd2e3dcd09fb4d160914fa5ed6619cd605de480e6a4a9f7d5757fefb06624",
-      "upstream_sha256": "0df1a59a6b63ef9d89cb1ed920b3e76d0fe2b0c0e85441b1b5d6d393bc1bb8da",
-      "upstream_path": "server/data/arc3-games/g046.py",
-      "preview": "previews/g046.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g046.py",
-      "category": "authored"
-    },
-    {
-      "id": "g047",
-      "class_name": "Peephole",
-      "path": "games/g047.py",
-      "sha256": "d63d73cbc034de02f27cd36e7ffb6a63c806ffd6b23b9fc0c41999fc30ee27c1",
-      "upstream_sha256": "ceb9fd9a9441ea945c66325b4a4c0a9a8ede85fa52fa7b60a79107f6d61829c8",
-      "upstream_path": "server/data/arc3-games/g047.py",
-      "preview": "previews/g047.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g047.py",
-      "category": "authored"
-    },
-    {
-      "id": "g050",
-      "class_name": "AshPath",
-      "path": "games/g050.py",
-      "sha256": "19a5a19963204c955df12627499b7625d02c2d73c2646afc340670a80f1f55c3",
-      "upstream_sha256": "b0f87bd813b462535e9e3d9cbdd4531e8db1995155959f2556dacc3d27c74dc3",
-      "upstream_path": "server/data/arc3-games/g050.py",
-      "preview": "previews/g050.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g050.py",
-      "category": "authored"
-    },
-    {
-      "id": "g136",
-      "class_name": "Quotient",
-      "path": "games/g136.py",
-      "sha256": "3e61cd8e4717ec2c2e7a4b9f9c8bf7659e6e5933d78fa95ad379ff3c4cc5d0ce",
-      "upstream_sha256": "293d2dfce233fc1e81ee9e66a1fc48e8c8ddba7c36a27171cfeaf04986d81e63",
-      "upstream_path": "server/data/arc3-games/g136.py",
-      "preview": "previews/g136.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g136.py",
-      "category": "authored"
-    },
-    {
-      "id": "g155",
-      "class_name": "OneBite",
-      "path": "games/g155.py",
-      "sha256": "bca9a5320c56318cf6e1a9abfdc478a702506f03cfa016ed1fa97931b8ee9329",
-      "upstream_sha256": "88507bc96335f69ff2fef646ed21900da0181f8d1e89d7e267b33811c21854dc",
-      "upstream_path": "server/data/arc3-games/g155.py",
-      "preview": "previews/g155.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g155.py",
-      "category": "authored"
-    },
-    {
-      "id": "g162",
-      "class_name": "Sleeper",
-      "path": "games/g162.py",
-      "sha256": "ec1026a3dd728fdc19c4942a0f2c191b223c90dd2d092f4f54b3d566d99b8035",
-      "upstream_sha256": "7cff8cc6e0ef5d9bead95764ed36e3d00bd651477b0cbf59d2acabf3a820c314",
-      "upstream_path": "server/data/arc3-games/g162.py",
-      "preview": "previews/g162.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g162.py",
-      "category": "authored"
-    },
-    {
-      "id": "g171",
-      "class_name": "Ration",
-      "path": "games/g171.py",
-      "sha256": "740cf978918492eac163fdf8990b4f8b6965f6430f9909999ce4f2295d2a9909",
-      "upstream_sha256": "944a35347ed92a631fd90d768436637699df81aef40f70e293e1716fdfae6f24",
-      "upstream_path": "server/data/arc3-games/g171.py",
-      "preview": "previews/g171.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g171.py",
-      "category": "authored"
-    },
-    {
-      "id": "g178",
-      "class_name": "Turnout",
-      "path": "games/g178.py",
-      "sha256": "cb2b95185d7722e7e2b95592ae6e02994828949218181e5ab76185619692f289",
-      "upstream_sha256": "0bbfaa25c03d5514eec5c0df3bba67e28a8b521048e91a1d89e2ef86ae917e0e",
-      "upstream_path": "server/data/arc3-games/g178.py",
-      "preview": "previews/g178.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g178.py",
-      "category": "authored"
-    },
-    {
-      "id": "g304",
-      "class_name": "Crawler",
-      "path": "games/g304.py",
-      "sha256": "98a17eedb5ec19f48d960b32941021b7c2d4776434bbf09669b755f136937bad",
-      "upstream_sha256": "543f413f7aa3c6095fa83b8aaa750565b21c00c5c85706121106dd91b4a3978f",
-      "upstream_path": "server/data/arc3-games/g304.py",
-      "preview": "previews/g304.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g304.py",
-      "category": "authored"
-    },
-    {
-      "id": "g305",
-      "class_name": "Shrines",
-      "path": "games/g305.py",
-      "sha256": "e77ec2a26b64e50f1f57d06adb979ac585f5231e9c19db2648a61d607b7d0f56",
-      "upstream_sha256": "954e1a4936d9342408a7aa923e4942a73f861b02f3b0ab373d4c317db9dbf8b7",
-      "upstream_path": "server/data/arc3-games/g305.py",
-      "preview": "previews/g305.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g305.py",
-      "category": "authored"
-    },
-    {
-      "id": "g306",
-      "class_name": "Seasons",
-      "path": "games/g306.py",
-      "sha256": "17c16bd11a713c4c32df5016d959a0e4e032095211e76191377a195d6cefe7c8",
-      "upstream_sha256": "d9cd25a508b5aadf9660164c00f7f1d6ffec52b1d162cb03829b444ba5217428",
-      "upstream_path": "server/data/arc3-games/g306.py",
-      "preview": "previews/g306.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g306.py",
-      "category": "authored"
-    },
-    {
-      "id": "g309",
-      "class_name": "Cartographer",
-      "path": "games/g309.py",
-      "sha256": "ea146dabbc98e1ee51856710dfd2056bcd1c6f864c3929a62934acfb78b375fa",
-      "upstream_sha256": "b8d2c1530febebad092d208d252a581fb1e6e278646fc811ad4ff272c70c7934",
-      "upstream_path": "server/data/arc3-games/g309.py",
-      "preview": "previews/g309.png",
-      "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g309.py",
-      "category": "authored"
+      "id": "fm01",
+      "class_name": "Fm01",
+      "path": "games/fm01.py",
+      "sha256": "59ac6b8e296ac8f711fbd8f599ad6fdd289a5b6b23bad546c8ccadcedd3a0675",
+      "by": "Ronen / Codex",
+      "levels": 8,
+      "human": {
+        "actions": 83,
+        "levels": 7
+      },
+      "preview": "previews/fm01.png",
+      "media": {
+        "play": "previews/fm01-play.gif",
+        "levels": "previews/fm01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        5,
+        6,
+        7
+      ]
     },
     {
       "id": "dz01",
       "class_name": "Dz01",
       "path": "games/dz01.py",
-      "sha256": "9631e01a728c4f994c01c987154da66706a5873f11c58c249d4d78c6651d446d",
-      "upstream_sha256": "6ab85ff0e7d28c31af056e8f5226ea7aa1a7ceb066e2d2bad4bc5d7350f94ad5",
-      "origin": {
-        "workspace": "the team authoring workspace",
-        "version": "dz01@6ab85ff0e7d2"
+      "sha256": "6ab85ff0e7d28c31af056e8f5226ea7aa1a7ceb066e2d2bad4bc5d7350f94ad5",
+      "by": "Mark Barney / Claude Opus 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 380,
+        "levels": 8
       },
       "preview": "previews/dz01.png",
-      "category": "authored",
-      "levels": 8,
-      "note": "Dig down through sand, packed earth and rock to the checkered floor. Every dig spends the bar at the side, and whatever you open up, falls.",
-      "controls": "Arrow keys to move. Click a cell beside the hero to dig it. Space lights a star.",
-      "credit": "Designed by Mark Barney. Built by Claude Opus 5.5.",
       "media": {
-        "opening": "previews/dz01-opening.gif",
+        "play": "previews/dz01-play.gif",
         "levels": "previews/dz01-levels.png"
-      }
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
     },
     {
-      "id": "lt02",
-      "class_name": "Lt02",
-      "path": "games/lt02.py",
-      "sha256": "9abb804d9ee021e25935e4b8da2dbcab1b714cdda291231fa634ab1d3a1897ed",
-      "upstream_sha256": "2b5c09181fae36e54a211f255fbd04aabaae001e6b5454dc5d67aa90d7488b24",
-      "origin": {
-        "workspace": "the team authoring workspace",
-        "version": "lt02@2b5c09181fae"
-      },
-      "preview": "previews/lt02.png",
-      "category": "authored",
+      "id": "di01",
+      "class_name": "Mb64",
+      "path": "games/di01.py",
+      "sha256": "319a8712819ab70906279f6c687d79e97ce2d9cac9b4652cc40a99119a1345ab",
+      "by": "Claude Opus 5",
       "levels": 9,
-      "note": "A scrolling city, a tray of five tools and threats on the move. Pick a tool, choose your spot, and see what the blast takes with it.",
-      "controls": "Arrow keys scroll the city. 5 changes tool. Click to fire. 7 lets a moment pass.",
-      "credit": "Built by GPT-6 Astra Ultra for Mark Barney.",
+      "human": {
+        "actions": 79,
+        "levels": 3
+      },
+      "preview": "previews/di01.png",
       "media": {
-        "opening": "previews/lt02-opening.gif",
-        "levels": "previews/lt02-levels.png"
-      }
-    }
-  ],
-  "excluded": [
+        "play": "previews/di01-play.gif",
+        "levels": "previews/di01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
     {
-      "id": "g028",
-      "reason": "Authoring distribution freshness check reports stale package; omitted pending refresh and verification."
-    }
-  ],
-  "support_files": [
+      "id": "im01",
+      "class_name": "Im01",
+      "path": "games/im01.py",
+      "sha256": "9c7c98724d2ff98459517a9ba57b72e32fb9b83528e665471cef0a463280a7a1",
+      "by": "Ronen / Codex",
+      "levels": 7,
+      "human": {
+        "actions": 160,
+        "levels": 0
+      },
+      "preview": "previews/im01.png",
+      "media": {
+        "play": "previews/im01-play.gif",
+        "levels": "previews/im01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        5,
+        6,
+        7
+      ]
+    },
     {
-      "path": "games/sprite_book.py",
-      "sha256": "30feec1b4de2695b7e1c094d94affe8fe1c4476430606cbdd8fbb7bbc68f5003",
-      "upstream_sha256": "80bdc21ca1cf748118abee57d4802bb6a1459293397a387628cfa98122169852"
+      "id": "pv01",
+      "class_name": "G047",
+      "path": "games/pv01.py",
+      "sha256": "050bd1ac12730df1c43737dc23dfd961b6bcbf504fffefa70f9de33ab8006882",
+      "by": "cellensinc",
+      "levels": 7,
+      "human": {
+        "actions": 181,
+        "levels": 3
+      },
+      "preview": "previews/pv01.png",
+      "media": {
+        "play": "previews/pv01-play.gif",
+        "levels": "previews/pv01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "hf01",
+      "class_name": "G028",
+      "path": "games/hf01.py",
+      "sha256": "94630175d0c0ed8d67daeb82c75c3f61f9eb274d4b450885cce88da72a6d573a",
+      "by": "Claude Opus 5.5 High",
+      "levels": 8,
+      "human": {
+        "actions": 96,
+        "levels": 0
+      },
+      "preview": "previews/hf01.png",
+      "media": {
+        "play": "previews/hf01-play.gif",
+        "levels": "previews/hf01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "hl01",
+      "class_name": "Fq27",
+      "path": "games/hl01.py",
+      "sha256": "7d1d660a090bb0eb40c4aba1c3ad49c64aac8c0b7b53ffbb5f08866740a5b84e",
+      "by": "Claude Opus 5.5 High",
+      "levels": 9,
+      "human": {
+        "actions": 123,
+        "levels": 2
+      },
+      "preview": "previews/hl01.png",
+      "media": {
+        "play": "previews/hl01-play.gif",
+        "levels": "previews/hl01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "bh01",
+      "class_name": "Br10",
+      "path": "games/bh01.py",
+      "sha256": "a07769812c6b0c6e24eb2dd41c8b9114846dd597e66c82e3d859b76e37f0c8d6",
+      "by": "Claude Opus 5.5",
+      "levels": 9,
+      "human": {
+        "actions": 142,
+        "levels": 3
+      },
+      "preview": "previews/bh01.png",
+      "media": {
+        "play": "previews/bh01-play.gif",
+        "levels": "previews/bh01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "hc01",
+      "class_name": "G014",
+      "path": "games/hc01.py",
+      "sha256": "7b4e233bbf92f0650d4995e0e9ec6776d37475b75280ee134b65c8b274645a22",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 130,
+        "levels": 4
+      },
+      "preview": "previews/hc01.png",
+      "media": {
+        "play": "previews/hc01-play.gif",
+        "levels": "previews/hc01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "bc01",
+      "class_name": "G006",
+      "path": "games/bc01.py",
+      "sha256": "d1bb487b437c0821f1108ef858d014f7dea9bbd5afe3725139b38ba3afd6d0b3",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 192,
+        "levels": 4
+      },
+      "preview": "previews/bc01.png",
+      "media": {
+        "play": "previews/bc01-play.gif",
+        "levels": "previews/bc01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "gt01",
+      "class_name": "G001",
+      "path": "games/gt01.py",
+      "sha256": "68c5abca5ff9fab9ad8816c6def8b633865c5a6019f878701a749d056c612600",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 113,
+        "levels": 3
+      },
+      "preview": "previews/gt01.png",
+      "media": {
+        "play": "previews/gt01-play.gif",
+        "levels": "previews/gt01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "eh01",
+      "class_name": "Eh01",
+      "path": "games/eh01.py",
+      "sha256": "aa87c36c91376b957ff6675ff6177f37163022c8ad180e72fed76eac8efd9853",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 836,
+        "levels": 8
+      },
+      "preview": "previews/eh01.png",
+      "media": {
+        "play": "previews/eh01-play.gif",
+        "levels": "previews/eh01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "wf01",
+      "class_name": "Dv51",
+      "path": "games/wf01.py",
+      "sha256": "8b97b5ffb8d8aabc24451a46d90a643b8a93d2e523fdb24274bf4f6c0265eebe",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 217,
+        "levels": 3
+      },
+      "preview": "previews/wf01.png",
+      "media": {
+        "play": "previews/wf01-play.gif",
+        "levels": "previews/wf01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        5,
+        6
+      ]
+    },
+    {
+      "id": "jt01",
+      "class_name": "De48",
+      "path": "games/jt01.py",
+      "sha256": "be973c15bbc9f988a35979e99e4ec2e5bdaf4938d6f78aa17d597c1adcaf46eb",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 124,
+        "levels": 4
+      },
+      "preview": "previews/jt01.png",
+      "media": {
+        "play": "previews/jt01-play.gif",
+        "levels": "previews/jt01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "cl01",
+      "class_name": "Cu64",
+      "path": "games/cl01.py",
+      "sha256": "de17b03ab5e753f23b637d78fb3dfc49b866e475bf18cd9ad1c37136f5a09deb",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 57,
+        "levels": 2
+      },
+      "preview": "previews/cl01.png",
+      "media": {
+        "play": "previews/cl01-play.gif",
+        "levels": "previews/cl01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        5,
+        6
+      ]
+    },
+    {
+      "id": "cr01",
+      "class_name": "Cr01",
+      "path": "games/cr01.py",
+      "sha256": "9ad854fa9521c562d8ff170614b9f819a86ce7a1c448a9541fd62726cc6714a3",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 38,
+        "levels": 2
+      },
+      "preview": "previews/cr01.png",
+      "media": {
+        "play": "previews/cr01-play.gif",
+        "levels": "previews/cr01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "dw01",
+      "class_name": "Dw01",
+      "path": "games/dw01.py",
+      "sha256": "d6fc5d08049d3cc2705aa0c138a10da5296467887453c8193862900943a42649",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 42,
+        "levels": 2
+      },
+      "preview": "previews/dw01.png",
+      "media": {
+        "play": "previews/dw01-play.gif",
+        "levels": "previews/dw01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "ds01",
+      "class_name": "G008",
+      "path": "games/ds01.py",
+      "sha256": "787ccaace5803b5a0e93f10a7dbcff7f2289bbd34a5e891be6f2a36d7dfad3a4",
+      "by": "Mark Barney",
+      "levels": 7,
+      "human": {
+        "actions": 201,
+        "levels": 4
+      },
+      "preview": "previews/ds01.png",
+      "media": {
+        "play": "previews/ds01-play.gif",
+        "levels": "previews/ds01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "mg01",
+      "class_name": "G012",
+      "path": "games/mg01.py",
+      "sha256": "e8bcbe1d781ae2ddf669230e6cf190ef9d73838879b97fa6d7d29288fe6a59db",
+      "by": "cellensinc",
+      "levels": 8,
+      "human": {
+        "actions": 251,
+        "levels": 7
+      },
+      "preview": "previews/mg01.png",
+      "media": {
+        "play": "previews/mg01-play.gif",
+        "levels": "previews/mg01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "rt01",
+      "class_name": "G007",
+      "path": "games/rt01.py",
+      "sha256": "0d979c40c841912b83a4e1499af29dd60700564d2517eb661b53779d9620c143",
+      "by": "Mark Barney",
+      "levels": 8,
+      "human": {
+        "actions": 154,
+        "levels": 3
+      },
+      "preview": "previews/rt01.png",
+      "media": {
+        "play": "previews/rt01-play.gif",
+        "levels": "previews/rt01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "fr01",
+      "class_name": "Fr01",
+      "path": "games/fr01.py",
+      "sha256": "22a277a72f66bdd9fad3e9d5d774e26d72a7025ae714b197986446fba0fc6318",
+      "by": "cellensinc",
+      "levels": 5,
+      "human": {
+        "actions": 193,
+        "levels": 1
+      },
+      "preview": "previews/fr01.png",
+      "media": {
+        "play": "previews/fr01-play.gif",
+        "levels": "previews/fr01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        6
+      ]
+    },
+    {
+      "id": "fg01",
+      "class_name": "Fg01",
+      "path": "games/fg01.py",
+      "sha256": "d6acb49b39d22901474bf4b047c358c1556f9796702f60be39fb60257e4935c0",
+      "by": "cellensinc",
+      "levels": 12,
+      "human": {
+        "actions": 1219,
+        "levels": 5
+      },
+      "preview": "previews/fg01.png",
+      "media": {
+        "play": "previews/fg01-play.gif",
+        "levels": "previews/fg01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "wc01",
+      "class_name": "Es81",
+      "path": "games/wc01.py",
+      "sha256": "493c6195accce5fad91366676874b36e0f023c9098f89af7af409941bc2d2eb8",
+      "by": "GPT-5",
+      "levels": 8,
+      "human": {
+        "actions": 80,
+        "levels": 5
+      },
+      "preview": "previews/wc01.png",
+      "media": {
+        "play": "previews/wc01-play.gif",
+        "levels": "previews/wc01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        5,
+        6
+      ]
+    },
+    {
+      "id": "ba01",
+      "class_name": "Ab02",
+      "path": "games/ba01.py",
+      "sha256": "64ecf75b547c1b81df666b07abb6c4a814492f640490ff6f7d254dce3d39c58c",
+      "by": "Claude Opus 5.5",
+      "levels": 10,
+      "human": {
+        "actions": 16,
+        "levels": 1
+      },
+      "preview": "previews/ba01.png",
+      "media": {
+        "play": "previews/ba01-play.gif",
+        "levels": "previews/ba01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "bl01",
+      "class_name": "Bl01",
+      "path": "games/bl01.py",
+      "sha256": "7addad540070a45e403cdf3bfbeaf2c1efb19dbcc5833885483e024e646aa16a",
+      "by": "GPT-6 Astra Ultra",
+      "levels": 8,
+      "human": {
+        "actions": 38,
+        "levels": 1
+      },
+      "preview": "previews/bl01.png",
+      "media": {
+        "play": "previews/bl01-play.gif",
+        "levels": "previews/bl01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "co01",
+      "class_name": "Co01",
+      "path": "games/co01.py",
+      "sha256": "60989ab774d6514e8195f0eb8879f3212f4582c5fbc02506e490cd74a87e49ed",
+      "by": "GPT 6.1 Sol",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/co01.png",
+      "media": {
+        "play": "previews/co01-play.gif",
+        "levels": "previews/co01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "er01",
+      "class_name": "Db11",
+      "path": "games/er01.py",
+      "sha256": "afdb7f4a0b59836a79ee19618064711da3e6b60b821f3f4eace655b3031a6ba6",
+      "by": "Claude Opus 5.5",
+      "levels": 9,
+      "human": {
+        "actions": 7,
+        "levels": 1
+      },
+      "preview": "previews/er01.png",
+      "media": {
+        "play": "previews/er01-play.gif",
+        "levels": "previews/er01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "es01",
+      "class_name": "Es01",
+      "path": "games/es01.py",
+      "sha256": "cda3374cc8340c26538564cca9f691cd9efe5fce176486b38cc4ccfa60cc8df8",
+      "by": "Codex",
+      "levels": 8,
+      "human": {
+        "actions": 44,
+        "levels": 1
+      },
+      "preview": "previews/es01.png",
+      "media": {
+        "play": "previews/es01-play.gif",
+        "levels": "previews/es01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "ff01",
+      "class_name": "Ff01",
+      "path": "games/ff01.py",
+      "sha256": "695c14bdcadfcb35506663929a29b4088e18e5c68ce31d81817cc8f65ca0a4a2",
+      "by": "Bubba",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/ff01.png",
+      "media": {
+        "play": "previews/ff01-play.gif",
+        "levels": "previews/ff01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "si01",
+      "class_name": "G011",
+      "path": "games/si01.py",
+      "sha256": "df505dbe7e380c34b96a389ba6569e2bcbc5c08c8328bb5bfbe28c7dfb6cac69",
+      "by": "GPT 6.1 Sol",
+      "levels": 9,
+      "human": {
+        "actions": 140,
+        "levels": 2
+      },
+      "preview": "previews/si01.png",
+      "media": {
+        "play": "previews/si01-play.gif",
+        "levels": "previews/si01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        7
+      ]
+    },
+    {
+      "id": "bk01",
+      "class_name": "G015",
+      "path": "games/bk01.py",
+      "sha256": "b013818374d96795b93ce4282fb27f907336427524f007166f933238b021492b",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/bk01.png",
+      "media": {
+        "play": "previews/bk01-play.gif",
+        "levels": "previews/bk01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "wt01",
+      "class_name": "G018",
+      "path": "games/wt01.py",
+      "sha256": "92f92db2dde93063d08a8eb60070874a33f817b774c70a64a6c820659c3108f9",
+      "by": "Claude Sonnet 5.5",
+      "levels": 7,
+      "human": null,
+      "preview": "previews/wt01.png",
+      "media": {
+        "play": "previews/wt01-play.gif",
+        "levels": "previews/wt01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "bs01",
+      "class_name": "G019",
+      "path": "games/bs01.py",
+      "sha256": "0c11bcc9ec92509d3c1401591ac3866428d1679f5242d9fbe8d1f76638b1352f",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/bs01.png",
+      "media": {
+        "play": "previews/bs01-play.gif",
+        "levels": "previews/bs01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "cg01",
+      "class_name": "G025",
+      "path": "games/cg01.py",
+      "sha256": "7e3b5a0822f2290a9f018bea9b7f30f938ba558d03a71c8ab76e10c6706ca56e",
+      "by": "Claude Opus 5.5 High",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/cg01.png",
+      "media": {
+        "play": "previews/cg01-play.gif",
+        "levels": "previews/cg01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "cc01",
+      "class_name": "G026",
+      "path": "games/cc01.py",
+      "sha256": "ab5abdf231e9ed8300c6b86c6f78c4f8084f360d0d3c5821bde892ad337b2b9e",
+      "by": "cellensinc",
+      "levels": 7,
+      "human": null,
+      "preview": "previews/cc01.png",
+      "media": {
+        "play": "previews/cc01-play.gif",
+        "levels": "previews/cc01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "mp01",
+      "class_name": "G029",
+      "path": "games/mp01.py",
+      "sha256": "c9d6caeac15cef06db57bf6348b4785c01dcfd169b48aabff78ddb20769a9ae5",
+      "by": "Claude Opus 5.5 High",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/mp01.png",
+      "media": {
+        "play": "previews/mp01-play.gif",
+        "levels": "previews/mp01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "kt01",
+      "class_name": "G036",
+      "path": "games/kt01.py",
+      "sha256": "1f90cb01ac31a7de8a91a1e0e8c8c5be934fd03234b42d42b4370f233d7c6948",
+      "by": "GPT 6.1 Sol",
+      "levels": 10,
+      "human": null,
+      "preview": "previews/kt01.png",
+      "media": {
+        "play": "previews/kt01-play.gif",
+        "levels": "previews/kt01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "fp01",
+      "class_name": "G045",
+      "path": "games/fp01.py",
+      "sha256": "559c8159bd1d37ce0c3d9efdb5cb01a72de0a9d3bc19735e188baff918611a49",
+      "by": "Claude Opus 5.5 High",
+      "levels": 7,
+      "human": null,
+      "preview": "previews/fp01.png",
+      "media": {
+        "play": "previews/fp01-play.gif",
+        "levels": "previews/fp01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "ap01",
+      "class_name": "G050",
+      "path": "games/ap01.py",
+      "sha256": "02a3a5cac49663734d842bc25d51b7200b0b59e546c25cd27937ccf750946d59",
+      "by": "Claude Opus 5.5 High",
+      "levels": 9,
+      "human": null,
+      "preview": "previews/ap01.png",
+      "media": {
+        "play": "previews/ap01-play.gif",
+        "levels": "previews/ap01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "pt01",
+      "class_name": "Pt01",
+      "path": "games/pt01.py",
+      "sha256": "ce78f19c7fd0a2ca84abe41a1a9ab3e7f1be1315c8b970802ce7126766794c4f",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": {
+        "actions": 373,
+        "levels": 8
+      },
+      "preview": "previews/pt01.png",
+      "media": {
+        "play": "previews/pt01-play.gif",
+        "levels": "previews/pt01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "rx01",
+      "class_name": "Rx01",
+      "path": "games/rx01.py",
+      "sha256": "81c6959244c4e04b8cf1f1ee003370f35cba233c847c085ab626a6fb9cedce9d",
+      "by": "Claude Sonnet 5.5",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/rx01.png",
+      "media": {
+        "play": "previews/rx01-play.gif",
+        "levels": "previews/rx01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        6
+      ]
+    },
+    {
+      "id": "sf01",
+      "class_name": "Sf01",
+      "path": "games/sf01.py",
+      "sha256": "7c10b37845f0708cfc9c51ec3a236eef5ddf21b9e58f5f38b39d661c9c539d70",
+      "by": "Claude Fable 5.1",
+      "levels": 7,
+      "human": null,
+      "preview": "previews/sf01.png",
+      "media": {
+        "play": "previews/sf01-play.gif",
+        "levels": "previews/sf01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "ss01",
+      "class_name": "Ss01",
+      "path": "games/ss01.py",
+      "sha256": "4bc8cb8759a852e341e075c09dafb182848643d5d451104d87fdbd3863f41991",
+      "by": "Ronen / Codex",
+      "levels": 8,
+      "human": {
+        "actions": 484,
+        "levels": 8
+      },
+      "preview": "previews/ss01.png",
+      "media": {
+        "play": "previews/ss01-play.gif",
+        "levels": "previews/ss01-levels.png"
+      },
+      "clip": "walk",
+      "inputs": [
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "te01",
+      "class_name": "Te01",
+      "path": "games/te01.py",
+      "sha256": "13afb43e9921c670261a1b25f3a98ff511e1a582db148f50c9f24b1be994f28a",
+      "by": "GPT 6.1 Sol",
+      "levels": 8,
+      "human": {
+        "actions": 487,
+        "levels": 7
+      },
+      "preview": "previews/te01.png",
+      "media": {
+        "play": "previews/te01-play.gif",
+        "levels": "previews/te01-levels.png"
+      },
+      "clip": "line",
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
     }
-  ],
-  "featured": [
-    "dz01",
-    "lt02"
   ]
 }

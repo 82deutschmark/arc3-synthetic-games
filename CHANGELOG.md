@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 — 30 October 2026
+
+Claude Opus 5.5: the collection is now only the games Mark Barney marked Trainable, in his page order. Removed the old g-series mirror, lt02 and the transformed extensions. Rebuilt the page with highlight cards and a compact grid, real gameplay clips, human numbers and no rule descriptions or marketing copy. Game files are now byte-for-byte copies.
+
 ## 0.2.1 — 30 October 2026
 
 Claude Sonnet 5.5 Medium: added `docs/why.html`, a note in Mark Barney's voice (creativity can't be interpolated, what the ARC-AGI-3 public games are, where these games came from), linked from the front page and its nav. Slimmed the header and the lead so the featured games start at the top of the page.

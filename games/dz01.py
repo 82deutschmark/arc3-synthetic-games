@@ -1,8 +1,3 @@
-# Author: Claude Sonnet 5.5 Medium
-# Date: 30-October-2026
-# PURPOSE: Release packaging of an existing authored ARC-style runtime; original source follows unchanged.
-# SRP/DRY check: Pass — copies the authoring file as-is; no game logic rewritten.
-# Original authorship is in the file header below: designed by Mark Barney, built by Claude Opus 5.5 (High, with a later Medium pass), with parts adapted from an earlier game by Claude Opus 5.5, Claude Fable 5.1 and Claude Opus 5.
 # Author: Claude Opus 5.5 High (the build); Mark Barney (the design, 18-Oct-2026); hero, hearts, guard faces,
 #   progress bar and finish animation adapted from fn01 (Claude Opus 5.5 High, Claude Fable 5.1 Low, Claude Opus 5)
 # Date: 18-October-2026 (energy cells, 22-October-2026)
