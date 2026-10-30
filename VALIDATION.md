@@ -1,5 +1,14 @@
 # Validation — 29 October 2026
 
+## 30 October 2026 update (featured games)
+
+- `tools/validate.py`: all 55 catalog games pass, including the new dz01 and lt02, and every featured id is checked for its replay and level strip.
+- `tools/make_featured_media.py`: each game's recorded winning line cleared every level through the real engine and ended in WIN before any picture was written.
+- `node --check docs/catalog.js`: pass. The page was loaded from a local static server at desktop and phone width; the featured cards rendered and the grid listed the featured games first.
+- Not verified: GitHub Pages delivery after publication, and full-game solvability beyond the one recorded line per game.
+
+## 29 October 2026
+
 Python 3.13 with arcengine 0.9.3 and numpy 2.4.3.
 
 - `tools/validate.py`: all 53 catalog games pass integrity, preview presence, module import, real RESET and one advertised action. Shared sprite helper hash passes.

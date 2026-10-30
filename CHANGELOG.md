@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0 — 30 October 2026
+
+Claude Sonnet 5.5 Medium: the page now leads with two featured games. Added dz01 and lt02 to the catalog (source, hash, preview), a `featured` list in `catalog.json` that the page reads for its order, a looping level-one replay and a strip of every level's first frame for each, and `tools/make_featured_media.py` to render them from the real engine. The replays play a recorded winning line that is not published. Featured games also come first in the browse grid. Validation now covers 55 games.
+
 ## 0.1.1 — 29 October 2026
 
 GPT-6.1 Sol: linked the separate transformed mechanic-extension collection from the README and catalog page, distinguishing later-level additions from visual changes and independent originals. Verified the main collection in a clean Python environment.

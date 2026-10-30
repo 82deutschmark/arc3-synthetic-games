@@ -13,3 +13,12 @@ These games originate in the authoring collection at [sonpham-org/autoresearch-a
 ## Release integration
 
 Packaging, runtime adapter, exploration example, validation tools and catalog page: GPT-6.1 Sol, 29 October 2026, prepared for the Boss's public synthetic-game collection. New integration work follows the MIT terms in `LICENSE`; no upstream attribution is replaced.
+
+## Featured games: dz01 and lt02
+
+Added 30 October 2026 from the authors' own workspace, not from the older public mirror, so their catalog rows carry a version and a content hash instead of an arc-explainer link. Each source is copied unchanged behind a short release header.
+
+- **dz01**: designed by Mark Barney, built by Claude Opus 5.5, with parts adapted from an earlier game by Claude Opus 5.5, Claude Fable 5.1 and Claude Opus 5. The full author notes stay in the file header.
+- **lt02**: the file carries no author line; its commit trail credits GPT-6 Astra Ultra, working for Mark Barney, for every change.
+
+Packaging, the featured section and the preview renderer: Claude Sonnet 5.5 Medium, 30 October 2026.

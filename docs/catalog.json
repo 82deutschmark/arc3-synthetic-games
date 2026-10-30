@@ -1,6 +1,6 @@
 {
-  "version": "0.1.0",
-  "snapshot_date": "2026-10-29",
+  "version": "0.2.0",
+  "snapshot_date": "2026-10-30",
   "source_repository": "82deutschmark/arc-explainer",
   "source_commit": "076566cf2480d4ec0d8982d9941d9ff21cb7a9ab",
   "license": "MIT",
@@ -587,6 +587,48 @@
       "preview": "previews/g309.png",
       "source_url": "https://github.com/82deutschmark/arc-explainer/blob/076566cf2480d4ec0d8982d9941d9ff21cb7a9ab/server/data/arc3-games/g309.py",
       "category": "authored"
+    },
+    {
+      "id": "dz01",
+      "class_name": "Dz01",
+      "path": "games/dz01.py",
+      "sha256": "9631e01a728c4f994c01c987154da66706a5873f11c58c249d4d78c6651d446d",
+      "upstream_sha256": "6ab85ff0e7d28c31af056e8f5226ea7aa1a7ceb066e2d2bad4bc5d7350f94ad5",
+      "origin": {
+        "workspace": "the team authoring workspace",
+        "version": "dz01@6ab85ff0e7d2"
+      },
+      "preview": "previews/dz01.png",
+      "category": "authored",
+      "levels": 8,
+      "note": "Dig down through sand, packed earth and rock to the checkered floor. Every dig spends the bar at the side, and whatever you open up, falls.",
+      "controls": "Arrow keys to move. Click a cell beside the hero to dig it. Space lights a star.",
+      "credit": "Designed by Mark Barney. Built by Claude Opus 5.5.",
+      "media": {
+        "opening": "previews/dz01-opening.gif",
+        "levels": "previews/dz01-levels.png"
+      }
+    },
+    {
+      "id": "lt02",
+      "class_name": "Lt02",
+      "path": "games/lt02.py",
+      "sha256": "9abb804d9ee021e25935e4b8da2dbcab1b714cdda291231fa634ab1d3a1897ed",
+      "upstream_sha256": "2b5c09181fae36e54a211f255fbd04aabaae001e6b5454dc5d67aa90d7488b24",
+      "origin": {
+        "workspace": "the team authoring workspace",
+        "version": "lt02@2b5c09181fae"
+      },
+      "preview": "previews/lt02.png",
+      "category": "authored",
+      "levels": 9,
+      "note": "A scrolling city, a tray of five tools and threats on the move. Pick a tool, choose your spot, and see what the blast takes with it.",
+      "controls": "Arrow keys scroll the city. 5 changes tool. Click to fire. 7 lets a moment pass.",
+      "credit": "Built by GPT-6 Astra Ultra for Mark Barney.",
+      "media": {
+        "opening": "previews/lt02-opening.gif",
+        "levels": "previews/lt02-levels.png"
+      }
     }
   ],
   "excluded": [
@@ -601,5 +643,9 @@
       "sha256": "30feec1b4de2695b7e1c094d94affe8fe1c4476430606cbdd8fbb7bbc68f5003",
       "upstream_sha256": "80bdc21ca1cf748118abee57d4802bb6a1459293397a387628cfa98122169852"
     }
+  ],
+  "featured": [
+    "dz01",
+    "lt02"
   ]
 }

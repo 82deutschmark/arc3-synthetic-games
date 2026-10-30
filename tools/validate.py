@@ -2,6 +2,7 @@
 # Date: 29-October-2026
 # PURPOSE: Verify release file integrity and exercise real engine resets and actions.
 # SRP/DRY check: Pass — catalog and runtime are reused; no duplicate game rules.
+# Updated: 30-October-2026, Claude Sonnet 5.5 Medium — also checks that every featured game has its replay and level strip.
 from __future__ import annotations
 
 import hashlib
@@ -27,6 +28,11 @@ def main():
         except Exception as exc:
             failures.append({'id': entry['id'], 'error': str(exc)})
             print(f"FAIL {entry['id']}: {exc}")
+    by_id = {entry['id']: entry for entry in CATALOG['games']}
+    for game_id in CATALOG.get('featured', []):
+        media = by_id[game_id]['media']
+        for name in ('opening', 'levels'):
+            assert (ROOT / 'docs' / media[name]).is_file(), f'{game_id}: missing featured {name} picture'
     for entry in CATALOG['support_files']:
         assert hashlib.sha256((ROOT / entry['path']).read_bytes()).hexdigest() == entry['sha256']
     report = {'checked': len(CATALOG['games']), 'failures': failures,

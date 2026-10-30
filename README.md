@@ -2,7 +2,7 @@
 
 A snapshot of authored interactive reasoning environments, packaged for people building agents and collecting training trajectories. Browse the [collection page](https://82deutschmark.github.io/arc3-synthetic-games/) or inspect the [machine-readable catalog](docs/catalog.json).
 
-This is an independent community collection, not an official ARC Prize benchmark. The initial snapshot contains **53 authored environments** from the public arc-explainer mirror. Game identifiers deliberately stay opaque. There are no expert demonstrations, trained models, or generated-level solvers in this initial package.
+This is an independent community collection, not an official ARC Prize benchmark. The snapshot contains **55 authored environments**: 53 from the public arc-explainer mirror, plus two featured games, **dz01** and **lt02**, added on 30 October 2026 from the authors' own workspace. The page leads with those two. Game identifiers deliberately stay opaque. There are no expert demonstrations, trained models, or generated-level solvers in this initial package.
 
 ## Quick start
 
@@ -33,7 +33,7 @@ The collection provides environments, not a complete reinforcement-learning syst
 
 - `games/`: self-contained mirrored runtimes plus their shared sprite helper.
 - `docs/catalog.json`: class names, paths, content hashes, pinned upstream links and exclusions.
-- `docs/previews/`: initial-frame previews from the same public mirror; these are illustrative, not live game playback.
+- `docs/previews/`: initial-frame previews from the same public mirror; these are illustrative, not live game playback. The two featured games also have a looping level-one replay and a strip of every level's first frame, rendered by `tools/make_featured_media.py` from the real engine.
 - `examples/collect.py`: real random exploration trajectory collector.
 - `tools/validate.py`: hash checks plus real reset/action checks for each environment.
 - `docs/`: buildless catalog page with search, source and download links.
