@@ -1,0 +1,195 @@
+{
+ "tool": "vet_game.py/1",
+ "created_at": "2026-10-16T02:25:44+00:00",
+ "python": "3.13.13",
+ "source": "vj17.py",
+ "source_sha256": "1cb6162d39b88e43ceacb4f9d961f47677b5fe0268b14a2767f619bed8b5ca6d",
+ "profile": "glowup",
+ "checks": {
+  "size": {
+   "status": "warn",
+   "detail": "472450 bytes"
+  },
+  "imports": {
+   "status": "pass",
+   "detail": "standard library maths/containers, numpy, arcengine only"
+  },
+  "calls": {
+   "status": "pass",
+   "detail": "no file, eval or import-hook calls"
+  },
+  "load": {
+   "status": "pass",
+   "detail": "Vj17() loads and RESET renders a 64x64 frame"
+  },
+  "level_count": {
+   "status": "pass",
+   "detail": "9 levels (glowup needs 7-12)"
+  },
+  "win_trace": {
+   "status": "pass",
+   "detail": "clears all 9 levels in 84 actions and ends in WIN"
+  },
+  "determinism": {
+   "status": "pass",
+   "detail": "two fresh replays produce identical frames"
+  },
+  "deepcopy": {
+   "status": "pass",
+   "detail": "replays from deep copies match (Undo-safe)"
+  },
+  "reset": {
+   "status": "pass",
+   "detail": "RESET restores each level exactly, keeps completed levels, and the level is winnable after it"
+  },
+  "level1_short": {
+   "status": "pass",
+   "detail": "the recorded level-1 win takes 5 actions (limit 10)"
+  },
+  "level1_safe": {
+   "status": "pass",
+   "detail": "0 of 24 random runs of up to 150 actions reached GAME_OVER on level 1"
+  },
+  "early_death": {
+   "status": "pass",
+   "detail": "share of random runs that reach GAME_OVER within 10 actions: L1 0%, L2 0%, L3 0%, L4 0%, L5 0%, L6 0%, L7 0%, L8 0%, L9 0% (limit 10%)"
+  },
+  "random_resistance": {
+   "status": "pass",
+   "detail": "random runs of 250 actions (retrying after GAME_OVER) that cleared the level: L2 0/40, L3 0/40, L4 0/40, L5 0/40, L6 0/40, L7 0/40, L8 0/40, L9 0/40"
+  },
+  "fuzz": {
+   "status": "pass",
+   "detail": "85473 random actions: no exception, every frame valid"
+  },
+  "frames_per_action": {
+   "status": "warn",
+   "detail": "longest action plays 25 frames (warn over 15, fail over 60; the site plays ~30 per second)"
+  },
+  "visible_response": {
+   "status": "pass",
+   "detail": "share of random actions with no visible change, by action: {6: 0.82}"
+  }
+ },
+ "arcengine": "0.9.3",
+ "class_name": "Vj17",
+ "levels": 9,
+ "trace_sha256": "944b0245e0d71b22608565729da47f7fbb4d4e29d525f66a08c9dc784351c6ea",
+ "trace_actions_per_level": [
+  5,
+  8,
+  15,
+  9,
+  9,
+  19,
+  5,
+  5,
+  9
+ ],
+ "random": {
+  "mode": "uniform over available actions; clicks split between anywhere, a random on-screen colour, and engine click targets",
+  "seed": 20260919,
+  "levels": [
+   {
+    "level": 1,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0
+   },
+   {
+    "level": 2,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 3,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 4,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 5,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 6,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 7,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 8,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 9,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   }
+  ]
+ },
+ "strips": [
+  "L1-a5-16f.png",
+  "L2-a7-3f.png",
+  "L3-a13-2f.png",
+  "L4-a1-2f.png",
+  "L4-a6-2f.png",
+  "L4-a9-15f.png",
+  "L5-a7-5f.png",
+  "L6-a5-2f.png"
+ ],
+ "verdict": "pass",
+ "warnings": [
+  "size",
+  "frames_per_action"
+ ]
+}

@@ -1,0 +1,171 @@
+{
+ "tool": "vet_game.py/1",
+ "created_at": "2026-10-15T09:41:18+00:00",
+ "python": "3.13.13",
+ "source": "vz17.py",
+ "source_sha256": "9c3dff675095ad82c350e09eab834c02b2ac16d70edc5967e4df4ba2190fdc34",
+ "profile": "glowup",
+ "checks": {
+  "size": {
+   "status": "pass",
+   "detail": "47765 bytes"
+  },
+  "imports": {
+   "status": "pass",
+   "detail": "standard library maths/containers, numpy, arcengine only"
+  },
+  "calls": {
+   "status": "pass",
+   "detail": "no file, eval or import-hook calls"
+  },
+  "load": {
+   "status": "pass",
+   "detail": "Vz17() loads and RESET renders a 64x64 frame"
+  },
+  "level_count": {
+   "status": "pass",
+   "detail": "7 levels (glowup needs 7-12)"
+  },
+  "win_trace": {
+   "status": "pass",
+   "detail": "clears all 7 levels in 90 actions and ends in WIN"
+  },
+  "determinism": {
+   "status": "pass",
+   "detail": "two fresh replays produce identical frames"
+  },
+  "deepcopy": {
+   "status": "pass",
+   "detail": "replays from deep copies match (Undo-safe)"
+  },
+  "reset": {
+   "status": "pass",
+   "detail": "RESET restores each level exactly, keeps completed levels, and the level is winnable after it"
+  },
+  "level1_short": {
+   "status": "pass",
+   "detail": "the recorded level-1 win takes 6 actions (limit 10)"
+  },
+  "level1_safe": {
+   "status": "pass",
+   "detail": "0 of 24 random runs of up to 150 actions reached GAME_OVER on level 1"
+  },
+  "early_death": {
+   "status": "pass",
+   "detail": "share of random runs that reach GAME_OVER within 10 actions: L1 0%, L2 4%, L3 4%, L4 4%, L5 0%, L6 0%, L7 0% (limit 10%)"
+  },
+  "random_resistance": {
+   "status": "pass",
+   "detail": "random runs of 250 actions (retrying after GAME_OVER) that cleared the level: L2 0/40, L3 0/40, L4 0/40, L5 0/40, L6 0/40, L7 0/40"
+  },
+  "fuzz": {
+   "status": "pass",
+   "detail": "64681 random actions: no exception, every frame valid"
+  },
+  "frames_per_action": {
+   "status": "warn",
+   "detail": "longest action plays 36 frames (warn over 15, fail over 60; the site plays ~30 per second)"
+  },
+  "visible_response": {
+   "status": "pass",
+   "detail": "share of random actions with no visible change, by action: {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0, 5: 0.0, 6: 0.0}"
+  }
+ },
+ "arcengine": "0.9.3",
+ "class_name": "Vz17",
+ "levels": 7,
+ "trace_sha256": "1c9e59efafba153ec39a6109a1340f381624f92dea9fc34d9e72eaabebe59f18",
+ "trace_actions_per_level": [
+  6,
+  10,
+  14,
+  18,
+  12,
+  14,
+  16
+ ],
+ "random": {
+  "mode": "uniform over available actions; clicks split between anywhere, a random on-screen colour, and engine click targets",
+  "seed": 20260919,
+  "levels": [
+   {
+    "level": 1,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0
+   },
+   {
+    "level": 2,
+    "early_runs": 24,
+    "early_game_over_rate": 0.042,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 3,
+    "early_runs": 24,
+    "early_game_over_rate": 0.042,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 4,
+    "early_runs": 24,
+    "early_game_over_rate": 0.042,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 5,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 6,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   },
+   {
+    "level": 7,
+    "early_runs": 24,
+    "early_game_over_rate": 0.0,
+    "resistance_runs": 40,
+    "horizon": 250,
+    "cleared": 0,
+    "fastest_clear": null,
+    "reset_lost_progress": 0
+   }
+  ]
+ },
+ "strips": [
+  "L1-a6-16f.png",
+  "L2-a10-16f.png",
+  "L3-a14-16f.png",
+  "L4-a18-16f.png",
+  "L5-a12-16f.png",
+  "L6-a14-16f.png",
+  "L7-a16-16f.png"
+ ],
+ "verdict": "pass",
+ "warnings": [
+  "frames_per_action"
+ ]
+}
