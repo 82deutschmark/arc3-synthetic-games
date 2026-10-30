@@ -29,7 +29,6 @@ is the newest game of that family, so LT02 is the one featured.
 - `docs/catalog.js`, `docs/index.html`, `docs/style.css`: featured section first, then the existing collection with the
   featured games shown first in the grid.
 
-## Not decided here
+## Publishing
 
-Publishing. Both games are unpublished designs until this branch is pushed, and the release plan in the authoring
-workspace schedules the full release after the 2 November close. The branch is committed locally and not pushed.
+Published on 30-October-2026 at the Boss's instruction.
