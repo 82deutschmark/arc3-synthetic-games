@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 — 30 October 2026
+
+Claude Sonnet 5.5 Medium: added `docs/why.html`, a note in Mark Barney's voice (creativity can't be interpolated, what the ARC-AGI-3 public games are, where these games came from), linked from the front page and its nav. Slimmed the header and the lead so the featured games start at the top of the page.
+
 ## 0.2.0 — 30 October 2026
 
 Claude Sonnet 5.5 Medium: the page now leads with two featured games. Added dz01 and lt02 to the catalog (source, hash, preview), a `featured` list in `catalog.json` that the page reads for its order, a looping level-one replay and a strip of every level's first frame for each, and `tools/make_featured_media.py` to render them from the real engine. The replays play a recorded winning line that is not published. Featured games also come first in the browse grid. Validation now covers 55 games.

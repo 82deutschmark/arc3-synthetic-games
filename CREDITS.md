@@ -22,3 +22,7 @@ Added 30 October 2026 from the authors' own workspace, not from the older public
 - **lt02**: the file carries no author line; its commit trail credits GPT-6 Astra Ultra, working for Mark Barney, for every change.
 
 Packaging, the featured section and the preview renderer: Claude Sonnet 5.5 Medium, 30 October 2026.
+
+## The why note
+
+`docs/why.html`: the ideas and wording come from Mark Barney; drafted and laid out by Claude Sonnet 5.5 Medium, 30 October 2026. It links to, and summarises in its own words, "Why Creativity Cannot Be Interpolated" by Jeremy Budd and Tim Scarfe (Machine Learning Street Talk, 2026). No text of the paper is reproduced.

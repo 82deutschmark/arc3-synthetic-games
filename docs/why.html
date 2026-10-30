@@ -1,0 +1,51 @@
+<!--
+Author: Claude Sonnet 5.5 Medium, from Mark Barney's own words
+Date: 30-October-2026
+PURPOSE: The note behind the featured games: why a person has to be in the loop, what the ARC-AGI-3 public games are, and where these games came from. Written in Mark Barney's voice; a draft until he is happy with it. Revised the same day after a fact-check against the paper, the repo and a cold read. Lifting it to another site needs style.css and the links back to the catalog page copied along.
+SRP/DRY check: Pass — shares style.css with the catalog page; no game data is repeated here.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A video game producer on why creativity can't be interpolated, what the ARC-AGI-3 public games really are, and why these games were made with a person in the loop.">
+<title>Creativity can’t be interpolated · Synthetic Games</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><a class="wordmark" href="./">SYNTHETIC GAMES<span>FIELD COLLECTION / 2026</span></a><nav aria-label="Primary"><a href="index.html#featured">Featured</a><a href="why.html" aria-current="page">Why</a><a href="index.html#collection">Browse</a><a href="index.html#training">Train</a><a href="https://github.com/82deutschmark/arc3-synthetic-games">GitHub<span aria-hidden="true">&nbsp;↗</span></a></nav></header>
+<main>
+<article class="essay">
+<h1>Creativity can’t be interpolated.</h1>
+<p class="deck">Why the games at the top of this collection were made the slow way, with a person in the loop.</p>
+<p class="byline">MARK BARNEY · 30 OCTOBER 2026</p>
+
+<p>I’m a video game producer. I learned to write code in the ’80s for one reason: I wanted to make games. I’m still not good at clever code on my own. But when I iterate with a partner who can write code, I’m sometimes able to supply the clever parts. That’s how I work.</p>
+
+<h2>Coding agents are amazing. They aren’t creative.</h2>
+<p>Coding agents are wonderful. I can get things built now that were never possible for me before. But on their own they aren’t creative. They aren’t discovering anything new or thinking of anything new. They put together the old, which is great, and we can do a lot with that. We just shouldn’t mistake it for something it isn’t.</p>
+<p>That’s my caveman version. Dr. Jeremy Budd and Dr. Tim Scarfe wrote the careful one, <a href="https://archive.mlst.ai/paper/why-creativity-cannot-be-interpolated/">Why Creativity Cannot Be Interpolated</a> (Machine Learning Street Talk, 2026), and they’re more careful than I am. They hedge, and they say outright that they aren’t claiming AI can never be creative. Here’s how I read it, in chicken-farmer terms.</p>
+<p>When they say a model interpolates, they mean it recombines what already exists. You get something that looks new, with no picture of why the pieces fit together. They call that quasi-creativity.</p>
+<p>They borrow a split from Margaret Boden: creativity that explores inside a framework, and creativity that reshapes the framework itself. Either way it has to respect the rules of the domain. In game terms, that’s the difference between a new level and a new rule that changes what the old levels mean.</p>
+<p>What the human brings is taste: domain knowledge, a nose for what’s interesting, knowing what’s missing, and knowing which question to ask. The authors point to systems that pair a generator with an outside check, and for now they call people and AI working together the most promising path. In my shop the agent makes the thing and a person playing the game is the outside check.</p>
+<p>I’m talking about the tools we have today. Today the agent builds, and I decide what is worth building and whether it’s any good.</p>
+
+<h2>If you’re not deep in ARC-AGI-3</h2>
+<p>ARC says part of this in <a href="https://arxiv.org/abs/2603.24621">its own paper</a> (section 3.6), but I haven’t seen it put plainly for people outside the deep end of ARC-AGI-3. Three things to know.</p>
+<ul>
+<li><strong>The 25 public games are the tutorial level.</strong> ARC calls them intentionally easier and says they don’t fully cover the mechanics of the private set. “My agent beats all 25 public games, as efficiently as a human” is fine. It’s also like saying you speed-ran the tutorial level of a video game. Not that impressive. The public 25 are a small taste of the mechanics, the easiest stuff, there to get you started. They’re not a tour of everything you’ll meet. I haven’t seen the semi-private games, but I expect them to be deviously difficult.</li>
+<li><strong>The public 25 had to be a little fun.</strong> ARC says they got a stronger emphasis on clarity and fun, so they’re easy for humans and at least somewhat fun for humans. My guess is the private games got less of that. I can’t see them, so it’s a guess. I expect stuff that isn’t fun for humans, while still being somewhat easy for a person and hard for an AI.</li>
+<li><strong>A generated game that no person played is slop.</strong> I’ve seen plenty of procedurally generated game packages from people who pointed a coding agent at the problem and said, “Hey, do this.” Mechanics-wise, okay, cool. Most of it is complete slop: no human curation, no human intent, and it has probably never been played by a human. Here’s my tell. ARC scores an agent against what real people did, with human action baselines behind the numbers. If a synthetic game set ships with no human action numbers at all, I assume nobody played it. That’s a tell, not proof.</li>
+</ul>
+
+<h2>What I’m trying to give you</h2>
+<p>The standard I’m aiming for is games that have relative human action efficiency scores and that a person with creative intent iterated on. I’m not there yet. These two don’t have published human action numbers. I’ve played and won DZ01, but one player isn’t a baseline. What I can say today is that neither of the two at the top is a one-shot from Codex, GPT or any other coding agent.</p>
+
+<h2>Whose games these are</h2>
+<p>Not all of them are mine. Some came from Son and Ronen, and some of Son’s came out of his own head. Some we pulled out of the GPT and Claude slop soup, and then people got their hands on them. I don’t know that any of them are new ideas. What we added was human creativity.</p>
+<p>The two at the top are the ones I’m proudest of. <strong>DZ01</strong> I designed. It started as an earlier climbing game, turned upside down into a dig, and Claude Opus 5.5 built it. I asked for changes after the first build. <strong>LT02</strong> was built for me by GPT-6 Astra Ultra and went through five versions. <a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/games/dz01.py">Read DZ01’s source</a>, <a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/games/lt02.py">read LT02’s source</a>, or <a href="https://github.com/82deutschmark/arc3-synthetic-games#quick-start">run them yourself</a>.</p>
+<p><a href="index.html#featured"><span aria-hidden="true">←</span> Back to the games</a></p>
+</article>
+</main>
+<footer><span>Built for exploration. Shared for learning.</span><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/LICENSE">MIT license</a><span>Not affiliated with ARC Prize.</span></footer>
+</body></html>

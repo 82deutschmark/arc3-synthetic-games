@@ -1,7 +1,7 @@
 <!--
 Author: GPT-6.1 Sol
 Date: 29-October-2026
-Updated: 30-October-2026, Claude Sonnet 5.5 Medium — the page now leads with the featured games, read from catalog.json.
+Updated: 30-October-2026, Claude Sonnet 5.5 Medium — the page now leads with the featured games, read from catalog.json; slim header and lead, link to the why note.
 PURPOSE: Accessible static catalog of actual released synthetic environments and training entry points.
 SRP/DRY check: Pass — catalog.json is the only game registry; no invented metadata.
 -->
@@ -14,10 +14,11 @@ SRP/DRY check: Pass — catalog.json is the only game registry; no invented meta
 <link rel="stylesheet" href="style.css"><script src="catalog.js" defer></script>
 </head>
 <body>
-<header><a class="wordmark" href="./">SYNTHETIC GAMES<span>FIELD COLLECTION / 2026</span></a><nav aria-label="Primary"><a href="#featured">Featured</a><a href="#collection">Browse</a><a href="#training">Train</a><a href="https://github.com/82deutschmark/arc3-synthetic-games">GitHub ↗</a></nav></header>
+<header><a class="wordmark" href="./">SYNTHETIC GAMES<span>FIELD COLLECTION / 2026</span></a><nav aria-label="Primary"><a href="#featured">Featured</a><a href="why.html">Why</a><a href="#collection">Browse</a><a href="#training">Train</a><a href="https://github.com/82deutschmark/arc3-synthetic-games">GitHub<span aria-hidden="true">&nbsp;↗</span></a></nav></header>
 <main>
-<section class="lead"><p class="eyebrow">INTERACTIVE REASONING / OPEN SOURCE</p><h1>Start with the<br><em>best of it.</em></h1><p class="intro">Small worlds. Unfamiliar rules. Real consequences. These are the games we are proudest of. The rest of the collection follows.</p></section>
+<section class="lead"><h1>Start with the best of it.</h1><p class="intro">The games we are proudest of come first. The rest of the collection follows.</p></section>
 <section id="featured" class="featured" aria-label="Featured games"><div id="featured-list"></div><p class="fine">Each opening animation replays one recorded winning line through the real engine. The pictures are real frames; the line itself is not published.</p><noscript><p>JavaScript is needed to show the featured games. <a href="catalog.json">Download the complete catalog</a>.</p></noscript></section>
+<p class="why-line">Why a person has to be in the loop: <strong>creativity can’t be interpolated.</strong> <a href="why.html">Read the note <span aria-hidden="true">→</span></a></p>
 <section class="principles" aria-label="What is included"><div><strong>Runnable worlds</strong><p>Python game source using the ARC engine. Not screenshots posing as environments.</p></div><div><strong>Traceable snapshots</strong><p>Every game maps to its upstream source, with content hashes in the catalog.</p></div><div><strong>Your agent, your loop</strong><p>Collect observations and actions. Bring your own policy, rewards and training method.</p></div></section>
 <section id="collection"><div class="section-heading"><div><p class="eyebrow">THE ENVIRONMENTS</p><h2>Find a world to explore.</h2></div><p id="count" aria-live="polite">Loading collection…</p></div><div class="controls"><label for="search">Find by game ID<input id="search" type="search" placeholder="Search game IDs" autocomplete="off"></label><label for="view">Show<select id="view"><option value="all">All released games</option><option value="preview">With preview images</option></select></label><a href="catalog.json">Machine-readable catalog ↗</a></div><p id="error" role="alert" hidden></p><div id="games" class="grid"></div><noscript><p>JavaScript is needed to browse the gallery. <a href="catalog.json">Download the complete catalog</a> or <a href="https://github.com/82deutschmark/arc3-synthetic-games/tree/main/games">browse source files on GitHub</a>.</p></noscript></section>
 <section id="extensions" class="release-note"><p class="eyebrow">COMPANION COLLECTION</p><h2>Familiar worlds. Another layer of rules.</h2><p>Explore rotated and recoloured games that add mechanics, including changes introduced on later levels. These are labeled separately from the original authored collection, with parent families, introduction levels and recorded replay checks.</p><p><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/extensions/README.md">Browse the mechanic extensions ↗</a></p></section>

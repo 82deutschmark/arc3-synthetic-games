@@ -32,3 +32,9 @@ is the newest game of that family, so LT02 is the one featured.
 ## Publishing
 
 Published on 30-October-2026 at the Boss's instruction.
+
+## The why note
+
+`docs/why.html` carries the Boss's own account: creativity can't be interpolated, what the ARC-AGI-3 public games are, and
+where these games came from. It is a draft in his voice until he is happy with it. Later, the same note and the featured
+section should also appear on the ARC-Explainer page (arc3.markbarney.net); the note is a standalone page so it can be lifted.
