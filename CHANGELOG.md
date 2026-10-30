@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2 — 30 October 2026
+
+Claude Sonnet 5.5: five more highlighted games: ff01, pt01, te01, bs01, es01.
+
 ## 0.3.1 — 30 October 2026
 
 Claude Opus 5.5: lead with dz01 and lt02 (lt02 restored). Removed per-game bylines and the note byline; credit is Team Turducken, under the direction of Mark Barney. Clips now run across levels instead of stopping after level one.
