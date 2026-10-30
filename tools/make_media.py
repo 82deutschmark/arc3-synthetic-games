@@ -1,7 +1,7 @@
 # Author: Claude Opus 5.5
 # Date: 30-October-2026
-# PURPOSE: Render one game's pictures from the real engine: opening frame, each level's opening frame, and a short
-#   gameplay clip of level one. A recorded line, kept outside this repository, drives the clip when one still clears
+# PURPOSE: Render one game's pictures from the real engine: opening frame, each level's opening frame, and a gameplay
+#   clip across as many levels as the clip length allows. A recorded line, kept outside this repository, drives the clip when one still clears
 #   level one; otherwise the clip is a short fixed walk of real moves. Prints which it used.
 # SRP/DRY check: Pass -- loading and stepping come from tools/runtime.py; replaces make_featured_media.py.
 from __future__ import annotations
@@ -19,7 +19,7 @@ PALETTE = np.array([
     (255, 255, 255), (204, 204, 204), (153, 153, 153), (102, 102, 102), (51, 51, 51), (0, 0, 0), (229, 58, 163),
     (255, 123, 204), (249, 60, 49), (30, 147, 255), (136, 216, 241), (255, 220, 0), (255, 133, 27), (146, 18, 49),
     (79, 204, 48), (163, 86, 214)], dtype=np.uint8)
-MAX_CLIP_FRAMES = 140
+MAX_CLIP_FRAMES = 420
 
 
 def picture(grid, scale):
@@ -32,15 +32,14 @@ def decode(raw):
 
 
 def run_line(game_id, trace):
-    """Play a recorded line. Returns level-one frame groups and every opening reached, or None if level one isn't cleared."""
+    """Play a recorded line. Returns the frame groups of the whole line and every opening reached, or None if level one isn't cleared."""
     game = load_game(game_id)
     frame = perform(game, 0)
     groups, openings = [[np.asarray(f) for f in frame.frame]], [np.asarray(frame.frame[-1])]
     for index, level in enumerate(trace['levels']):
         for raw in level['actions']:
             frame = perform(game, *decode(raw))
-            if index == 0:
-                groups.append([np.asarray(f) for f in frame.frame])
+            groups.append([np.asarray(f) for f in frame.frame])
         if int(frame.levels_completed) != index + 1:
             return (groups, openings) if index else None
         if frame.state.value != 'WIN':
@@ -56,7 +55,7 @@ def walk(game_id):
     actions = [int(a) for a in frame.available_actions]
     moves = [a for a in actions if a in (1, 2, 3, 4)] or actions
     pattern = [m for m in moves for _ in range(4)] + ([5] if 5 in actions else [])
-    for step in range(48):
+    for step in range(90):
         action = pattern[step % len(pattern)]
         x, y = (8 + (step * 11) % 48, 8 + (step * 7) % 48)
         frame = perform(game, action, x, y)

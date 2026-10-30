@@ -2,9 +2,10 @@
   "version": "0.3.0",
   "snapshot_date": "2026-10-30",
   "featured": [
+    "dz01",
+    "lt02",
     "wb01",
     "li01",
-    "dz01",
     "hc01",
     "wf01",
     "eh01",
@@ -13,11 +14,34 @@
   ],
   "games": [
     {
+      "id": "lt02",
+      "class_name": "Lt02",
+      "path": "games/lt02.py",
+      "sha256": "2b5c09181fae36e54a211f255fbd04aabaae001e6b5454dc5d67aa90d7488b24",
+      "levels": 9,
+      "human": null,
+      "preview": "previews/lt02.png",
+      "media": {
+        "play": "previews/lt02-play.gif",
+        "levels": "previews/lt02-levels.png"
+      },
+      "clip": "line",
+      "tiles": 9,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
       "id": "wb01",
       "class_name": "Wb01",
       "path": "games/wb01.py",
       "sha256": "8e361117444a96a045c806129802b6a18cecbd03e165828744c7a5dee7faca40",
-      "by": "GPT-6 Astra Ultra",
       "levels": 8,
       "human": {
         "actions": 224,
@@ -29,6 +53,7 @@
         "levels": "previews/wb01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -44,7 +69,6 @@
       "class_name": "Tl01",
       "path": "games/tl01.py",
       "sha256": "f43bdf46ab871d0d6246003573371e761830aa5dcc7888471aa60a6e2a83703e",
-      "by": "GPT-5",
       "levels": 9,
       "human": {
         "actions": 122,
@@ -56,6 +80,7 @@
         "levels": "previews/tl01-levels.png"
       },
       "clip": "walk",
+      "tiles": 9,
       "inputs": [
         1,
         2,
@@ -68,7 +93,6 @@
       "class_name": "Ng01",
       "path": "games/ng01.py",
       "sha256": "ef8636966cda4dba9baaeb38a05eae99813e9a60f6972a8a88699b29d3eb59af",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 104,
@@ -80,6 +104,7 @@
         "levels": "previews/ng01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -93,7 +118,6 @@
       "class_name": "G010",
       "path": "games/li01.py",
       "sha256": "8201e3d81fa3a6782a93e9c4f1d9339eb9616696d80fe70a42fde8e18d0e618b",
-      "by": "cellensinc",
       "levels": 6,
       "human": {
         "actions": 144,
@@ -105,6 +129,7 @@
         "levels": "previews/li01-levels.png"
       },
       "clip": "walk",
+      "tiles": 6,
       "inputs": [
         1,
         2,
@@ -117,7 +142,6 @@
       "class_name": "Fm01",
       "path": "games/fm01.py",
       "sha256": "59ac6b8e296ac8f711fbd8f599ad6fdd289a5b6b23bad546c8ccadcedd3a0675",
-      "by": "Ronen / Codex",
       "levels": 8,
       "human": {
         "actions": 83,
@@ -129,6 +153,7 @@
         "levels": "previews/fm01-levels.png"
       },
       "clip": "walk",
+      "tiles": 8,
       "inputs": [
         5,
         6,
@@ -140,7 +165,6 @@
       "class_name": "Dz01",
       "path": "games/dz01.py",
       "sha256": "6ab85ff0e7d28c31af056e8f5226ea7aa1a7ceb066e2d2bad4bc5d7350f94ad5",
-      "by": "Mark Barney / Claude Opus 5.5",
       "levels": 8,
       "human": {
         "actions": 380,
@@ -152,6 +176,7 @@
         "levels": "previews/dz01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -166,7 +191,6 @@
       "class_name": "Mb64",
       "path": "games/di01.py",
       "sha256": "319a8712819ab70906279f6c687d79e97ce2d9cac9b4652cc40a99119a1345ab",
-      "by": "Claude Opus 5",
       "levels": 9,
       "human": {
         "actions": 79,
@@ -178,6 +202,7 @@
         "levels": "previews/di01-levels.png"
       },
       "clip": "walk",
+      "tiles": 9,
       "inputs": [
         1,
         2,
@@ -191,7 +216,6 @@
       "class_name": "Im01",
       "path": "games/im01.py",
       "sha256": "9c7c98724d2ff98459517a9ba57b72e32fb9b83528e665471cef0a463280a7a1",
-      "by": "Ronen / Codex",
       "levels": 7,
       "human": {
         "actions": 160,
@@ -203,6 +227,7 @@
         "levels": "previews/im01-levels.png"
       },
       "clip": "walk",
+      "tiles": 7,
       "inputs": [
         1,
         2,
@@ -216,7 +241,6 @@
       "class_name": "G047",
       "path": "games/pv01.py",
       "sha256": "050bd1ac12730df1c43737dc23dfd961b6bcbf504fffefa70f9de33ab8006882",
-      "by": "cellensinc",
       "levels": 7,
       "human": {
         "actions": 181,
@@ -228,6 +252,7 @@
         "levels": "previews/pv01-levels.png"
       },
       "clip": "walk",
+      "tiles": 7,
       "inputs": [
         1,
         2,
@@ -241,7 +266,6 @@
       "class_name": "G028",
       "path": "games/hf01.py",
       "sha256": "94630175d0c0ed8d67daeb82c75c3f61f9eb274d4b450885cce88da72a6d573a",
-      "by": "Claude Opus 5.5 High",
       "levels": 8,
       "human": {
         "actions": 96,
@@ -253,6 +277,7 @@
         "levels": "previews/hf01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -268,7 +293,6 @@
       "class_name": "Fq27",
       "path": "games/hl01.py",
       "sha256": "7d1d660a090bb0eb40c4aba1c3ad49c64aac8c0b7b53ffbb5f08866740a5b84e",
-      "by": "Claude Opus 5.5 High",
       "levels": 9,
       "human": {
         "actions": 123,
@@ -280,6 +304,7 @@
         "levels": "previews/hl01-levels.png"
       },
       "clip": "line",
+      "tiles": 9,
       "inputs": [
         1,
         2,
@@ -293,7 +318,6 @@
       "class_name": "Br10",
       "path": "games/bh01.py",
       "sha256": "a07769812c6b0c6e24eb2dd41c8b9114846dd597e66c82e3d859b76e37f0c8d6",
-      "by": "Claude Opus 5.5",
       "levels": 9,
       "human": {
         "actions": 142,
@@ -305,6 +329,7 @@
         "levels": "previews/bh01-levels.png"
       },
       "clip": "line",
+      "tiles": 9,
       "inputs": [
         1,
         2,
@@ -318,7 +343,6 @@
       "class_name": "G014",
       "path": "games/hc01.py",
       "sha256": "7b4e233bbf92f0650d4995e0e9ec6776d37475b75280ee134b65c8b274645a22",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 130,
@@ -330,6 +354,7 @@
         "levels": "previews/hc01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         3,
         4,
@@ -342,7 +367,6 @@
       "class_name": "G006",
       "path": "games/bc01.py",
       "sha256": "d1bb487b437c0821f1108ef858d014f7dea9bbd5afe3725139b38ba3afd6d0b3",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 192,
@@ -354,6 +378,7 @@
         "levels": "previews/bc01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -367,7 +392,6 @@
       "class_name": "G001",
       "path": "games/gt01.py",
       "sha256": "68c5abca5ff9fab9ad8816c6def8b633865c5a6019f878701a749d056c612600",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 113,
@@ -379,6 +403,7 @@
         "levels": "previews/gt01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -392,7 +417,6 @@
       "class_name": "Eh01",
       "path": "games/eh01.py",
       "sha256": "aa87c36c91376b957ff6675ff6177f37163022c8ad180e72fed76eac8efd9853",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 836,
@@ -404,6 +428,7 @@
         "levels": "previews/eh01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -417,7 +442,6 @@
       "class_name": "Dv51",
       "path": "games/wf01.py",
       "sha256": "8b97b5ffb8d8aabc24451a46d90a643b8a93d2e523fdb24274bf4f6c0265eebe",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 217,
@@ -429,6 +453,7 @@
         "levels": "previews/wf01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         5,
         6
@@ -439,7 +464,6 @@
       "class_name": "De48",
       "path": "games/jt01.py",
       "sha256": "be973c15bbc9f988a35979e99e4ec2e5bdaf4938d6f78aa17d597c1adcaf46eb",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 124,
@@ -451,6 +475,7 @@
         "levels": "previews/jt01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -464,7 +489,6 @@
       "class_name": "Cu64",
       "path": "games/cl01.py",
       "sha256": "de17b03ab5e753f23b637d78fb3dfc49b866e475bf18cd9ad1c37136f5a09deb",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 57,
@@ -476,6 +500,7 @@
         "levels": "previews/cl01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         5,
         6
@@ -486,7 +511,6 @@
       "class_name": "Cr01",
       "path": "games/cr01.py",
       "sha256": "9ad854fa9521c562d8ff170614b9f819a86ce7a1c448a9541fd62726cc6714a3",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 38,
@@ -498,6 +522,7 @@
         "levels": "previews/cr01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -510,7 +535,6 @@
       "class_name": "Dw01",
       "path": "games/dw01.py",
       "sha256": "d6fc5d08049d3cc2705aa0c138a10da5296467887453c8193862900943a42649",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 42,
@@ -522,6 +546,7 @@
         "levels": "previews/dw01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -535,7 +560,6 @@
       "class_name": "G008",
       "path": "games/ds01.py",
       "sha256": "787ccaace5803b5a0e93f10a7dbcff7f2289bbd34a5e891be6f2a36d7dfad3a4",
-      "by": "Mark Barney",
       "levels": 7,
       "human": {
         "actions": 201,
@@ -547,6 +571,7 @@
         "levels": "previews/ds01-levels.png"
       },
       "clip": "walk",
+      "tiles": 7,
       "inputs": [
         1,
         2,
@@ -560,7 +585,6 @@
       "class_name": "G012",
       "path": "games/mg01.py",
       "sha256": "e8bcbe1d781ae2ddf669230e6cf190ef9d73838879b97fa6d7d29288fe6a59db",
-      "by": "cellensinc",
       "levels": 8,
       "human": {
         "actions": 251,
@@ -572,6 +596,7 @@
         "levels": "previews/mg01-levels.png"
       },
       "clip": "walk",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -585,7 +610,6 @@
       "class_name": "G007",
       "path": "games/rt01.py",
       "sha256": "0d979c40c841912b83a4e1499af29dd60700564d2517eb661b53779d9620c143",
-      "by": "Mark Barney",
       "levels": 8,
       "human": {
         "actions": 154,
@@ -597,6 +621,7 @@
         "levels": "previews/rt01-levels.png"
       },
       "clip": "walk",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -611,7 +636,6 @@
       "class_name": "Fr01",
       "path": "games/fr01.py",
       "sha256": "22a277a72f66bdd9fad3e9d5d774e26d72a7025ae714b197986446fba0fc6318",
-      "by": "cellensinc",
       "levels": 5,
       "human": {
         "actions": 193,
@@ -623,6 +647,7 @@
         "levels": "previews/fr01-levels.png"
       },
       "clip": "line",
+      "tiles": 5,
       "inputs": [
         1,
         2,
@@ -636,7 +661,6 @@
       "class_name": "Fg01",
       "path": "games/fg01.py",
       "sha256": "d6acb49b39d22901474bf4b047c358c1556f9796702f60be39fb60257e4935c0",
-      "by": "cellensinc",
       "levels": 12,
       "human": {
         "actions": 1219,
@@ -648,6 +672,7 @@
         "levels": "previews/fg01-levels.png"
       },
       "clip": "walk",
+      "tiles": 12,
       "inputs": [
         1,
         2,
@@ -662,7 +687,6 @@
       "class_name": "Es81",
       "path": "games/wc01.py",
       "sha256": "493c6195accce5fad91366676874b36e0f023c9098f89af7af409941bc2d2eb8",
-      "by": "GPT-5",
       "levels": 8,
       "human": {
         "actions": 80,
@@ -674,6 +698,7 @@
         "levels": "previews/wc01-levels.png"
       },
       "clip": "walk",
+      "tiles": 8,
       "inputs": [
         5,
         6
@@ -684,7 +709,6 @@
       "class_name": "Ab02",
       "path": "games/ba01.py",
       "sha256": "64ecf75b547c1b81df666b07abb6c4a814492f640490ff6f7d254dce3d39c58c",
-      "by": "Claude Opus 5.5",
       "levels": 10,
       "human": {
         "actions": 16,
@@ -696,6 +720,7 @@
         "levels": "previews/ba01-levels.png"
       },
       "clip": "line",
+      "tiles": 10,
       "inputs": [
         1,
         2,
@@ -708,7 +733,6 @@
       "class_name": "Bl01",
       "path": "games/bl01.py",
       "sha256": "7addad540070a45e403cdf3bfbeaf2c1efb19dbcc5833885483e024e646aa16a",
-      "by": "GPT-6 Astra Ultra",
       "levels": 8,
       "human": {
         "actions": 38,
@@ -720,6 +744,7 @@
         "levels": "previews/bl01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -735,7 +760,6 @@
       "class_name": "Co01",
       "path": "games/co01.py",
       "sha256": "60989ab774d6514e8195f0eb8879f3212f4582c5fbc02506e490cd74a87e49ed",
-      "by": "GPT 6.1 Sol",
       "levels": 8,
       "human": null,
       "preview": "previews/co01.png",
@@ -744,6 +768,7 @@
         "levels": "previews/co01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -758,7 +783,6 @@
       "class_name": "Db11",
       "path": "games/er01.py",
       "sha256": "afdb7f4a0b59836a79ee19618064711da3e6b60b821f3f4eace655b3031a6ba6",
-      "by": "Claude Opus 5.5",
       "levels": 9,
       "human": {
         "actions": 7,
@@ -770,6 +794,7 @@
         "levels": "previews/er01-levels.png"
       },
       "clip": "line",
+      "tiles": 9,
       "inputs": [
         1,
         2,
@@ -783,7 +808,6 @@
       "class_name": "Es01",
       "path": "games/es01.py",
       "sha256": "cda3374cc8340c26538564cca9f691cd9efe5fce176486b38cc4ccfa60cc8df8",
-      "by": "Codex",
       "levels": 8,
       "human": {
         "actions": 44,
@@ -795,6 +819,7 @@
         "levels": "previews/es01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -809,7 +834,6 @@
       "class_name": "Ff01",
       "path": "games/ff01.py",
       "sha256": "695c14bdcadfcb35506663929a29b4088e18e5c68ce31d81817cc8f65ca0a4a2",
-      "by": "Bubba",
       "levels": 8,
       "human": null,
       "preview": "previews/ff01.png",
@@ -818,6 +842,7 @@
         "levels": "previews/ff01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -830,7 +855,6 @@
       "class_name": "G011",
       "path": "games/si01.py",
       "sha256": "df505dbe7e380c34b96a389ba6569e2bcbc5c08c8328bb5bfbe28c7dfb6cac69",
-      "by": "GPT 6.1 Sol",
       "levels": 9,
       "human": {
         "actions": 140,
@@ -842,6 +866,7 @@
         "levels": "previews/si01-levels.png"
       },
       "clip": "line",
+      "tiles": 9,
       "inputs": [
         1,
         2,
@@ -855,7 +880,6 @@
       "class_name": "G015",
       "path": "games/bk01.py",
       "sha256": "b013818374d96795b93ce4282fb27f907336427524f007166f933238b021492b",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": null,
       "preview": "previews/bk01.png",
@@ -864,6 +888,7 @@
         "levels": "previews/bk01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -877,7 +902,6 @@
       "class_name": "G018",
       "path": "games/wt01.py",
       "sha256": "92f92db2dde93063d08a8eb60070874a33f817b774c70a64a6c820659c3108f9",
-      "by": "Claude Sonnet 5.5",
       "levels": 7,
       "human": null,
       "preview": "previews/wt01.png",
@@ -886,6 +910,7 @@
         "levels": "previews/wt01-levels.png"
       },
       "clip": "line",
+      "tiles": 7,
       "inputs": [
         1,
         2,
@@ -898,7 +923,6 @@
       "class_name": "G019",
       "path": "games/bs01.py",
       "sha256": "0c11bcc9ec92509d3c1401591ac3866428d1679f5242d9fbe8d1f76638b1352f",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": null,
       "preview": "previews/bs01.png",
@@ -907,6 +931,7 @@
         "levels": "previews/bs01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -919,7 +944,6 @@
       "class_name": "G025",
       "path": "games/cg01.py",
       "sha256": "7e3b5a0822f2290a9f018bea9b7f30f938ba558d03a71c8ab76e10c6706ca56e",
-      "by": "Claude Opus 5.5 High",
       "levels": 8,
       "human": null,
       "preview": "previews/cg01.png",
@@ -928,6 +952,7 @@
         "levels": "previews/cg01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -942,7 +967,6 @@
       "class_name": "G026",
       "path": "games/cc01.py",
       "sha256": "ab5abdf231e9ed8300c6b86c6f78c4f8084f360d0d3c5821bde892ad337b2b9e",
-      "by": "cellensinc",
       "levels": 7,
       "human": null,
       "preview": "previews/cc01.png",
@@ -951,6 +975,7 @@
         "levels": "previews/cc01-levels.png"
       },
       "clip": "walk",
+      "tiles": 7,
       "inputs": [
         1,
         2,
@@ -964,7 +989,6 @@
       "class_name": "G029",
       "path": "games/mp01.py",
       "sha256": "c9d6caeac15cef06db57bf6348b4785c01dcfd169b48aabff78ddb20769a9ae5",
-      "by": "Claude Opus 5.5 High",
       "levels": 8,
       "human": null,
       "preview": "previews/mp01.png",
@@ -973,6 +997,7 @@
         "levels": "previews/mp01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -987,8 +1012,7 @@
       "class_name": "G036",
       "path": "games/kt01.py",
       "sha256": "1f90cb01ac31a7de8a91a1e0e8c8c5be934fd03234b42d42b4370f233d7c6948",
-      "by": "GPT 6.1 Sol",
-      "levels": 10,
+      "levels": null,
       "human": null,
       "preview": "previews/kt01.png",
       "media": {
@@ -996,6 +1020,7 @@
         "levels": "previews/kt01-levels.png"
       },
       "clip": "line",
+      "tiles": 10,
       "inputs": [
         1,
         2,
@@ -1010,7 +1035,6 @@
       "class_name": "G045",
       "path": "games/fp01.py",
       "sha256": "559c8159bd1d37ce0c3d9efdb5cb01a72de0a9d3bc19735e188baff918611a49",
-      "by": "Claude Opus 5.5 High",
       "levels": 7,
       "human": null,
       "preview": "previews/fp01.png",
@@ -1019,6 +1043,7 @@
         "levels": "previews/fp01-levels.png"
       },
       "clip": "line",
+      "tiles": 7,
       "inputs": [
         1,
         2,
@@ -1032,7 +1057,6 @@
       "class_name": "G050",
       "path": "games/ap01.py",
       "sha256": "02a3a5cac49663734d842bc25d51b7200b0b59e546c25cd27937ccf750946d59",
-      "by": "Claude Opus 5.5 High",
       "levels": 9,
       "human": null,
       "preview": "previews/ap01.png",
@@ -1041,6 +1065,7 @@
         "levels": "previews/ap01-levels.png"
       },
       "clip": "line",
+      "tiles": 9,
       "inputs": [
         1,
         2,
@@ -1053,7 +1078,6 @@
       "class_name": "Pt01",
       "path": "games/pt01.py",
       "sha256": "ce78f19c7fd0a2ca84abe41a1a9ab3e7f1be1315c8b970802ce7126766794c4f",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": {
         "actions": 373,
@@ -1065,6 +1089,7 @@
         "levels": "previews/pt01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -1078,7 +1103,6 @@
       "class_name": "Rx01",
       "path": "games/rx01.py",
       "sha256": "81c6959244c4e04b8cf1f1ee003370f35cba233c847c085ab626a6fb9cedce9d",
-      "by": "Claude Sonnet 5.5",
       "levels": 8,
       "human": null,
       "preview": "previews/rx01.png",
@@ -1087,6 +1111,7 @@
         "levels": "previews/rx01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,
@@ -1100,7 +1125,6 @@
       "class_name": "Sf01",
       "path": "games/sf01.py",
       "sha256": "7c10b37845f0708cfc9c51ec3a236eef5ddf21b9e58f5f38b39d661c9c539d70",
-      "by": "Claude Fable 5.1",
       "levels": 7,
       "human": null,
       "preview": "previews/sf01.png",
@@ -1109,6 +1133,7 @@
         "levels": "previews/sf01-levels.png"
       },
       "clip": "walk",
+      "tiles": 7,
       "inputs": [
         1,
         2,
@@ -1122,7 +1147,6 @@
       "class_name": "Ss01",
       "path": "games/ss01.py",
       "sha256": "4bc8cb8759a852e341e075c09dafb182848643d5d451104d87fdbd3863f41991",
-      "by": "Ronen / Codex",
       "levels": 8,
       "human": {
         "actions": 484,
@@ -1134,6 +1158,7 @@
         "levels": "previews/ss01-levels.png"
       },
       "clip": "walk",
+      "tiles": 8,
       "inputs": [
         5,
         6,
@@ -1145,7 +1170,6 @@
       "class_name": "Te01",
       "path": "games/te01.py",
       "sha256": "13afb43e9921c670261a1b25f3a98ff511e1a582db148f50c9f24b1be994f28a",
-      "by": "GPT 6.1 Sol",
       "levels": 8,
       "human": {
         "actions": 487,
@@ -1157,6 +1181,7 @@
         "levels": "previews/te01-levels.png"
       },
       "clip": "line",
+      "tiles": 8,
       "inputs": [
         1,
         2,

@@ -1,6 +1,6 @@
 # ARC-3 Synthetic Games
 
-ARC-AGI-3 style games that Mark Barney marked Trainable. Python source on the ARC engine, no instructions. Page: https://82deutschmark.github.io/arc3-synthetic-games/
+ARC-AGI-3 style games by Team Turducken, under the direction of Mark Barney. Python source on the ARC engine, no instructions. Page: https://82deutschmark.github.io/arc3-synthetic-games/
 
 ## Quick start
 
@@ -25,7 +25,7 @@ The collection provides environments, not a complete reinforcement-learning syst
 
 ## What's included
 
-- `games/`: the current approved version of each game, byte for byte; `docs/catalog.json` has each file's hash and author.
+- `games/`: the current version of each game, byte for byte; `docs/catalog.json` has each file's hash.
 - `docs/previews/`: real engine frames and level-one clips.
 - `tools/validate.py`: loads each game, resets it and takes one action. It does not play games through.
 - Human numbers on the page come from people's review plays. A dash means none recorded yet. Winning lines are not published.

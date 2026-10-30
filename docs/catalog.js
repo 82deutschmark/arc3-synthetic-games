@@ -29,7 +29,7 @@ function card(game, big) {
   const node = el('article', big ? 'pick' : 'game');
   const image = el('img');
   image.src = game.media.play;
-  image.alt = `Gameplay from level one of ${game.id}`;
+  image.alt = `Gameplay of ${game.id}`;
   image.width = 256;
   image.height = 256;
   if (!big) image.loading = 'lazy';
@@ -38,7 +38,7 @@ function card(game, big) {
   title.href = SOURCE_BASE + game.path;
   const human = game.human ? `${game.human.actions} actions, ${game.human.levels}/${game.levels} levels` : '—';
   const facts = el('dl', 'facts');
-  for (const [label, value] of [['HUMAN', human], ['INPUTS', (game.inputs || []).map(i => INPUTS[i]).join(' ')], ['BY', game.by]]) {
+  for (const [label, value] of [['HUMAN', human], ['INPUTS', (game.inputs || []).map(i => INPUTS[i]).join(' ')]]) {
     facts.append(el('dt', '', label), el('dd', '', value));
   }
   copy.append(title, facts);

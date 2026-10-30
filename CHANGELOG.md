@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 — 30 October 2026
+
+Claude Opus 5.5: lead with dz01 and lt02 (lt02 restored). Removed per-game bylines and the note byline; credit is Team Turducken, under the direction of Mark Barney. Clips now run across levels instead of stopping after level one.
+
 ## 0.3.0 — 30 October 2026
 
 Claude Opus 5.5: the collection is now only the games Mark Barney marked Trainable, in his page order. Removed the old g-series mirror, lt02 and the transformed extensions. Rebuilt the page with highlight cards and a compact grid, real gameplay clips, human numbers and no rule descriptions or marketing copy. Game files are now byte-for-byte copies.
