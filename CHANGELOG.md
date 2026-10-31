@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1 — 31 October 2026
+
+Claude Sonnet 5.5: the page now shows only the highlighted picks, Mark Barney's best. The other approved games are no longer on the page; their source stays in `games/` and their entries stay in `docs/catalog.json`. Removed the compact card.
+
 ## 0.4.0 — 31 October 2026
 
 Claude Sonnet 5.5: removed the animated clips. They replayed winning lines recorded by game-building agents (or a fixed walk), not anyone's play. Cards now show the opening frame and the level strip until a person's recorded play can be used.

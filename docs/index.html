@@ -2,7 +2,8 @@
 Author: GPT-6.1 Sol
 Date: 29-October-2026
 Updated: 30-October-2026, Claude Opus 5.5 — rebuilt around Mark Barney's Trainable games only; highlights first, no rule descriptions.
-PURPOSE: Show the approved games, their real gameplay and their human numbers. All game data comes from catalog.json.
+Updated: 31-October-2026, Claude Sonnet 5.5 — only the highlighted picks are on the page; the rest of the approved games are linked to the repository.
+PURPOSE: Show the highlighted games, their real gameplay and their human numbers. All game data comes from catalog.json.
 SRP/DRY check: Pass — catalog.json is the only game registry.
 -->
 <!doctype html>
@@ -18,10 +19,9 @@ SRP/DRY check: Pass — catalog.json is the only game registry.
 <main>
 <p class="lead-line"><span id="count">The games</span> by <a href="https://arc.markbarney.net/news#2026-10-18-special-turducken-takes-third">Team Turducken</a>, under the direction of Mark Barney. No instructions, same as ARC-AGI-3: working out the rules is the game. Python source, ARC engine, MIT.</p>
 <p id="error" role="alert" hidden></p>
-<section id="featured" aria-label="Highlighted games"></section>
-<section id="games" class="grid" aria-label="All other games"></section>
+<section id="featured" aria-label="Games"></section>
 <noscript><p>JavaScript is needed to show the games. <a href="catalog.json">Read the catalog</a>.</p></noscript>
-<p class="fine">Pictures are real engine frames: the opening screen and the first frame of each level. Human numbers are actions taken and levels cleared by a person on that version; a dash means none recorded yet.</p>
+<p class="fine">Pictures are real engine frames: the opening screen and the first frame of each level. Human numbers are actions taken and levels cleared by a person on that version; a dash means none recorded yet. The other approved games are in the <a href="https://github.com/82deutschmark/arc3-synthetic-games/tree/main/games">repository</a>.</p>
 </main>
 <footer><a href="https://github.com/82deutschmark/arc3-synthetic-games#quick-start">Run them</a><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/CREDITS.md">Credits</a><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/LICENSE">MIT license</a><span>Not affiliated with ARC Prize.</span></footer>
 </body></html>

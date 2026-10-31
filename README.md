@@ -26,7 +26,8 @@ The collection provides environments, not a complete reinforcement-learning syst
 ## What's included
 
 - `games/`: the current version of each game, byte for byte; `docs/catalog.json` has each file's hash.
-- `docs/previews/`: real engine frames and level-one clips.
+- `docs/previews/`: real engine frames: each game's opening screen and the first frame of every level.
+- The page shows the highlighted games only. Every approved game is here in `games/` and in `docs/catalog.json`.
 - `tools/validate.py`: loads each game, resets it and takes one action. It does not play games through.
 - Human numbers on the page come from people's review plays. A dash means none recorded yet. Winning lines are not published.
 

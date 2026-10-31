@@ -2,8 +2,9 @@
 // Date: 29-October-2026
 // Updated: 30-October-2026, Claude Opus 5.5 — highlight cards plus a compact grid, both from catalog.json.
 // Updated: 31-October-2026, Claude Sonnet 5.5 — a Play link on every card, to the game's page on arc3.sonpham.net.
-// PURPOSE: Render the approved games using safe DOM APIs.
-// SRP/DRY check: Pass — catalog.json is authoritative; one card builder serves both sizes.
+// Updated: 31-October-2026, Claude Sonnet 5.5 — the page shows only the highlighted picks (Mark's best); the other approved games stay in catalog.json and games/. The compact card is gone.
+// PURPOSE: Render the highlighted games using safe DOM APIs.
+// SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
 'use strict';
 const SOURCE_BASE = 'https://github.com/82deutschmark/arc3-synthetic-games/blob/main/';
 const INPUTS = { 1: '↑', 2: '↓', 3: '←', 4: '→', 5: 'Space', 6: 'Click', 7: 'Undo' };
@@ -26,14 +27,13 @@ function strip(game) {
   }
   return box;
 }
-function card(game, big) {
-  const node = el('article', big ? 'pick' : 'game');
+function card(game) {
+  const node = el('article', 'pick');
   const image = el('img');
   image.src = game.media.play;
   image.alt = `Gameplay of ${game.id}`;
   image.width = 256;
   image.height = 256;
-  if (!big) image.loading = 'lazy';
   const copy = el('div', 'info');
   const title = el('a', 'name', game.id.toUpperCase());
   title.href = SOURCE_BASE + game.path;
@@ -45,7 +45,7 @@ function card(game, big) {
   const play = el('a', 'play', 'PLAY ↗');
   play.href = game.play;
   copy.append(title, play, facts);
-  if (big) copy.append(strip(game));
+  copy.append(strip(game));
   node.append(image, copy);
   return node;
 }
@@ -54,9 +54,8 @@ fetch('catalog.json').then(response => {
   return response.json();
 }).then(catalog => {
   const picks = catalog.featured.map(id => catalog.games.find(game => game.id === id));
-  document.querySelector('#count').textContent = `${catalog.games.length} games`;
-  document.querySelector('#featured').append(...picks.map(game => card(game, true)));
-  document.querySelector('#games').append(...catalog.games.filter(game => !catalog.featured.includes(game.id)).map(game => card(game, false)));
+  document.querySelector('#count').textContent = `${picks.length} games`;
+  document.querySelector('#featured').append(...picks.map(card));
 }).catch(() => {
   const error = document.querySelector('#error');
   error.hidden = false;
