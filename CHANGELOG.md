@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 — 31 October 2026
+
+Claude Sonnet 5.5: removed the animated clips. They replayed winning lines recorded by game-building agents (or a fixed walk), not anyone's play. Cards now show the opening frame and the level strip until a person's recorded play can be used.
+
 ## 0.3.3 — 31 October 2026
 
 Claude Sonnet 5.5: every card has a Play link to the game's page on arc3.sonpham.net, so visitors' plays count as human plays.

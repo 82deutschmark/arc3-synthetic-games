@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "snapshot_date": "2026-10-30",
   "featured": [
     "dz01",
@@ -27,10 +27,9 @@
       "human": null,
       "preview": "previews/lt02.png",
       "media": {
-        "play": "previews/lt02-play.gif",
+        "play": "previews/lt02.png",
         "levels": "previews/lt02-levels.png"
       },
-      "clip": "line",
       "tiles": 9,
       "inputs": [
         1,
@@ -55,10 +54,9 @@
       },
       "preview": "previews/wb01.png",
       "media": {
-        "play": "previews/wb01-play.gif",
+        "play": "previews/wb01.png",
         "levels": "previews/wb01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -83,10 +81,9 @@
       },
       "preview": "previews/tl01.png",
       "media": {
-        "play": "previews/tl01-play.gif",
+        "play": "previews/tl01.png",
         "levels": "previews/tl01-levels.png"
       },
-      "clip": "walk",
       "tiles": 9,
       "inputs": [
         1,
@@ -108,10 +105,9 @@
       },
       "preview": "previews/ng01.png",
       "media": {
-        "play": "previews/ng01-play.gif",
+        "play": "previews/ng01.png",
         "levels": "previews/ng01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -134,10 +130,9 @@
       },
       "preview": "previews/li01.png",
       "media": {
-        "play": "previews/li01-play.gif",
+        "play": "previews/li01.png",
         "levels": "previews/li01-levels.png"
       },
-      "clip": "walk",
       "tiles": 6,
       "inputs": [
         1,
@@ -159,10 +154,9 @@
       },
       "preview": "previews/fm01.png",
       "media": {
-        "play": "previews/fm01-play.gif",
+        "play": "previews/fm01.png",
         "levels": "previews/fm01-levels.png"
       },
-      "clip": "walk",
       "tiles": 8,
       "inputs": [
         5,
@@ -183,10 +177,9 @@
       },
       "preview": "previews/dz01.png",
       "media": {
-        "play": "previews/dz01-play.gif",
+        "play": "previews/dz01.png",
         "levels": "previews/dz01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -210,10 +203,9 @@
       },
       "preview": "previews/di01.png",
       "media": {
-        "play": "previews/di01-play.gif",
+        "play": "previews/di01.png",
         "levels": "previews/di01-levels.png"
       },
-      "clip": "walk",
       "tiles": 9,
       "inputs": [
         1,
@@ -236,10 +228,9 @@
       },
       "preview": "previews/im01.png",
       "media": {
-        "play": "previews/im01-play.gif",
+        "play": "previews/im01.png",
         "levels": "previews/im01-levels.png"
       },
-      "clip": "walk",
       "tiles": 7,
       "inputs": [
         1,
@@ -262,10 +253,9 @@
       },
       "preview": "previews/pv01.png",
       "media": {
-        "play": "previews/pv01-play.gif",
+        "play": "previews/pv01.png",
         "levels": "previews/pv01-levels.png"
       },
-      "clip": "walk",
       "tiles": 7,
       "inputs": [
         1,
@@ -288,10 +278,9 @@
       },
       "preview": "previews/hf01.png",
       "media": {
-        "play": "previews/hf01-play.gif",
+        "play": "previews/hf01.png",
         "levels": "previews/hf01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -316,10 +305,9 @@
       },
       "preview": "previews/hl01.png",
       "media": {
-        "play": "previews/hl01-play.gif",
+        "play": "previews/hl01.png",
         "levels": "previews/hl01-levels.png"
       },
-      "clip": "line",
       "tiles": 9,
       "inputs": [
         1,
@@ -342,10 +330,9 @@
       },
       "preview": "previews/bh01.png",
       "media": {
-        "play": "previews/bh01-play.gif",
+        "play": "previews/bh01.png",
         "levels": "previews/bh01-levels.png"
       },
-      "clip": "line",
       "tiles": 9,
       "inputs": [
         1,
@@ -368,10 +355,9 @@
       },
       "preview": "previews/hc01.png",
       "media": {
-        "play": "previews/hc01-play.gif",
+        "play": "previews/hc01.png",
         "levels": "previews/hc01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         3,
@@ -393,10 +379,9 @@
       },
       "preview": "previews/bc01.png",
       "media": {
-        "play": "previews/bc01-play.gif",
+        "play": "previews/bc01.png",
         "levels": "previews/bc01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -419,10 +404,9 @@
       },
       "preview": "previews/gt01.png",
       "media": {
-        "play": "previews/gt01-play.gif",
+        "play": "previews/gt01.png",
         "levels": "previews/gt01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -445,10 +429,9 @@
       },
       "preview": "previews/eh01.png",
       "media": {
-        "play": "previews/eh01-play.gif",
+        "play": "previews/eh01.png",
         "levels": "previews/eh01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -471,10 +454,9 @@
       },
       "preview": "previews/wf01.png",
       "media": {
-        "play": "previews/wf01-play.gif",
+        "play": "previews/wf01.png",
         "levels": "previews/wf01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         5,
@@ -494,10 +476,9 @@
       },
       "preview": "previews/jt01.png",
       "media": {
-        "play": "previews/jt01-play.gif",
+        "play": "previews/jt01.png",
         "levels": "previews/jt01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -520,10 +501,9 @@
       },
       "preview": "previews/cl01.png",
       "media": {
-        "play": "previews/cl01-play.gif",
+        "play": "previews/cl01.png",
         "levels": "previews/cl01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         5,
@@ -543,10 +523,9 @@
       },
       "preview": "previews/cr01.png",
       "media": {
-        "play": "previews/cr01-play.gif",
+        "play": "previews/cr01.png",
         "levels": "previews/cr01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -568,10 +547,9 @@
       },
       "preview": "previews/dw01.png",
       "media": {
-        "play": "previews/dw01-play.gif",
+        "play": "previews/dw01.png",
         "levels": "previews/dw01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -594,10 +572,9 @@
       },
       "preview": "previews/ds01.png",
       "media": {
-        "play": "previews/ds01-play.gif",
+        "play": "previews/ds01.png",
         "levels": "previews/ds01-levels.png"
       },
-      "clip": "walk",
       "tiles": 7,
       "inputs": [
         1,
@@ -620,10 +597,9 @@
       },
       "preview": "previews/mg01.png",
       "media": {
-        "play": "previews/mg01-play.gif",
+        "play": "previews/mg01.png",
         "levels": "previews/mg01-levels.png"
       },
-      "clip": "walk",
       "tiles": 8,
       "inputs": [
         1,
@@ -646,10 +622,9 @@
       },
       "preview": "previews/rt01.png",
       "media": {
-        "play": "previews/rt01-play.gif",
+        "play": "previews/rt01.png",
         "levels": "previews/rt01-levels.png"
       },
-      "clip": "walk",
       "tiles": 8,
       "inputs": [
         1,
@@ -673,10 +648,9 @@
       },
       "preview": "previews/fr01.png",
       "media": {
-        "play": "previews/fr01-play.gif",
+        "play": "previews/fr01.png",
         "levels": "previews/fr01-levels.png"
       },
-      "clip": "line",
       "tiles": 5,
       "inputs": [
         1,
@@ -699,10 +673,9 @@
       },
       "preview": "previews/fg01.png",
       "media": {
-        "play": "previews/fg01-play.gif",
+        "play": "previews/fg01.png",
         "levels": "previews/fg01-levels.png"
       },
-      "clip": "walk",
       "tiles": 12,
       "inputs": [
         1,
@@ -726,10 +699,9 @@
       },
       "preview": "previews/wc01.png",
       "media": {
-        "play": "previews/wc01-play.gif",
+        "play": "previews/wc01.png",
         "levels": "previews/wc01-levels.png"
       },
-      "clip": "walk",
       "tiles": 8,
       "inputs": [
         5,
@@ -749,10 +721,9 @@
       },
       "preview": "previews/ba01.png",
       "media": {
-        "play": "previews/ba01-play.gif",
+        "play": "previews/ba01.png",
         "levels": "previews/ba01-levels.png"
       },
-      "clip": "line",
       "tiles": 10,
       "inputs": [
         1,
@@ -774,10 +745,9 @@
       },
       "preview": "previews/bl01.png",
       "media": {
-        "play": "previews/bl01-play.gif",
+        "play": "previews/bl01.png",
         "levels": "previews/bl01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -799,10 +769,9 @@
       "human": null,
       "preview": "previews/co01.png",
       "media": {
-        "play": "previews/co01-play.gif",
+        "play": "previews/co01.png",
         "levels": "previews/co01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -826,10 +795,9 @@
       },
       "preview": "previews/er01.png",
       "media": {
-        "play": "previews/er01-play.gif",
+        "play": "previews/er01.png",
         "levels": "previews/er01-levels.png"
       },
-      "clip": "line",
       "tiles": 9,
       "inputs": [
         1,
@@ -852,10 +820,9 @@
       },
       "preview": "previews/es01.png",
       "media": {
-        "play": "previews/es01-play.gif",
+        "play": "previews/es01.png",
         "levels": "previews/es01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -876,10 +843,9 @@
       "human": null,
       "preview": "previews/ff01.png",
       "media": {
-        "play": "previews/ff01-play.gif",
+        "play": "previews/ff01.png",
         "levels": "previews/ff01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -901,10 +867,9 @@
       },
       "preview": "previews/si01.png",
       "media": {
-        "play": "previews/si01-play.gif",
+        "play": "previews/si01.png",
         "levels": "previews/si01-levels.png"
       },
-      "clip": "line",
       "tiles": 9,
       "inputs": [
         1,
@@ -924,10 +889,9 @@
       "human": null,
       "preview": "previews/bk01.png",
       "media": {
-        "play": "previews/bk01-play.gif",
+        "play": "previews/bk01.png",
         "levels": "previews/bk01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -947,10 +911,9 @@
       "human": null,
       "preview": "previews/wt01.png",
       "media": {
-        "play": "previews/wt01-play.gif",
+        "play": "previews/wt01.png",
         "levels": "previews/wt01-levels.png"
       },
-      "clip": "line",
       "tiles": 7,
       "inputs": [
         1,
@@ -969,10 +932,9 @@
       "human": null,
       "preview": "previews/bs01.png",
       "media": {
-        "play": "previews/bs01-play.gif",
+        "play": "previews/bs01.png",
         "levels": "previews/bs01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -991,10 +953,9 @@
       "human": null,
       "preview": "previews/cg01.png",
       "media": {
-        "play": "previews/cg01-play.gif",
+        "play": "previews/cg01.png",
         "levels": "previews/cg01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -1015,10 +976,9 @@
       "human": null,
       "preview": "previews/cc01.png",
       "media": {
-        "play": "previews/cc01-play.gif",
+        "play": "previews/cc01.png",
         "levels": "previews/cc01-levels.png"
       },
-      "clip": "walk",
       "tiles": 7,
       "inputs": [
         1,
@@ -1038,10 +998,9 @@
       "human": null,
       "preview": "previews/mp01.png",
       "media": {
-        "play": "previews/mp01-play.gif",
+        "play": "previews/mp01.png",
         "levels": "previews/mp01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -1062,10 +1021,9 @@
       "human": null,
       "preview": "previews/kt01.png",
       "media": {
-        "play": "previews/kt01-play.gif",
+        "play": "previews/kt01.png",
         "levels": "previews/kt01-levels.png"
       },
-      "clip": "line",
       "tiles": 10,
       "inputs": [
         1,
@@ -1086,10 +1044,9 @@
       "human": null,
       "preview": "previews/fp01.png",
       "media": {
-        "play": "previews/fp01-play.gif",
+        "play": "previews/fp01.png",
         "levels": "previews/fp01-levels.png"
       },
-      "clip": "line",
       "tiles": 7,
       "inputs": [
         1,
@@ -1109,10 +1066,9 @@
       "human": null,
       "preview": "previews/ap01.png",
       "media": {
-        "play": "previews/ap01-play.gif",
+        "play": "previews/ap01.png",
         "levels": "previews/ap01-levels.png"
       },
-      "clip": "line",
       "tiles": 9,
       "inputs": [
         1,
@@ -1134,10 +1090,9 @@
       },
       "preview": "previews/pt01.png",
       "media": {
-        "play": "previews/pt01-play.gif",
+        "play": "previews/pt01.png",
         "levels": "previews/pt01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -1157,10 +1112,9 @@
       "human": null,
       "preview": "previews/rx01.png",
       "media": {
-        "play": "previews/rx01-play.gif",
+        "play": "previews/rx01.png",
         "levels": "previews/rx01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
@@ -1180,10 +1134,9 @@
       "human": null,
       "preview": "previews/sf01.png",
       "media": {
-        "play": "previews/sf01-play.gif",
+        "play": "previews/sf01.png",
         "levels": "previews/sf01-levels.png"
       },
-      "clip": "walk",
       "tiles": 7,
       "inputs": [
         1,
@@ -1206,10 +1159,9 @@
       },
       "preview": "previews/ss01.png",
       "media": {
-        "play": "previews/ss01-play.gif",
+        "play": "previews/ss01.png",
         "levels": "previews/ss01-levels.png"
       },
-      "clip": "walk",
       "tiles": 8,
       "inputs": [
         5,
@@ -1230,10 +1182,9 @@
       },
       "preview": "previews/te01.png",
       "media": {
-        "play": "previews/te01-play.gif",
+        "play": "previews/te01.png",
         "levels": "previews/te01-levels.png"
       },
-      "clip": "line",
       "tiles": 8,
       "inputs": [
         1,
