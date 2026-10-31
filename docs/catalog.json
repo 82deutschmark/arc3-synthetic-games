@@ -40,7 +40,8 @@
         5,
         6,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/lt02"
     },
     {
       "id": "wb01",
@@ -67,7 +68,8 @@
         5,
         6,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/wb01"
     },
     {
       "id": "tl01",
@@ -91,7 +93,8 @@
         2,
         3,
         4
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/tl01"
     },
     {
       "id": "ng01",
@@ -116,7 +119,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/ng01"
     },
     {
       "id": "li01",
@@ -140,7 +144,8 @@
         2,
         3,
         4
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g010"
     },
     {
       "id": "fm01",
@@ -163,7 +168,8 @@
         5,
         6,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/fm01"
     },
     {
       "id": "dz01",
@@ -189,7 +195,8 @@
         4,
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/dz01"
     },
     {
       "id": "di01",
@@ -214,7 +221,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/mb64"
     },
     {
       "id": "im01",
@@ -239,7 +247,8 @@
         5,
         6,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/im01"
     },
     {
       "id": "pv01",
@@ -264,7 +273,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g047"
     },
     {
       "id": "hf01",
@@ -291,7 +301,8 @@
         5,
         6,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g028"
     },
     {
       "id": "hl01",
@@ -316,7 +327,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/fq27"
     },
     {
       "id": "bh01",
@@ -341,7 +353,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/br10"
     },
     {
       "id": "hc01",
@@ -365,7 +378,8 @@
         4,
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g014"
     },
     {
       "id": "bc01",
@@ -390,7 +404,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g006"
     },
     {
       "id": "gt01",
@@ -415,7 +430,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g001"
     },
     {
       "id": "eh01",
@@ -440,7 +456,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/eh01"
     },
     {
       "id": "wf01",
@@ -462,7 +479,8 @@
       "inputs": [
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/wf01"
     },
     {
       "id": "jt01",
@@ -487,7 +505,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/de48"
     },
     {
       "id": "cl01",
@@ -509,7 +528,8 @@
       "inputs": [
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/cu64"
     },
     {
       "id": "cr01",
@@ -533,7 +553,8 @@
         2,
         3,
         4
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/cr01"
     },
     {
       "id": "dw01",
@@ -558,7 +579,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/dw01"
     },
     {
       "id": "ds01",
@@ -583,7 +605,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g008"
     },
     {
       "id": "mg01",
@@ -608,7 +631,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g012"
     },
     {
       "id": "rt01",
@@ -634,7 +658,8 @@
         4,
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g007"
     },
     {
       "id": "fr01",
@@ -659,7 +684,8 @@
         3,
         4,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/fr01"
     },
     {
       "id": "fg01",
@@ -685,7 +711,8 @@
         4,
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/fg01"
     },
     {
       "id": "wc01",
@@ -707,7 +734,8 @@
       "inputs": [
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/es81"
     },
     {
       "id": "ba01",
@@ -731,7 +759,8 @@
         2,
         3,
         4
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/ab02"
     },
     {
       "id": "bl01",
@@ -758,7 +787,8 @@
         5,
         6,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/bl01"
     },
     {
       "id": "co01",
@@ -781,7 +811,8 @@
         4,
         5,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/co01"
     },
     {
       "id": "er01",
@@ -806,7 +837,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/db11"
     },
     {
       "id": "es01",
@@ -832,7 +864,8 @@
         4,
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/es01"
     },
     {
       "id": "ff01",
@@ -853,7 +886,8 @@
         2,
         3,
         4
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/ff01"
     },
     {
       "id": "si01",
@@ -878,7 +912,8 @@
         3,
         4,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g011"
     },
     {
       "id": "bk01",
@@ -900,7 +935,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g015"
     },
     {
       "id": "wt01",
@@ -921,7 +957,8 @@
         2,
         3,
         4
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g018"
     },
     {
       "id": "bs01",
@@ -942,7 +979,8 @@
         2,
         3,
         4
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g019"
     },
     {
       "id": "cg01",
@@ -965,7 +1003,8 @@
         4,
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g025"
     },
     {
       "id": "cc01",
@@ -987,7 +1026,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g026"
     },
     {
       "id": "mp01",
@@ -1010,7 +1050,8 @@
         4,
         5,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g029"
     },
     {
       "id": "kt01",
@@ -1033,7 +1074,8 @@
         4,
         5,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g036"
     },
     {
       "id": "fp01",
@@ -1055,7 +1097,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g045"
     },
     {
       "id": "ap01",
@@ -1076,7 +1119,8 @@
         2,
         3,
         4
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/g050"
     },
     {
       "id": "pt01",
@@ -1101,7 +1145,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/pt01"
     },
     {
       "id": "rx01",
@@ -1123,7 +1168,8 @@
         3,
         4,
         6
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/rx01"
     },
     {
       "id": "sf01",
@@ -1145,7 +1191,8 @@
         3,
         4,
         5
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/sf01"
     },
     {
       "id": "ss01",
@@ -1168,7 +1215,8 @@
         5,
         6,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/ss01"
     },
     {
       "id": "te01",
@@ -1195,7 +1243,8 @@
         5,
         6,
         7
-      ]
+      ],
+      "play": "https://arc3.sonpham.net/games/te01"
     }
   ]
 }

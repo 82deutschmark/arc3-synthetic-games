@@ -1,6 +1,7 @@
 // Author: GPT-6.1 Sol
 // Date: 29-October-2026
 // Updated: 30-October-2026, Claude Opus 5.5 — highlight cards plus a compact grid, both from catalog.json.
+// Updated: 31-October-2026, Claude Sonnet 5.5 — a Play link on every card, to the game's page on arc3.sonpham.net.
 // PURPOSE: Render the approved games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder serves both sizes.
 'use strict';
@@ -41,7 +42,9 @@ function card(game, big) {
   for (const [label, value] of [['HUMAN', human], ['INPUTS', (game.inputs || []).map(i => INPUTS[i]).join(' ')]]) {
     facts.append(el('dt', '', label), el('dd', '', value));
   }
-  copy.append(title, facts);
+  const play = el('a', 'play', 'PLAY ↗');
+  play.href = game.play;
+  copy.append(title, play, facts);
   if (big) copy.append(strip(game));
   node.append(image, copy);
   return node;

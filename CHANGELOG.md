@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 — 31 October 2026
+
+Claude Sonnet 5.5: every card has a Play link to the game's page on arc3.sonpham.net, so visitors' plays count as human plays.
+
 ## 0.3.2 — 30 October 2026
 
 Claude Sonnet 5.5: five more highlighted games: ff01, pt01, te01, bs01, es01.

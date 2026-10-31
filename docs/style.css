@@ -29,3 +29,5 @@ Updated 30-October-2026, Claude Sonnet 5.5 Medium: lead section and featured car
 #games.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px 10px}.game{padding:0;border:0}.game .name{font-size:17px;margin:4px 0}.game .facts{display:block}.game .facts dt{display:none}.game .facts dd{margin:0}
 main>.fine{margin:12px 0 18px;max-width:none}
 @media(max-width:1000px){#featured{grid-template-columns:1fr}}@media(max-width:520px){.pick{grid-template-columns:128px 1fr}#games.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.play{display:inline-block;font:700 12px Arial,sans-serif;letter-spacing:.08em;background:var(--accent);color:#fff;padding:5px 10px;margin:0 0 8px;text-decoration:none}.play:hover{color:#fff;background:var(--ink)}.game .play{font-size:11px;padding:3px 8px}
