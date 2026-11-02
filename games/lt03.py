@@ -1,4 +1,4 @@
-# ARC-AGI-3 candidate task lt02.py.
+# ARC-AGI-3 candidate task lt03.py.
 
 from __future__ import annotations
 from copy import deepcopy
@@ -51,8 +51,11 @@ TOOL_ORDER = ('heavy', 'precision', 'fire', 'aid', 'beacon')
 FRAME_COUNT = 6
 WORLD_WIDTH, WORLD_HEIGHT = 128, 104
 PRACTICE_RECHARGE = 6
-RECHARGE_TURNS = 10
-MISSION_TARGETS = (1,2,3,4,5,6,7,8,9)
+RECHARGE_TURNS = 7
+AID_SLOW_TURNS = 12
+FREEZE_RADIUS = 7
+FREEZE_TURNS = 6
+MISSION_TARGETS = (2,4,4,5,5,6,7,8,9)
 PAN_STEP = 8
 PAN = {1:(0,-PAN_STEP), 2:(0,PAN_STEP), 3:(-PAN_STEP,0), 4:(PAN_STEP,0)}
 
@@ -209,14 +212,15 @@ ZONE_LAYOUTS=((0,1,2,3,4,5),(4,2,0,5,1,3),(5,1,3,0,4,2),
 SNAPSHOT_FIELDS=('buildings','roads','actors','craters','tools','tool_index','ammo','reload_progress',
     'time_limit','sensor_period','tick','risk','total_hostiles','pending','fires','beacons',
     'events','incidents','ledger','stale','flash_tool','ending','before_actors',
-    'view_x','view_y','before_view','mission_index','blocked_cells','response_load')
+    'view_x','view_y','before_view','mission_index','blocked_cells','response_load','slow_until',
+    'sheltered_actors')
 
 
-class Lt02(ARCBaseGame):
+class Lt03(ARCBaseGame):
     def __init__(self):
         self._mission_number=None;self._mission_entry=None
         self.world_width=WORLD_WIDTH;self.world_height=WORLD_HEIGHT
-        super().__init__(game_id='lt02', levels=[Level(sprites=[],grid_size=(64,64),
+        super().__init__(game_id='lt03', levels=[Level(sprites=[],grid_size=(64,64),
             data={'mission':i}) for i in range(9)],
             camera=Camera(width=64,height=64,background=5,letter_box=5),
             available_actions=[1,2,3,4,5,6,7],win_score=9)
@@ -231,6 +235,16 @@ class Lt02(ARCBaseGame):
             if not continuing:
                 self.buildings,self.roads,self.actors=build_city()
                 self.craters={};self.view_x=0;self.view_y=0
+                self.sheltered_actors=[]
+            else:
+                buildings={b['id']:b for b in self.buildings}
+                for a in self.sheltered_actors:
+                    b=buildings.get(a.get('indoors'))
+                    if b and b['integrity']<=0:
+                        a['indoors']=None;a['pos']=a['observed']=a['home']=b['door']
+                        a['route']=[a['pos']];a['index']=0
+                    self.actors.append(a)
+                self.sheltered_actors=[]
             self.actors=[a for a in self.actors if a['role']!='hostile']
             survivors={a['id'] for a in self.actors}
             for a in self.actors:
@@ -238,13 +252,14 @@ class Lt02(ARCBaseGame):
                 a['occupants']=[key for key in a.get('occupants',[]) if key in survivors]
             self.response_load=0
             ward=MISSION_WARDS[index];offset=((ward%2)*64,(ward//2)*52)
-            spec=build_district(min(index,7))
+            spec=build_district(min(max(index,1),7))
             enemies=[a for a in spec['actors'] if a['role']=='hostile'][:MISSION_TARGETS[index]]
             if index==0:
-                enemies=[actor('h0','hostile',line_route([(29,21),(37,21),(29,21)]))]
+                enemies=[actor('h0','hostile',line_route([(29,21),(37,21),(29,21)])),
+                         actor('h1','hostile',line_route([(43,35),(51,35),(43,35)]))]
             for number,a in enumerate(enemies):
-                target_ward=ward if index<8 else (number%6)%4
-                shift=offset if index<8 else ((target_ward%2)*64,(target_ward//2)*52)
+                target_ward=(ward+1)%4 if 1<=index<8 and number==1 else (ward if index<8 else number%4)
+                shift=((target_ward%2)*64,(target_ward//2)*52)
                 ward_spec=build_district((0,3,5,7)[target_ward])
                 if index>0:
                     zone=ZONE_LAYOUTS[index][number%6];col,row=zone%3,zone//3
@@ -256,9 +271,16 @@ class Lt02(ARCBaseGame):
                     route=line_route(points);phase=(number//6)*3
                     a=actor(f'h{number}','hostile',route[phase:]+route[:phase],
                             4 if number==0 else number%3,index>=2 and number==1)
+                if index<4:a['confidence']=4
                 a.update(threat_age=0,threat_limit=100+index*12+number*14,attack_stage='quiet')
                 self.actors.append(offset_actor(a,shift,f'm{index}_'))
-            if index>=2:
+            if index<4:
+                patrols=[p for a in self.actors if a['role']=='hostile' for p in a['route']]
+                for a in list(self.actors):
+                    if a['role']=='hostile':continue
+                    if any(self._near(p,q,13) for p in a['route'] for q in patrols):
+                        self.actors.remove(a);self.sheltered_actors.append(a)
+            if index>=4:
                 riders=[a for a in self.actors if a['role']=='hostile' and int(a['id'].split('h')[-1])%3==0]
                 for a in riders[:1+index//4]:
                     car=actor(a['id']+'_car','civilian',list(a['route']))
@@ -270,18 +292,18 @@ class Lt02(ARCBaseGame):
                         people.append(passenger)
                     car['occupants']=[c['id'] for c in people]
                     self.actors.extend(people)
-            unlocked={'heavy','precision'}
+            unlocked={'heavy','precision','fire'}
             if index>=2:unlocked.add('beacon')
             if index>=3:unlocked.add('aid')
-            if index>=4:unlocked.add('fire')
             self.tools=[t for t in TOOL_ORDER if t in unlocked];self.tool_index=0
             self.view_x,self.view_y=MISSION_VIEWS[index]
             self.ammo={name:TOOLS[name]['stock'] for name in TOOL_ORDER}
             self.reload_progress={name:0 for name in TOOL_ORDER}
             self.time_limit=spec['time_limit']+100 if index<8 else 700
-            self.sensor_period=spec['sensor_period'];self.tick=0;self.risk=100
+            self.sensor_period=spec['sensor_period'];self.tick=0;self.risk=120
             self.total_hostiles=self.remaining_hostiles()
             self.pending=[];self.fires=[];self.beacons=[];self.events=[];self.incidents=[]
+            self.slow_until=0
             self.ledger=dict(hostiles=0,priority=0,civilian_losses=0,responder_losses=0,
                             building_damage=0,unconfirmed=0,aided=0,shots=0,
                             enemy_attacks=0,enemy_civilian_losses=0)
@@ -351,9 +373,16 @@ class Lt02(ARCBaseGame):
         while best is not None: result.append(best);best=parent[best]
         return result[::-1]
 
+    def _frozen(self, a):
+        return a['role']=='hostile' and any(
+            self.tick < b['freeze_until'] and self._near(a['pos'], b['pos'], FREEZE_RADIUS)
+            for b in self.beacons)
+
     def _move(self):
         for a in self.actors:
             if not a['alive'] or a['injured'] or a.get('onboard') or a.get('ride_target'): continue
+            a['motion_path']=[]
+            if self._frozen(a): continue
             if a['role']=='responder':
                 if a['assignment']:
                     path=a['route']
@@ -440,6 +469,7 @@ class Lt02(ARCBaseGame):
         self.beacons=[b for b in self.beacons if not self._near(b['pos'],pos,radius)]
 
     def _respond(self,pos):
+        if self.mission_index<3:return
         self.response_load=min(18,self.response_load+1)
         pressure=self.response_load
         ordered=sorted((a for a in self.actors if a['alive']),
@@ -462,18 +492,22 @@ class Lt02(ARCBaseGame):
         pos=shot['pos'];tool=shot['tool'];radius=TOOLS[tool]['radius']
         self.events.append(dict(kind=tool,pos=pos,radius=radius))
         if tool=='aid':
+            self.slow_until=max(self.slow_until,self.tick+AID_SLOW_TURNS+1)
             self.fires=[f for f in self.fires if not self._near(f['pos'],pos,radius)]
             for incident in self.incidents:
                 if self._near(incident['pos'],pos,radius) and not incident['resolved']:
                     incident['resolved']=True;self.ledger['aided']+=1
             for a in self.actors:
-                if a['alive'] and a.get('gather_until') and self._near(a['pos'],pos,12):
+                if (a['alive'] and a['role']=='civilian' and a.get('traffic')
+                    and not a.get('onboard') and not a.get('ride_target')
+                    and not a['indoors'] and self._near(a['pos'],pos,20)):
                     a['route']=self._street_path(a['pos'],pos);a['index']=0
-                    a['gather_until']=self.tick+8;self.ledger['aided']+=1
+                    a['evacuating']=True;a['crowd_target']=None
+                    a['gather_until']=self.tick+12;self.ledger['aided']+=1
                 if a['alive'] and a['injured'] and self._near(a['pos'],pos,radius):
                     a['injured']=False;self.ledger['aided']+=1
         elif tool=='beacon':
-            self.beacons.append(dict(pos=pos,until=self.tick+9))
+            self.beacons.append(dict(pos=pos,until=self.tick+9,freeze_until=self.tick+FREEZE_TURNS+1))
         else:
             self._impact(pos,radius,tool)
             if tool in ('heavy','fire'):self._respond(pos)
@@ -492,9 +526,9 @@ class Lt02(ARCBaseGame):
                 elif a['role']=='hostile' and a['confidence']<4 and self.tick%18==0 and not a['indoors']: a['confidence']+=1
 
     def _threats(self):
-        if self.mission_index==0:return
+        if self.mission_index<3:return
         for target in self.actors:
-            if target['role']!='hostile' or not target['alive']:continue
+            if target['role']!='hostile' or not target['alive'] or self._frozen(target):continue
             target['threat_age']+=1
             age,limit=target['threat_age'],target['threat_limit']
             target['attack_stage']='arming' if age>=limit*4//5 else 'gather' if age>=limit//2 else 'quiet'
@@ -546,8 +580,15 @@ class Lt02(ARCBaseGame):
                     else:
                         self.events.append(dict(kind='refuse',pos=(int(x),int(y)),radius=2))
                         self.flash_tool=tool
-        self._move()
+        slowed=self.tick<self.slow_until and (self.slow_until-self.tick)%2==0
+        if not slowed:
+            self._move()
+        else:
+            for a in self.actors: a['motion_path']=[]
+            for incident in self.incidents:
+                if not incident['resolved']: incident['deadline']+=1
         for fire in self.fires:
+            if slowed: continue
             fire['left']-=1
             if fire['incident']: continue
             fire['radius']=min(5,fire['radius']+1)
@@ -560,7 +601,7 @@ class Lt02(ARCBaseGame):
             if not incident['resolved'] and self.tick>=incident['deadline']:
                 self._impact(incident['pos'],5,'fire');incident['resolved']=True
         self.beacons=[b for b in self.beacons if b['until']>self.tick]
-        self._threats()
+        if not slowed: self._threats()
         self._observe()
         recharge = PRACTICE_RECHARGE if self.mission_index==0 else RECHARGE_TURNS
         for tool in self.tools:
@@ -572,7 +613,7 @@ class Lt02(ARCBaseGame):
             else:
                 self.reload_progress[tool] = 0
         unresolved=any(not i['resolved'] for i in self.incidents)
-        if self.mission_index>0 and self.risk<=0:self.ending='lose'
+        if self.mission_index>=3 and self.risk<=0:self.ending='lose'
         elif not self.remaining_hostiles() and not self.pending and not self.fires and not unresolved: self.ending='win'
 
     def step(self):
@@ -754,7 +795,7 @@ def _city_instruments(game, phase=5):
         for col in range(inset, 12-inset):
             if col in (3, 8) and row < 3:
                 continue
-            threshold = (col+1)*100//12
+            threshold = (col+1)*120//12
             shield[row, col] = shield_colour if game.risk >= threshold else 4
     _city_put(game, 'civilian_condition', shield, 30, 0, 40, ['condition'])
     pressure = np.full((4, 2), -1, dtype=np.int8)
@@ -907,6 +948,12 @@ def city_art_frame(game, phase, frames):
         x, y = fire['pos']
         _city_put(game, 'fire_'+str(index), flame, x-radius-1, y-radius-1,
                   5, ['fire'], True)
+    if game.tick < game.slow_until:
+        left=game.slow_until-game.tick
+        mark=np.array(pixel_art(('.g.', 'ggg', '.g.'), {'g':14}), dtype=np.int8)
+        _city_put(game, 'slow_cross', mark, 30, 5, 38, ['slowdown'])
+        _city_put(game, 'slow_duration', [[14 if i<(left+1)//2 else 4 for i in range(6)]],
+                  29, 9, 38, ['slowdown'])
     for index, beacon in enumerate(game.beacons):
         x, y = beacon['pos']
         art = _city_brackets(2, 7)
@@ -1030,6 +1077,11 @@ def city_art_frame(game, phase, frames):
             _city_put(game, 'priority_'+actor['id'], _city_brackets(0, size),
                       x-(5 if has_seats else 3), y-(4 if has_seats else 3),
                       18, ['priority'], True)
+        if game._frozen(shown) or any(game._frozen(person) for person in seat_occupants):
+            size=12 if has_seats else 8
+            _city_put(game, 'frozen_'+actor['id'], _city_brackets(1, size),
+                      x-(5 if has_seats else 3), y-(4 if has_seats else 3),
+                      25, ['frozen'], True)
         if shown.get('injured'):
             _city_put(game, 'injured_'+actor['id'], [[1,1]], x, y+3,
                       18, ['injured'], True)

@@ -1,6 +1,8 @@
-# Author: GPT-6 Astra Ultra
-# Date: 27-October-2026
-# PURPOSE: WB01 native ARC game; boats shelter one another from fixed wind,
+# Author: GPT-6 Astra Ultra; wind flags by Claude Opus 5.5 High (01-November-2026)
+# Date: 27-October-2026 (edited 01-November-2026)
+# CHANGELOG: 01-Nov-2026 (Claude Opus 5.5 High) -- the Boss: no arrows on screen. The three wind arrows are now
+#   three flags whose banners stream downwind. Art only; rules and levels unchanged.
+# PURPOSE: WB02 native ARC game; boats shelter one another from fixed wind,
 # steer to matching docks, and lower sails when handing control away at a dock.
 # SRP/DRY check: Pass. Native engine sprites/rendering; one shared transition for
 # gameplay and verification; no copied renderer, external assets, or hidden text.
@@ -138,14 +140,21 @@ def boat_pixels(boat, lowered=False):
     return pixels
 
 
-def wind_arrow(name, x, y, direction, color=0, layer=4):
+def wind_flag(name, x, y, direction, layer=4):
+    """A pole across the wind with a swallow-tailed banner streaming downwind."""
     dx, dy = direction
     pixels = [[-1] * 7 for _ in range(7)]
-    for step in range(-3, 4):
-        pixels[3 + step * dy][3 + step * dx] = color
-    for step in (1, 2):
-        pixels[3 + (3-step)*dy + step*dx][3 + (3-step)*dx - step*dy] = color
-        pixels[3 + (3-step)*dy - step*dx][3 + (3-step)*dx + step*dy] = color
+    def put(along, across, color):
+        # along runs pole to tail (0-6) in the wind's direction; across runs along the pole.
+        px = 3 + (along-3)*dx + (across-3)*abs(dy)
+        py = 3 + (along-3)*dy + (across-3)*abs(dx)
+        pixels[py][px] = color
+    for across in range(7):
+        put(0, across, 0)
+    for across in range(4):
+        # The notch in the tail keeps the banner from reading as a point.
+        for along in range(1, 7 if across in (0, 3) else 5):
+            put(along, across, 8)
     return sprite(name, x-3, y-3, pixels, layer)
 
 
@@ -192,19 +201,19 @@ def picture(spec, state, locations=None, lower_fraction=1, refusal=False):
             for sx, sy, width, height in ((-5,-5,3,1),(-5,-5,1,3),(3,-5,3,1),(5,-5,1,3),
                                            (-5,4,1,2),(-5,5,3,1),(5,4,1,2),(3,5,3,1)):
                 out.append(box('selected-'+str(sx)+'-'+str(sy)+'-'+str(width),x+sx,y+sy,width,height,color,11))
-    # Fixed wind is always shown above the water; both direction and shape are explicit.
+    # Fixed wind is always shown above the water: the banners stream the way it blows.
     for index in range(3):
-        out.append(wind_arrow('wind-'+str(index),41+index*8,4,spec['wind']))
+        out.append(wind_flag('wind-'+str(index),41+index*8,4,spec['wind']))
     return out
 
 
-class Wb01(ARCBaseGame):
+class Wb02(ARCBaseGame):
     def __init__(self):
         self.logical = None
         self.frames = []
         self.history = []
         self.used = 0
-        super().__init__(game_id='wb01', levels=[Level(sprites=[],name='stage-'+str(i+1),data={'index':i}) for i in range(len(SPECS))],
+        super().__init__(game_id='wb02', levels=[Level(sprites=[],name='stage-'+str(i+1),data={'index':i}) for i in range(len(SPECS))],
                          camera=Camera(background=4), available_actions=[1,2,3,4,5,6,7])
 
     def on_set_level(self, level):

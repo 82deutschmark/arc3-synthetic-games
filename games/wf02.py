@@ -1,4 +1,19 @@
-"""dv51"""
+"""wf02"""
+# Author: Claude Sonnet 5.5 Medium; water buttons and lever stops by Claude Opus 5.5 High (01-November-2026)
+# Date: 30-October-2026 (edited 01-November-2026)
+# PURPOSE: A bank of linked water tanks; click a wheel to pour one or two blocks along its pipe, flip the
+#   flow lever to reverse a circuit, and match every tank to its white target marks.  A wheel shows water
+#   waiting on the side it will leave.
+# SRP/DRY check: Pass -- rules are pure module functions, art is pure pixel functions, the class only wires
+#   them; the glyph set (GATE / DROP_ONE / DROP_TWO / RING) is drawn once.
+#
+# CHANGELOG
+# 01-Nov-2026 Claude Opus 5.5 High: the Boss still read the comets as arrows. Wheels now show water behind a black
+#   gate, on the side it leaves (one block for one unit, two for two); the lever ends are plain stops. Art only.
+# 30-Oct-2026 Claude Sonnet 5.5 Medium: the chevron arrows on the wheels and lever are replaced by a comet
+#   glyph (a four-point star leading, a spark trailing; a fat gem for two-block pipes; a ring while spinning).
+#   Direction is read by which side the spark trails.  Level 1 is lengthened: taller tanks, a full left tank,
+#   a mark of one left and five across, so it takes five presses instead of two.  Other levels untouched.
 import copy
 
 import numpy as np
@@ -56,13 +71,13 @@ def pour(spec, v, f, j):
 
 # ---------------------------------------------------------------- levels
 LEVELS = [
-    # 1: one pipe, two tanks
-    dict(caps=(4, 4), start=(3, 0), valves=[(0, 1, 1, 0)], orders=[(1, 2)]),
+    # 1: one pipe, two tanks; tip nearly all of a full tank across, one block per press
+    dict(caps=(6, 6), start=(6, 0), valves=[(0, 1, 1, 0)], orders=[(1, 5)]),
     # 2: a chain with narrow middle tanks, two deliveries, forward only
     dict(caps=(6, 2, 2, 6), start=(6, 0, 0, 0),
          valves=[(0, 1, 1, 0), (1, 2, 1, 0), (2, 3, 1, 0)],
          orders=[(3, 1, 1, 1), (1, 1, 1, 3)]),
-    # 3: water has to go against the arrows: the flow lever
+    # 3: water has to go the other way: the flow lever
     dict(caps=(3, 3, 5, 3), start=(1, 3, 2, 2),
          valves=[(0, 1, 1, 0), (1, 2, 1, 0), (2, 3, 1, 0)],
          orders=[(0, 2, 5, 1), (3, 1, 2, 2), (0, 2, 3, 3)]),
@@ -174,14 +189,15 @@ CIRCUIT_LOOK = (
     dict(pipe=SHEEN, line=MARK, wheel=MARK, press=SHEEN, lit=WATER),
 )
 
-# chevron pixels inside the 7x7 body, pointing right (row, col)
-CHEV_ONE = ((1, 2), (1, 3), (2, 3), (2, 4), (3, 4), (3, 5), (4, 3), (4, 4), (5, 2), (5, 3))
-CHEV_TWO = ((1, 1), (2, 2), (3, 3), (4, 2), (5, 1), (1, 4), (2, 5), (3, 6), (4, 5), (5, 4))
-DOT = ((3, 3), (3, 2), (3, 4), (2, 3), (4, 3))
+# Glyphs inside the 7x7 body (row, col): water on the side it leaves, a black gate in the middle column.
+GATE = tuple((r, 3) for r in range(7))
+DROP_ONE = tuple((r, c) for r in range(1, 6) for c in range(3))
+DROP_TWO = tuple((r, c) for r in (0, 1, 2, 4, 5, 6) for c in range(3))
+RING = ((2, 2), (2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 3), (4, 4))  # spinning: round, no heading
 
 
 def wheel_pixels(heads_right, load, look, state):
-    """9x9 wheel: black rim, body, chevron(s) showing which way water goes (None = spinning)."""
+    """9x9 wheel: black rim, body, water waiting on the side it leaves (None = spinning)."""
     px = np.full((9, 9), INK, dtype=np.int8)
     for r, c in ((0, 0), (0, 8), (8, 0), (8, 8)):
         px[r, c] = -1
@@ -195,11 +211,14 @@ def wheel_pixels(heads_right, load, look, state):
         px[8, 1:8] = MARK
         px[1:8, 0] = MARK
         px[1:8, 8] = MARK
-    cells = DOT if heads_right is None else (CHEV_ONE if load == 1 else CHEV_TWO)
-    for r, c in cells:
-        if heads_right is False:
-            c = 6 - c
+    if heads_right is None:
+        for r, c in RING:
+            px[1 + r, 1 + c] = INK
+        return px
+    for r, c in GATE:
         px[1 + r, 1 + c] = INK
+    for r, c in (DROP_ONE if load == 1 else DROP_TWO):
+        px[1 + r, 1 + (c if heads_right else 6 - c)] = WATER
     return px
 
 
@@ -209,10 +228,8 @@ def lever_pixels(look, knob, hint):
     for r, c in ((0, 0), (0, 16), (6, 0), (6, 16)):
         px[r, c] = -1
     px[3, 2:15] = look["pipe"]
-    for r, c in ((2, 2), (3, 3), (4, 2)):          # ">" at the left end
-        px[r, c] = look["pipe"]
-    for r, c in ((2, 14), (3, 13), (4, 14)):        # "<" at the right end
-        px[r, c] = look["pipe"]
+    px[2:5, 2] = look["pipe"]                  # a plain stop at each end of the track
+    px[2:5, 14] = look["pipe"]
     if hint:
         px[0, 1:16] = MARK
         px[6, 1:16] = MARK
@@ -290,11 +307,11 @@ def pip_pixels(state):
 
 
 # ---------------------------------------------------------------- the game
-class Dv51(ARCBaseGame):
+class Wf02(ARCBaseGame):
     def __init__(self, seed=0):
         levels = [Level(sprites=[], grid_size=(64, 64), name=f"bank_{k}", data={}) for k in range(len(LEVELS))]
         super().__init__(
-            game_id="dv51", levels=levels,
+            game_id="wf02", levels=levels,
             camera=Camera(width=64, height=64, background=FIELD, letter_box=FIELD),
             available_actions=[5, 6], seed=seed,
         )

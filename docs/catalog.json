@@ -1,15 +1,15 @@
 {
-  "version": "0.4.1",
-  "snapshot_date": "2026-10-30",
+  "version": "0.5.0",
+  "snapshot_date": "2026-11-01",
   "featured": [
     "dz01",
-    "lt02",
-    "wb01",
+    "lt03",
+    "wb02",
     "li01",
     "hc01",
-    "wf01",
+    "wf02",
     "eh01",
-    "ng01",
+    "ng02",
     "fr01",
     "ff01",
     "pt01",
@@ -19,16 +19,16 @@
   ],
   "games": [
     {
-      "id": "lt02",
-      "class_name": "Lt02",
-      "path": "games/lt02.py",
-      "sha256": "2b5c09181fae36e54a211f255fbd04aabaae001e6b5454dc5d67aa90d7488b24",
+      "id": "lt03",
+      "class_name": "Lt03",
+      "path": "games/lt03.py",
+      "sha256": "d7ba2872ed320ae3956916e0ac103d4367750f52b0bd30908cf3a8b84d7908a8",
       "levels": 9,
       "human": null,
-      "preview": "previews/lt02.png",
+      "preview": "previews/lt03.png",
       "media": {
-        "play": "previews/lt02.png",
-        "levels": "previews/lt02-levels.png"
+        "play": "previews/lt03.png",
+        "levels": "previews/lt03-levels.png"
       },
       "tiles": 9,
       "inputs": [
@@ -40,22 +40,19 @@
         6,
         7
       ],
-      "play": "https://arc3.sonpham.net/games/lt02"
+      "play": "https://arc3.sonpham.net/games/lt03"
     },
     {
-      "id": "wb01",
-      "class_name": "Wb01",
-      "path": "games/wb01.py",
-      "sha256": "8e361117444a96a045c806129802b6a18cecbd03e165828744c7a5dee7faca40",
+      "id": "wb02",
+      "class_name": "Wb02",
+      "path": "games/wb02.py",
+      "sha256": "eac4bc3425cf79deb880bc8668d6f4b052b5590cc5e0ad9ae70c73309a267c4b",
       "levels": 8,
-      "human": {
-        "actions": 224,
-        "levels": 8
-      },
-      "preview": "previews/wb01.png",
+      "human": null,
+      "preview": "previews/wb02.png",
       "media": {
-        "play": "previews/wb01.png",
-        "levels": "previews/wb01-levels.png"
+        "play": "previews/wb02.png",
+        "levels": "previews/wb02-levels.png"
       },
       "tiles": 8,
       "inputs": [
@@ -67,7 +64,7 @@
         6,
         7
       ],
-      "play": "https://arc3.sonpham.net/games/wb01"
+      "play": "https://arc3.sonpham.net/games/wb02"
     },
     {
       "id": "tl01",
@@ -94,21 +91,18 @@
       "play": "https://arc3.sonpham.net/games/tl01"
     },
     {
-      "id": "ng01",
-      "class_name": "Ng01",
-      "path": "games/ng01.py",
-      "sha256": "ef8636966cda4dba9baaeb38a05eae99813e9a60f6972a8a88699b29d3eb59af",
-      "levels": 8,
-      "human": {
-        "actions": 104,
-        "levels": 3
-      },
-      "preview": "previews/ng01.png",
+      "id": "ng02",
+      "class_name": "Ng02",
+      "path": "games/ng02.py",
+      "sha256": "bca6f1f80fe57bbb708dc6676694cf10251ab6a3f7645cd67019e918cae9cff6",
+      "levels": 7,
+      "human": null,
+      "preview": "previews/ng02.png",
       "media": {
-        "play": "previews/ng01.png",
-        "levels": "previews/ng01-levels.png"
+        "play": "previews/ng02.png",
+        "levels": "previews/ng02-levels.png"
       },
-      "tiles": 8,
+      "tiles": 7,
       "inputs": [
         1,
         2,
@@ -116,7 +110,7 @@
         4,
         5
       ],
-      "play": "https://arc3.sonpham.net/games/ng01"
+      "play": "https://arc3.sonpham.net/games/ng02"
     },
     {
       "id": "li01",
@@ -443,26 +437,23 @@
       "play": "https://arc3.sonpham.net/games/eh01"
     },
     {
-      "id": "wf01",
-      "class_name": "Dv51",
-      "path": "games/wf01.py",
-      "sha256": "8b97b5ffb8d8aabc24451a46d90a643b8a93d2e523fdb24274bf4f6c0265eebe",
+      "id": "wf02",
+      "class_name": "Wf02",
+      "path": "games/wf02.py",
+      "sha256": "3985a073d40b2ab767e2515ecba364244a87715748a51ffe873841f0c57512ad",
       "levels": 8,
-      "human": {
-        "actions": 217,
-        "levels": 3
-      },
-      "preview": "previews/wf01.png",
+      "human": null,
+      "preview": "previews/wf02.png",
       "media": {
-        "play": "previews/wf01.png",
-        "levels": "previews/wf01-levels.png"
+        "play": "previews/wf02.png",
+        "levels": "previews/wf02-levels.png"
       },
       "tiles": 8,
       "inputs": [
         5,
         6
       ],
-      "play": "https://arc3.sonpham.net/games/wf01"
+      "play": "https://arc3.sonpham.net/games/wf02"
     },
     {
       "id": "jt01",

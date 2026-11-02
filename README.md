@@ -10,7 +10,7 @@ Use Python 3.13 (the release was exercised with Python 3.13 and the pinned depen
 python3.13 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python tools/validate.py
-.venv/bin/python examples/collect.py --game wb01 --steps 16 --seed 0 --output rollouts/wb01.jsonl
+.venv/bin/python examples/collect.py --game wb02 --steps 16 --seed 0 --output rollouts/wb02.jsonl
 ```
 
 The collector runs a real game. Its random policy is an integration example, **not an expert or a solver**. It writes JSON Lines: each row contains game_id, the action just taken, and the resulting observation. The first action is RESET (zero). Observations contain the engine's frames, state, levels_completed and available_actions. Click actions also contain screen x/y coordinates. The collector stops at a terminal state and refuses to overwrite files.
@@ -27,7 +27,7 @@ The collection provides environments, not a complete reinforcement-learning syst
 
 - `games/`: the current version of each game, byte for byte; `docs/catalog.json` has each file's hash.
 - `docs/previews/`: real engine frames: each game's opening screen and the first frame of every level.
-- The page shows the highlighted games only. Every approved game is here in `games/` and in `docs/catalog.json`.
+- The page shows the highlighted games only, each at its current version. Every game in `docs/catalog.json` is here in `games/`.
 - `tools/validate.py`: loads each game, resets it and takes one action. It does not play games through.
 - Human numbers on the page come from people's review plays. A dash means none recorded yet. Winning lines are not published.
 
