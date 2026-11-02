@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0 — 2 November 2026
+
+Claude Opus 5.5 High: the front page is now a spoilers page, at Mark Barney's call. Each of the twelve games shows what is special about it, its rules written out, how it differs from ARC's public 25 and its look, plus Mark's own words where his reviews have them. Every rule was checked against the game's code, and by playing it where needed, before it went up. Human action numbers are gone from the page and from the why note. The "no instructions" line is gone.
+
 ## 0.6.0 — 2 November 2026
 
 Claude Sonnet 5.5 Medium: the front page order follows Mark Barney's call: pt01, te01, dz01, lt03 and es01 lead; wf02 and hc01 are last. li01 is off the page: approved, but not one of the best. ng02 and fr01 are also off the page (ng02 sits too close to eh01 in colour; fr01 is an earlier version of ff01). xb02, a game with a world several screens wide, is added, with its source in `games/` and its pictures. The why note is rewritten around the games' own pictures.

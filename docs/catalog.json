@@ -38,7 +38,21 @@
         6,
         7
       ],
-      "play": "https://arc3.sonpham.net/games/lt03"
+      "play": "https://arc3.sonpham.net/games/lt03",
+      "spoiler": {
+        "rules": [
+          "You look down on a dark city from the air, where people and cars are small squares coloured in the middle: red for targets, yellow for street traffic, green for people inside schools and hospitals, and ambulances carry pink crosses.",
+          "Click anywhere on the map to fire the selected round, press space to switch rounds, and use the arrow keys to pan across a city of four districts, with arrows at the screen edge pointing to targets out of view; every action, even panning, moves the city on one step, and undo just waits a step.",
+          "Every round lands late, so you aim where a walking target will be, and now and then a target takes a double step: precision lands on the next step with a tiny blast, fire a step later and leaves flames that spread for a few steps, and heavy is the slowest with the biggest blast; each round has a small stock that slowly refills.",
+          "A mission is won when every target is gone, nothing is still falling and no fire is burning; hurting bystanders, ambulances or buildings (schools and hospitals cost most), hitting a target that is not yet confirmed, and above all letting a target blow up drain the shield at the top, and from the fourth mission on an empty shield fails the mission and you start it over.",
+          "From the fourth mission, heavy and fire rounds call in ambulances and crowds of onlookers, more each time, and send nearby targets running, and a target left alone too long pulls people round itself and then blows up among them.",
+          "Later missions add a flare that confirms who is who and freezes nearby targets, an aid drop that slows the whole city and puts out fires, targets riding in cars with passengers (hit the car and everyone in it goes) and targets that show only part red, or look exactly like street traffic, until confirmed, then a hospital fire that blocks the win until aid puts it out or it bursts, and a sensor that only updates every third step; the damage you do stays in the city for every mission after."
+        ],
+        "special": "You never steer anyone: you aim at a city that keeps walking, and every shot lands late, so the skill is reading where people will be a few steps from now. From the fourth mission the city answers back: heavy and fire rounds draw crowds and ambulances, more each time, so one careless big shot makes the rest of that mission harder, while the precision round draws nobody. Waiting does not get you out of it either, because a target you leave alone slowly gathers people round itself and then explodes among them, and a flare that freezes it buys you time.",
+        "look": "A dark sensor view of a city from above, in black and greys: roads with dashed lines, roofs with vents and marks for homes, schools, hospitals and stations, trees, parked cars and a school playground, with a faint scan line and static drifting across. People are tiny squares whose middles carry the colour code, cars show who is sitting in them, a target getting ready to blow grows dashes round it that turn orange, blasts flash and then ring orange, leaving smoke and craters that stay, and the tray at the bottom holds a drawn icon for each round with its stock underneath.",
+        "vsPublic": "BP35 and LF52 are the only public games whose view scrolls, and in both you move pieces through the world; in LT03 you never move anyone, you pan across a busy city and aim. SC25’s fireball and CD82’s dye are aimed at boards that hold still, and KA59’s bombs wait on a fuse, but here your own shot arrives late and the target keeps walking. WA30 has other movers that act after each of your moves; from the fourth mission this city also answers you, sending crowds and ambulances to every heavy or fire blast.",
+        "markSaid": ""
+      }
     },
     {
       "id": "wb02",
@@ -62,7 +76,21 @@
         6,
         7
       ],
-      "play": "https://arc3.sonpham.net/games/wb02"
+      "play": "https://arc3.sonpham.net/games/wb02",
+      "spoiler": {
+        "rules": [
+          "Two or three sailboats sit in a small harbor, each with a berth of its own color. White corner brackets mark the boat you are steering: the arrow keys move it one square, space or a click on a boat hands control to another, and undo takes back a command.",
+          "The wind blows one fixed way per level, shown by the flags at the top. Every time your boat actually moves, every other boat with its sail up drifts one square downwind, unless a rock, the edge or another boat blocks it, or it sits in calm water.",
+          "A raised sail, including the one on the boat you are steering, blocks the wind for the whole line downwind of it in the same row or column, even past rocks. That calm water is drawn paler, and a boat sitting in it does not drift, so you can park one boat upwind to hold another still.",
+          "The hidden rule: a boat anchors only when you hand control away from it while it sits in its own berth. Then it lowers its sail, drops anchor, stays put and stops shading anyone. A boat the wind pushes into its berth does not anchor, and moving an anchored boat raises its sail again.",
+          "The level clears the moment every boat is in its berth. Every command, even a switch or a blocked move, uses one dot from the green bars at the bottom; undo gives the dot back, and running out ends the game.",
+          "Rocks arrive on level two and a third boat on level three, and from level five the wind blows down, left or up instead of right."
+        ],
+        "special": "Each move of the boat you steer is a gust for every other boat with its sail up, so the boats you are not touching are the real puzzle. What keeps a finished boat home is letting go of it in its berth, which drops its anchor; take that rule away and several levels cannot be won, because the wind carries each docked boat back out while you sail the next one.",
+        "look": "A small harbor seen from above: blue water with broken ripple lines, paler water where the wind is blocked, orange, pink and green sailboats, U-shaped berths in each boat’s color, and grey boulders. Three red flags at the top stream downwind, an anchored boat furls its sail and shows an anchor, the selection brackets flash red when a command does nothing, and four green bars along the bottom shorten with every command.",
+        "vsPublic": "Closest are RE86, where you switch between colored pieces and slide each onto dots of its own color, and BP35, where a pull carries you along after every sideways step. In RE86 the pieces you are not moving stay where they are, and in BP35 the pull acts on you; here the wind moves only the boats you are not steering, one square at a time, boats shield each other from it, and parking a boat for good means letting go of it in its berth.",
+        "markSaid": "It’s easy but I think the AI will have trouble with it."
+      }
     },
     {
       "id": "tl01",
@@ -181,7 +209,21 @@
         5,
         6
       ],
-      "play": "https://arc3.sonpham.net/games/dz01"
+      "play": "https://arc3.sonpham.net/games/dz01",
+      "spoiler": {
+        "rules": [
+          "You see a green hero at the top of a sand shaft whose checkered finish lies out of sight far below, and a strip at the side with your hearts, a star slot and a bar: its yellow is your digging budget, a green dot on it shows how deep you are, and it ends in the same checkers.",
+          "Arrow keys walk, and up climbs one step when sand or earth is right beside the hero; click the square straight above, below, left or right of him to dig it: sand takes one click, packed earth two, rock three, and black bedrock never breaks.",
+          "Loose things fall: dig under the hero and he drops into the hole, and sand, hearts, stars and batteries pour into any hole opened under them, so a hole dug beneath a sand column fills right back up.",
+          "Walk into a creature to fight it, which costs no clicks: you punch out one of its white stripes, it punches out one of your hearts, and so on until its last stripe goes, so a one-stripe crab costs nothing, a two-stripe mole one heart and a three-stripe worm two.",
+          "Lose your last heart, or empty the bar while the finish is still out of reach, and the level starts over; walking onto a heart gives one back, up to three, and a blue battery in the sand puts clicks back.",
+          "Later levels add packed earth with moles, rock bands with worms, bedrock to tunnel round, red-eyed creatures that come down with the sand and start the fight themselves if they land on your head, and a star you can carry: space lights it, and while its ring of sparks lasts, creatures go flat at a touch and sand digs for free without pouring back in."
+        ],
+        "special": "The ground shows its price before you pay it: the long way round through sand costs clicks, rock costs three clicks a square, and the short way through the worm living in a rock band costs hearts instead, while a heart lying in the sand only pays off if you can reach it with clicks to spare. Because sand pours into every hole, the order you dig in matters, and a red-eyed creature sitting above a pocket warns you what opening it will bring down on you. You never need the star, but on the last level it turns a long dig through a rock wall into a run straight down a column of worms.",
+        "look": "Early-console colours and no greys: yellow sand with orange grain, orange packed earth that cracks black, dark red rock that cracks yellow as you hit it, black bedrock edged in blue, and sky blue in every open pocket. The creatures have faces: purple crabs, blue moles and orange worms wear their strength as white stripes that go dark as you punch them out, and the ones that fall have red eyes.",
+        "vsPublic": "BP35 is the closest: a tall shaft that runs past the screen, where clicking breaks some blocks and every action, undo included, counts on the bar. In DZ01 walking and fighting are free and only digging uses up the bar, the ground’s colour tells you whether it takes one, two or three clicks or never breaks, and sand and loose items fall into whatever you open. In TU93, an enemy kills you or dies depending on which side you meet it from; here a fight trades stripes for hearts, and the price is drawn on the creature before you start.",
+        "markSaid": ""
+      }
     },
     {
       "id": "di01",
@@ -357,7 +399,21 @@
         5,
         6
       ],
-      "play": "https://arc3.sonpham.net/games/g014"
+      "play": "https://arc3.sonpham.net/games/g014",
+      "spoiler": {
+        "rules": [
+          "A light sits on one edge of the board, and every green block casts a shadow away from it. Touching squares of the same height count as one block.",
+          "Turn the light with the left and right arrows (space turns it the same way as right), then click a block. It falls over along its shadow and is gone, and every hole under the shadow gets one step shallower.",
+          "A shadow reaches as far as the block is tall, and further across holes, so filling a hole also shortens the shadows that cross it. A wall or the edge of the board just cuts a shadow short, but a block whose shadow has nowhere to land cannot fall.",
+          "A block may only fall if its whole shadow lands in holes. The board shows this before you click: those holes turn purple, and a shadow that would be refused is drawn dotted.",
+          "Leave the board flat, with no holes and no blocks, to clear the level. A fall that makes that impossible flashes the board red and starts the level again.",
+          "Later levels add holes two deep that need a fall from each side, short blocks that can fall two ways where only one leaves the right run of holes for a tall block, and walled rooms that all share one light."
+        ],
+        "special": "You never push a block: you aim the light, and the shadows decide where everything lands, so one turn of the light re-aims every block in every room at once. The shadow doubles as a preview that keeps changing as holes fill. After every fall the game checks every move still left and restarts only when the level truly cannot be won, so you never play on a dead board.",
+        "look": "Yellow lit rooms on black, green blocks marked with one white die face for their height, blue holes with a white die face on every square for their depth, and a yellow wedge on the edge of the screen for the light. A fall sweeps green down the shadow into the holes, and a refused block blinks a red outline.",
+        "vsPublic": "None of the public write-ups describes a light or shadows. The nearest are KA59, where you knock pieces into frames they fit, and BP35, where a red block flips which way the world pulls you. HC01 never moves a piece by hand: its one direction control re-aims every block on the board at once and decides where each one will land.",
+        "markSaid": ""
+      }
     },
     {
       "id": "bc01",
@@ -432,7 +488,21 @@
         4,
         5
       ],
-      "play": "https://arc3.sonpham.net/games/eh01"
+      "play": "https://arc3.sonpham.net/games/eh01",
+      "spoiler": {
+        "rules": [
+          "You walk a small blue creature through corridors cut into rock with the arrow keys. You can see the shape of the corridors but not what any square holds, and stepping onto a square never shows you what is there.",
+          "Space is your lantern. Right after you step onto a dark square, space lights the square you are standing on and steps you back onto the one you came from, showing whether it held a key, the exit ring, a pit or nothing. On ground that is already lit, space does nothing.",
+          "Every look burns one of the two orange marks on the square you step back onto. When its last mark goes it becomes a crossed orange scar: you can step off it but never back on, so the order you explore in decides the level. The entrance never wears out.",
+          "Lighting a key sends it flying into a slot along the top. When every slot is full the ring turns from pink to pale blue. You have to light the ring itself too, then walk in.",
+          "Pits look like any other dark square. Step onto one and then walk off it in any direction, even back the way you came, and you fall back to the entrance. Press space on it instead and you step back safely; either way the pit is lit and can never be entered again.",
+          "Level one has no marks and can’t be lost. Later levels add pits, a loop and thin ground that holds only one mark. If you cut off the last way to win, the creature turns red, the corridor fills in with rock and the level starts over."
+        ],
+        "special": "Seeing and spending are the same move: the only way to learn what a square holds is to back off it, and backing off wears down the floor you land on. The budget is written into the corridor itself, so every square you peek into costs ground you may need to cross later. A pit only sends you home, but a mark spent in the wrong place can end the level.",
+        "look": "Corridors are cut through deep maroon rock. Unknown ground is purple under a black stipple and lit ground is flat green, both with orange marks in the top corners, a spent square is a crossed orange scar, and ground you can no longer reach fills in with rock. Keys fly up yellow into dark slots along the top beside a ring that is pink when shut and pale blue when open, a lit pit is a pink rim around a black hole, and every look is animated: the creature slides back, the square flares white and the mark burns red.",
+        "vsPublic": "LS20 also has a key and a door, but you reshape one key on tiles in plain sight, and its fog only arrives on the final level, where you can still see everything near you; in EH01 nothing a square holds shows until you step back off it. G50T’s fifth action walks you back to the start and leaves a ghost that replays your moves, and SK48’s undo is free; in EH01 stepping back is the only way to see, and each step back costs a mark on the floor. That floor is the whole budget, where LS20 and TU93 count your steps on a bar.",
+        "markSaid": "You have to discover where the keys are. It’s kind of a little bit like Minesweeper. … I think this is probably a perfect training game."
+      }
     },
     {
       "id": "wf02",
@@ -451,7 +521,21 @@
         5,
         6
       ],
-      "play": "https://arc3.sonpham.net/games/wf02"
+      "play": "https://arc3.sonpham.net/games/wf02",
+      "spoiler": {
+        "rules": [
+          "A row of black tanks holds blue water in stacked blocks, and white dashes in each tank mark how full it should be.",
+          "Pipes arch over the tanks with a wheel on top of each. Click a wheel to pour one block along that pipe, or two if the pipe has a stripe down its middle. The wheel shows one or two blocks of water on the side it will leave from.",
+          "Press space or click the lever at the bottom to reverse every pipe of that colour at once. From level 5 the pale pipes with white wheels get a second lever, and only a click moves it.",
+          "A pour is refused when the tank it drains holds less than the pipe carries, or the tank it fills has no room. The wheel turns red and shakes, and the tank in the way gets a red rim.",
+          "When every tank sits exactly on its marks, a dot at the top turns green and new marks appear, with the water left where it is. Finish every dot to clear the level. Nothing can be lost, because any pour can be undone by flipping, pouring back and flipping again.",
+          "Later levels add short tanks that hold only two blocks, two-block pipes, a high pipe that joins the end tanks into a ring, nearly full tanks and up to four deliveries."
+        ],
+        "special": "A pipe does not set its own direction: one lever turns every pipe of its colour around at once, so each pour is really a choice of which way a whole circuit runs, and from level 5 two circuits turn separately. The marks change after every match but the water stays put, so the way you finish one delivery sets up the next. Pipe and tank sizes do the rest: a tank fed only by two-block pipes can only ever change by two, and a small tank fills fast and refuses more until you pass water on.",
+        "look": "A flat purple field with black tanks of stacked blue water, orange pipes arching overhead, and fat yellow wheel buttons that show water waiting behind a black gate on the side it will leave. A pour lights up the whole pipe, runs a white pulse along it and lands the block with a white flash, and a tank that matches turns its marks and the lamp underneath it green.",
+        "vsPublic": "VC33 is the closest: it also moves liquid between tanks by clicking, but every wall there has a pump on each side, so each click picks its own direction, the goal is a single finished board, and a click budget can lose the level. WF02 hands direction to a lever shared by a whole circuit, moves loads of one or two blocks, can carry water round a ring, chains up to four sets of marks with the water carried over, and has no budget and no way to lose. SP80 also pours, but there you place bars to steer falling liquid into cups instead of sharing out a fixed amount of water between tanks.",
+        "markSaid": ""
+      }
     },
     {
       "id": "jt01",
@@ -821,7 +905,21 @@
         5,
         6
       ],
-      "play": "https://arc3.sonpham.net/games/es01"
+      "play": "https://arc3.sonpham.net/games/es01",
+      "spoiler": {
+        "rules": [
+          "On level one you are a small green alien. Arrow keys walk, and space sneezes a short fan of green droplets straight ahead and out to both forward diagonals. Walls and the first person in each line stop it; vent grilles do not.",
+          "The alien’s sneeze is weak: a person needs three hits, and a green spot appears on their face with each one. The first person the alien fully infects becomes the body you play. From level two you start each level already inside an infected person, and the alien follows you on its own, sneezing at any healthy person lined up close to it.",
+          "Your host’s sneeze infects anyone it reaches in one hit, and each new victim sneezes onward the same way straight away, so a lined-up crowd falls like dominoes. From level two each host sneeze spends one of the magenta spore dots beside you, and every new infection gives one back until the stack is full. With none left, space does nothing.",
+          "Click any infected person on screen to jump into them. Walking into a vent grille also jumps you if an infected person stands just past it; grilles stop feet but let sneezes through. From level two most people pace slowly back and forth, and the ones you leave behind now and then give a weak cough toward their nearest healthy neighbour.",
+          "Level one needs two infections. From level two you must infect everyone, guards and doctors included. Guards in maroon and red arrive on level three: they walk toward the alien, and once lined up with it in a clear straight line they flash yellow, then shoot a piece off it. If the whole alien is shot away you lose, and infecting a guard stops it.",
+          "Doctors in white arrive on level four. They cure sick people close by, and if they cure your host you are back in the alien. When no one sick is near, they wall up doorways with white walls that stop both feet and sneezes. Only your host’s full sneeze chips those walls, and it takes two. Every board after the first is bigger than the screen and scrolls with you."
+        ],
+        "special": "You don’t win by walking a path. You aim an outbreak: one well-placed sneeze down a line of people chains across a room, and every person you turn becomes another body you can jump into. The board fights back with its own cast: doctors undo your work and wall up doorways, and guards shoot the alien apart a piece at a time.",
+        "look": "Four city places, each with its own floor markings and frame colour: a street with dashed lanes, a market with orange and maroon stalls, a grey-tiled clinic with pale blue fittings and a transit platform with yellow safety studs. People in coloured clothes turn green with magenta eyes when infected, doctors wear white and guards maroon and red, the alien is green with antennae, black-and-white eyes and a magenta mouth, and a green wipe sweeps the screen on every win.",
+        "vsPublic": "SK48 lets you click between two rods from level six, and WA30’s thief pulls finished crates back out of their bays. In ES01 every person you infect is another body to click into, while doctors cure them and guards shoot the alien. The nearest public spread is BP35’s purple, which grows into the empty squares around a clicked block, but that spreads scenery: we found no public game where a state passes from one character to the next, and like BP35, ES01’s boards are bigger than the screen with a view that follows you.",
+        "markSaid": ""
+      }
     },
     {
       "id": "ff01",
@@ -842,7 +940,21 @@
         3,
         4
       ],
-      "play": "https://arc3.sonpham.net/games/ff01"
+      "play": "https://arc3.sonpham.net/games/ff01",
+      "spoiler": {
+        "rules": [
+          "You are the green fish. You swim with the arrow keys through a sea bigger than the screen, and the view follows you.",
+          "Touch a fish your size or smaller to eat it. Colour shows size: orange is smallest, then pink, magenta, red and maroon. Eat enough to fill the meal pips and the level clears; from level two, a few meals also make you grow a size.",
+          "Bigger fish bite and cost one of your three lives, then you blink safe for a moment. They never chase you; each one just swims its own pattern.",
+          "The lighter water is current. It carries you and every other fish, and you can never swim against it: at best you hold still.",
+          "Every few moves the tide turns (the yellow pips at top right count down to it), and every current and every other fish changes heading. A yellow dot on each current’s arrows and on each other fish shows which way it goes next, and fish you can eat that are off the screen show as a small mark in their colour on the screen’s edge.",
+          "From level two a time bar runs down, and running out or losing your last life ends the run. Later levels bring more currents, more fish and bigger ones, and on the last two levels you can grow big enough to eat even the largest fish."
+        ],
+        "special": "The whole sea runs on one tide: every current and every fish turns together on a beat you can count, and a yellow dot on each shows where it goes next. Since no current can be swum against, crossing the sea means catching the right ride at the right moment, so you plan a few moves ahead instead of only dodging. The bigger fish never chase, so the dots never lie, and growing turns fish that could bite you into food.",
+        "look": "A flat blue sea with lighter current lanes full of drifting white arrows, a purple sea bed with swaying kelp and rising bubble streams, and white crests on the surface. The fish have forked tails, fins and a white eye, coloured by size from orange up to maroon, with you in green. A meal pops a ring of bubbles, and clearing a level makes your fish spin and rise in a shower of them.",
+        "vsPublic": "BP35 is the closest: it also scrolls and carries you with a pull you cannot refuse, but its pull runs one way across the whole level, slides you until something solid stops you, and you flip it yourself by clicking. FF01’s sea has many currents that push a set distance each move, carry every fish, and all turn together on one tide clock, with each next heading shown ahead of time. In TU93, whether you or its red enemy dies depends on which way that enemy faces; here it depends on size, and your size grows as you eat.",
+        "markSaid": ""
+      }
     },
     {
       "id": "si01",
@@ -931,7 +1043,21 @@
         3,
         4
       ],
-      "play": "https://arc3.sonpham.net/games/g019"
+      "play": "https://arc3.sonpham.net/games/g019",
+      "spoiler": {
+        "rules": [
+          "You are the black figure. The arrow keys move you one square; there is no other control and no undo, and every press is a turn, even walking into a wall or the edge, which is how you wait.",
+          "Step on a bell to ring it. From then on every red guard walks one square per turn toward the bell you rang last by a shortest route, waiting in line if another guard is in the way; in the first two levels the pad is itself a bell.",
+          "A guard that ends a turn on your square or right beside you, though not diagonally, catches you and the level starts over. Pink checks mark every square where that would happen next turn.",
+          "Each guard carries pips, shown in white on its belly like a die face, and each plain round pad shows in black pips how many it needs; the bell pads of the first two levels need one. A guard carrying at least that many lights the pad it stands on, and while every pad is lit the door opens and you walk in to win.",
+          "The hidden rule: pips spill between guards standing side by side, though not diagonally. When one guard’s pips plus its ground height are two or more above its neighbour’s, one pip hops across, so ground matters: blue is low, green is middle, and the yellow blocks under the bells are high.",
+          "Also hidden: the moment you make a move from which the level can no longer be won, you fall on the spot and the level restarts. Later levels add more guards and pads, sunken blue ground you can still walk on, a rock wall with one gap and a dead-end corridor with the bell at its far end."
+        ],
+        "special": "The guards are both the danger and the only way through: you never touch them, you herd the whole group at once by choosing which bell to ring and when, and they open the door for you by standing on the pads. Their pips behave like water finding its level, running from the guard that stands taller, counting pips and ground together, to the one beside it; without that flow, or with the ground made flat, most levels cannot be won. A lost position is never left to drag on: the move that makes the level unwinnable is the move that kills you.",
+        "look": "An early home-console cartridge look: flat saturated colors with hard black edges, ground in three heights (blue low, green middle, yellow high), purple brick for walls and the border, red horned guards that face the way they will step, orange bells on yellow blocks, round light-blue pads, a maroon door and a small black figure for you. The bell you rang last turns white, a held pad glows white, the border turns white when the door opens and red when you are caught or fall, you turn pink and crumple, and a pip is drawn flying from one guard to the next when it spills.",
+        "vsPublic": "Closest are WA30, where helpers take a step every time you act and haul crates into bays on their own routine, and G50T, where a ghost copy of you holds a plate down while patrols kill you if they land on your square. Here the plate-holders are the same creatures that kill you, standing beside one is as deadly as standing on it, and you steer them only by which bell you rang last. VC33 moves liquid between tanks, but only when you click a pump; here the pips pass between neighbouring guards on their own, by count and ground height together.",
+        "markSaid": ""
+      }
     },
     {
       "id": "cg01",
@@ -1090,7 +1216,21 @@
         4,
         5
       ],
-      "play": "https://arc3.sonpham.net/games/pt01"
+      "play": "https://arc3.sonpham.net/games/pt01",
+      "spoiler": {
+        "rules": [
+          "You sail the black ship one square at a time with the arrow keys and fire with space; the ball flies straight ahead along the dotted line from your bow, and pressing toward land or a ship turns you to face it without moving.",
+          "Sink every enemy ship to clear the level, but only a ship’s stern, the end with the yellow lamps, can be hurt: you must get behind it, facing the way it faces, and each hit puts out one lamp.",
+          "A ball that strikes a bow or a side bounces straight back and costs you one of three hearts; the aim line turns pink before you fire to warn you.",
+          "Enemy ships never sail, but every press, even a bump or a shot, is one beat of a fixed clock, and gunships fire on a set rhythm: the gun turns orange two presses before a shot, then red with a red dashed lane one press before, and since your move lands before the shot, stepping out of the lane on that press keeps you safe.",
+          "Your ball stops at the first ship in its path, so one ship can shield another from you, and islands and ships stop enemy fire too, so they can shield you; lose all three hearts and your ship sinks, and the level restarts exactly as it began, same rhythm.",
+          "Level 1 cannot be lost; later levels add bouncing shots, gunships, two gunships on different beats, ships that turn a quarter on a timer (the tip of the bow turns white one press before), a frigate firing from both sides, and finally a galleon that fires from its bow and both sides."
+        ],
+        "special": "Every ship is armoured except its stern, so each target is a question of where to stand and which way to face, and a careless shot hurts you instead. Enemy fire is a fixed pattern drawn one press ahead, and because your move lands before the shot, you read the red lanes and slip between them. Ships also turn on their own beat, so the stern and the gun lanes swing round, and a safe square turns deadly on a rhythm you can learn.",
+        "look": "Seen from above: a flat blue sea with small light blue wave crests, yellow sand islands with black shores and green palms, and your black ship with a white sail bar. Enemy hulls are coloured by kind (orange merchant, dark red corvette, purple frigate, magenta galleon) with yellow lamps on a black stern, sunk ships break up inside a spreading ripple, and a black strip below shows your red hearts (from level 2) and one hull icon per ship still afloat.",
+        "vsPublic": "The nearest public pieces are TU93’s red enemy, which kills you head-on and dies if you reach it from the side or behind; SC25’s fireball, which flies the way you last moved and just fizzles on anything but its target; and KA59’s bombs, which go off every few presses. In PT01 a shot that strikes a ship’s bow or side bounces back and costs you a heart, so only the stern can be hit, and enemy guns fire at you on fixed beats down lanes drawn one press ahead that islands and other ships block.",
+        "markSaid": ""
+      }
     },
     {
       "id": "rx01",
@@ -1184,7 +1324,21 @@
         6,
         7
       ],
-      "play": "https://arc3.sonpham.net/games/te01"
+      "play": "https://arc3.sonpham.net/games/te01",
+      "spoiler": {
+        "rules": [
+          "You drive a small green rover with the arrow keys; an orange cable runs from the blue dock to the rover and always pulls tight, bending only at the corners of the posts it wraps around.",
+          "Stop beside the blue crystal (not diagonally) or right on top of it, click it to pick it up, then drive back onto the dock to clear the level.",
+          "The cable has a fixed length, shown as orange dots on the spool by the dock; a move that needs more is refused and a red mark flashes at the bend holding it back, so the side you passed each post on decides how far you can reach.",
+          "Space reels you in one step back along the cable toward its last bend, and undo takes back your last move.",
+          "Red blades end the attempt two ways: drive the rover into one, or let the cable touch one as it sweeps behind you, even when the rover itself stays well clear; undo cannot save you then, only reset, which starts the level again.",
+          "Levels 1 and 2 have no blades and level 3 brings the first; from level 5 you push a silver cover along an orange rail onto a blade, its stripe turns green as it locks, and then rover and cable can both cross that blade; level 6 bends the rail, and the last two levels add long walls that come alternately from the top and the bottom, with a much longer cable that has to wind back and forth between them."
+        ],
+        "special": "The cable remembers your route: it is pulled tight around every post it wraps and never gets longer than its spool, so the side you take round each post decides how far you can reach. Blades are a danger to the line as well as the rover, so you plan where the cable will sweep, not just where you drive. Covers pushed along a rail turn a blade into floor you can cross.",
+        "look": "A dark workshop floor with faint seams, purple posts (striped on the wider ones, while the long thin walls of the last two levels show as white lines), a small green rover with black wheels, a blue cradle for a dock, a blue crystal, and round red blades with a white rim. The cable is orange, a grey spool by the dock loses orange dots as cable pays out, the rover shows the crystal once it carries it and turns red when a blade gets it, and the cover is a silver hood whose orange stripe turns green when it locks.",
+        "vsPublic": "The closest public games are SK48, whose skewer runs straight out of its handle on an energy budget, and TU93 and G50T, where the path you walked comes back as an enemy or a twin. In TE01 you have a fixed length of cable that bends round posts, so how much of it a route uses depends on which side of each post it went, and blades cut that cable as it sweeps, not just the rover.",
+        "markSaid": "Awesome game. … Mechanics are great."
+      }
     },
     {
       "id": "xb02",
@@ -1205,7 +1359,21 @@
         3,
         4
       ],
-      "play": "https://arc3.sonpham.net/games/xb02"
+      "play": "https://arc3.sonpham.net/games/xb02",
+      "spoiler": {
+        "rules": [
+          "You walk a hooded pilgrim along yellow tracks with the arrow keys, through a countryside several screens wide and tall. You start beside the sanctum; open its barred door and walk in to clear the level.",
+          "Four shrines stand in the four corners. Step onto a shrine’s brazier and every gate of one colour, anywhere in the world, crumbles for the rest of the level.",
+          "No shrine shows which colour it opens, but that never changes: top-left opens red, top-right blue, bottom-left purple, bottom-right light grey. The sanctum door is a gate too, and its colour changes from level to level.",
+          "The gates decide which shrines you can reach, so each level hides an order. The land is the same in every level; only the gates and the patrols change. Until the last two levels some shrines open nothing, and the last two need all four.",
+          "Walk into a magenta thorn bush, or let a magenta horned patrol step onto you, and you go back to the last shrine you stood on, or to the start if you have not reached one. Patrols pace short stretches of track from level two on, one step for each move you make; the flowers are harmless, even the magenta ones.",
+          "There are no lives and no timer, and lit shrines stay lit. Bumping into a wall or a shut gate still lets the patrols take their step, which is how you wait for one to pass."
+        ],
+        "special": "Lighting a shrine changes the world somewhere you cannot see, and nothing tells you what changed: you find out only when you come back to a gate that stopped you and find it gone. The land never changes between levels, only the gates and patrols do, so what you learn about the map and the shrine colours carries over while the order has to be found again. On the first level one shrine has a gate of its colour on the same screen, so you watch one crumble before the game starts working at a distance.",
+        "look": "An early home-console look: flat green fields with oaks, pines and glinting ponds, yellow tracks with stepped corners, brick shrines with tiled roofs, and barred gates in red, blue, purple and light grey that crumble away when opened. A hooded black pilgrim with white eyes and a maroon scarf, magenta horned patrols whose eyes look where they are heading, and magenta thorn bushes, with every step sliding smoothly across the screen.",
+        "vsPublic": "DC22 is the closest: on its first levels each coloured button changes every floor piece of its colour, but you click it on a side panel with its pieces on the same screen, and G50T’s floor plates are each joined to their gate by a line of the same colour. In XB02 a shrine never shows its colour, and after the first level its gates are always somewhere else, so you only learn what it did by travelling back to look. G50T and TU93 have patrols that kill you and hold still when you bump a wall; here a catch only sends you back to your last shrine, making each shrine a key and a checkpoint at once, and a bump lets the patrols step so you can wait them out.",
+        "markSaid": ""
+      }
     }
   ]
 }

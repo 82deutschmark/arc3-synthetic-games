@@ -4,6 +4,8 @@
 // Updated: 31-October-2026, Claude Sonnet 5.5 — a Play link on every card, to the game's page on arc3.sonpham.net.
 // Updated: 31-October-2026, Claude Sonnet 5.5 — the page shows only the highlighted picks (Mark's best); the other approved games stay in catalog.json and games/. The compact card is gone.
 // Updated: 01-November-2026, Claude Opus 5.5 — no human row when no play is recorded.
+// Updated: 02-November-2026, Claude Opus 5.5 High — the Boss's spoilers page: each card shows the game's rules, what is special
+//   about it, its look and how it differs from the public 25, from the game's "spoiler" entry in catalog.json. No human numbers.
 // PURPOSE: Render the highlighted games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
 'use strict';
@@ -28,28 +30,40 @@ function strip(game) {
   }
   return box;
 }
+function section(label, body) {
+  const box = el('section', 'part');
+  box.append(el('h3', '', label), body);
+  return box;
+}
 function card(game) {
-  const node = el('article', 'pick');
+  const node = el('article', 'spoiler');
+  const pictures = el('div', 'pictures');
   const image = el('img');
   image.src = game.media.play;
-  image.alt = `Gameplay of ${game.id}`;
+  image.alt = `Opening screen of ${game.id}`;
   image.width = 256;
   image.height = 256;
+  pictures.append(image, strip(game));
   const copy = el('div', 'info');
+  const head = el('div', 'head');
   const title = el('a', 'name', game.id.toUpperCase());
   title.href = SOURCE_BASE + game.path;
-  const facts = el('dl', 'facts');
-  // A game with no recorded play simply has no human row; a dash read as "nobody played this".
-  const rows = [['INPUTS', (game.inputs || []).map(i => INPUTS[i]).join(' ')]];
-  if (game.human) rows.unshift(['HUMAN', `${game.human.actions} actions, ${game.human.levels}/${game.levels} levels`]);
-  for (const [label, value] of rows) {
-    facts.append(el('dt', '', label), el('dd', '', value));
-  }
   const play = el('a', 'play', 'PLAY ↗');
   play.href = game.play;
-  copy.append(title, play, facts);
-  copy.append(strip(game));
-  node.append(image, copy);
+  head.append(title, play, el('span', 'controls', (game.inputs || []).map(i => INPUTS[i]).join(' ')));
+  copy.append(head);
+  // Spoilers on purpose: what we are proud of first, then the rules written out, then how it differs from ARC's public 25 and its look.
+  const notes = game.spoiler || {};
+  if (notes.special) copy.append(section('WHAT’S SPECIAL', el('p', 'lead', notes.special)));
+  if (notes.rules && notes.rules.length) {
+    const list = el('ul', 'rules');
+    for (const rule of notes.rules) list.append(el('li', '', rule));
+    copy.append(section('THE RULES', list));
+  }
+  if (notes.vsPublic) copy.append(section('NOT IN THE PUBLIC 25', el('p', '', notes.vsPublic)));
+  if (notes.look) copy.append(section('THE LOOK', el('p', '', notes.look)));
+  if (notes.markSaid) copy.append(el('blockquote', 'said', `“${notes.markSaid}” — Mark`));
+  node.append(pictures, copy);
   return node;
 }
 fetch('catalog.json').then(response => {
