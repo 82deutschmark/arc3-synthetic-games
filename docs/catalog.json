@@ -1,21 +1,20 @@
 {
-  "version": "0.5.0",
-  "snapshot_date": "2026-11-01",
+  "version": "0.6.0",
+  "snapshot_date": "2026-11-02",
   "featured": [
-    "dz01",
-    "lt03",
-    "wb02",
-    "li01",
-    "hc01",
-    "wf02",
-    "eh01",
-    "ng02",
-    "fr01",
-    "ff01",
     "pt01",
     "te01",
+    "dz01",
+    "lt03",
+    "es01",
+    "eh01",
+    "ff01",
+    "xb02",
+    "wb02",
     "bs01",
-    "es01"
+    "wf02",
+    "hc01",
+    "li01"
   ],
   "games": [
     {
@@ -1187,6 +1186,27 @@
         7
       ],
       "play": "https://arc3.sonpham.net/games/te01"
+    },
+    {
+      "id": "xb02",
+      "class_name": "Xb02",
+      "path": "games/xb02.py",
+      "sha256": "e3c7f4131070f8909307cdbbe80409e48449f1470cbc1b9ade739bdf7d6f0485",
+      "levels": 6,
+      "human": null,
+      "preview": "previews/xb02.png",
+      "media": {
+        "play": "previews/xb02.png",
+        "levels": "previews/xb02-levels.png"
+      },
+      "tiles": 6,
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "play": "https://arc3.sonpham.net/games/xb02"
     }
   ]
 }

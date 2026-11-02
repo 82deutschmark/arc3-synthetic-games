@@ -1,9 +1,9 @@
 <!--
 Author: Claude Sonnet 5.5 Medium, from Mark Barney's own words
 Date: 30-October-2026
-Updated: 02-November-2026, Claude Sonnet 5.5 Medium — rewritten shorter after the Boss disliked the first version. New plain title; the story runs in order (what I tried first, what slop is, what we did instead, why the human number matters); the batch games that strangers never finished are named; says plainly that most of the playing and feedback was his. Cut: the long public-25 and private-set guessing, the repeated points, the paper citations beyond one credit.
-PURPOSE: The note behind the featured games: why a person has to play every game, and what that changed. Written in Mark Barney's voice; a draft until he is happy with it. Lifting it to another site needs style.css and the links back to the catalog page copied along.
-SRP/DRY check: Pass — shares style.css with the catalog page; no game data is repeated here.
+Updated: 02-November-2026, Claude Sonnet 5.5 Medium -- rewritten twice the same day after the Boss called the first rewrite's layout awful. Now picture-led: a mosaic of the games' real opening frames under the title, and each section sits beside a game picture. The writing went through an adversarial pass (plain voice, facts against the counted fact sheet, a sceptical reader). Facts were checked against the counted fact sheet and the other-sets comparison: about 1,410 batch games, a program-recorded win for the first thousand, 72 first plays on 66 of them with none finished, LT03 eight versions, most feedback Mark's, human lines are one person's run.
+PURPOSE: The note behind the games: why a person has to play every game, and what that changed. Written in Mark Barney's voice. Lifting it to another site needs style.css, previews/ and the links back to the catalog page copied along.
+SRP/DRY check: Pass -- shares style.css and previews/ with the catalog page; game pictures are the catalog's own files.
 -->
 <!doctype html>
 <html lang="en">
@@ -16,38 +16,43 @@ SRP/DRY check: Pass — shares style.css with the catalog page; no game data is 
 <body>
 <header><a class="wordmark" href="./">ARC-3 SYNTHETIC GAMES</a><nav aria-label="Primary"><a href="index.html">Games</a><a href="why.html" aria-current="page">Why</a><a href="https://github.com/82deutschmark/arc3-synthetic-games">GitHub<span aria-hidden="true">&nbsp;↗</span></a></nav></header>
 <main>
-<article class="essay">
+<article class="essay longread">
 <p class="fine">Hey, don’t bother running this through Pangram. I’ll save you the credit. Pangram will say it’s 100% AI-written. It is. Welcome to the new normal.</p>
-<h1>Why a person plays every game.</h1>
-<p class="deck">These games were made slowly, on purpose.</p>
+<h1>Why a person has to be in the loop.</h1>
+<p class="deck">Agents built these games. People played them, said what was wrong, and decided which to keep.</p>
+<div class="mosaic"><a href="https://arc3.sonpham.net/games/pt01" title="PT01"><img src="previews/pt01.png" width="256" height="256" alt="PT01, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/te01" title="TE01"><img src="previews/te01.png" width="256" height="256" alt="TE01, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/dz01" title="DZ01"><img src="previews/dz01.png" width="256" height="256" alt="DZ01, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/lt03" title="LT03"><img src="previews/lt03.png" width="256" height="256" alt="LT03, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/es01" title="ES01"><img src="previews/es01.png" width="256" height="256" alt="ES01, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/eh01" title="EH01"><img src="previews/eh01.png" width="256" height="256" alt="EH01, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/ff01" title="FF01"><img src="previews/ff01.png" width="256" height="256" alt="FF01, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/xb02" title="XB02"><img src="previews/xb02.png" width="256" height="256" alt="XB02, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/wb02" title="WB02"><img src="previews/wb02.png" width="256" height="256" alt="WB02, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/g019" title="BS01"><img src="previews/bs01.png" width="256" height="256" alt="BS01, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/wf02" title="WF02"><img src="previews/wf02.png" width="256" height="256" alt="WF02, opening screen" loading="lazy"></a><a href="https://arc3.sonpham.net/games/g014" title="HC01"><img src="previews/hc01.png" width="256" height="256" alt="HC01, opening screen" loading="lazy"></a></div>
 
-<p>I’m a video game producer. I learned to write code in the ’80s for one reason: I wanted to make games. I’m still not good at clever code on my own. When I work with a partner who can write it, I’m sometimes able to supply the clever parts. That’s how I work.</p>
-<p>Coding agents are wonderful. I can build things now that were never possible for me. But on their own they put the old together. They don’t find anything new. What a person brings is taste: knowing the domain, a nose for what’s interesting, and knowing what’s missing. The agent makes the game. A person playing it is the check.</p>
+<section class="beat"><div>
+<h2>Agents build. A person decides.</h2>
+<p>I’m a video game producer. I learned to code in the ’80s because I wanted to make games, and I’m still not a good programmer. Coding agents write the code now, and that’s a real change for me.</p>
+<p>What I haven’t seen them do on their own is notice that a game is dull, or confusing, or has nothing new in it. That takes someone who knows games.</p>
+</div><figure class="shot"><a href="https://arc3.sonpham.net/games/pt01"><img src="previews/pt01.png" width="256" height="256" alt="PT01, opening screen"></a><figcaption>PT01 · <a href="https://arc3.sonpham.net/games/pt01">Play ↗</a></figcaption></figure></section>
 
-<h2>What I tried first</h2>
-<p>I’ve played ARC-AGI-3 since the day the preview came out, in July 2025. When the game engine opened up in January, I forked it the next day and pointed my coding agents at it. They could barely manage reskins and rotations of games that already existed.</p>
-<p>So we built generators that turned out games by the batch. Well over a thousand, each one proven winnable by a program. When strangers sat down with them, nobody finished one. The notes people left say the same thing again and again: I never understood it, it felt impossible, it felt broken.</p>
+<section class="beat"><div>
+<h2>What went wrong when agents worked alone</h2>
+<p>I’ve played ARC-AGI-3 since the preview came out in July 2025. When the game engine opened up in January, I forked it the next day and pointed my coding agents at it. At first they mostly reskinned and rotated the games that already existed.</p>
+<p>So we tried batches: about fourteen hundred games turned out by generators, and a program checked that the first thousand could be won. We put some of them in front of visitors. Nobody finished one, and the notes mostly said they never understood it, or it felt impossible or broken.</p>
+<p>That’s slop. Slop looks new and breaks the rules of its domain. I got the word from Jeremy Budd and Tim Scarfe, in a paper in the Machine Learning Street Talk archive, <a href="https://archive.mlst.ai/paper/why-creativity-cannot-be-interpolated/">Why Creativity Cannot Be Interpolated</a>. In ARC-AGI-3 the first rule is that a person can finish the game cold. I add one: it has to be fun. A program can prove a game can be won. It can’t tell you whether anyone would want to win it.</p>
+</div><figure class="shot"><a href="https://arc3.sonpham.net/games/te01"><img src="previews/te01.png" width="256" height="256" alt="TE01, opening screen"></a><figcaption>TE01: one person cleared seven of eight levels · <a href="https://arc3.sonpham.net/games/te01">Play ↗</a></figcaption></figure></section>
 
-<h2>What slop is</h2>
-<p>Slop is something that doesn’t respect the constraints of the domain. It looks new, and it breaks a rule the domain cares about. I got that from Dr. Jeremy Budd and Dr. Tim Scarfe of Machine Learning Street Talk (<a href="https://archive.mlst.ai/paper/why-creativity-cannot-be-interpolated/">Why Creativity Cannot Be Interpolated</a>).</p>
-<p>In ARC-AGI-3 the domain has a rule you can check. The games have to be easy for humans, and fun. A game that’s easier for an AI than for a person, or that no person enjoys, is slop, however clever its mechanics are. A program can prove a game is winnable. It can’t tell you whether a person would want to win it.</p>
+<section class="beat"><div>
+<h2>One at a time, with a person playing</h2>
+<p>ARC Prize hired a studio of game developers, and members of the public played each game cold before it shipped. We can’t run that. Ours is smaller: someone plays a version and says what’s wrong, the agent fixes it, and someone plays it again. LT03, below, went through eight versions.</p>
+<p>Most of that someone is me, and most of the feedback on these games is mine. Visitors to the public playtest page left written notes too, mostly in September.</p>
+</div><figure class="shot wide"><a href="https://arc3.sonpham.net/games/lt03"><img src="previews/lt03-levels.png" width="1152" height="128" alt="The first screen of each of LT03's 9 levels"></a><figcaption>LT03: eight versions to get here · <a href="https://arc3.sonpham.net/games/lt03">Play ↗</a></figcaption></figure></section>
 
-<h2>What we did instead</h2>
-<p>We made games one at a time, the way the ARC Prize Foundation made theirs. They hired game developers, and members of the public played every game cold before it shipped. Ours go the same way. Someone plays it, says what’s wrong, the agent fixes it, someone plays it again. LT03 went through eight versions that way.</p>
-<p>That someone was mostly me. Most of the feedback on these games came from me, with help from Son Pham and Ronen, and from the people who played on the review site. It takes time and attention, and it’s the part an agent can’t do.</p>
+<section class="beat"><div>
+<h2>What the human number is</h2>
+<p>ARC-AGI-3 scores an agent by how many actions it took against how many a person needed. Where a person has played a game here, the card shows what they did: the actions they took and the levels they cleared. It’s one person’s run, not ARC’s median. No number means no play of that version is on record.</p>
+<p>The four outside synthetic sets I looked at either publish a solver or a replayed solution as proof a game can be won, or say nothing about it. None publishes a record of people playing its games.</p>
+</div><figure class="shot"><a href="https://arc3.sonpham.net/games/eh01"><img src="previews/eh01.png" width="256" height="256" alt="EH01, opening screen"></a><figcaption>EH01: one person cleared all eight levels in 836 actions · <a href="https://arc3.sonpham.net/games/eh01">Play ↗</a></figcaption></figure></section>
 
-<h2>Why the human number matters</h2>
-<p>ARC-AGI-3 scores an agent by how many actions it took compared with how many a person needed. The other synthetic game sets I’ve seen tell you a program checked that each game can be won. None of them shows a person playing it. Without that number, nothing ties a game to how a human actually does on it, and that’s the thing that matters.</p>
-
-<h2>The 25 public games</h2>
-<p>ARC says the 25 public games are intentionally easier than the rest and don’t cover everything in the private set. Beating all 25 is a good start. It’s the tutorial level.</p>
-
-<h2>What’s on this page</h2>
-<p>Only games that got worked on until they were worth keeping. Where a person has played a game, the card shows how many actions it took and how many levels got cleared. Where nobody has, the card leaves that out, and that game isn’t finished. Every card has a Play button, and every play adds a real human number.</p>
-
-<h2>Whose games these are</h2>
-<p>Not all of them are mine. Some came from Son and Ronen, and some of Son’s came out of his own head. Some we pulled out of the GPT and Claude slop soup, and then people got their hands on them. I don’t know that any of them are new ideas. What we added was human creativity.</p>
+<section class="beat"><div>
+<h2>Who made these, and what for</h2>
+<p>Not all of these are mine. Some came from Son and Ronen, and some of Son’s came out of his own head. Others started as GPT or Claude output that people then played and reworked. I can’t promise any idea is new. I can say people played them and kept sending them back until they worked.</p>
+<p>ARC says its 25 public games are easier on purpose and don’t cover everything in the private set, so we don’t copy them. The bet is that games a person played make better practice for an agent than games only a program checked. Nobody has measured that yet.</p>
 <p><a href="index.html"><span aria-hidden="true">←</span> Back to the games</a></p>
+</div><figure class="shot"><a href="https://arc3.sonpham.net/games/dz01"><img src="previews/dz01.png" width="256" height="256" alt="DZ01, opening screen"></a><figcaption>DZ01: one person cleared all eight levels in 380 actions · <a href="https://arc3.sonpham.net/games/dz01">Play ↗</a></figcaption></figure></section>
 </article>
 </main>
 <footer><span>Built for exploration. Shared for learning.</span><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/LICENSE">MIT license</a><span>Not affiliated with ARC Prize.</span></footer>
