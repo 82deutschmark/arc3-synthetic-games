@@ -2,7 +2,7 @@
 
 ## 0.6.0 — 2 November 2026
 
-Claude Sonnet 5.5 Medium: the front page order follows Mark Barney's call: pt01, te01, dz01, lt03 and es01 lead; wf02, hc01 and li01 are last. ng02 and fr01 are off the page (ng02 sits too close to eh01 in colour; fr01 is an earlier version of ff01). xb02, a game with a world several screens wide, is added, with its source in `games/` and its pictures. The why note is rewritten around the games' own pictures.
+Claude Sonnet 5.5 Medium: the front page order follows Mark Barney's call: pt01, te01, dz01, lt03 and es01 lead; wf02 and hc01 are last. li01 is off the page: approved, but not one of the best. ng02 and fr01 are also off the page (ng02 sits too close to eh01 in colour; fr01 is an earlier version of ff01). xb02, a game with a world several screens wide, is added, with its source in `games/` and its pictures. The why note is rewritten around the games' own pictures.
 
 ## 0.5.2 — 2 November 2026
 
