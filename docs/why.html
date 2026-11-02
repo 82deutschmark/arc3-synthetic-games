@@ -1,16 +1,16 @@
 <!--
 Author: Claude Sonnet 5.5 Medium, from Mark Barney's own words
 Date: 30-October-2026
-Updated: 02-November-2026, Claude Opus 5.5 Medium — added Mark's argument that a person playing is the bottleneck and the tether to reality (relative human action efficiency; slop as breaking the easy-for-humans constraint); the missing-play wording matches the page. Added "One at a time, the way ARC made theirs": his history since the preview, agents that could only reskin and rotate at first, and what other synthetic sets publish instead. The paper's academic lineage and jargon are cut; a plain "What slop is" section replaces it (slop breaks the domain's constraints; in ARC-AGI-3 that is easy for humans, and fun).
-PURPOSE: The note behind the featured games: why a person has to be in the loop, what the ARC-AGI-3 public games are, and where these games came from. Written in Mark Barney's voice; a draft until he is happy with it. Revised the same day after a fact-check against the paper, the repo and a cold read. Lifting it to another site needs style.css and the links back to the catalog page copied along.
+Updated: 02-November-2026, Claude Sonnet 5.5 Medium — rewritten shorter after the Boss disliked the first version. New plain title; the story runs in order (what I tried first, what slop is, what we did instead, why the human number matters); the batch games that strangers never finished are named; says plainly that most of the playing and feedback was his. Cut: the long public-25 and private-set guessing, the repeated points, the paper citations beyond one credit.
+PURPOSE: The note behind the featured games: why a person has to play every game, and what that changed. Written in Mark Barney's voice; a draft until he is happy with it. Lifting it to another site needs style.css and the links back to the catalog page copied along.
 SRP/DRY check: Pass — shares style.css with the catalog page; no game data is repeated here.
 -->
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="A video game producer on why creativity can't be interpolated, what the ARC-AGI-3 public games really are, and why these games were made with a person in the loop.">
-<title>Creativity can’t be interpolated · ARC-3 Synthetic Games</title>
+<meta name="description" content="Why every game on this site was played by a person before it was kept, and what that changed.">
+<title>Why a person plays every game · ARC-3 Synthetic Games</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,39 +18,32 @@ SRP/DRY check: Pass — shares style.css with the catalog page; no game data is 
 <main>
 <article class="essay">
 <p class="fine">Hey, don’t bother running this through Pangram. I’ll save you the credit. Pangram will say it’s 100% AI-written. It is. Welcome to the new normal.</p>
-<h1>Creativity can’t be interpolated.</h1>
-<p class="deck">Why these games were made the slow way, with a person in the loop.</p>
+<h1>Why a person plays every game.</h1>
+<p class="deck">These games were made slowly, on purpose.</p>
 
-<p>I’m a video game producer. I learned to write code in the ’80s for one reason: I wanted to make games. I’m still not good at clever code on my own. But when I iterate with a partner who can write code, I’m sometimes able to supply the clever parts. That’s how I work.</p>
+<p>I’m a video game producer. I learned to write code in the ’80s for one reason: I wanted to make games. I’m still not good at clever code on my own. When I work with a partner who can write it, I’m sometimes able to supply the clever parts. That’s how I work.</p>
+<p>Coding agents are wonderful. I can build things now that were never possible for me. But on their own they put the old together. They don’t find anything new. What a person brings is taste: knowing the domain, a nose for what’s interesting, and knowing what’s missing. The agent makes the game. A person playing it is the check.</p>
 
-<h2>Coding agents are amazing. They aren’t creative.</h2>
-<p>Coding agents are wonderful. I can get things built now that were never possible for me before. But on their own they aren’t creative. They aren’t discovering anything new or thinking of anything new. They put together the old, which is great, and we can do a lot with that. We just shouldn’t mistake it for something it isn’t.</p>
-<p>What a person brings is taste: knowing the domain, a nose for what’s interesting, and knowing what’s missing. In my shop the agent makes the thing, and a person playing the game is the check. Today the agent builds, and I decide what is worth building and whether it’s any good.</p>
+<h2>What I tried first</h2>
+<p>I’ve played ARC-AGI-3 since the day the preview came out, in July 2025. When the game engine opened up in January, I forked it the next day and pointed my coding agents at it. They could barely manage reskins and rotations of games that already existed.</p>
+<p>So we built generators that turned out games by the batch. Well over a thousand, each one proven winnable by a program. When strangers sat down with them, nobody finished one. The notes people left say the same thing again and again: I never understood it, it felt impossible, it felt broken.</p>
 
 <h2>What slop is</h2>
-<p>We talk about AI slop all the time. Most people don’t have a definition for it, and it can be tough to recognize. Here’s the one I use, from Dr. Jeremy Budd and Dr. Tim Scarfe of Machine Learning Street Talk (<a href="https://archive.mlst.ai/paper/why-creativity-cannot-be-interpolated/">Why Creativity Cannot Be Interpolated</a>): slop is something that doesn’t respect the constraints of the domain. It’s fake creativity. It looks new, and it breaks a rule the domain cares about.</p>
-<p>In ARC-AGI-3 slop is easier to recognize, because the domain has a constraint you can check: the games have to be easy for humans, and fun. A game that’s easier for an AI than for a person, or that no person enjoys playing, is slop, however clever its mechanics are.</p>
+<p>Slop is something that doesn’t respect the constraints of the domain. It looks new, and it breaks a rule the domain cares about. I got that from Dr. Jeremy Budd and Dr. Tim Scarfe of Machine Learning Street Talk (<a href="https://archive.mlst.ai/paper/why-creativity-cannot-be-interpolated/">Why Creativity Cannot Be Interpolated</a>).</p>
+<p>In ARC-AGI-3 the domain has a rule you can check. The games have to be easy for humans, and fun. A game that’s easier for an AI than for a person, or that no person enjoys, is slop, however clever its mechanics are. A program can prove a game is winnable. It can’t tell you whether a person would want to win it.</p>
 
-<h2>If you’re not deep in ARC-AGI-3</h2>
-<p>ARC says part of this in <a href="https://arxiv.org/abs/2603.24621">its own paper</a> (section 3.6), but I haven’t seen it put plainly for people outside the deep end of ARC-AGI-3. Three things to know.</p>
-<ul>
-<li><strong>The 25 public games are the tutorial level.</strong> ARC calls them intentionally easier and says they don’t fully cover the mechanics of the private set. “My agent beats all 25 public games, as efficiently as a human” is fine. It’s also like saying you speed-ran the tutorial level of a video game. Not that impressive. The public 25 are a small taste of the mechanics, the easiest stuff, there to get you started. They’re not a tour of everything you’ll meet. I haven’t seen the semi-private games, but I expect them to be deviously difficult.</li>
-<li><strong>The public 25 had to be a little fun.</strong> ARC says they got a stronger emphasis on clarity and fun, so they’re easy for humans and at least somewhat fun for humans. My guess is the private games got less of that. I can’t see them, so it’s a guess. I expect stuff that isn’t fun for humans, while still being somewhat easy for a person and hard for an AI.</li>
-<li><strong>A generated game that no person played is slop.</strong> I’ve seen plenty of procedurally generated game packages from people who pointed a coding agent at the problem and said, “Hey, do this.” Mechanics-wise, okay, cool. Most of it is complete slop: no human curation, no human intent, and it has probably never been played by a human. Here’s my tell. ARC scores an agent against what real people did, with human action baselines behind the numbers. If a synthetic game set ships with no human action numbers at all, I assume nobody played it. That’s a tell, not proof.</li>
-</ul>
+<h2>What we did instead</h2>
+<p>We made games one at a time, the way the ARC Prize Foundation made theirs. They hired game developers, and members of the public played every game cold before it shipped. Ours go the same way. Someone plays it, says what’s wrong, the agent fixes it, someone plays it again. LT03 went through eight versions that way.</p>
+<p>That someone was mostly me. Most of the feedback on these games came from me, with help from Son Pham and Ronen, and from the people who played on the review site. It takes time and attention, and it’s the part an agent can’t do.</p>
 
-<h2>One at a time, the way ARC made theirs</h2>
-<p>I’ve been playing ARC-AGI-3 since the day the preview came out, summer before last. When the game engine came out in January, I forked it the next day and pointed my coding agents at the code and everything around it. They could barely manage reskins and rotations of games that already existed.</p>
-<p>So I make games the way the ARC Prize Foundation made theirs: one by one, with a person deeply in the loop. They hired a studio of game developers, and members of the public played every game cold before it shipped. It takes time and cognitive bandwidth. Somebody who’s a much more talented software engineer, like Son Pham, can get a lot more done than I can on my own.</p>
-<p>The other synthetic sets I’ve seen tell you a computer program checked that each game is possible and winnable. None of them publishes a single person playing its games, or a person judging whether they’re any good. One says its games are easy for humans. None shows it, never mind easier for a human than for an AI. Where a human baseline number does show up, it’s the solver’s own moves, or ARC’s figures copied over from ARC’s original games.</p>
+<h2>Why the human number matters</h2>
+<p>ARC-AGI-3 scores an agent by how many actions it took compared with how many a person needed. The other synthetic game sets I’ve seen tell you a program checked that each game can be won. None of them shows a person playing it. Without that number, nothing ties a game to how a human actually does on it, and that’s the thing that matters.</p>
 
-<h2>The bottleneck is a person sitting down to play</h2>
-<p>The hardest thing about making synthetic games, and the biggest bottleneck, is getting an actual human to sit down and play them. Agents can make games all day. They can’t tell you how a person does on one.</p>
-<p>That’s also the bottleneck for anybody doing reinforcement learning on these games. ARC-AGI-3 scores an agent by relative human action efficiency: how many actions a person needed to clear a level, compared with how many the agent took. Every synthetic game set and dataset I’ve seen is missing that number. Nothing ties it to reality, and the reality is how a human does on these games.</p>
-<p>A lot of the synthetic games I see break the easy-for-humans constraint. I think many of them are actually easier for an AI than for a person, and that makes them slop. I was talking about this on Discord with Jack and Son. You can’t check that constraint without a person playing the game, so the human numbers aren’t decoration. They’re the proof.</p>
+<h2>The 25 public games</h2>
+<p>ARC says the 25 public games are intentionally easier than the rest and don’t cover everything in the private set. Beating all 25 is a good start. It’s the tutorial level.</p>
 
 <h2>What’s on this page</h2>
-<p>Only games that got worked on until they were worth keeping. The old batch that never got iterated on is gone. Where a person has played a game, the card shows how many actions it took and how many levels got cleared. Where nobody has played it yet, the card leaves that line out, and by my own test above that game isn’t finished. Every card has a Play button, and each play adds a real human number.</p>
+<p>Only games that got worked on until they were worth keeping. Where a person has played a game, the card shows how many actions it took and how many levels got cleared. Where nobody has, the card leaves that out, and that game isn’t finished. Every card has a Play button, and every play adds a real human number.</p>
 
 <h2>Whose games these are</h2>
 <p>Not all of them are mine. Some came from Son and Ronen, and some of Son’s came out of his own head. Some we pulled out of the GPT and Claude slop soup, and then people got their hands on them. I don’t know that any of them are new ideas. What we added was human creativity.</p>
