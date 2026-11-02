@@ -50,7 +50,7 @@ function card(game) {
   title.href = SOURCE_BASE + game.path;
   const play = el('a', 'play', 'PLAY ↗');
   play.href = game.play;
-  head.append(title, play, el('span', 'controls', (game.inputs || []).map(i => INPUTS[i]).join(' ')));
+  head.append(title, play, el('span', 'keys', (game.inputs || []).map(i => INPUTS[i]).join(' ')));
   copy.append(head);
   // Spoilers on purpose: what we are proud of first, then the rules written out, then how it differs from ARC's public 25 and its look.
   const notes = game.spoiler || {};

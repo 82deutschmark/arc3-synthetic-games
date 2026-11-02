@@ -46,7 +46,7 @@ main>.fine{margin:12px 0 18px;max-width:none}
 #featured.spoilers{display:block}
 .spoiler{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:clamp(16px,3vw,36px);padding:16px 0 18px;border-top:1px solid var(--line)}
 .spoiler .pictures{background:#183b35;padding:8px;align-self:start}.spoiler .pictures img{display:block;width:100%;height:auto;image-rendering:pixelated;background:#000;margin-bottom:6px}.spoiler .strip{gap:2px;max-width:none}
-.spoiler .head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;margin-bottom:4px}.spoiler .name{font:700 34px/1 'Courier New',monospace;margin:0}.spoiler .play{margin:0}.spoiler .controls{font:13px Arial,sans-serif;color:var(--muted)}
+.spoiler .head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;margin-bottom:4px}.spoiler .name{font:700 34px/1 'Courier New',monospace;margin:0}.spoiler .play{margin:0}.spoiler .keys{font:13px Arial,sans-serif;color:var(--muted)}
 .spoiler .part{margin:10px 0 0}.spoiler .part h3{font:700 11px Arial,sans-serif;letter-spacing:.12em;color:var(--accent);margin:0 0 3px}.spoiler .part p{margin:0;font-size:16px;line-height:1.5}.spoiler .part p.lead{font-size:18px;color:var(--ink)}
 .spoiler .rules{margin:0;padding-left:20px}.spoiler .rules li{font-size:16px;line-height:1.45;margin:0 0 4px}.spoiler .rules li::marker{color:var(--accent)}
 .spoiler .said{margin:12px 0 0;padding:8px 12px;border-left:3px solid var(--accent);font-style:italic;font-size:16px;color:var(--ink);background:rgba(179,63,36,.06)}
