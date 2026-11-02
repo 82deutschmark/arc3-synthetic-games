@@ -2,7 +2,7 @@
 
 ## 0.5.2 — 2 November 2026
 
-Claude Opus 5.5 Medium: the note now says how these games are made (one at a time with a person deep in the loop, the way ARC Prize made theirs), what other synthetic sets publish instead (a program's check that a game can be won), and why a person playing is the bottleneck and the tie to reality.
+Claude Opus 5.5 Medium: the note now says how these games are made (one at a time with a person deep in the loop, the way ARC Prize made theirs), what other synthetic sets publish (a program’s check that a game can be won), and why a person playing is the bottleneck and the tie to reality.
 
 ## 0.5.1 — 1 November 2026
 
