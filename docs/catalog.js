@@ -3,6 +3,7 @@
 // Updated: 30-October-2026, Claude Opus 5.5 — highlight cards plus a compact grid, both from catalog.json.
 // Updated: 31-October-2026, Claude Sonnet 5.5 — a Play link on every card, to the game's page on arc3.sonpham.net.
 // Updated: 31-October-2026, Claude Sonnet 5.5 — the page shows only the highlighted picks (Mark's best); the other approved games stay in catalog.json and games/. The compact card is gone.
+// Updated: 01-November-2026, Claude Opus 5.5 — no human row when no play is recorded.
 // PURPOSE: Render the highlighted games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
 'use strict';
@@ -37,9 +38,11 @@ function card(game) {
   const copy = el('div', 'info');
   const title = el('a', 'name', game.id.toUpperCase());
   title.href = SOURCE_BASE + game.path;
-  const human = game.human ? `${game.human.actions} actions, ${game.human.levels}/${game.levels} levels` : '—';
   const facts = el('dl', 'facts');
-  for (const [label, value] of [['HUMAN', human], ['INPUTS', (game.inputs || []).map(i => INPUTS[i]).join(' ')]]) {
+  // A game with no recorded play simply has no human row; a dash read as "nobody played this".
+  const rows = [['INPUTS', (game.inputs || []).map(i => INPUTS[i]).join(' ')]];
+  if (game.human) rows.unshift(['HUMAN', `${game.human.actions} actions, ${game.human.levels}/${game.levels} levels`]);
+  for (const [label, value] of rows) {
     facts.append(el('dt', '', label), el('dd', '', value));
   }
   const play = el('a', 'play', 'PLAY ↗');

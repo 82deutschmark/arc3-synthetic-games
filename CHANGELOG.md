@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 — 1 November 2026
+
+Claude Opus 5.5: a card with no recorded human play no longer shows a human row. The dash read as "nobody played this".
+
 ## 0.5.0 — 1 November 2026
 
 Claude Sonnet 5.5: four highlighted games moved on, so the page now shows their current versions. lt03 replaces lt02, the older version it was grown from; it carries Mark Barney's Trainable vote. wb02, wf02 and ng02 replace wb01, wf01 and ng01; they were published the same day and have no Trainable vote and no recorded human play yet. The old files and pictures are removed. `tools/make_media.py` now draws stills only.

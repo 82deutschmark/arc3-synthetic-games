@@ -29,7 +29,7 @@ The collection provides environments, not a complete reinforcement-learning syst
 - `docs/previews/`: real engine frames: each game's opening screen and the first frame of every level.
 - The page shows the highlighted games only, each at its current version. Every game in `docs/catalog.json` is here in `games/`.
 - `tools/validate.py`: loads each game, resets it and takes one action. It does not play games through.
-- Human numbers on the page come from people's review plays. A dash means none recorded yet. Winning lines are not published.
+- Human numbers on the page come from people's review plays; a game with none recorded shows no human line. Winning lines are not published.
 
 ## Contributing
 
