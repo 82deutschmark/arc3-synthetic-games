@@ -2,7 +2,7 @@
 
 ## 0.7.3 — 2 November 2026
 
-Claude Opus 5.5 High: a called-out note, at Mark Barney's call. ES01 (an outbreak spread person to person) and LT03 (air strikes on a crowded city) touch what has been in the news, and no guardrail stopped either being built. The note sits under the grid, those two cards carry a red edge, and it leads their panels. The text lives once in catalog.json as "highlight", so arc.markbarney.net shows the same words.
+Claude Opus 5.5 High: a called-out note, at Mark Barney's call. ES01 (an outbreak spread person to person) and LT03 (air strikes on a crowded city) touch what has been in the news, and no guardrail stopped either being built. The note sits under the grid, those two cards carry a red edge, and it leads their panels. The text lives once in catalog.json as "highlight", so arc.markbarney.net shows the same words. The script and stylesheet links carry the version, and the catalog is fetched fresh, so a visitor sees a change as soon as it is pushed.
 
 ## 0.7.2 — 2 November 2026
 

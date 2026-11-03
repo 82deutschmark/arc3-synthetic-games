@@ -99,7 +99,7 @@ function card(game) {
   node.addEventListener('click', () => openPanel(game));
   return node;
 }
-fetch('catalog.json').then(response => {
+fetch('catalog.json', { cache: 'no-cache' }).then(response => {
   if (!response.ok) throw new Error(`Catalog request failed (${response.status})`);
   return response.json();
 }).then(catalog => {
