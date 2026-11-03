@@ -6,7 +6,8 @@
 // Updated: 01-November-2026, Claude Opus 5.5 — no human row when no play is recorded.
 // Updated: 02-November-2026, Claude Opus 5.5 High — the Boss's spoilers page: each card shows the game's rules, what is special
 //   about it, its look and how it differs from the public 25, from the game's "spoiler" entry in catalog.json. No human numbers.
-// Updated: 02-November-2026, Claude Sonnet 5.5 — the Boss hated the long spoiler rows: back to the card grid, one line per card, the rest behind a click.
+// Updated: 02-November-2026, Claude Opus 5.5 High — data-dense: twelve small cards, six to a row on a laptop; a click opens the
+//   game's full write-up in a dialog. arc.markbarney.net mirrors this layout from the same catalog.json.
 // PURPOSE: Render the highlighted games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
 'use strict';
@@ -36,56 +37,60 @@ function section(label, body) {
   box.append(el('h3', '', label), body);
   return box;
 }
-// The card face carries only the first sentence of "what is special"; everything else waits behind a click.
+// A card face only has room for the first sentence of "what is special".
 function hook(text) {
   const match = (text || '').match(/^.*?[.!?](?=\s|$)/);
   return match ? match[0] : (text || '');
 }
-function detail(game) {
-  const notes = game.spoiler || {};
-  const box = el('div', 'more');
-  if (notes.special) box.append(section('WHAT’S SPECIAL', el('p', '', notes.special)));
-  if (notes.rules && notes.rules.length) {
-    const list = el('ul', 'rules');
-    for (const rule of notes.rules) list.append(el('li', '', rule));
-    box.append(section('THE RULES', list));
-  }
-  if (notes.vsPublic) box.append(section('NOT IN THE PUBLIC 25', el('p', '', notes.vsPublic)));
-  if (notes.look) box.append(section('THE LOOK', el('p', '', notes.look)));
-  if (notes.markSaid) box.append(el('blockquote', 'said', `“${notes.markSaid}” — Mark`));
-  box.hidden = true;
-  return box;
+function keys(game) {
+  return (game.inputs || []).map(i => INPUTS[i]).join(' ');
 }
-function card(game) {
-  const node = el('article', 'pick');
+// The full write-up for one game, shown in the page's one <dialog>.
+function openPanel(game) {
+  const dialog = document.querySelector('#panel');
+  const body = dialog.querySelector('.panel-body');
+  const notes = game.spoiler || {};
+  const side = el('div', 'side');
   const image = el('img');
   image.src = game.media.play;
   image.alt = `Opening screen of ${game.id}`;
   image.width = 256;
   image.height = 256;
-  const copy = el('div', 'info');
-  const title = el('a', 'name', game.id.toUpperCase());
-  title.href = SOURCE_BASE + game.path;
-  const play = el('a', 'play', 'PLAY ↗');
+  const play = el('a', 'play big', `PLAY ${game.id.toUpperCase()} ↗`);
   play.href = game.play;
-  const keys = el('p', 'keys', (game.inputs || []).map(i => INPUTS[i]).join(' '));
-  const notes = game.spoiler || {};
-  copy.append(title, play, keys);
-  if (notes.special) copy.append(el('p', 'hook', hook(notes.special)));
-  copy.append(strip(game));
-  const more = detail(game);
-  const toggle = el('button', 'toggle', 'MORE ▾');
-  toggle.type = 'button';
-  toggle.setAttribute('aria-expanded', 'false');
-  toggle.addEventListener('click', () => {
-    const open = more.hidden;
-    more.hidden = !open;
-    node.classList.toggle('open', open);
-    toggle.setAttribute('aria-expanded', String(open));
-    toggle.textContent = open ? 'LESS ▴' : 'MORE ▾';
-  });
-  copy.append(toggle);
-  node.append(image, copy, more);
+  const source = el('a', 'source', 'Python source ↗');
+  source.href = SOURCE_BASE + game.path;
+  side.append(image, strip(game), el('p', 'meta', `${game.levels} levels · ${keys(game)}`), play, source);
+  const text = el('div', 'text');
+  if (notes.special) text.append(section('WHAT’S SPECIAL', el('p', 'lead', notes.special)));
+  if (notes.rules && notes.rules.length) {
+    const list = el('ul', 'rules');
+    for (const rule of notes.rules) list.append(el('li', '', rule));
+    text.append(section('THE RULES', list));
+  }
+  if (notes.vsPublic) text.append(section('NOT IN THE PUBLIC 25', el('p', '', notes.vsPublic)));
+  if (notes.look) text.append(section('THE LOOK', el('p', '', notes.look)));
+  if (notes.markSaid) text.append(el('blockquote', 'said', `“${notes.markSaid}” — Mark`));
+  dialog.querySelector('.panel-title').textContent = game.id.toUpperCase();
+  body.replaceChildren(side, text);
+  dialog.showModal();
+  dialog.scrollTop = 0;
+}
+// A small card: opening board, code, level count, inputs, one line. The whole card opens the panel.
+function card(game) {
+  const node = el('button', 'pick');
+  node.type = 'button';
+  node.setAttribute('aria-label', `${game.id.toUpperCase()}: rules and details`);
+  const image = el('img');
+  image.src = game.media.play;
+  image.alt = '';
+  image.width = 256;
+  image.height = 256;
+  image.loading = 'lazy';
+  const head = el('span', 'head');
+  head.append(el('b', '', game.id.toUpperCase()), el('span', '', `${game.levels} LV`));
+  node.append(image, head, el('span', 'keys', keys(game)), el('span', 'hook', hook((game.spoiler || {}).special)));
+  node.addEventListener('click', () => openPanel(game));
   return node;
 }
 fetch('catalog.json').then(response => {
@@ -93,7 +98,7 @@ fetch('catalog.json').then(response => {
   return response.json();
 }).then(catalog => {
   const picks = catalog.featured.map(id => catalog.games.find(game => game.id === id));
-  document.querySelector('#count').textContent = `${picks.length} games`;
+  document.querySelector('#count').textContent = `${picks.length} best of ${catalog.games.length} games`;
   document.querySelector('#featured').append(...picks.map(card));
 }).catch(() => {
   const error = document.querySelector('#error');

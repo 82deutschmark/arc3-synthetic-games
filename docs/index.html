@@ -6,6 +6,7 @@ Updated: 31-October-2026, Claude Sonnet 5.5 — only the highlighted picks are o
 Updated: 01-November-2026, Claude Sonnet 5.5 — each highlight is the game's current version, so the description no longer says every game is approved.
 Updated: 02-November-2026, Claude Opus 5.5 High — the Boss's spoilers page: the best games with their rules written out, what is special about each, and how each differs from ARC's public 25. Human numbers are gone.
 PURPOSE: Show the best games and what makes each one creative, rules included. All game data comes from catalog.json.
+Updated: 02-November-2026, Claude Opus 5.5 High — a dense card grid with one dialog for the details, and the clone line for people taking the games into their own training.
 SRP/DRY check: Pass — catalog.json is the only game registry.
 -->
 <!doctype html>
@@ -19,11 +20,12 @@ SRP/DRY check: Pass — catalog.json is the only game registry.
 <body>
 <header><a class="wordmark" href="./">ARC-3 SYNTHETIC GAMES</a><nav aria-label="Primary"><a href="why.html">Why</a><a href="catalog.json">Catalog</a><a href="https://github.com/82deutschmark/arc3-synthetic-games">GitHub<span aria-hidden="true">&nbsp;↗</span></a></nav></header>
 <main>
-<p class="lead-line"><span id="count">The games</span> by <a href="https://arc.markbarney.net/news#2026-10-18-special-turducken-takes-third">Team Turducken</a>, directed by Mark Barney. Click MORE on a card for the rules. Spoilers.</p>
+<p class="lead-line"><b id="count">The games</b> by <a href="https://arc.markbarney.net/news#2026-10-18-special-turducken-takes-third">Team Turducken</a>, directed by Mark Barney. ARC-AGI-3 style, Python on the ARC engine, MIT: fork them for your own training. Click a card for its rules (spoilers). <code class="clone">git clone https://github.com/82deutschmark/arc3-synthetic-games</code> <a href="https://github.com/82deutschmark/arc3-synthetic-games#quick-start">Quick start</a></p>
 <p id="error" role="alert" hidden></p>
 <section id="featured" aria-label="Games"></section>
+<dialog id="panel" aria-labelledby="panel-title"><div class="panel-top"><h2 class="panel-title" id="panel-title"></h2><form method="dialog"><button class="close" aria-label="Close">✕</button></form></div><div class="panel-body"></div></dialog>
 <noscript><p>JavaScript is needed to show the games. <a href="catalog.json">Read the catalog</a>.</p></noscript>
-<p class="fine">Pictures are real engine frames. The other approved games are in the <a href="https://github.com/82deutschmark/arc3-synthetic-games/tree/main/games">repository</a>.</p>
+<p class="fine">Pictures are real engine frames. Every game is in <a href="https://github.com/82deutschmark/arc3-synthetic-games/tree/main/games">games/</a>, listed in <a href="catalog.json">catalog.json</a>.</p>
 </main>
 <footer><a href="https://github.com/82deutschmark/arc3-synthetic-games#quick-start">Run them</a><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/CREDITS.md">Credits</a><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/LICENSE">MIT license</a><span>Not affiliated with ARC Prize.</span></footer>
 </body></html>

@@ -22,13 +22,11 @@ Updated 30-October-2026, Claude Sonnet 5.5 Medium: lead section and featured car
 @media(max-width:850px){.feature{grid-template-columns:1fr;gap:18px;padding:16px 0}.screen{max-width:380px;margin:0 auto;padding:14px}}
 @media(max-width:600px){.feature h2{font-size:48px}.facts{grid-template-columns:1fr;gap:2px 0}.facts dd{margin-bottom:10px}.strip{gap:3px}}
 .lead-line{margin:10px 0;font:15px/1.4 Arial,sans-serif;color:var(--muted)}#count{color:var(--ink);font-weight:700}
-#featured{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
-.pick{display:grid;grid-template-columns:256px 1fr;gap:12px;background:#183b35;color:var(--paper);padding:8px}.pick img,.game img{display:block;width:100%;height:auto;image-rendering:pixelated;background:#000}
-.pick .facts dt{color:#e9b9a8}.pick .strip{gap:2px;max-width:none}
+.game img{display:block;width:100%;height:auto;image-rendering:pixelated;background:#000}
 .info{min-width:0}.name{font:700 26px/1 'Courier New',monospace;text-decoration:none;display:block;margin-bottom:6px}.pick .facts,.game .facts{font:12px/1.35 Arial,sans-serif;gap:2px 8px;margin:0 0 8px}.facts dt{font-size:10px;letter-spacing:.06em}
 #games.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px 10px}.game{padding:0;border:0}.game .name{font-size:17px;margin:4px 0}.game .facts{display:block}.game .facts dt{display:none}.game .facts dd{margin:0}
 main>.fine{margin:12px 0 18px;max-width:none}
-@media(max-width:1000px){#featured{grid-template-columns:1fr}}@media(max-width:520px){.pick{grid-template-columns:128px 1fr}#games.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){#games.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* Updated 02-November-2026, Claude Opus 5.5 Medium: the funnel on the numbers page, big figure left, plain words right. */
 .funnel{display:grid;grid-template-columns:auto 1fr;gap:0 18px;margin:8px 0 0;font:17px/1.4 Arial,sans-serif}.funnel dt{font:700 26px/1.3 'Courier New',monospace;color:var(--accent);text-align:right;white-space:nowrap;border-top:1px solid var(--line);padding:6px 0}.funnel dd{margin:0;border-top:1px solid var(--line);padding:10px 0 6px}
@@ -42,17 +40,27 @@ main>.fine{margin:12px 0 18px;max-width:none}
 .shot.wide{grid-column:1/-1;margin:0 0 12px}
 @media(max-width:850px){.beat{grid-template-columns:1fr;gap:0}.mosaic{grid-template-columns:repeat(4,minmax(0,1fr))}.shot{max-width:320px}.shot.wide{max-width:none}}
 
-/* Updated 02-November-2026, Claude Sonnet 5.5: the card grid is back. A card shows picture, name, one line and a strip; MORE opens the rules across the full row. */
-#featured{align-items:stretch}
-.pick .keys{font:12px Arial,sans-serif;color:#bcc9be;margin:0 0 6px}
-.pick .hook{font:14px/1.4 Georgia,serif;margin:0 0 8px;color:var(--paper);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-.pick .toggle{margin:10px 0 0;font:700 11px Arial,sans-serif;letter-spacing:.1em;background:transparent;color:var(--paper);border:1px solid #e9b9a8;padding:5px 10px;cursor:pointer}
-.pick .toggle:hover{background:var(--accent);border-color:var(--accent)}
-.pick.open{grid-column:1/-1}
-.pick .more{grid-column:1/-1;background:var(--paper);color:var(--ink);padding:4px 16px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
-.pick .more[hidden]{display:none}
-.pick .part{margin:10px 0 0}.pick .part h3{font:700 11px Arial,sans-serif;letter-spacing:.12em;color:var(--accent);margin:0 0 3px}.pick .part p{margin:0;font-size:15px;line-height:1.5}
-.pick .rules{margin:0;padding-left:20px}.pick .rules li{font-size:15px;line-height:1.45;margin:0 0 4px}.pick .rules li::marker{color:var(--accent)}
-.pick .said{grid-column:1/-1;margin:12px 0 0;padding:8px 12px;border-left:3px solid var(--accent);font-style:italic;font-size:15px;background:rgba(179,63,36,.06)}
-@media(max-width:760px){.pick .more{grid-template-columns:1fr}}
-.pick.open .hook{display:none}
+/* Updated 02-November-2026, Claude Opus 5.5 High: data-dense picks. Six small cards to a row on a laptop, three on a tablet, two on a phone; one dialog holds a game's write-up. */
+#featured{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:0 0 8px;align-items:stretch}
+.pick{display:flex;flex-direction:column;gap:0;padding:4px;background:#183b35;color:var(--paper);border:0;text-align:left;cursor:pointer;font:inherit}
+.pick:hover,.pick:focus-visible{background:var(--accent)}
+.pick img{display:block;width:100%;height:auto;aspect-ratio:1;image-rendering:pixelated;background:#000}
+.pick .head{display:flex;justify-content:space-between;align-items:baseline;padding:4px 2px 0;font:700 15px/1.2 'Courier New',monospace}.pick .head span{font:10px Arial,sans-serif;color:#bcc9be}
+.pick .keys{padding:0 2px;font:10px/1.5 Arial,sans-serif;color:#bcc9be;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick .hook{padding:2px 2px 2px;font:12px/1.35 Arial,sans-serif;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.lead-line{margin:6px 0 8px;font:14px/1.45 Arial,sans-serif}
+.clone{font:12px 'Courier New',monospace;background:#e7e2d4;padding:1px 5px;white-space:nowrap}
+#panel{width:min(980px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:0;background:var(--paper);color:var(--ink);overflow:auto}
+#panel::backdrop{background:rgba(10,20,18,.72)}
+.panel-top{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#183b35;color:var(--paper);position:sticky;top:0}
+.panel-title{margin:0;font:700 22px/1 'Courier New',monospace}.close{background:none;border:0;color:var(--paper);font-size:20px;cursor:pointer;padding:2px 6px}
+.panel-body{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;padding:12px}
+.panel-body .side img{display:block;width:100%;height:auto;image-rendering:pixelated;background:#000;margin-bottom:4px}.panel-body .strip{gap:2px;max-width:none}
+.panel-body .meta{font:12px Arial,sans-serif;color:var(--muted);margin:6px 0}.play.big{display:block;text-align:center;font-size:13px;padding:8px}.source{font:12px Arial,sans-serif}
+.panel-body .part{margin:0 0 10px}.panel-body .part h3{font:700 11px Arial,sans-serif;letter-spacing:.12em;color:var(--accent);margin:0 0 2px}
+.panel-body .part p,.panel-body .rules li{margin:0;font:14px/1.5 Georgia,serif}.panel-body .part p.lead{font-size:15px}
+.panel-body .rules{margin:0;padding-left:18px}.panel-body .rules li{margin:0 0 4px}.panel-body .rules li::marker{color:var(--accent)}
+.panel-body .said{margin:8px 0 0;padding:6px 10px;border-left:3px solid var(--accent);font-style:italic;font-size:14px;background:rgba(179,63,36,.06)}
+@media(max-width:1000px){#featured{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:700px){#featured{grid-template-columns:repeat(3,minmax(0,1fr))}.panel-body{grid-template-columns:1fr}.panel-body .side{max-width:320px}}
+@media(max-width:460px){#featured{grid-template-columns:repeat(2,minmax(0,1fr))}}

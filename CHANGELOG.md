@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2 — 2 November 2026
+
+Claude Opus 5.5 High: the front page is data-dense, at Mark Barney's call. The twelve best games are small cards, six to a row on a laptop, all on one screen: opening board, code, level count, controls and one line. A click opens the game's full write-up (what is special, the rules, how it differs from the public 25, its look) with the level strip, a play button and the source. The top line carries the clone command for anyone taking the games into their own training. arc.markbarney.net shows the same cards from this catalog.
+
 ## 0.7.1 — 2 November 2026
 
 Claude Sonnet 5.5: the card grid is back, at Mark Barney's call. The long spoiler rows are gone from the front page. Each of the twelve games is a card again (picture, name, one line, the level strip), and MORE opens its rules, what is special, how it differs from the public 25 and its look. The page text is cut to two short lines.
