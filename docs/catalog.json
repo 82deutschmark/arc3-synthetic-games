@@ -15,6 +15,13 @@
     "wf02",
     "hc01"
   ],
+  "highlight": {
+    "games": [
+      "es01",
+      "lt03"
+    ],
+    "text": "Two of these touch what has been in the news lately. In ES01 you spread an outbreak through a city, person to person, while doctors try to cure it and guards shoot back. In LT03 you fire air strikes into a crowded city, where a careless shot hits bystanders, ambulances, schools and hospitals. We hit no guardrails building either one."
+  },
   "games": [
     {
       "id": "lt03",

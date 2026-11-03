@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3 — 2 November 2026
+
+Claude Opus 5.5 High: a called-out note, at Mark Barney's call. ES01 (an outbreak spread person to person) and LT03 (air strikes on a crowded city) touch what has been in the news, and no guardrail stopped either being built. The note sits under the grid, those two cards carry a red edge, and it leads their panels. The text lives once in catalog.json as "highlight", so arc.markbarney.net shows the same words.
+
 ## 0.7.2 — 2 November 2026
 
 Claude Opus 5.5 High: the front page is data-dense, at Mark Barney's call. The twelve best games are small cards, six to a row on a laptop, all on one screen: opening board, code, level count, controls and one line. A click opens the game's full write-up (what is special, the rules, how it differs from the public 25, its look) with the level strip, a play button and the source. The top line carries the clone command for anyone taking the games into their own training. arc.markbarney.net shows the same cards from this catalog.

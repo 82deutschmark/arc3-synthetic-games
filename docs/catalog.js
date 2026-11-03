@@ -8,10 +8,14 @@
 //   about it, its look and how it differs from the public 25, from the game's "spoiler" entry in catalog.json. No human numbers.
 // Updated: 02-November-2026, Claude Opus 5.5 High — data-dense: twelve small cards, six to a row on a laptop; a click opens the
 //   game's full write-up in a dialog. arc.markbarney.net mirrors this layout from the same catalog.json.
+//   Same day: the catalog's "highlight" (ES01 and LT03, outbreak and air strikes, no guardrails hit) shows under the grid,
+//   marks those two cards and leads their panels.
 // PURPOSE: Render the highlighted games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
 'use strict';
 const SOURCE_BASE = 'https://github.com/82deutschmark/arc3-synthetic-games/blob/main/';
+// The catalog's one called-out note (two games and why), shown under the grid and in their panels.
+let HIGHLIGHT = null;
 const INPUTS = { 1: '↑', 2: '↓', 3: '←', 4: '→', 5: 'Space', 6: 'Click', 7: 'Undo' };
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -62,6 +66,7 @@ function openPanel(game) {
   source.href = SOURCE_BASE + game.path;
   side.append(image, strip(game), el('p', 'meta', `${game.levels} levels · ${keys(game)}`), play, source);
   const text = el('div', 'text');
+  if (HIGHLIGHT && HIGHLIGHT.games.includes(game.id)) text.append(el('p', 'flag', HIGHLIGHT.text));
   if (notes.special) text.append(section('WHAT’S SPECIAL', el('p', 'lead', notes.special)));
   if (notes.rules && notes.rules.length) {
     const list = el('ul', 'rules');
@@ -90,6 +95,7 @@ function card(game) {
   const head = el('span', 'head');
   head.append(el('b', '', game.id.toUpperCase()), el('span', '', `${game.levels} LV`));
   node.append(image, head, el('span', 'keys', keys(game)), el('span', 'hook', hook((game.spoiler || {}).special)));
+  if (HIGHLIGHT && HIGHLIGHT.games.includes(game.id)) node.classList.add('flagged');
   node.addEventListener('click', () => openPanel(game));
   return node;
 }
@@ -97,6 +103,12 @@ fetch('catalog.json').then(response => {
   if (!response.ok) throw new Error(`Catalog request failed (${response.status})`);
   return response.json();
 }).then(catalog => {
+  HIGHLIGHT = catalog.highlight || null;
+  if (HIGHLIGHT) {
+    const line = document.querySelector('#highlight');
+    line.textContent = HIGHLIGHT.text;
+    line.hidden = false;
+  }
   const picks = catalog.featured.map(id => catalog.games.find(game => game.id === id));
   document.querySelector('#count').textContent = `${picks.length} best of ${catalog.games.length} games`;
   document.querySelector('#featured').append(...picks.map(card));
