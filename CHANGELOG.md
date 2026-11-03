@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1 — 2 November 2026
+
+Claude Sonnet 5.5: the card grid is back, at Mark Barney's call. The long spoiler rows are gone from the front page. Each of the twelve games is a card again (picture, name, one line, the level strip), and MORE opens its rules, what is special, how it differs from the public 25 and its look. The page text is cut to two short lines.
+
 ## 0.7.0 — 2 November 2026
 
 Claude Opus 5.5 High: the front page is now a spoilers page, at Mark Barney's call. Each of the twelve games shows what is special about it, its rules written out, how it differs from ARC's public 25 and its look, plus Mark's own words where his reviews have them. Every rule was checked against the game's code, and by playing it where needed, before it went up. Human action numbers are gone from the page and from the why note. The "no instructions" line is gone.
