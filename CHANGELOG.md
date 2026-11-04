@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.5 — 4 November 2026
+
+Claude Opus 5.5 High: a game's name now spells its tag, at Mark Barney's call. EH01 is Eroding Horizons, WB02 Windy Boats, BS01 Bell Stealth and WF02 Water Flip. HC01 is renamed ST01, Shadow Topple, after its mechanic: its file, pictures and catalog entry move to the new tag, and the entry keeps "was": ["hc01"] so links and mirrors can still find it. XB02's teaser drops the name that did not match its tag.
+
 ## 0.7.4 — 4 November 2026
 
 Claude Opus 5.5 High: every card leads with a short teaser instead of the first sentence of its write-up. Mark Barney wrote PT01, TE01, DZ01, LT03, ES01 and FF01's; the rest follow his style, and EH01 gets a name, Burnt Bridges. The teasers live in catalog.json as "teaser", so arc.markbarney.net shows the same words.

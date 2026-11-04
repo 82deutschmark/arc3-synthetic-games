@@ -13,7 +13,7 @@
     "wb02",
     "bs01",
     "wf02",
-    "hc01"
+    "st01"
   ],
   "highlight": {
     "games": [
@@ -86,7 +86,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/wb02",
       "spoiler": {
-        "teaser": "Harbor wind. Steer one boat and the wind blows all the others.",
+        "teaser": "Windy Boats. Steer one boat and the wind blows all the others.",
         "rules": [
           "Two or three sailboats sit in a small harbor, each with a berth of its own color. White corner brackets mark the boat you are steering: the arrow keys move it one square, space or a click on a boat hands control to another, and undo takes back a command.",
           "The wind blows one fixed way per level, shown by the flags at the top. Every time your boat actually moves, every other boat with its sail up drifts one square downwind, unless a rock, the edge or another boat blocks it, or it sits in calm water.",
@@ -388,19 +388,22 @@
       "play": "https://arc3.sonpham.net/games/br10"
     },
     {
-      "id": "hc01",
+      "id": "st01",
+      "was": [
+        "hc01"
+      ],
       "class_name": "G014",
-      "path": "games/hc01.py",
+      "path": "games/st01.py",
       "sha256": "7b4e233bbf92f0650d4995e0e9ec6776d37475b75280ee134b65c8b274645a22",
       "levels": 8,
       "human": {
         "actions": 130,
         "levels": 4
       },
-      "preview": "previews/hc01.png",
+      "preview": "previews/st01.png",
       "media": {
-        "play": "previews/hc01.png",
-        "levels": "previews/hc01-levels.png"
+        "play": "previews/st01.png",
+        "levels": "previews/st01-levels.png"
       },
       "tiles": 8,
       "inputs": [
@@ -411,7 +414,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/g014",
       "spoiler": {
-        "teaser": "Shadow Fall. Turn the light and the blocks topple along their shadows.",
+        "teaser": "Shadow Topple. Turn the light and the blocks topple along their shadows into the holes.",
         "rules": [
           "A light sits on one edge of the board, and every green block casts a shadow away from it. Touching squares of the same height count as one block.",
           "Turn the light with the left and right arrows (space turns it the same way as right), then click a block. It falls over along its shadow and is gone, and every hole under the shadow gets one step shallower.",
@@ -501,7 +504,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/eh01",
       "spoiler": {
-        "teaser": "Burnt Bridges. Every peek with your lantern wears away the floor you need to get back.",
+        "teaser": "Eroding Horizons. Every peek with your lantern wears away the floor you need to get back.",
         "rules": [
           "You walk a small blue creature through corridors cut into rock with the arrow keys. You can see the shape of the corridors but not what any square holds, and stepping onto a square never shows you what is there.",
           "Space is your lantern. Right after you step onto a dark square, space lights the square you are standing on and steps you back onto the one you came from, showing whether it held a key, the exit ring, a pit or nothing. On ground that is already lit, space does nothing.",
@@ -535,7 +538,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/wf02",
       "spoiler": {
-        "teaser": "Waterworks. One lever flips every pipe. Fill each tank to the line.",
+        "teaser": "Water Flip. One lever flips every pipe. Fill each tank to the line.",
         "rules": [
           "A row of black tanks holds blue water in stacked blocks, and white dashes in each tank mark how full it should be.",
           "Pipes arch over the tanks with a wheel on top of each. Click a wheel to pour one block along that pipe, or two if the pipe has a stripe down its middle. The wheel shows one or two blocks of water on the side it will leave from.",
@@ -1060,7 +1063,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/g019",
       "spoiler": {
-        "teaser": "Bell Herder. Ring the bells to drive the guards onto the pads, and don't get caught.",
+        "teaser": "Bell Stealth. Ring the bells to drive the guards onto the pads, and don't get caught.",
         "rules": [
           "You are the black figure. The arrow keys move you one square; there is no other control and no undo, and every press is a turn, even walking into a wall or the edge, which is how you wait.",
           "Step on a bell to ring it. From then on every red guard walks one square per turn toward the bell you rang last by a shortest route, waiting in line if another guard is in the way; in the first two levels the pad is itself a bell.",
@@ -1379,7 +1382,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/xb02",
       "spoiler": {
-        "teaser": "Shrine Run. Light a shrine and a gate crumbles somewhere you can't see.",
+        "teaser": "Light a shrine and a gate crumbles somewhere you can't see.",
         "rules": [
           "You walk a hooded pilgrim along yellow tracks with the arrow keys, through a countryside several screens wide and tall. You start beside the sanctum; open its barred door and walk in to clear the level.",
           "Four shrines stand in the four corners. Step onto a shrine’s brazier and every gate of one colour, anywhere in the world, crumbles for the rest of the level.",
