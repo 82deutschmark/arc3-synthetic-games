@@ -47,6 +47,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/lt03",
       "spoiler": {
+        "teaser": "Lock target, select munitions, hunt the hostiles. Try not to kill too many friendlies.",
         "rules": [
           "You look down on a dark city from the air, where people and cars are small squares coloured in the middle: red for targets, yellow for street traffic, green for people inside schools and hospitals, and ambulances carry pink crosses.",
           "Click anywhere on the map to fire the selected round, press space to switch rounds, and use the arrow keys to pan across a city of four districts, with arrows at the screen edge pointing to targets out of view; every action, even panning, moves the city on one step, and undo just waits a step.",
@@ -85,6 +86,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/wb02",
       "spoiler": {
+        "teaser": "Harbor wind. Steer one boat and the wind blows all the others.",
         "rules": [
           "Two or three sailboats sit in a small harbor, each with a berth of its own color. White corner brackets mark the boat you are steering: the arrow keys move it one square, space or a click on a boat hands control to another, and undo takes back a command.",
           "The wind blows one fixed way per level, shown by the flags at the top. Every time your boat actually moves, every other boat with its sail up drifts one square downwind, unless a rock, the edge or another boat blocks it, or it sits in calm water.",
@@ -218,6 +220,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/dz01",
       "spoiler": {
+        "teaser": "Inspired by the desert levels of Super Mario Bros. 2 on the original NES.",
         "rules": [
           "You see a green hero at the top of a sand shaft whose checkered finish lies out of sight far below, and a strip at the side with your hearts, a star slot and a bar: its yellow is your digging budget, a green dot on it shows how deep you are, and it ends in the same checkers.",
           "Arrow keys walk, and up climbs one step when sand or earth is right beside the hero; click the square straight above, below, left or right of him to dig it: sand takes one click, packed earth two, rock three, and black bedrock never breaks.",
@@ -408,6 +411,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/g014",
       "spoiler": {
+        "teaser": "Shadow Fall. Turn the light and the blocks topple along their shadows.",
         "rules": [
           "A light sits on one edge of the board, and every green block casts a shadow away from it. Touching squares of the same height count as one block.",
           "Turn the light with the left and right arrows (space turns it the same way as right), then click a block. It falls over along its shadow and is gone, and every hole under the shadow gets one step shallower.",
@@ -497,6 +501,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/eh01",
       "spoiler": {
+        "teaser": "Burnt Bridges. Every peek with your lantern wears away the floor you need to get back.",
         "rules": [
           "You walk a small blue creature through corridors cut into rock with the arrow keys. You can see the shape of the corridors but not what any square holds, and stepping onto a square never shows you what is there.",
           "Space is your lantern. Right after you step onto a dark square, space lights the square you are standing on and steps you back onto the one you came from, showing whether it held a key, the exit ring, a pit or nothing. On ground that is already lit, space does nothing.",
@@ -530,6 +535,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/wf02",
       "spoiler": {
+        "teaser": "Waterworks. One lever flips every pipe. Fill each tank to the line.",
         "rules": [
           "A row of black tanks holds blue water in stacked blocks, and white dashes in each tank mark how full it should be.",
           "Pipes arch over the tanks with a wheel on top of each. Click a wheel to pour one block along that pipe, or two if the pipe has a stripe down its middle. The wheel shows one or two blocks of water on the side it will leave from.",
@@ -914,6 +920,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/es01",
       "spoiler": {
+        "teaser": "Extreme sneeze. Spread the alien outbreak to win.",
         "rules": [
           "On level one you are a small green alien. Arrow keys walk, and space sneezes a short fan of green droplets straight ahead and out to both forward diagonals. Walls and the first person in each line stop it; vent grilles do not.",
           "The alien’s sneeze is weak: a person needs three hits, and a green spot appears on their face with each one. The first person the alien fully infects becomes the body you play. From level two you start each level already inside an infected person, and the alien follows you on its own, sneezing at any healthy person lined up close to it.",
@@ -949,6 +956,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/ff01",
       "spoiler": {
+        "teaser": "Feeding frenzy. Eat the small fry, ride the tide, grow big.",
         "rules": [
           "You are the green fish. You swim with the arrow keys through a sea bigger than the screen, and the view follows you.",
           "Touch a fish your size or smaller to eat it. Colour shows size: orange is smallest, then pink, magenta, red and maroon. Eat enough to fill the meal pips and the level clears; from level two, a few meals also make you grow a size.",
@@ -1052,6 +1060,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/g019",
       "spoiler": {
+        "teaser": "Bell Herder. Ring the bells to drive the guards onto the pads, and don't get caught.",
         "rules": [
           "You are the black figure. The arrow keys move you one square; there is no other control and no undo, and every press is a turn, even walking into a wall or the edge, which is how you wait.",
           "Step on a bell to ring it. From then on every red guard walks one square per turn toward the bell you rang last by a shortest route, waiting in line if another guard is in the way; in the first two levels the pad is itself a bell.",
@@ -1225,6 +1234,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/pt01",
       "spoiler": {
+        "teaser": "You are a ship shooting at other ships.",
         "rules": [
           "You sail the black ship one square at a time with the arrow keys and fire with space; the ball flies straight ahead along the dotted line from your bow, and pressing toward land or a ship turns you to face it without moving.",
           "Sink every enemy ship to clear the level, but only a ship’s stern, the end with the yellow lamps, can be hurt: you must get behind it, facing the way it faces, and each hit puts out one lamp.",
@@ -1333,6 +1343,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/te01",
       "spoiler": {
+        "teaser": "A cable and a pulley.",
         "rules": [
           "You drive a small green rover with the arrow keys; an orange cable runs from the blue dock to the rover and always pulls tight, bending only at the corners of the posts it wraps around.",
           "Stop beside the blue crystal (not diagonally) or right on top of it, click it to pick it up, then drive back onto the dock to clear the level.",
@@ -1368,6 +1379,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/xb02",
       "spoiler": {
+        "teaser": "Shrine Run. Light a shrine and a gate crumbles somewhere you can't see.",
         "rules": [
           "You walk a hooded pilgrim along yellow tracks with the arrow keys, through a countryside several screens wide and tall. You start beside the sanctum; open its barred door and walk in to clear the level.",
           "Four shrines stand in the four corners. Step onto a shrine’s brazier and every gate of one colour, anywhere in the world, crumbles for the rest of the level.",

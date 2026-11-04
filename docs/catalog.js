@@ -10,6 +10,7 @@
 //   game's full write-up in a dialog. arc.markbarney.net mirrors this layout from the same catalog.json.
 //   Same day: the catalog's "highlight" (ES01 and LT03, outbreak and air strikes, no guardrails hit) shows under the grid,
 //   marks those two cards and leads their panels.
+// Updated: 04-November-2026, Claude Opus 5.5 High — each card face shows the game's short teaser (catalog "spoiler.teaser").
 // PURPOSE: Render the highlighted games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
 'use strict';
@@ -94,7 +95,9 @@ function card(game) {
   image.loading = 'lazy';
   const head = el('span', 'head');
   head.append(el('b', '', game.id.toUpperCase()), el('span', '', `${game.levels} LV`));
-  node.append(image, head, el('span', 'keys', keys(game)), el('span', 'hook', hook((game.spoiler || {}).special)));
+  const notes = game.spoiler || {};
+  // Mark's short teaser leads the card; the first sentence of "what is special" covers a game without one.
+  node.append(image, head, el('span', 'keys', keys(game)), el('span', 'hook', notes.teaser || hook(notes.special)));
   if (HIGHLIGHT && HIGHLIGHT.games.includes(game.id)) node.classList.add('flagged');
   node.addEventListener('click', () => openPanel(game));
   return node;
