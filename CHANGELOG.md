@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.6 — 4 November 2026
+
+Claude Opus 5.5 High: more names that spell their tags, at Mark Barney's call. TE01 is Tethered Extraction and PT01 Perfect Target. XB02 is renamed SE01, Shrine Exploration: its file, pictures and catalog entry move to the new tag, and the entry keeps "was": ["xb02"]. The game code is unchanged; its engine id stays internal, as for the other games.
+
 ## 0.7.5 — 4 November 2026
 
 Claude Opus 5.5 High: a game's name now spells its tag, at Mark Barney's call. EH01 is Eroding Horizons, WB02 Windy Boats, BS01 Bell Stealth and WF02 Water Flip. HC01 is renamed ST01, Shadow Topple, after its mechanic: its file, pictures and catalog entry move to the new tag, and the entry keeps "was": ["hc01"] so links and mirrors can still find it. XB02's teaser drops the name that did not match its tag.

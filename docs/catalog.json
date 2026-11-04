@@ -9,7 +9,7 @@
     "es01",
     "eh01",
     "ff01",
-    "xb02",
+    "se01",
     "wb02",
     "bs01",
     "wf02",
@@ -1237,7 +1237,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/pt01",
       "spoiler": {
-        "teaser": "You are a ship shooting at other ships.",
+        "teaser": "Perfect Target. You are a ship shooting at other ships.",
         "rules": [
           "You sail the black ship one square at a time with the arrow keys and fire with space; the ball flies straight ahead along the dotted line from your bow, and pressing toward land or a ship turns you to face it without moving.",
           "Sink every enemy ship to clear the level, but only a ship’s stern, the end with the yellow lamps, can be hurt: you must get behind it, facing the way it faces, and each hit puts out one lamp.",
@@ -1346,7 +1346,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/te01",
       "spoiler": {
-        "teaser": "A cable and a pulley.",
+        "teaser": "Tethered Extraction. A cable and a pulley.",
         "rules": [
           "You drive a small green rover with the arrow keys; an orange cable runs from the blue dock to the rover and always pulls tight, bending only at the corners of the posts it wraps around.",
           "Stop beside the blue crystal (not diagonally) or right on top of it, click it to pick it up, then drive back onto the dock to clear the level.",
@@ -1362,16 +1362,19 @@
       }
     },
     {
-      "id": "xb02",
+      "id": "se01",
+      "was": [
+        "xb02"
+      ],
       "class_name": "Xb02",
-      "path": "games/xb02.py",
+      "path": "games/se01.py",
       "sha256": "e3c7f4131070f8909307cdbbe80409e48449f1470cbc1b9ade739bdf7d6f0485",
       "levels": 6,
       "human": null,
-      "preview": "previews/xb02.png",
+      "preview": "previews/se01.png",
       "media": {
-        "play": "previews/xb02.png",
-        "levels": "previews/xb02-levels.png"
+        "play": "previews/se01.png",
+        "levels": "previews/se01-levels.png"
       },
       "tiles": 6,
       "inputs": [
@@ -1382,7 +1385,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/xb02",
       "spoiler": {
-        "teaser": "Light a shrine and a gate crumbles somewhere you can't see.",
+        "teaser": "Shrine Exploration. Light a shrine and a gate crumbles somewhere you can't see.",
         "rules": [
           "You walk a hooded pilgrim along yellow tracks with the arrow keys, through a countryside several screens wide and tall. You start beside the sanctum; open its barred door and walk in to clear the level.",
           "Four shrines stand in the four corners. Step onto a shrine’s brazier and every gate of one colour, anywhere in the world, crumbles for the rest of the level.",
