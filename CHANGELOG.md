@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1 — 5 November 2026
+
+Claude Code, at Mark Barney's call: an adversarial review of the twelve featured games, in `docs/reviews/2026-11-05-featured-twelve-review.md`. Every featured source file read in full; a random-action probe and a brute-force solver run against the real engine; findings ranked, with a card per game. No game was changed.
+
 ## 0.8.0 — 5 November 2026
 
 Claude Opus 5.5, at Mark Barney's call: each game's panel now leads with "why AI struggles", written in plain gamer talk, and names the Slippery Seven game it is a cousin of where the repository's own write-ups say so (PT01 and LT03 with SC25, TE01 and ES01 with SK48, SE01 and WF02 with DC22, BS01 with G50T, ST01 with TN36). The long rules, what's special, how it differs from the public 25 and the look fold under "full rules and details". DZ01 is Dig Zone. Every Play link goes to the lab at arc3.sonpham.net, which records plays.
