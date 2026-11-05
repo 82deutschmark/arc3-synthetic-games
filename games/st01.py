@@ -1,4 +1,7 @@
-# ARC-AGI-3 candidate task g014: a moving light, a shadow, and holes to fill.
+# ARC-AGI-3 candidate task st01 (Shadow Topple): a moving light, a shadow, and holes to fill.
+# Updated: 05-November-2026, Claude Code -- the game is st01 (it reported itself as g014); a lost position now ends
+#   the run as GAME_OVER instead of silently restarting the level; the winnability memo lives on the game, not the
+#   module; RESET restarts the level, or the whole game only when nothing has been played or it is won.
 #
 # Designer notes
 # --------------
@@ -23,6 +26,7 @@ from arcengine import (
     BlockingMode,
     Camera,
     GameAction,
+    GameState,
     InteractionMode,
     Level,
     RenderableUserDisplay,
@@ -255,9 +259,6 @@ def is_flat(field) -> bool:
     return all(v == 0 or v >= WALL for row in field for v in row)
 
 
-_WINNABLE = {}
-
-
 def components(field):
     """Separate rooms: shadows never cross a wall, so rooms can be judged one by one."""
     seen, comps = set(), []
@@ -279,19 +280,20 @@ def components(field):
     return comps
 
 
-def alive(field, comps) -> bool:
-    """False when some room can no longer be levelled, whichever way the light turns."""
+def alive(field, comps, memo) -> bool:
+    """False when some room can no longer be levelled, whichever way the light turns. memo is the
+    game's own cache of boards already judged."""
     for comp in comps:
         part = tuple(tuple(field[y][x] if (x, y) in comp else WALL for x in range(N))
                      for y in range(N))
-        if not winnable(part):
+        if not winnable(part, memo):
             return False
     return True
 
 
-def winnable(field) -> bool:
+def winnable(field, memo) -> bool:
     """Can this board still be levelled, whichever way the light is turned?"""
-    got = _WINNABLE.get(field)
+    got = memo.get(field)
     if got is not None:
         return got
     if is_flat(field):
@@ -301,12 +303,12 @@ def winnable(field) -> bool:
         for cell in regions(field):
             for si in range(4):
                 nxt = fell(field, cell, si)
-                if nxt is not None and winnable(nxt):
+                if nxt is not None and winnable(nxt, memo):
                     res = True
                     break
             if res:
                 break
-    _WINNABLE[field] = res
+    memo[field] = res
     return res
 
 
@@ -385,7 +387,7 @@ def outline_cells(frame, cells, colour):
 
 class ShadowDisplay(RenderableUserDisplay):
 
-    def __init__(self, game: "G014") -> None:
+    def __init__(self, game: "St01") -> None:
         super().__init__()
         self._game = game
 
@@ -506,7 +508,7 @@ class ShadowDisplay(RenderableUserDisplay):
                         frame[py + j, px + i] = C_FLOOR
 
 
-class G014(ARCBaseGame):
+class St01(ARCBaseGame):
 
     def __init__(self) -> None:
         spec = LEVELS_SPEC[0]
@@ -522,12 +524,13 @@ class G014(ARCBaseGame):
         self.cue_cells = set()
         self.cue_point = None
         self.comps = components(self.field)
+        self.memo = {}
         camera = Camera(
             width=64, height=64,
             background=C_INK, letter_box=C_INK,
             interfaces=[ShadowDisplay(self)],
         )
-        super().__init__(game_id="g014", levels=build_levels(), camera=camera,
+        super().__init__(game_id="st01", levels=build_levels(), camera=camera,
                          available_actions=[3, 4, 5, 6])
 
     def tick_index(self) -> int:
@@ -547,14 +550,17 @@ class G014(ARCBaseGame):
         self.cue_cells = set()
         self.cue_point = None
         self.comps = components(self.field)
+        self.memo = {}
 
-    def level_reset(self) -> None:
-        super().level_reset()
-        self.on_set_level(self.current_level)
+    def handle_reset(self) -> None:
+        """A full restart only from a fresh or finished game; otherwise the level starts over.
+        The engine's default also restarts the whole game when no action has been taken yet on a
+        level, which would wipe progress on a RESET sent right after a level is cleared."""
+        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
+            self.full_reset()
+        else:
+            self.level_reset()
 
-    def full_reset(self) -> None:
-        super().full_reset()
-        self.on_set_level(self.current_level)
 
     def _begin(self, phase: str, frames: int) -> None:
         self.phase = phase
@@ -569,7 +575,7 @@ class G014(ARCBaseGame):
             self.phase = None
             self.next_level()
             self.complete_action()
-        elif not alive(self.field, self.comps):
+        elif not alive(self.field, self.comps, self.memo):
             self._begin("die", DIE_FRAMES)
         else:
             self.phase = None
@@ -589,8 +595,7 @@ class G014(ARCBaseGame):
                 self._finish_topple()
             elif phase == "die":
                 self.phase = None
-                self.level_reset()
-                self._action_count = max(1, self._action_count)
+                self.lose()
                 self.complete_action()
             else:
                 self.phase = None

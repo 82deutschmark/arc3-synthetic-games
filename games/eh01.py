@@ -16,6 +16,8 @@
 #   flies to the top row); known ground is green and dark ground purple (pink now only means
 #   a pit rim or a shut ring); the walker is a small creature, not a diamond.
 # SRP/DRY check: Pass -- self-contained. Rule state lives in Core, which the solver imports.
+# Updated: 05-November-2026, Claude Code -- a dead end now ends the run as GAME_OVER instead of silently
+#   restarting the level (RESET restarts it); the action-count workaround and two unused helpers are gone.
 """Echo -- the lantern is how you see.
 
 ACTION1-4 walk up/down/left/right. ACTION5 (Space) steps back the way you just came and lights
@@ -603,7 +605,6 @@ class Eh01(ARCBaseGame):
             self.full_reset()
         else:
             self.level_reset()
-            self._action_count = max(1, self._action_count)
 
     # -- layout of the top band ---------------------------------------------
 
@@ -624,11 +625,7 @@ class Eh01(ARCBaseGame):
 
     # -- presentation: decide once (the core already moved), then show -------
 
-    def _cell_center_px(self, cell):
-        x, y = origin(cell)
-        return x, y
-
-    def _build(self, aid, ev, before):
+    def _build(self, aid, ev):
         core = self.core
         frames = []
         e = ev[0]
@@ -710,7 +707,7 @@ class Eh01(ARCBaseGame):
         for t in range(15):
             fr.append({"dying": t, "wcolor": C_RED if t < 8 else None,
                        "wscale": 2 if t < 5 else (1 if t < 8 else (0.5 if t < 11 else 0))})
-        fr[-1]["reset"] = True
+        fr[-1]["lose"] = True
         return fr
 
     # -- engine entry point -------------------------------------------------
@@ -723,9 +720,8 @@ class Eh01(ARCBaseGame):
             self.complete_action()
             return
         if self.anim is None:
-            before = None
             ev = self.core.act(aid)
-            frames = self._build(aid, ev, before) if ev else [{}]
+            frames = self._build(aid, ev) if ev else [{}]
             if self.core.lost():
                 frames += self._death()
             self.anim = frames
@@ -734,11 +730,9 @@ class Eh01(ARCBaseGame):
         done = not self.anim
         if frame.get("win"):
             self.next_level()
-        if frame.get("reset"):
-            self.level_reset()
-            self._action_count = max(1, self._action_count)
+        if frame.get("lose"):
+            self.lose()
             done = True
         if done:
             self.anim = None
-            self.vis = {} if frame.get("reset") else self.vis
             self.complete_action()

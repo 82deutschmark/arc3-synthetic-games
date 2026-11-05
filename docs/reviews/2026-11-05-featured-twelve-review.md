@@ -80,7 +80,7 @@ st01, bs01, eh01 and dz01 run a search after every move and, when the position c
 
 ARC's founding rule is that everything needed is on the screen. Six of the twelve break it in a way a cold human would call unfair rather than clever.
 
-- es01: five separate clocks. The alien acts on even ticks, infected people cough every fourth, gunmen every third, civilians every eighth (offset by their index), doctors every fifth. Nothing on screen shows any of them. Also the win target counts doctors and gunmen as people to infect, and nothing says so.
+- es01: five separate clocks. The alien acts on even ticks, infected people cough every fourth, gunmen every third, civilians every eighth (offset by their index), doctors every fifth. Nothing on screen shows any of them. Also the win target counts doctors and gunmen as people to infect; the catalog says so, the screen does not.
 - lt03: threat timers that make an untouched target explode, a recharge counter, aid that freezes the city on alternate ticks, a sensor that goes stale every third tick from mission 7. The HUD tries to show these in a four-pixel strip with seven instruments. It is unreadable without the legend in catalog.json.
 - te01: positions, cable length and blade contact are floating-point numbers (obstacles at 3.2 to 3.8, cable budget 7.8). The frame is a rounded picture of a hidden continuous state; the player cannot see exactly how much cable is left or exactly where a blade will stop them.
 - ff01: predators off-screen are not marked (only edible fish are), so bites arrive from outside the window. The one-pixel yellow "next heading" tell is invisible at 64x64.
@@ -123,7 +123,7 @@ es01 (spread an outbreak through a city) and lt03 (air strikes that kill schoolc
 
 Not the main event, but a senior engineer would flag these in a review:
 
-- Dead parameters and fields: `Wf02.__init__(seed=0)` never uses the seed; se01 stores an `order` list per level that no rule reads; lt03 computes `time_limit` per mission and never checks it; st01's `sun0` is 0 in every level; eh01's `_build(..., before)` is always None and `_cell_center_px` is unused.
+- Dead parameters and fields: se01 stores an `order` list per level that no rule reads; lt03 computes `time_limit` per mission and never checks it; st01's `sun0` is 0 in every level; eh01's `_build(..., before)` is always None and `_cell_center_px` is unused.
 - Crash paths inside the ARC server: te01's `tighten()` raises `ValueError` if its own invariant fails; bs01's `analyse()` raises at level load if a level has more than 60,000 states or is unwinnable.
 - Module-global caches that grow for the life of the process and are shared between game instances: st01 `_WINNABLE`, bs01 `_LIVE` and `_MODELS`, pt01 `_LAND_CACHE`.
 - Four copies of the same hack: `self._action_count = max(1, self._action_count)` after a level reset, in st01, eh01, bs01, dz01. It exists because the engine's default RESET does a full reset when the action count is zero; the fix belongs in one override of `handle_reset`, which te01 and eh01 already have.
@@ -193,7 +193,7 @@ Fix: re-derive the rules on integers: cable length in cells, obstacles on cell b
 
 Clear visuals (target line, green tank, red rim on the tank that refuses). The lever-reverses-a-whole-circuit twist is a good one.
 
-What is wrong: it is the classic water-jug puzzle with no cost of any kind. Nine reachable positions in level 1; 5,062 in the largest. Random clicking clears level 1 in a seed. A click anywhere that is not a control flashes every control (a free map of the buttons). ACTION5 works on lever 0 only. Unused seed parameter.
+What is wrong: it is the classic water-jug puzzle with no cost of any kind. Nine reachable positions in level 1; 5,062 in the largest. Random clicking clears level 1 in a seed. A click anywhere that is not a control flashes every control (a free map of the buttons). ACTION5 works on lever 0 only.
 
 Fix: a pour budget per level, drawn as pips. Make ACTION5 cycle which lever is live, or remove it and make everything a click. Remove the click-anywhere hint.
 
@@ -217,7 +217,7 @@ Fix: count steps and draw them; drop the player to the start, not the last shrin
 
 Fully deterministic and the host-hopping idea is original.
 
-What is wrong: five invisible clocks (problem 3), a win target that silently includes doctors and gunmen, a 26-pixel face as a health bar, a vent rule that is one obscure special case, and a cliff between level 1 (a 7x6 room with every AI switched off) and level 2 (a 20x10 scrolling map with everything on). Random play clears two levels in every seed. No header. Dense one-letter code with 200-column lines. Human record: 44 actions, one level. And the theme (problem 9).
+What is wrong: five invisible clocks (problem 3), a win target that includes doctors and gunmen with no count on screen, a 26-pixel face as a health bar, a vent rule that is one obscure special case, and a cliff between level 1 (a 7x6 room with every AI switched off) and level 2 (a 20x10 scrolling map with everything on). Random play clears two levels in every seed. No header. Dense one-letter code with 200-column lines. Human record: 44 actions, one level. And the theme (problem 9).
 
 Fix: one clock. Show it. Make the goal count visible (pips for people left). Re-theme it; the mechanics do not need the outbreak.
 
@@ -248,3 +248,26 @@ Fix: this is two games. Keep "aim late at a walking target" (missions 1 to 3, wi
 ## Scripts
 
 Three throwaway scripts were run from a scratch directory against this checkout and are not committed: a random-action probe over `tools/runtime.py` (2,000 actions, seeds 0 to 2, per game), a breadth-first solver calling each game's rule functions (`advance`, `pour`/`refusal`, `fell`, `resolve`, `Core.act`, `transition`, `act`), and a timer for the in-game winnability searches. Anyone can reproduce Table A with `examples/collect.py` and a loop; Table B needs the solver, which is forty lines per game and is worth adding to `tools/` if you want the numbers to stay honest as levels change.
+
+## Fixes applied on 5 November 2026 (same day, after this review)
+
+Every change is a defect fix; nothing about difficulty, level count, theme or the dead-end detectors was changed, because those are design decisions for Mark. All twelve games still pass `tools/validate.py`; the catalog hashes, class names and three write-ups were refreshed to match. Each fix was driven to its loss state with a script against the real engine and checked: the engine reports GAME_OVER, and a RESET restarts the same level with progress kept.
+
+| Game | What changed |
+|---|---|
+| pt01 | A sunk player now ends the run (`lose()`) instead of silently rebuilding the level. `handle_reset` restarts the level, or the whole game only when nothing has been played or it is won. Keyword arguments to the engine. Header added. |
+| st01 | Reports itself as st01, class `St01` (was g014/`G014`). A lost position ends the run as GAME_OVER instead of a silent restart; the action-count workaround is gone. The winnability memo lives on the game instance, not the module. |
+| bs01 | Reports itself as bs01, class `Bs01` (was g019/`G019`). A dead end ends the run as GAME_OVER; workaround gone. Every level's state space is searched once at import, so a level that is too large or unwinnable fails at load, never mid-play. |
+| eh01 | A dead end ends the run as GAME_OVER; workaround gone. Unused `before` parameter and `_cell_center_px` removed. |
+| dz01 | A broken hero ends the run as GAME_OVER; workaround gone. A perched hero shows a white hand on the wall he holds, so that state is on screen. Keyword arguments to the engine. |
+| te01 | Cable tightening no longer raises an exception inside the engine when a shortening step would lengthen the path; the step is skipped. Keyword arguments to the engine. |
+| se01 | Reports itself as se01, class `Se01` (was xb02/`Xb02`). The per-level `order` list that no rule read is gone. |
+| lt03 | Clicking a round in the tray selects it (it only flashed before); a locked round still only flashes. The per-mission `time_limit` that nothing read is gone. Header added. |
+| es01 | Header added. |
+| ff01 | Every fish off the window is now marked on the edge, predators included; before, only food was marked and bites arrived from nowhere. Keyword arguments to the engine. |
+| wb02 | Dead tie-breaking loop removed; leftover docstring removed. |
+| catalog | Hashes for the eleven changed files; class names for st01, bs01, se01; st01's "all at once" claim corrected; wb02's "running out ends the game" now says a reset restarts the level; ff01's and lt03's rules updated for the two behaviour changes. |
+
+Left alone on purpose: wf02 (nothing in it is broken, it is just shallow), the four dead-end detectors, the pink danger overlay in bs01, the hidden clocks in es01 and lt03, the duplicated levels, the themes, and the asymmetric ACTION5 in wf02. Those are the design calls in the ranked list above.
+
+Random play after the fixes (600 actions, three seeds): pt01, eh01, bs01 and ff01 now hand the engine a GAME_OVER several times per run; wb02 still does; st01 and dz01 can lose but random play rarely finds the dead end. Levels cleared by random play did not change, as expected, because nothing about difficulty changed.

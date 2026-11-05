@@ -11,6 +11,8 @@
 #   Rebuilt from fr01 (one 64x64 screen, five levels) at the Boss's ask, 15-Oct-2026: a bigger
 #   world behind the window, directions that keep changing inside a level, finer fish art.
 #   Level data below is written by the generator (polish/ff01/ff01_gen.py); never hand-edit it.
+# Updated: 05-November-2026, Claude Code -- every fish off the window is marked on its edge, predators included
+#   (only food was marked before, so bites arrived from nowhere); keyword arguments to the engine.
 # SRP/DRY check: Pass -- one self-contained game file (the site execs it alone); level data is
 #   generated elsewhere and pasted between the GENERATED markers.
 
@@ -230,11 +232,11 @@ class SeaView(RenderableUserDisplay):
                     if (by + j) % 3:
                         view[by, (j + (by // 3) % 2) % VIEW_W] = WHITE
 
-        # fish you can eat that are off the window: a 2x2 mark in their colour on the window's
-        # edge, on the line towards them, so the food in a sea bigger than the screen can be found
+        # every fish off the window: a 2x2 mark in its colour on the window's edge, on the line
+        # towards it, so food and danger in a sea bigger than the screen can both be found
         if not g.winning and not g.dying:
             for f in g.fish:
-                if not f[3] or f[2] > g.size:
+                if not f[3]:
                     continue
                 fx, fy = f[0] + FISH_W[f[2]] // 2 - cx, f[1] + FISH_H[f[2]] // 2 - cy
                 if 0 <= fx < VIEW_W and 0 <= fy < VIEW_H:
@@ -303,8 +305,8 @@ class Ff01(ARCBaseGame):
     def __init__(self):
         self.display = SeaView(self)
         self._load_level(0)
-        super().__init__('ff01', levels, Camera(0, 0, SCREEN, SCREEN, SEA, SEA, [self.display]),
-                         False, len(levels), [1, 2, 3, 4])
+        super().__init__(game_id='ff01', levels=levels, camera=Camera(0, 0, SCREEN, SCREEN, SEA, SEA, [self.display]),
+                         win_score=len(levels), available_actions=[1, 2, 3, 4])
 
     # -- level setup --------------------------------------------------------
     def on_set_level(self, level):

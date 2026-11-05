@@ -27,7 +27,7 @@
       "id": "lt03",
       "class_name": "Lt03",
       "path": "games/lt03.py",
-      "sha256": "d7ba2872ed320ae3956916e0ac103d4367750f52b0bd30908cf3a8b84d7908a8",
+      "sha256": "14c605e766c3d3c6a7df264d868de1f9e0220a71ab26df1dd47b946e2a873926",
       "levels": 9,
       "human": null,
       "preview": "previews/lt03.png",
@@ -51,7 +51,7 @@
         "hard": "You never move anyone. You aim, and every shot lands late, so you have to lead a walking target. From the fourth mission the city answers back: big shots pull crowds and ambulances in. A bot has to predict where people will be, and a single screenshot doesn't show motion. In the family of SC25's aimed fireball.",
         "rules": [
           "You look down on a dark city from the air, where people and cars are small squares coloured in the middle: red for targets, yellow for street traffic, green for people inside schools and hospitals, and ambulances carry pink crosses.",
-          "Click anywhere on the map to fire the selected round, press space to switch rounds, and use the arrow keys to pan across a city of four districts, with arrows at the screen edge pointing to targets out of view; every action, even panning, moves the city on one step, and undo just waits a step.",
+          "Click anywhere on the map to fire the selected round, press space or click a round in the tray to switch rounds, and use the arrow keys to pan across a city of four districts, with arrows at the screen edge pointing to targets out of view; every action, even panning, moves the city on one step, and undo just waits a step.",
           "Every round lands late, so you aim where a walking target will be, and now and then a target takes a double step: precision lands on the next step with a tiny blast, fire a step later and leaves flames that spread for a few steps, and heavy is the slowest with the biggest blast; each round has a small stock that slowly refills.",
           "A mission is won when every target is gone, nothing is still falling and no fire is burning; hurting bystanders, ambulances or buildings (schools and hospitals cost most), hitting a target that is not yet confirmed, and above all letting a target blow up drain the shield at the top, and from the fourth mission on an empty shield fails the mission and you start it over.",
           "From the fourth mission, heavy and fire rounds call in ambulances and crowds of onlookers, more each time, and send nearby targets running, and a target left alone too long pulls people round itself and then blows up among them.",
@@ -67,7 +67,7 @@
       "id": "wb02",
       "class_name": "Wb02",
       "path": "games/wb02.py",
-      "sha256": "eac4bc3425cf79deb880bc8668d6f4b052b5590cc5e0ad9ae70c73309a267c4b",
+      "sha256": "b58885dccb48fd17a6cb534b4223b22d672a70c42f07bd12119d8cb0461ee6de",
       "levels": 8,
       "human": null,
       "preview": "previews/wb02.png",
@@ -94,7 +94,7 @@
           "The wind blows one fixed way per level, shown by the flags at the top. Every time your boat actually moves, every other boat with its sail up drifts one square downwind, unless a rock, the edge or another boat blocks it, or it sits in calm water.",
           "A raised sail, including the one on the boat you are steering, blocks the wind for the whole line downwind of it in the same row or column, even past rocks. That calm water is drawn paler, and a boat sitting in it does not drift, so you can park one boat upwind to hold another still.",
           "The hidden rule: a boat anchors only when you hand control away from it while it sits in its own berth. Then it lowers its sail, drops anchor, stays put and stops shading anyone. A boat the wind pushes into its berth does not anchor, and moving an anchored boat raises its sail again.",
-          "The level clears the moment every boat is in its berth. Every command, even a switch or a blocked move, uses one dot from the green bars at the bottom; undo gives the dot back, and running out ends the game.",
+          "The level clears the moment every boat is in its berth. Every command, even a switch or a blocked move, uses one dot from the green bars at the bottom; undo gives the dot back, and running out ends the run, and a reset restarts the level with a full set of dots.",
           "Rocks arrive on level two and a third boat on level three, and from level five the wind blows down, left or up instead of right."
         ],
         "special": "Each move of the boat you steer is a gust for every other boat with its sail up, so the boats you are not touching are the real puzzle. What keeps a finished boat home is letting go of it in its berth, which drops its anchor; take that rule away and several levels cannot be won, because the wind carries each docked boat back out while you sail the next one.",
@@ -200,7 +200,7 @@
       "id": "dz01",
       "class_name": "Dz01",
       "path": "games/dz01.py",
-      "sha256": "6ab85ff0e7d28c31af056e8f5226ea7aa1a7ceb066e2d2bad4bc5d7350f94ad5",
+      "sha256": "9a1f958f6172257ea3186e85cddab01e8b5f5cdb8044f5eb9e742521faf59032",
       "levels": 8,
       "human": {
         "actions": 380,
@@ -395,9 +395,9 @@
       "was": [
         "hc01"
       ],
-      "class_name": "G014",
+      "class_name": "St01",
       "path": "games/st01.py",
-      "sha256": "7b4e233bbf92f0650d4995e0e9ec6776d37475b75280ee134b65c8b274645a22",
+      "sha256": "33092bce575db98ab2d6de36f735dbda24b3ce718a1acf0af1b85a2e1d47395f",
       "levels": 8,
       "human": {
         "actions": 130,
@@ -418,7 +418,7 @@
       "play": "https://arc3.sonpham.net/games/g014",
       "spoiler": {
         "teaser": "Shadow Topple. Turn the light and the blocks topple along their shadows into the holes.",
-        "hard": "You never move a block. You turn the light, and the shadows decide where every block lands, all at once. A bot looks for a piece to push and finds none. Like TN36, you never touch the thing that moves.",
+        "hard": "You never push a block. You turn the light and click one, and its shadow decides where it lands. A bot looks for a piece to push and finds none. Like TN36, you never touch the thing that moves.",
         "rules": [
           "A light sits on one edge of the board, and every green block casts a shadow away from it. Touching squares of the same height count as one block.",
           "Turn the light with the left and right arrows (space turns it the same way as right), then click a block. It falls over along its shadow and is gone, and every hole under the shadow gets one step shallower.",
@@ -487,7 +487,7 @@
       "id": "eh01",
       "class_name": "Eh01",
       "path": "games/eh01.py",
-      "sha256": "aa87c36c91376b957ff6675ff6177f37163022c8ad180e72fed76eac8efd9853",
+      "sha256": "b2cc53f1ba66a18fbe92a20ba39dd38be0dff5a05a6999e99e123f7ce38b540f",
       "levels": 8,
       "human": {
         "actions": 836,
@@ -907,7 +907,7 @@
       "id": "es01",
       "class_name": "Es01",
       "path": "games/es01.py",
-      "sha256": "cda3374cc8340c26538564cca9f691cd9efe5fce176486b38cc4ccfa60cc8df8",
+      "sha256": "f6f300367dadfd5eba9bfc26841a4d9fb20ab8316ec9a49acccbecb6a390c696",
       "levels": 8,
       "human": {
         "actions": 44,
@@ -949,7 +949,7 @@
       "id": "ff01",
       "class_name": "Ff01",
       "path": "games/ff01.py",
-      "sha256": "695c14bdcadfcb35506663929a29b4088e18e5c68ce31d81817cc8f65ca0a4a2",
+      "sha256": "062bf016f8419b28ae582145ae1751ec268e60367774cf92d066ac383d8370f7",
       "levels": 8,
       "human": null,
       "preview": "previews/ff01.png",
@@ -973,7 +973,7 @@
           "Touch a fish your size or smaller to eat it. Colour shows size: orange is smallest, then pink, magenta, red and maroon. Eat enough to fill the meal pips and the level clears; from level two, a few meals also make you grow a size.",
           "Bigger fish bite and cost one of your three lives, then you blink safe for a moment. They never chase you; each one just swims its own pattern.",
           "The lighter water is current. It carries you and every other fish, and you can never swim against it: at best you hold still.",
-          "Every few moves the tide turns (the yellow pips at top right count down to it), and every current and every other fish changes heading. A yellow dot on each current’s arrows and on each other fish shows which way it goes next, and fish you can eat that are off the screen show as a small mark in their colour on the screen’s edge.",
+          "Every few moves the tide turns (the yellow pips at top right count down to it), and every current and every other fish changes heading. A yellow dot on each current’s arrows and on each other fish shows which way it goes next, and every other fish that is off the screen shows as a small mark in its colour on the screen’s edge, food and danger alike.",
           "From level two a time bar runs down, and running out or losing your last life ends the run. Later levels bring more currents, more fish and bigger ones, and on the last two levels you can grow big enough to eat even the largest fish."
         ],
         "special": "The whole sea runs on one tide: every current and every fish turns together on a beat you can count, and a yellow dot on each shows where it goes next. Since no current can be swum against, crossing the sea means catching the right ride at the right moment, so you plan a few moves ahead instead of only dodging. The bigger fish never chase, so the dots never lie, and growing turns fish that could bite you into food.",
@@ -1052,9 +1052,9 @@
     },
     {
       "id": "bs01",
-      "class_name": "G019",
+      "class_name": "Bs01",
       "path": "games/bs01.py",
-      "sha256": "0c11bcc9ec92509d3c1401591ac3866428d1679f5242d9fbe8d1f76638b1352f",
+      "sha256": "aacff2fcc19d81ec547983775a85ee6635f4577d9fd0b16128cd3d8eee24580d",
       "levels": 8,
       "human": null,
       "preview": "previews/bs01.png",
@@ -1225,7 +1225,7 @@
       "id": "pt01",
       "class_name": "Pt01",
       "path": "games/pt01.py",
-      "sha256": "ce78f19c7fd0a2ca84abe41a1a9ab3e7f1be1315c8b970802ce7126766794c4f",
+      "sha256": "5a7bde161447813223ce2a34409ccf4b936ed6ad07f071e48be41f2f96f5d80b",
       "levels": 8,
       "human": {
         "actions": 373,
@@ -1333,7 +1333,7 @@
       "id": "te01",
       "class_name": "Te01",
       "path": "games/te01.py",
-      "sha256": "13afb43e9921c670261a1b25f3a98ff511e1a582db148f50c9f24b1be994f28a",
+      "sha256": "981d8ae48704cad3ffe65b14a7f5d58c36dfeb8556af9d04a81cdee966d466a1",
       "levels": 8,
       "human": {
         "actions": 487,
@@ -1377,9 +1377,9 @@
       "was": [
         "xb02"
       ],
-      "class_name": "Xb02",
+      "class_name": "Se01",
       "path": "games/se01.py",
-      "sha256": "e3c7f4131070f8909307cdbbe80409e48449f1470cbc1b9ade739bdf7d6f0485",
+      "sha256": "bdfa6133f72dd148a875caceebb95f25177937eae2351915a19aec244e76df18",
       "levels": 6,
       "human": null,
       "preview": "previews/se01.png",

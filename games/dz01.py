@@ -13,6 +13,8 @@
 #   Creatures wear their strength as stripes; a fight trades punches until the last stripe goes, and a dropper
 #   that lands on the hero's head starts one by itself (it "drops in on you while you dig"). Eight levels,
 #   written by gen_dig.py between the LEVELS markers.
+# Updated: 05-November-2026, Claude Code -- a hero who breaks ends the run as GAME_OVER instead of silently
+#   restarting the level (RESET restarts it); a perched hero shows a hand on the wall; keyword arguments to the engine.
 # PURPOSE: dz01 -- dig down a shaft of sand, packed earth and rock to the checkered finish at the bottom.
 #   The rules live in pure functions on a small DigState (act, settle, can_go_on), shared by the game (which
 #   animates the frames act() records), by gen_dig.py (whose search plays the same act() to find each level's
@@ -30,7 +32,7 @@ you punch out a stripe, it punches out a heart, until its last stripe goes. Spac
 """
 
 import numpy as np
-from arcengine import ARCBaseGame, Camera, GameAction, Level, RenderableUserDisplay
+from arcengine import ARCBaseGame, Camera, GameAction, GameState, Level, RenderableUserDisplay
 
 # ---------------------------------------------------------------------------
 # Palette (ARC-3 indices). No greys anywhere: the early-console look the Boss asked for.
@@ -760,6 +762,10 @@ class Dz01Display(RenderableUserDisplay):
             _put(f, art, hx, hy, y1=(VIEW * CELL) if fx.get("sink") else 63)
             if st.star and not st.lit:
                 _rect(f, hx + 3, hy - 1, hx + 3, hy - 1, C_YELLOW)     # the carried star, a yellow spark on his head
+            if st.perched and not fx.get("poof"):
+                # perched: a hand on the wall he is holding, so the held state is on screen
+                side = -1 if st.at(st.r, st.c - 1) in CLIMB else 1
+                _rect(f, hx + (0 if side < 0 else CELL - 1), hy + 2, hx + (0 if side < 0 else CELL - 1), hy + 2, C_WHITE)
         # the impact: a white spark on the edge between the hero and the creature he is fighting
         if fx.get("spark") and not fx.get("poof"):
             pr, pc = fx["spark"]
@@ -822,8 +828,9 @@ class Dz01(ARCBaseGame):
         self._end = None
         self._busy = False
         levels = [Level(sprites=[], grid_size=(64, 64), data=ldef, name=ldef["name"]) for ldef in LEVELS]
-        super().__init__("dz01", levels, Camera(0, 0, 64, 64, C_BLACK, C_BLACK, [self.display]),
-                         False, len(levels), [1, 2, 3, 4, 5, 6])
+        super().__init__(game_id="dz01", levels=levels,
+                         camera=Camera(0, 0, 64, 64, C_BLACK, C_BLACK, [self.display]),
+                         win_score=len(levels), available_actions=[1, 2, 3, 4, 5, 6])
 
     def on_set_level(self, level: Level) -> None:
         ldef = LEVELS[self.level_index]
@@ -833,6 +840,15 @@ class Dz01(ARCBaseGame):
         self._script = []
         self._end = None
         self._busy = False
+
+    def handle_reset(self) -> None:
+        """A full restart only from a fresh or finished game; otherwise the level starts over.
+        The engine's default also restarts the whole game when no action has been taken yet on a
+        level, which would wipe progress on a RESET sent right after a level is cleared."""
+        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
+            self.full_reset()
+        else:
+            self.level_reset()
 
     def view_state(self):
         return self.v[0] if self.v is not None else self.st
@@ -920,8 +936,5 @@ class Dz01(ARCBaseGame):
         if end == "next":
             self.next_level()
         elif end == "die":
-            self.level_reset()
-            # level_reset() zeroes the action count, and RESET on a zero count restarts the whole game; keep it
-            # above zero so a RESET right after a restart keeps the levels already cleared (from fn01)
-            self._action_count = max(1, self._action_count)
+            self.lose()
         self.complete_action()

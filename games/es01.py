@@ -1,4 +1,8 @@
-# ARC-AGI-3 candidate task es01.py.
+# ARC-AGI-3 candidate task es01 (Extreme Sneeze).
+# Author: Team Turducken agents, under Mark Barney's direction
+# Date: October 2026
+# PURPOSE: es01, Extreme Sneeze: spread an alien infection through a city, hopping between infected hosts.
+# SRP/DRY check: Pass -- one game class; the sprite functions above it only draw.
 
 from copy import deepcopy
 from collections import deque

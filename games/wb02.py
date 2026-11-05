@@ -6,7 +6,8 @@
 # steer to matching docks, and lower sails when handing control away at a dock.
 # SRP/DRY check: Pass. Native engine sprites/rendering; one shared transition for
 # gameplay and verification; no copied renderer, external assets, or hidden text.
-"""Independently authored NT80 revision. Human ease awaits human play review."""
+# Updated: 05-November-2026, Claude Code -- the dead tie-breaking loop is gone (one fixed wind can never send two
+#   boats to one cell).
 from arcengine import ARCBaseGame, Camera, GameAction, Level, Sprite, BlockingMode
 
 DIRECTIONS = ((0, -1), (0, 1), (-1, 0), (1, 0))
@@ -98,11 +99,9 @@ def advance(spec, state, action):
         candidate = destination(spec,snapshot,boat,spec['wind'])
         if candidate != cell:
             proposals[boat] = candidate
-    # Same fixed wind makes duplicate targets impossible, but refuse any tie as
-    # a pair rather than allowing loop order to decide a collision.
-    for boat,candidate in proposals.items():
-        if sum(value == candidate for value in proposals.values()) == 1:
-            moved[boat] = candidate
+    # One fixed wind can never send two boats to the same cell, so every proposal stands.
+    for boat, candidate in proposals.items():
+        moved[boat] = candidate
     return tuple(moved), selected, moored
 
 

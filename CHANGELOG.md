@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2 — 5 November 2026
+
+Claude Code, at Mark Barney's call: the defects found by the review are fixed, and only those. A loss now reaches the engine as GAME_OVER in pt01, st01, bs01, eh01 and dz01 (they used to restart the level silently), and RESET restarts the level; the four copies of the action-count workaround are gone. st01, bs01 and se01 report their own ids (they said g014, g019 and xb02). te01 no longer raises inside the engine while tightening the cable. lt03's tray selects a round when clicked and its unused time limit is gone. ff01 marks predators off the window, not just food. dz01 shows a perched hero. Dead code out of se01, eh01 and wb02; headers on pt01, lt03 and es01. Catalog hashes, class names and the st01, wb02, ff01 and lt03 write-ups refreshed. The review records every fix and what was deliberately left alone.
+
 ## 0.8.1 — 5 November 2026
 
 Claude Code, at Mark Barney's call: an adversarial review of the twelve featured games, in `docs/reviews/2026-11-05-featured-twelve-review.md`. Every featured source file read in full; a random-action probe and a brute-force solver run against the real engine; findings ranked, with a card per game. No game was changed.

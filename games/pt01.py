@@ -1,3 +1,9 @@
+# Author: Claude Sonnet 5.5, for Mark Barney
+# Date: 13-October-2026
+# PURPOSE: pt01, Perfect Target: a turn-based ship game, eight levels, enemy fire on a fixed script.
+# SRP/DRY check: Pass -- rules in one pure function (advance), pictures below it, engine glue last.
+# Updated: 05-November-2026, Claude Code -- a sunk player ends the run as GAME_OVER instead of silently rebuilding
+#   the level; RESET restarts the level; keyword arguments to the engine.
 """pt01 (game source).
 
 Author: Claude Sonnet 5.5, for the Boss (Mark Barney), 13-October-2026.
@@ -10,7 +16,7 @@ import math
 from math import gcd
 
 import numpy as np
-from arcengine import ARCBaseGame, BlockingMode, Camera, GameAction, InteractionMode, Level, RenderableUserDisplay, Sprite
+from arcengine import ARCBaseGame, BlockingMode, Camera, GameAction, GameState, InteractionMode, Level, RenderableUserDisplay, Sprite
 
 # ── geometry ──────────────────────────────────────────────────────────────────
 CELL = 7                 # screen pixels per sea cell
@@ -579,11 +585,22 @@ class Pt01(ARCBaseGame):
         self.s_ships = []
         self.s_fx = []
         levels = [Level(sprites=[], name=f"pt01-{i + 1}", data={"index": i}) for i in range(len(SPECS))]
-        super().__init__("pt01", levels, Camera(0, 0, 64, 64, SEA, BLACK, [self.display]), False, len(levels), [1, 2, 3, 4, 5])
+        super().__init__(game_id="pt01", levels=levels, camera=Camera(0, 0, 64, 64, SEA, BLACK, [self.display]),
+                         win_score=len(levels), available_actions=[1, 2, 3, 4, 5])
 
     @property
     def spec(self):
         return SPECS[self.level_index]
+
+    def handle_reset(self) -> None:
+        """A full restart only from a fresh or finished game; otherwise the level starts over.
+        The engine's default also restarts the whole game when no action has been taken yet on a
+        level, which would wipe progress on a RESET sent right after a level is cleared."""
+        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
+            self.full_reset()
+        else:
+            self.level_reset()
+
 
     # ── entering a level: the one place that builds it, used for start, next level, RESET and a sinking ──
 
@@ -684,8 +701,8 @@ class Pt01(ARCBaseGame):
             self._begin()
         sc = self.frames[self.fi]
         self.fi += 1
-        if sc is None:                              # the death is over: the level starts again as it was entered
-            self._enter(self.current_level)
+        if sc is None:                              # the death is over: the run ends; RESET restarts the level
+            self.lose()
         else:
             self._show(sc)
         if self.fi >= len(self.frames):

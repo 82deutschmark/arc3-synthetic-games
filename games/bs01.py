@@ -1,4 +1,7 @@
-# ARC-AGI-3 candidate task g019.
+# ARC-AGI-3 candidate task bs01 (Bell Stealth).
+# Updated: 05-November-2026, Claude Code -- the game is bs01 (it reported itself as g019); a position that cannot be
+#   won ends the run as GAME_OVER instead of silently restarting the level; every level is searched once at import,
+#   so a level too large or unwinnable fails at load and never mid-play; RESET restarts the level.
 # Author: Claude Sonnet 5.5
 # Date: 13-October-2026
 # PURPOSE: Second version of g019: eight levels that climb, a redrawn board, and a short visible
@@ -15,6 +18,7 @@ from arcengine import (
     BlockingMode,
     Camera,
     GameAction,
+    GameState,
     InteractionMode,
     Level,
     RenderableUserDisplay,
@@ -378,6 +382,10 @@ def analyse(index: int) -> frozenset:
     return _LIVE[index]
 
 
+for _index in range(len(LEVELS)):
+    analyse(_index)          # fail at import, not at level entry
+
+
 # ---------------------------------------------------------------------------------------------
 # Art. Early home-console look: flat saturated fields, black hard edges, figures cut from one
 # colour. Red belongs to the guards alone: red means this sends you back.
@@ -618,7 +626,7 @@ def _danger(m, guards, target):
 class Overlay(RenderableUserDisplay):
     """The brick border, the glow round a pad that is holding, and a load in flight."""
 
-    def __init__(self, game: "G019") -> None:
+    def __init__(self, game: "Bs01") -> None:
         super().__init__()
         self._game = game
 
@@ -653,7 +661,7 @@ def _lerp(a, b, num, den):
     return (a[0] + round((b[0] - a[0]) * num / den), a[1] + round((b[1] - a[1]) * num / den))
 
 
-class G019(ARCBaseGame):
+class Bs01(ARCBaseGame):
 
     HIT_FRAMES = 5
     FALL_FRAMES = 4
@@ -669,7 +677,7 @@ class G019(ARCBaseGame):
         self._refs = {}
         camera = Camera(width=64, height=64, background=BLACK, letter_box=BLACK,
                         interfaces=[Overlay(self)])
-        super().__init__(game_id="g019", levels=build_levels(), camera=camera,
+        super().__init__(game_id="bs01", levels=build_levels(), camera=camera,
                          available_actions=[1, 2, 3, 4])
 
     # -- the level ---------------------------------------------------------------------------
@@ -681,6 +689,15 @@ class G019(ARCBaseGame):
         self._refs = {s.name: s for s in level.get_sprites()
                       if s.name == "player" or s.name == "exit" or s.name.startswith(("guard_", "thing_"))}
         self._paint(self._settled())
+
+    def handle_reset(self) -> None:
+        """A full restart only from a fresh or finished game; otherwise the level starts over.
+        The engine's default also restarts the whole game when no action has been taken yet on a
+        level, which would wipe progress on a RESET sent right after a level is cleared."""
+        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
+            self.full_reset()
+        else:
+            self.level_reset()
 
     def _settled(self, state=None) -> dict:
         m = model(self.level_index)
@@ -719,10 +736,8 @@ class G019(ARCBaseGame):
             return
         view = self.script.pop(0)
         end = view.get("end")
-        if end == "restart":
-            taken = self._action_count
-            self.level_reset()
-            self._action_count = max(1, taken)
+        if end == "lose":
+            self.lose()
         elif end == "next":
             self.next_level()
         else:
@@ -789,7 +804,7 @@ class G019(ARCBaseGame):
                     v["live"] = False
                     v["zone"] = []
                     frames.append(v)
-            frames.append({"end": "restart"})
+            frames.append({"end": "lose"})
         elif won:
             for pose, count in (("idle", 2), ("half", 2), ("gone", 1)):
                 for _ in range(count):

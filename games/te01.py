@@ -3,7 +3,9 @@
 # PURPOSE: Expand te01 to eight cable-routing stages with named readable sprites,
 # safe level retries, and intact short movement using the original contact geometry.
 # SRP/DRY check: Pass — reuses the parent cable/cover rules and shared sprite-book art.
-"""te01: an eight-stage human-feedback revision of te01@6c224f109520."""
+# Updated: 05-November-2026, Claude Code -- cable tightening no longer raises inside the engine when a shortening
+#   step would lengthen the path (the step is skipped instead); keyword arguments to the engine.
+"""te01: an eight-stage revision."""
 from functools import lru_cache
 from collections import namedtuple
 from itertools import combinations
@@ -206,7 +208,7 @@ def tighten(path, obstacles):
                 continue
             old_length, new_length = cable_length(old), cable_length(replacement)
             if new_length > old_length+1e-7:
-                raise ValueError("Cable tightening increased the local path length")
+                continue                      # never lengthen the cable; keep the bend as it is
             if new_length < old_length-EPS or len(replacement) < len(old):
                 path = canonical(path[:index-1]+replacement+path[index+2:])
                 changed = True
@@ -573,8 +575,8 @@ class Te01(ARCBaseGame):
         self.lvl, self.st = LEVELS[0], initial(LEVELS[0])
         self.animation, self.history, self.objects = None, [], {}
         levels = [Level(sprites=[], grid_size=(64, 64), data={}, name=level['name']) for level in LEVELS]
-        super().__init__('te01', levels, Camera(0, 0, 64, 64, BLACK, BLACK),
-                         False, len(levels), [1, 2, 3, 4, 5, 6, 7])
+        super().__init__(game_id='te01', levels=levels, camera=Camera(0, 0, 64, 64, BLACK, BLACK),
+                         win_score=len(levels), available_actions=[1, 2, 3, 4, 5, 6, 7])
 
     def put(self, name, pixels, x, y, layer, tags=()):
         art = np.asarray(pixels, dtype=np.int8)

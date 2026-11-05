@@ -1,4 +1,10 @@
-# ARC-AGI-3 candidate task lt03.py.
+# ARC-AGI-3 candidate task lt03 (Lock Target).
+# Author: Team Turducken agents, under Mark Barney's direction
+# Date: October 2026
+# PURPOSE: lt03, Lock Target: aim late-landing rounds at a walking city of four districts over nine missions.
+# SRP/DRY check: Pass -- the Lt03 class holds the rules; the city_art_* functions below it only draw.
+# Updated: 05-November-2026, Claude Code -- clicking a round in the tray selects it (it only flashed before); the
+#   per-mission time_limit that no rule ever read is gone.
 
 from __future__ import annotations
 from copy import deepcopy
@@ -158,7 +164,6 @@ def build_district(index):
     if index>=2: tools+=['beacon']
     if index>=5: tools=['heavy','precision','fire','aid','beacon']
     return dict(buildings=buildings,roads=roads,actors=actors,tools=tools,
-                time_limit=(190,210,260,290,320,350,390,440)[index],
                 sensor_period=3 if index>=6 else 1, initial_incident=index>=5)
 
 
@@ -210,7 +215,7 @@ ZONE_LAYOUTS=((0,1,2,3,4,5),(4,2,0,5,1,3),(5,1,3,0,4,2),
               (2,4,1,5,0,3),(1,5,3,2,4,0),(3,2,4,0,5,1),
               (4,0,5,1,3,2),(2,5,1,3,0,4),(5,3,1,4,2,0))
 SNAPSHOT_FIELDS=('buildings','roads','actors','craters','tools','tool_index','ammo','reload_progress',
-    'time_limit','sensor_period','tick','risk','total_hostiles','pending','fires','beacons',
+    'sensor_period','tick','risk','total_hostiles','pending','fires','beacons',
     'events','incidents','ledger','stale','flash_tool','ending','before_actors',
     'view_x','view_y','before_view','mission_index','blocked_cells','response_load','slow_until',
     'sheltered_actors')
@@ -299,7 +304,6 @@ class Lt03(ARCBaseGame):
             self.view_x,self.view_y=MISSION_VIEWS[index]
             self.ammo={name:TOOLS[name]['stock'] for name in TOOL_ORDER}
             self.reload_progress={name:0 for name in TOOL_ORDER}
-            self.time_limit=spec['time_limit']+100 if index<8 else 700
             self.sensor_period=spec['sensor_period'];self.tick=0;self.risk=120
             self.total_hostiles=self.remaining_hostiles()
             self.pending=[];self.fires=[];self.beacons=[];self.events=[];self.incidents=[]
@@ -569,7 +573,11 @@ class Lt03(ARCBaseGame):
             if isinstance(x,(int,np.integer)) and isinstance(y,(int,np.integer)):
                 if 54<=y<=63:
                     i=int(x)//12
-                    if 0<=i<len(TOOL_ORDER):self.flash_tool=TOOL_ORDER[i]
+                    if 0<=i<len(TOOL_ORDER):
+                        if TOOL_ORDER[i] in self.tools:
+                            self.tool_index=self.tools.index(TOOL_ORDER[i])
+                            self.events.append(dict(kind='switch',pos=(0,0),radius=0))
+                        else:self.flash_tool=TOOL_ORDER[i]
                 elif 2<=x<=61 and 4<=y<=51:
                     x,y=x+self.view_x,y+self.view_y
                     tool=self.tools[self.tool_index]
