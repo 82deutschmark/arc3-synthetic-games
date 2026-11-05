@@ -48,6 +48,7 @@
       "play": "https://arc3.sonpham.net/games/lt03",
       "spoiler": {
         "teaser": "Lock Target. Select munitions, hunt the hostiles. Try not to kill too many friendlies.",
+        "hard": "You never move anyone. You aim, and every shot lands late, so you have to lead a walking target. From the fourth mission the city answers back: big shots pull crowds and ambulances in. A bot has to predict where people will be, and a single screenshot doesn't show motion. In the family of SC25's aimed fireball.",
         "rules": [
           "You look down on a dark city from the air, where people and cars are small squares coloured in the middle: red for targets, yellow for street traffic, green for people inside schools and hospitals, and ambulances carry pink crosses.",
           "Click anywhere on the map to fire the selected round, press space to switch rounds, and use the arrow keys to pan across a city of four districts, with arrows at the screen edge pointing to targets out of view; every action, even panning, moves the city on one step, and undo just waits a step.",
@@ -87,6 +88,7 @@
       "play": "https://arc3.sonpham.net/games/wb02",
       "spoiler": {
         "teaser": "Windy Boats. Steer one boat and the wind blows all the others.",
+        "hard": "You steer one boat and the wind moves all the others, so the boats you aren't touching are the real puzzle. One rule is never announced: a boat only drops anchor if you hand control away while it sits in its berth. A bot has to discover a rule nobody tells it.",
         "rules": [
           "Two or three sailboats sit in a small harbor, each with a berth of its own color. White corner brackets mark the boat you are steering: the arrow keys move it one square, space or a click on a boat hands control to another, and undo takes back a command.",
           "The wind blows one fixed way per level, shown by the flags at the top. Every time your boat actually moves, every other boat with its sail up drifts one square downwind, unless a rock, the edge or another boat blocks it, or it sits in calm water.",
@@ -220,7 +222,8 @@
       ],
       "play": "https://arc3.sonpham.net/games/dz01",
       "spoiler": {
-        "teaser": "Inspired by the desert levels of Super Mario Bros. 2 on the original NES.",
+        "teaser": "Dig Zone. Inspired by the desert levels of Super Mario Bros. 2 on the original NES.",
+        "hard": "Every dig comes out of a bar, and the colour of the ground tells you if it takes one, two or three clicks, or never breaks. Sand falls into the hole you just made. So it's planning, not poking: a bot that clicks around to see what happens runs the bar dry. A cousin of BP35's shaft.",
         "rules": [
           "You see a green hero at the top of a sand shaft whose checkered finish lies out of sight far below, and a strip at the side with your hearts, a star slot and a bar: its yellow is your digging budget, a green dot on it shows how deep you are, and it ends in the same checkers.",
           "Arrow keys walk, and up climbs one step when sand or earth is right beside the hero; click the square straight above, below, left or right of him to dig it: sand takes one click, packed earth two, rock three, and black bedrock never breaks.",
@@ -415,6 +418,7 @@
       "play": "https://arc3.sonpham.net/games/g014",
       "spoiler": {
         "teaser": "Shadow Topple. Turn the light and the blocks topple along their shadows into the holes.",
+        "hard": "You never move a block. You turn the light, and the shadows decide where every block lands, all at once. A bot looks for a piece to push and finds none. Like TN36, you never touch the thing that moves.",
         "rules": [
           "A light sits on one edge of the board, and every green block casts a shadow away from it. Touching squares of the same height count as one block.",
           "Turn the light with the left and right arrows (space turns it the same way as right), then click a block. It falls over along its shadow and is gone, and every hole under the shadow gets one step shallower.",
@@ -505,6 +509,7 @@
       "play": "https://arc3.sonpham.net/games/eh01",
       "spoiler": {
         "teaser": "Eroding Horizons. Every peek with your lantern wears away the floor you need to get back.",
+        "hard": "You can't see what a square holds until you step off it, and every look wears out the floor you need to get home. The budget is the map. A bot that explores freely, the way it can in other games, burns its own way back. The hidden information is the point.",
         "rules": [
           "You walk a small blue creature through corridors cut into rock with the arrow keys. You can see the shape of the corridors but not what any square holds, and stepping onto a square never shows you what is there.",
           "Space is your lantern. Right after you step onto a dark square, space lights the square you are standing on and steps you back onto the one you came from, showing whether it held a key, the exit ring, a pit or nothing. On ground that is already lit, space does nothing.",
@@ -539,6 +544,7 @@
       "play": "https://arc3.sonpham.net/games/wf02",
       "spoiler": {
         "teaser": "Water Flip. One lever flips every pipe. Fill each tank to the line.",
+        "hard": "One lever flips every pipe of a colour at once, so each click is a decision about a whole circuit. After each match the marks move but the water stays, so how you finish one delivery sets up the next. Same idea as DC22's switch: one control changes many pieces.",
         "rules": [
           "A row of black tanks holds blue water in stacked blocks, and white dashes in each tank mark how full it should be.",
           "Pipes arch over the tanks with a wheel on top of each. Click a wheel to pour one block along that pipe, or two if the pipe has a stripe down its middle. The wheel shows one or two blocks of water on the side it will leave from.",
@@ -924,6 +930,7 @@
       "play": "https://arc3.sonpham.net/games/es01",
       "spoiler": {
         "teaser": "Extreme Sneeze. Spread the alien outbreak to win.",
+        "hard": "Every person you infect is a new body you can jump into, so who you are keeps changing. Doctors cure your work and guards shoot the alien. A bot loses track of which piece is it. Like SK48, where you click between two rods, but here there can be a whole crowd.",
         "rules": [
           "On level one you are a small green alien. Arrow keys walk, and space sneezes a short fan of green droplets straight ahead and out to both forward diagonals. Walls and the first person in each line stop it; vent grilles do not.",
           "The alien’s sneeze is weak: a person needs three hits, and a green spot appears on their face with each one. The first person the alien fully infects becomes the body you play. From level two you start each level already inside an infected person, and the alien follows you on its own, sneezing at any healthy person lined up close to it.",
@@ -960,6 +967,7 @@
       "play": "https://arc3.sonpham.net/games/ff01",
       "spoiler": {
         "teaser": "Feeding Frenzy. Eat the small fry, ride the tide, grow big.",
+        "hard": "One tide moves every fish and current at once, on a beat, and a yellow dot shows each next move. Size decides who eats who, and you grow. A bot has to plan several beats ahead instead of dodging. It borrows AS66's always-changing direction and BP35's pull across a world bigger than the screen.",
         "rules": [
           "You are the green fish. You swim with the arrow keys through a sea bigger than the screen, and the view follows you.",
           "Touch a fish your size or smaller to eat it. Colour shows size: orange is smallest, then pink, magenta, red and maroon. Eat enough to fill the meal pips and the level clears; from level two, a few meals also make you grow a size.",
@@ -1064,6 +1072,7 @@
       "play": "https://arc3.sonpham.net/games/g019",
       "spoiler": {
         "teaser": "Bell Stealth. Ring the bells to drive the guards onto the pads, and don't get caught.",
+        "hard": "You never touch the guards. You herd them by choosing which bell to ring, and they also hold the plates down and kill you if you stand beside them. Pips flow between neighbours by height, and a move that makes the level unwinnable kills you on the spot. In the family of G50T, where something other than you holds the plate and can catch you.",
         "rules": [
           "You are the black figure. The arrow keys move you one square; there is no other control and no undo, and every press is a turn, even walking into a wall or the edge, which is how you wait.",
           "Step on a bell to ring it. From then on every red guard walks one square per turn toward the bell you rang last by a shortest route, waiting in line if another guard is in the way; in the first two levels the pad is itself a bell.",
@@ -1238,6 +1247,7 @@
       "play": "https://arc3.sonpham.net/games/pt01",
       "spoiler": {
         "teaser": "Perfect Target. You are a ship shooting at other ships.",
+        "hard": "You can only hurt a ship from behind. Hit a bow or side and the shot bounces back and costs you a heart. Enemy guns fire on a beat down lanes you have to read one press ahead. A bot that shoots whatever is in front of it dies fast, because it has to work out that facing matters. Same family as SC25's fireball and TU93's head-on killer.",
         "rules": [
           "You sail the black ship one square at a time with the arrow keys and fire with space; the ball flies straight ahead along the dotted line from your bow, and pressing toward land or a ship turns you to face it without moving.",
           "Sink every enemy ship to clear the level, but only a ship’s stern, the end with the yellow lamps, can be hurt: you must get behind it, facing the way it faces, and each hit puts out one lamp.",
@@ -1347,6 +1357,7 @@
       "play": "https://arc3.sonpham.net/games/te01",
       "spoiler": {
         "teaser": "Tethered Extraction. A cable and a pulley.",
+        "hard": "Your cable is a fixed length and wraps round posts, so the same route costs more or less depending on which side of each post you pass. Blades cut the cable, not just you. A bot has to plan the whole path before it moves, not feel its way. In the family of SK48, where you carry a length of something and spend it.",
         "rules": [
           "You drive a small green rover with the arrow keys; an orange cable runs from the blue dock to the rover and always pulls tight, bending only at the corners of the posts it wraps around.",
           "Stop beside the blue crystal (not diagonally) or right on top of it, click it to pick it up, then drive back onto the dock to clear the level.",
@@ -1386,6 +1397,7 @@
       "play": "https://arc3.sonpham.net/games/xb02",
       "spoiler": {
         "teaser": "Shrine Exploration. Light a shrine and a gate crumbles somewhere you can't see.",
+        "hard": "Light a shrine and a gate crumbles somewhere you can't see, and nothing tells you which. You only find out by going back to look. It's DC22's trick, where one click rewrites the floor anywhere on the board, but hidden and far away.",
         "rules": [
           "You walk a hooded pilgrim along yellow tracks with the arrow keys, through a countryside several screens wide and tall. You start beside the sanctum; open its barred door and walk in to clear the level.",
           "Four shrines stand in the four corners. Step onto a shrine’s brazier and every gate of one colour, anywhere in the world, crumbles for the rest of the level.",
@@ -1400,5 +1412,6 @@
         "markSaid": ""
       }
     }
-  ]
+  ],
+  "slippery": "The Slippery Seven are the seven public ARC-AGI-3 games our AI agents fail most: DC22, G50T, M0R0, SC25, SK48, TN36 and TR87."
 }

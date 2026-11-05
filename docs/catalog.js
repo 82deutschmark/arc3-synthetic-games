@@ -10,6 +10,8 @@
 //   game's full write-up in a dialog. arc.markbarney.net mirrors this layout from the same catalog.json.
 //   Same day: the catalog's "highlight" (ES01 and LT03, outbreak and air strikes, no guardrails hit) shows under the grid,
 //   marks those two cards and leads their panels.
+// Updated: 05-November-2026, Claude Opus 5.5 — a panel leads with "why AI struggles" (catalog spoiler.hard, plain gamer talk, with the
+//   Slippery Seven cousin where there is one); the long write-up folds under FULL RULES. Play links go to the lab, which records plays.
 // Updated: 04-November-2026, Claude Opus 5.5 High — each card face shows the game's short teaser (catalog "spoiler.teaser").
 // PURPOSE: Render the highlighted games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
@@ -68,14 +70,19 @@ function openPanel(game) {
   side.append(image, strip(game), el('p', 'meta', `${game.levels} levels · ${keys(game)}`), play, source);
   const text = el('div', 'text');
   if (HIGHLIGHT && HIGHLIGHT.games.includes(game.id)) text.append(el('p', 'flag', HIGHLIGHT.text));
-  if (notes.special) text.append(section('WHAT’S SPECIAL', el('p', 'lead', notes.special)));
+  // Plain gamer talk first: why this one is hard for an AI. The long write-up folds underneath.
+  if (notes.hard) text.append(section('WHY AI STRUGGLES', el('p', 'lead', notes.hard)));
+  const full = el('details', 'full');
+  full.append(el('summary', '', 'FULL RULES AND DETAILS'));
+  if (notes.special) full.append(section('WHAT’S SPECIAL', el('p', '', notes.special)));
   if (notes.rules && notes.rules.length) {
     const list = el('ul', 'rules');
     for (const rule of notes.rules) list.append(el('li', '', rule));
-    text.append(section('THE RULES', list));
+    full.append(section('THE RULES', list));
   }
-  if (notes.vsPublic) text.append(section('NOT IN THE PUBLIC 25', el('p', '', notes.vsPublic)));
-  if (notes.look) text.append(section('THE LOOK', el('p', '', notes.look)));
+  if (notes.vsPublic) full.append(section('NOT IN THE PUBLIC 25', el('p', '', notes.vsPublic)));
+  if (notes.look) full.append(section('THE LOOK', el('p', '', notes.look)));
+  text.append(full);
   if (notes.markSaid) text.append(el('blockquote', 'said', `“${notes.markSaid}” — Mark`));
   dialog.querySelector('.panel-title').textContent = game.id.toUpperCase();
   body.replaceChildren(side, text);
