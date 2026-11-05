@@ -47,7 +47,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/lt03",
       "spoiler": {
-        "teaser": "Lock target, select munitions, hunt the hostiles. Try not to kill too many friendlies.",
+        "teaser": "Lock Target. Select munitions, hunt the hostiles. Try not to kill too many friendlies.",
         "rules": [
           "You look down on a dark city from the air, where people and cars are small squares coloured in the middle: red for targets, yellow for street traffic, green for people inside schools and hospitals, and ambulances carry pink crosses.",
           "Click anywhere on the map to fire the selected round, press space to switch rounds, and use the arrow keys to pan across a city of four districts, with arrows at the screen edge pointing to targets out of view; every action, even panning, moves the city on one step, and undo just waits a step.",
@@ -923,7 +923,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/es01",
       "spoiler": {
-        "teaser": "Extreme sneeze. Spread the alien outbreak to win.",
+        "teaser": "Extreme Sneeze. Spread the alien outbreak to win.",
         "rules": [
           "On level one you are a small green alien. Arrow keys walk, and space sneezes a short fan of green droplets straight ahead and out to both forward diagonals. Walls and the first person in each line stop it; vent grilles do not.",
           "The alien’s sneeze is weak: a person needs three hits, and a green spot appears on their face with each one. The first person the alien fully infects becomes the body you play. From level two you start each level already inside an infected person, and the alien follows you on its own, sneezing at any healthy person lined up close to it.",
@@ -959,7 +959,7 @@
       ],
       "play": "https://arc3.sonpham.net/games/ff01",
       "spoiler": {
-        "teaser": "Feeding frenzy. Eat the small fry, ride the tide, grow big.",
+        "teaser": "Feeding Frenzy. Eat the small fry, ride the tide, grow big.",
         "rules": [
           "You are the green fish. You swim with the arrow keys through a sea bigger than the screen, and the view follows you.",
           "Touch a fish your size or smaller to eat it. Colour shows size: orange is smallest, then pink, magenta, red and maroon. Eat enough to fill the meal pips and the level clears; from level two, a few meals also make you grow a size.",

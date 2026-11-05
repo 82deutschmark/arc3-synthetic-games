@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.7 — 4 November 2026
+
+Claude Sonnet 5.5: a review pass. Names are title case on every card (Extreme Sneeze, Feeding Frenzy, Lock Target), and the clone line wraps on a phone instead of running off the screen.
+
 ## 0.7.6 — 4 November 2026
 
 Claude Opus 5.5 High: more names that spell their tags, at Mark Barney's call. TE01 is Tethered Extraction and PT01 Perfect Target. XB02 is renamed SE01, Shrine Exploration: its file, pictures and catalog entry move to the new tag, and the entry keeps "was": ["xb02"]. The game code is unchanged; its engine id stays internal, as for the other games.

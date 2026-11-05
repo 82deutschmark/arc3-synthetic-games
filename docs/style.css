@@ -66,3 +66,4 @@ main>.fine{margin:12px 0 18px;max-width:none}
 @media(max-width:460px){#featured{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .flag{margin:0 0 8px;padding:7px 10px;border-left:4px solid var(--accent);background:rgba(179,63,36,.09);font:14px/1.45 Arial,sans-serif;color:var(--ink)}
 .pick.flagged{box-shadow:inset 0 0 0 2px var(--accent)}
+@media(max-width:700px){.clone{white-space:normal;word-break:break-all;display:inline-block;margin:3px 0}}
