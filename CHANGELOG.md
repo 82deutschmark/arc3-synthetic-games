@@ -1,12 +1,25 @@
 # Changelog
 
-## 0.8.2 — 5 November 2026
+## 0.8.5 — 5 November 2026
+
+Merged onto 0.8.3 on 6 November 2026 by Claude Opus 5.5 Low, at Mark Barney's call; the game fixes are unchanged.
 
 Claude Code, at Mark Barney's call: the defects found by the review are fixed, and only those. A loss now reaches the engine as GAME_OVER in pt01, st01, bs01, eh01 and dz01 (they used to restart the level silently), and RESET restarts the level; the four copies of the action-count workaround are gone. st01, bs01 and se01 report their own ids (they said g014, g019 and xb02). te01 no longer raises inside the engine while tightening the cable. lt03's tray selects a round when clicked and its unused time limit is gone. ff01 marks predators off the window, not just food. dz01 shows a perched hero. Dead code out of se01, eh01 and wb02; headers on pt01, lt03 and es01. Catalog hashes, class names and the st01, wb02, ff01 and lt03 write-ups refreshed. The review records every fix and what was deliberately left alone.
 
-## 0.8.1 — 5 November 2026
+## 0.8.4 — 5 November 2026
 
 Claude Code, at Mark Barney's call: an adversarial review of the twelve featured games, in `docs/reviews/2026-11-05-featured-twelve-review.md`. Every featured source file read in full; a random-action probe and a brute-force solver run against the real engine; findings ranked, with a card per game. No game was changed.
+## 0.8.3 — 5 November 2026
+
+Gemini 3.8 Flash High, at Mark Barney's call: `EVALUATION.md` guide added. Explains how to test open-weights models (LLMs and VLMs) on the public 25 ARC-AGI-3 games and how to use this repository's synthetic games as an air-gapped holdout suite. Covers `arcengine` runtime interaction, agent harness design (observation formatting, constrained decoding, context compaction, Code-as-Policies scaffolding), RHAE evaluation, the 12 featured games as Slippery Seven cousins, and family-based holdout splitting rules. Linked from `README.md`. The plan is `docs/05-Nov-2026-evaluation-guide-plan.md`.
+
+## 0.8.2 — 5 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call: three more highlighted games, BL01 Basket Lift, SS01 Shared Supply and KT01 Knot Tying, each with a teaser, "why AI struggles", rules, what's special and the look, written from the game's code and from runs of the real engine (SS01 and BL01 cleared on all eight levels by solver routes; KT01 levels one to six cleared in the engine and all ten solved under its own rule functions). The "not in the public 25" notes and any cousin games are left out until someone who knows the public set can check them. KT01's catalog entry now carries its level count, 10; it was empty. The names are proposals. The plan is `docs/05-Nov-2026-highlight-bl01-ss01-kt01-plan.md`. The page's count line is now "N best games", not "N best of M": the catalog is only the games in this repository, and Mark's picks are hand-picked from far more. The intro says they are the ones he liked most and thinks a person can play, the footer says "every game in this repository", and the README says the same. `catalog.js` carries the new cache version.
+
+## 0.8.1 — 5 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call: repository docs. The README is rewritten around what the games are for (holdouts for anyone who trained on the 25 public games) and what the user has to get right (keep the agent away from the game source), in Mark's voice. `AGENTS.md` and `CLAUDE.md` are added; `CODING_STANDARDS.md` is now Mark's full standards, with the repo-specific rules in `AGENTS.md`. `.gitattributes` forces LF so the catalog's game hashes verify on Windows, where checkouts were turning every game into a hash mismatch. The release plan moves from `docs/plans/` to `docs/`, named as the standards say.
 
 ## 0.8.0 — 5 November 2026
 

@@ -1,0 +1,3 @@
+# Games are hashed byte for byte in docs/catalog.json, so they must check out identically on every OS.
+* text=auto eol=lf
+*.png binary
