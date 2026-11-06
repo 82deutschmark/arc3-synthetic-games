@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.8.3 — 5 November 2026
+
+Gemini 3.8 Flash High, at Mark Barney's call: `EVALUATION.md` guide added. Explains how to test open-weights models (LLMs and VLMs) on the public 25 ARC-AGI-3 games and how to use this repository's synthetic games as an air-gapped holdout suite. Covers `arcengine` runtime interaction, agent harness design (observation formatting, constrained decoding, context compaction, Code-as-Policies scaffolding), RHAE evaluation, the 12 featured games as Slippery Seven cousins, and family-based holdout splitting rules. Linked from `README.md`. The plan is `docs/05-Nov-2026-evaluation-guide-plan.md`.
+
 ## 0.8.2 — 5 November 2026
 
-Claude Sonnet 5.5, at Mark Barney's call: three more highlighted games, BL01 Basket Lift, SS01 Shared Supply and KT01 Knot Tying, each with a teaser, "why AI struggles", rules, what's special and the look, written from the game's code and from runs of the real engine (SS01 and BL01 cleared on all eight levels by solver routes; KT01 levels one to six cleared in the engine and all ten solved under its own rule functions). The "not in the public 25" notes and any cousin games are left out until someone who knows the public set can check them. KT01's catalog entry now carries its level count, 10; it was empty. The names are proposals. The plan is `docs/05-Nov-2026-highlight-bl01-ss01-kt01-plan.md`.
+Claude Sonnet 5.5, at Mark Barney's call: three more highlighted games, BL01 Basket Lift, SS01 Shared Supply and KT01 Knot Tying, each with a teaser, "why AI struggles", rules, what's special and the look, written from the game's code and from runs of the real engine (SS01 and BL01 cleared on all eight levels by solver routes; KT01 levels one to six cleared in the engine and all ten solved under its own rule functions). The "not in the public 25" notes and any cousin games are left out until someone who knows the public set can check them. KT01's catalog entry now carries its level count, 10; it was empty. The names are proposals. The plan is `docs/05-Nov-2026-highlight-bl01-ss01-kt01-plan.md`. The page's count line is now "N best games", not "N best of M": the catalog is only the games in this repository, and Mark's picks are hand-picked from far more. The intro says they are the ones he liked most and thinks a person can play, the footer says "every game in this repository", and the README says the same. `catalog.js` carries the new cache version.
 
 ## 0.8.1 — 5 November 2026
 

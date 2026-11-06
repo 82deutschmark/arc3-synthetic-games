@@ -6,7 +6,7 @@ New ARC-AGI-3 style games, one Python file each, running on the ARC engine. Made
 
 ARC-AGI-3 has 25 public games. If you trained your agent on all 25, congratulations, you've got nothing left to test it on. These are your holdouts. Games you haven't seen, your agent hasn't seen, and nobody told it the rules.
 
-They aren't copies of the public games. Plenty are cousins of the ones agents fail hardest (the Slippery Seven, see the catalog), and the [browse page](https://82deutschmark.github.io/arc3-synthetic-games/) says how each highlighted game differs from the public set and what makes a bot sweat. Want to train on them instead? Go ahead, but then you've burned your holdout. Your call.
+They aren't copies of the public games. Plenty are cousins of the ones agents fail hardest (the Slippery Seven, see the catalog), and the [browse page](https://82deutschmark.github.io/arc3-synthetic-games/) says what makes a bot sweat on each highlighted game. The page shows only Mark's hand-picked best, the ones he liked most and thinks a person can play. The other games in `games/` are in the catalog too, but nobody has singled them out the same way. Want to train on them instead? Go ahead, but then you've burned your holdout. Your call.
 
 ## The catch
 
@@ -27,7 +27,7 @@ python -m venv .venv
 
 ## Plugging in your agent
 
-`tools/runtime.py` is all you need:
+`tools/runtime.py` is all you need. For an in-depth guide on testing open-weights models and using these games as an air-gapped holdout suite, see [EVALUATION.md](EVALUATION.md).
 
 ```python
 from runtime import load_game, perform, frame_record
@@ -52,6 +52,7 @@ A few things before you point anything at it:
 
 | Path | What it is |
 | --- | --- |
+| `EVALUATION.md` | Guide for testing open-weights models and setting up holdouts. |
 | `games/` | The games, one `.py` each. Hashes are in the catalog, so don't edit them. |
 | `docs/catalog.json` | The list of games: id, class, path, hash, levels, inputs, and the write-ups the page shows. |
 | `docs/index.html` | The browse page. |
