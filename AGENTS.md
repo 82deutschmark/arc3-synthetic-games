@@ -1,49 +1,43 @@
 # AGENTS.md
 
-Guidance for AI coding agents working in this repository. Humans should start with [README.md](README.md).
+Guidance for AI coding agents working in this repo. Humans: start with [README.md](README.md).
 
-## What this repository is for
+**How to work here is in [CODING_STANDARDS.md](CODING_STANDARDS.md). Read it first and follow it.** That includes the plan-before-code rule, the file headers, the changelog, and not committing unless asked. This file only covers what is specific to this repo.
 
-This is a **published dataset of synthetic ARC-AGI-3 style games**, made to be cloned by other people and dropped into their training and evaluation pipelines. The games are the product. Every decision should be judged by whether an outside user who clones this repo gets games that load, run and behave exactly as documented, on any OS, with nothing else installed beyond `requirements.txt`.
+## What this repo is for
 
-It is not an application and not a training system. It has no rewards, no splits and no solutions, and must not claim any.
+New ARC-AGI-3 style games for other people to clone and run in their own training and evaluation pipelines. The main use is as holdouts for anyone who trained on the 25 public games and has nothing left to test on. The games are the product. Judge every change by whether an outsider who clones this gets games that load and behave exactly as documented, on any OS, with only `requirements.txt` installed.
+
+It is not a training system. No rewards, no splits, no solutions, and nothing here should claim any.
 
 ## Layout
 
-- `games/*.py`: one game each, built on `arcengine`. Rules live in these files and nowhere else.
-- `docs/catalog.json`: the single source of truth for the game list (id, class name, path, SHA-256, levels, inputs, write-ups). `docs/catalog.js` renders it into `docs/index.html`, and the separate site arc.markbarney.net mirrors it, so treat its schema as a public interface.
-- `tools/runtime.py`: the shared loader and observation serialiser. The only place games are imported.
-- `tools/validate.py`: integrity and smoke check; rewrites `docs/validation.json`.
-- `tools/make_media.py`: regenerates `docs/previews/` from the real engine.
+- `games/*.py`: one game per file, on `arcengine`. Game rules live in these files and nowhere else.
+- `docs/catalog.json`: the single source of truth for the game list. `docs/catalog.js` renders it into `docs/index.html`, and arc.markbarney.net mirrors it from the same file, so treat the schema as public.
+- `tools/runtime.py`: the shared loader and observation serialiser. The only place games get imported.
+- `tools/validate.py`: integrity and smoke check. Rewrites `docs/validation.json`.
+- `tools/make_media.py`: redraws `docs/previews/` from the real engine.
 - `examples/collect.py`: random-policy rollout example.
-- `docs/plans/`: dated plans for substantive changes.
+- `docs/*-plan.md`: plans, named as the standards say.
 
 ## Commands
 
-Python 3.13. Use a virtualenv, never the system interpreter.
+Use a virtualenv, not the system Python.
 
 ```sh
-python3.13 -m venv .venv
+python -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt     # Windows: .venv\Scripts\python
-.venv/bin/python tools/validate.py                      # must print PASS for every game, exit 0
+.venv/bin/python tools/validate.py                      # PASS for every game, exit 0
 .venv/bin/python examples/collect.py --game wb02 --steps 16 --output rollouts/x.jsonl
 ```
 
-There is no test suite beyond `validate.py`. It checks hashes, imports, a reset and one action. It does **not** show a game is winnable. After changing a game, play it for real through `tools/runtime.py` and confirm the behaviour you changed, then say what you did and did not check.
+`validate.py` is the only check, and it is shallow: hashes, import, a reset and one action. It says nothing about whether a game can be won. After changing a game, play it through `tools/runtime.py`, confirm the thing you changed actually changed, and say what you did and didn't check.
 
-## Rules
+## Rules for this repo
 
-1. **Games are hashed.** `docs/catalog.json` stores each game's SHA-256 and `validate.py` enforces it. If you change a game, update its hash in the same commit. `.gitattributes` forces LF endings so hashes match on Windows; do not remove it.
-2. **Game ids are opaque.** Never put game names or descriptive ids into anything an agent under evaluation could read, such as observations, filenames in examples, or prompts. Renaming a game means moving its file and previews and keeping the old id in the entry's `"was"` list so links still resolve.
-3. **Reuse before you write.** Search for an existing helper before adding one. Shared loading belongs in `tools/runtime.py`. Don't duplicate game rules outside the game's file.
-4. **Real behaviour only.** No fabricated data, placeholder logic or invented rewards. Don't describe a game as solved or verified unless you played it and can say how.
-5. **Attribution.** Keep original author lines. Every new or modified Python, JavaScript, HTML or CSS file starts with a comment giving the actual author model, date, purpose and an SRP/DRY note. JSON stays comment-free. Full text in [CODING_STANDARDS.md](CODING_STANDARDS.md).
-6. **Record changes.** For anything substantive, write a dated plan in `docs/plans/` first, then add a `CHANGELOG.md` entry afterwards. Keep `docs/catalog.json`'s `version` in step with the changelog.
-7. **This repo is public.** Never commit credentials, personal data, play traces, generated rollouts, virtualenvs or caches. `rollouts/` is gitignored for that reason.
-8. **Stay honest about scope.** `VALIDATION.md` and the README state what the checks prove. If you extend the checks, update them; if something fails, say so.
-9. **Commits.** Stage only the paths you mean to change and read the diff first. Don't commit or push unless asked.
-
-## Known loose ends
-
-- `docs/catalog.json` `version` (0.6.0) has fallen behind `CHANGELOG.md` (0.8.0).
-- `docs/plans/2026-10-29-public-release.md` still has its last checklist item open.
+1. **Games are hash-pinned.** `docs/catalog.json` holds each game's SHA-256 and `validate.py` enforces it. Change a game, update its hash in the same change. `.gitattributes` forces LF line endings so the hashes hold on Windows. Leave it alone.
+2. **Ids are short tags** like `DZ01`. Renaming a game means moving its file and previews, and keeping the old id in the entry's `"was"` list so old links still resolve.
+3. **The source is readable by design,** and so is the browse page, which is a spoilers page. Don't write examples or docs that suggest putting either in front of an agent being tested.
+4. **Public repo.** No credentials, personal data, play traces, rollouts, virtualenvs or caches. `rollouts/` is gitignored for this.
+5. **Don't hardcode counts or versions in prose.** Game counts, highlighted counts and version numbers live in `docs/catalog.json` and `CHANGELOG.md`. Docs point at them.
+6. **Be honest about scope.** The README and `VALIDATION.md` say what the checks prove. Extend them if you extend the checks, and report failures as failures.

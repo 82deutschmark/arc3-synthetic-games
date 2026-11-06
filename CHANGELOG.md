@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1 — 5 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call: repository docs. The README is rewritten around what the games are for (holdouts for anyone who trained on the 25 public games) and what the user has to get right (keep the agent away from the game source), in Mark's voice. `AGENTS.md` and `CLAUDE.md` are added; `CODING_STANDARDS.md` is now Mark's full standards, with the repo-specific rules in `AGENTS.md`. `.gitattributes` forces LF so the catalog's game hashes verify on Windows, where checkouts were turning every game into a hash mismatch. The release plan moves from `docs/plans/` to `docs/`, named as the standards say.
+
 ## 0.8.0 — 5 November 2026
 
 Claude Opus 5.5, at Mark Barney's call: each game's panel now leads with "why AI struggles", written in plain gamer talk, and names the Slippery Seven game it is a cousin of where the repository's own write-ups say so (PT01 and LT03 with SC25, TE01 and ES01 with SK48, SE01 and WF02 with DC22, BS01 with G50T, ST01 with TN36). The long rules, what's special, how it differs from the public 25 and the look fold under "full rules and details". DZ01 is Dig Zone. Every Play link goes to the lab at arc3.sonpham.net, which records plays.

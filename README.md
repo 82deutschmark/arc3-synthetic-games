@@ -1,67 +1,74 @@
 # ARC-3 Synthetic Games
 
-Fifty small puzzle games for the [ARC engine](https://pypi.org/project/arcengine/), built to be pulled into somebody else's training or evaluation pipeline. Each game is one Python file. Load it, reset it, send it actions, and read back the frames the engine produces. None of them come with instructions: an agent has to work out the rules by playing, the way ARC-AGI-3 asks of it.
+New ARC-AGI-3 style games, one Python file each, running on the ARC engine. Made by Team Turducken, under the direction of Mark Barney.
 
-They were made by Team Turducken under the direction of Mark Barney, as new games in the style of the public ARC-AGI-3 set and not copies of it. Twelve are highlighted on the [browse page](https://82deutschmark.github.io/arc3-synthetic-games/), which shows what is special about each, how it differs from ARC's public 25, and what the early levels look like.
+## Why they exist
 
-**This is a set of environments.** It has no reward function, no train/test split and no solutions. You bring the agent and decide how to score it.
+ARC-AGI-3 has 25 public games. If you trained your agent on all 25, congratulations, you've got nothing left to test it on. These are your holdouts. Games you haven't seen, your agent hasn't seen, and nobody told it the rules.
+
+They aren't copies of the public games. Plenty are cousins of the ones agents fail hardest (the Slippery Seven, see the catalog), and the [browse page](https://82deutschmark.github.io/arc3-synthetic-games/) says how each highlighted game differs from the public set and what makes a bot sweat. Want to train on them instead? Go ahead, but then you've burned your holdout. Your call.
+
+## The catch
+
+The source is right here. Anyone, or any coding agent, who can read `games/dz01.py` can read the rules and the win condition. The browse page is a spoilers page on purpose, too.
+
+So the harness is on you. Your agent should only ever see what the engine gives it: frames in, actions out. If it can open files in this repo, you're not testing anything.
 
 ## Try it
 
-You need Python 3.13. From the repository root:
-
 ```sh
-python3.13 -m venv .venv
+python -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt      # Windows: .venv\Scripts\python
 .venv/bin/python tools/validate.py
 .venv/bin/python examples/collect.py --game wb02 --steps 16 --seed 0 --output rollouts/wb02.jsonl
 ```
 
-`validate.py` checks every game's hash, loads it, resets it and takes one action. `collect.py` plays a game with random actions and writes what happened as JSON Lines. The random policy is there to show the plumbing. It is not a solver and its output is not a demonstration.
+`validate.py` checks every game's hash, loads it, resets it and takes one action. `collect.py` plays one game with random button mashing and writes JSON Lines. It's there to show the plumbing. It's not a solver, and what it writes is not a demonstration.
 
-## Using the games in your own code
+## Plugging in your agent
 
-`tools/runtime.py` is the only integration point you need:
+`tools/runtime.py` is all you need:
 
 ```python
 from runtime import load_game, perform, frame_record
 
-game = load_game("wb02")        # a game id from docs/catalog.json
-frame = perform(game, 0)        # action 0 is RESET
-frame = perform(game, 1)        # then actions 1-5, 7 take no arguments
-frame = perform(game, 6, x=10, y=20)   # action 6 is a click at screen coordinates
-obs = frame_record(frame)       # JSON-safe dict
+game = load_game("wb02")                # any id from docs/catalog.json
+frame = perform(game, 0)                # 0 is RESET
+frame = perform(game, 1)                # 1-5 and 7 take no arguments
+frame = perform(game, 6, x=10, y=20)    # 6 is a click, in screen coordinates
+obs = frame_record(frame)               # JSON-safe dict
 ```
 
-An observation holds `frames` (the grid, 64 by 64 with 16 colours), `state`, `levels_completed` and `available_actions`. Games do not all offer the same controls: 1 to 4 are the arrow keys, 5 is Space, 6 is a click and 7 is undo. Read `available_actions` from each frame rather than assuming.
+An observation is `frames` (the grid), `state`, `levels_completed` and `available_actions`. Games don't all have the same buttons: 1 to 4 are the arrows, 5 is Space, 6 is a click, 7 is undo. Read `available_actions` off each frame, don't assume.
 
-A few things to know before you train on this:
+A few things before you point anything at it:
 
-- **The seed in `collect.py` only seeds the exploration policy.** The games themselves are fixed, hand-built levels. There is no level generator.
-- **Keep evaluation games out of training.** Several games are cousins of each other, and of the public ARC-AGI-3 games. If you want to measure generalisation, hold out whole families, not single games. We don't assign splits.
-- **Keep game ids away from your agent.** The ids are opaque tags on purpose. Don't put them, or the game names, anywhere an agent under evaluation can read them.
-- **Don't commit your rollouts.** They get large fast. `rollouts/` is gitignored; store trajectories on your own volume.
+- The `--seed` in `collect.py` seeds the random policy only. The games are hand-built levels. There's no level generator.
+- No rewards, no train/test split, no solutions. You decide what counts as success.
+- Several games share ideas with each other. If you split them yourself, split by family, not at random.
+- Rollouts get big fast. `rollouts/` is gitignored; keep your data somewhere else.
 
-## What's in the repository
+## What's in here
 
 | Path | What it is |
 | --- | --- |
-| `games/` | The fifty games, one `.py` each. Hashes are in the catalog, so the files must stay byte for byte as published. |
-| `docs/catalog.json` | The authoritative list: id, class, source path, SHA-256, level count, inputs, and the write-ups shown on the page. |
-| `tools/runtime.py` | Loads a catalog game and serialises observations. |
-| `tools/validate.py` | Integrity and smoke check. Writes `docs/validation.json`. |
-| `tools/make_media.py` | Redraws a game's preview pictures from the real engine. |
-| `examples/collect.py` | Random-policy rollout collector. |
-| `docs/` | The browse page, its data, and the preview images in `docs/previews/`. |
+| `games/` | The games, one `.py` each. Hashes are in the catalog, so don't edit them. |
+| `docs/catalog.json` | The list of games: id, class, path, hash, levels, inputs, and the write-ups the page shows. |
+| `docs/index.html` | The browse page. |
+| `docs/previews/` | Real engine frames: each game's opening screen, plus a strip of the opening of every level. |
+| `tools/runtime.py` | Loads a game, serialises observations. |
+| `tools/validate.py` | The smoke check. Writes `docs/validation.json`. |
+| `tools/make_media.py` | Redraws a game's pictures from the real engine. |
+| `examples/collect.py` | The random-policy collector. |
 
 ## How far to trust it
 
-The validation is shallow, and [VALIDATION.md](VALIDATION.md) says so. It proves each game imports, resets and accepts an action. It does not prove that any game can be won, that every level is solvable, or that the games are good training material. If you find an unwinnable level or a rules bug, open an issue with the game id and the action sequence.
+Not very far, and [VALIDATION.md](VALIDATION.md) says so. The check proves a game loads, resets and takes an action. It doesn't prove any game can be won or that every level is solvable. Found an unwinnable level or a broken rule? Open an issue with the game id and the actions that got you there.
 
 ## Contributing
 
-Read [AGENTS.md](AGENTS.md) first. It covers the layout, the commands, and the rules for changing games and the catalog. Short version: keep the original author attribution, update the catalog hash when a game changes, record the change in [CHANGELOG.md](CHANGELOG.md), and don't commit credentials, personal play traces or large data.
+If you're a person, read this README and [CREDITS.md](CREDITS.md). If you're an agent, or sending one in, read [AGENTS.md](AGENTS.md) and [CODING_STANDARDS.md](CODING_STANDARDS.md). Don't commit credentials, play traces or big data.
 
-## Licence and credits
+## Licence
 
-MIT, see [LICENSE](LICENSE). Attribution is in [CREDITS.md](CREDITS.md). The ARC engine is a separate dependency under its own licence. This project is not affiliated with or endorsed by ARC Prize.
+MIT, see [LICENSE](LICENSE). The ARC engine is a separate dependency under its own licence. Not affiliated with or endorsed by ARC Prize.

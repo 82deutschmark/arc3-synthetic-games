@@ -1,3 +1,4 @@
 @AGENTS.md
+@CODING_STANDARDS.md
 
-Claude Code reads this file; all project guidance lives in AGENTS.md so every agent tool gets the same instructions. Add Claude-specific notes below this line only.
+Claude Code reads this file; the guidance itself lives in the two files above so every agent tool gets the same instructions. Claude-specific notes go below this line only.
