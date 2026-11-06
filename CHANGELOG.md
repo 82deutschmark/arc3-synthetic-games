@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.6 — 6 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call: a review of the 0.8.5 fixes and the docs around them, in `docs/reviews/2026-11-06-fixes-and-docs-review.md`, linked from `AGENTS.md`. The fixes check out on a fresh clone and in the real engine. The open items are recorded there, the main one being that `EVALUATION.md` calls the games human-playtested and hardcodes counts, which is wrong. No game or guide was changed. The missing blank line before 0.8.3 is restored.
+
 ## 0.8.5 — 5 November 2026
 
 Merged onto 0.8.3 on 6 November 2026 by Claude Opus 5.5 Low, at Mark Barney's call; the game fixes are unchanged.
@@ -9,6 +13,7 @@ Claude Code, at Mark Barney's call: the defects found by the review are fixed, a
 ## 0.8.4 — 5 November 2026
 
 Claude Code, at Mark Barney's call: an adversarial review of the twelve featured games, in `docs/reviews/2026-11-05-featured-twelve-review.md`. Every featured source file read in full; a random-action probe and a brute-force solver run against the real engine; findings ranked, with a card per game. No game was changed.
+
 ## 0.8.3 — 5 November 2026
 
 Gemini 3.8 Flash High, at Mark Barney's call: `EVALUATION.md` guide added. Explains how to test open-weights models (LLMs and VLMs) on the public 25 ARC-AGI-3 games and how to use this repository's synthetic games as an air-gapped holdout suite. Covers `arcengine` runtime interaction, agent harness design (observation formatting, constrained decoding, context compaction, Code-as-Policies scaffolding), RHAE evaluation, the 12 featured games as Slippery Seven cousins, and family-based holdout splitting rules. Linked from `README.md`. The plan is `docs/05-Nov-2026-evaluation-guide-plan.md`.

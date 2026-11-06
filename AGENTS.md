@@ -33,6 +33,13 @@ python -m venv .venv
 
 `validate.py` is the only check, and it is shallow: hashes, import, a reset and one action. It says nothing about whether a game can be won. After changing a game, play it through `tools/runtime.py`, confirm the thing you changed actually changed, and say what you did and didn't check.
 
+## Open review notes
+
+Read these before starting work. They list what is known to be wrong or undecided, and what needs Mark's call.
+
+- [docs/reviews/2026-11-06-fixes-and-docs-review.md](docs/reviews/2026-11-06-fixes-and-docs-review.md): the fixes verified, and the open items, starting with `EVALUATION.md`, which makes claims that aren't true.
+- [docs/reviews/2026-11-05-featured-twelve-review.md](docs/reviews/2026-11-05-featured-twelve-review.md): the adversarial review of the featured games and the design calls it left for Mark.
+
 ## Rules for this repo
 
 1. **Games are hash-pinned.** `docs/catalog.json` holds each game's SHA-256 and `validate.py` enforces it. Change a game, update its hash in the same change. `.gitattributes` forces LF line endings so the hashes hold on Windows. Leave it alone.
