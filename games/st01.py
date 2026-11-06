@@ -1,5 +1,9 @@
 # ARC-AGI-3 candidate task st01 (Shadow Topple): a moving light, a shadow, and holes to fill.
-# Updated: 05-November-2026, Claude Code -- the game is st01 (it reported itself as g014); a lost position now ends
+# Author: Team Turducken agents, under Mark Barney's direction
+# Date: October 2026
+# PURPOSE: st01: turn the light and click a solid; it topples along its shadow into the holes. Win by levelling the board.
+# SRP/DRY check: Pass -- pure rules (cast, fell, winnable) first, drawing next, the engine game class last.
+# Updated: 05-November-2026, Claude Fable 5.1 -- the game is st01 (it reported itself as g014); a lost position now ends
 #   the run as GAME_OVER instead of silently restarting the level; the winnability memo lives on the game, not the
 #   module; RESET restarts the level, or the whole game only when nothing has been played or it is won.
 #
@@ -15,9 +19,9 @@
 # shadow drawn as a chequer is a solid that is refused: it would hang over floor, run into
 # something, or run off the board. A hole deepens the reach of a shadow that crosses it.
 #
-# If a topple leaves a level that can no longer be won, the board flashes and the level
-# starts again. That is checked by the game itself (search over every remaining topple),
-# so a restart always means the position really was lost.
+# If a topple leaves a level that can no longer be won, the board flashes and the run ends
+# (GAME_OVER); RESET starts the level again. That is checked by the game itself (search over
+# every remaining topple), so a lost run always means the position really was lost.
 
 import numpy as np
 

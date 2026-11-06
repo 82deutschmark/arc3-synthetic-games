@@ -3,13 +3,14 @@
 # Date: October 2026
 # PURPOSE: es01, Extreme Sneeze: spread an alien infection through a city, hopping between infected hosts.
 # SRP/DRY check: Pass -- one game class; the sprite functions above it only draw.
+# Updated: 06-November-2026, Claude Fable 5.1 -- dead code removed (unused OX/OY, build_index, _before, _effect and a
+#   stray local); the loose sprite-book string is now a comment. No change to play.
 
 from copy import deepcopy
 from collections import deque
 from arcengine import ARCBaseGame, Camera, GameAction, Level, Sprite
 
 CELL = 6
-OX, OY = 2, 8
 W, H = 10, 9
 DIRS = {1:(0,-1), 2:(0,1), 3:(-1,0), 4:(1,0)}
 
@@ -32,11 +33,7 @@ LEVELS_SPEC = [
  dict(size=(24,16), alien=(2,8), people=[(4,8),(6,3),(10,4),(16,3),(21,13)], hostile=[(3,10),(6,11),(10,12),(17,10)], doctors=[(15,12),(21,6)], walls=_partitions(16,[(7,{3,4,10,11}),(14,{4,5,10,11}),(20,{2,3,11,12})])+_cross(24,7,{2,3,9,10,16,17,22,23}), build=[(7,4),(14,10),(20,11)])
 ]
 
-"""Six-pixel ES creatures and scenery, built from the shared sprite book.
-
-Sprites contain no game rules.  -1 leaves the floor visible. The tiny direction
-notch is orange for the alien and pale yellow for people.
-"""
+# Six-pixel creatures and scenery. Sprites contain no game rules; -1 leaves the floor visible.
 
 
 def block(colour: int, cell: int = 4) -> list[list[int]]:
@@ -226,7 +223,6 @@ class Es01(ARCBaseGame):
         self.walls = set(spec['walls'])
         self.vents = set(spec.get('vents',[]))
         self.medical = {}
-        self.build_index = 0
         self.tick = 0
         self.supply = 3
         self.cough_pending = None
@@ -240,8 +236,6 @@ class Es01(ARCBaseGame):
         self._dynamic = []
         self._result_won = False
         self._result_lost = False
-        self._effect = []
-        self._before = None
         self._build_floor()
         self._draw()
 
@@ -321,7 +315,6 @@ class Es01(ARCBaseGame):
             if strength == 1:
                 face[2][2] = face[3][3] = 8
             self._put(face,(x,y),f'medical_{x}_{y}',3)
-        spec=LEVELS_SPEC[self.level_index]
         for doctor in self.people:
             b=doctor.get('build_target') if doctor.get('doctor') and not doctor['infected'] else None
             if b and b not in self.medical:
@@ -677,7 +670,6 @@ class Es01(ARCBaseGame):
             self.complete_action()
             return
         self.tick += 1
-        self._effect=[]
         self._events=[]
         start_alien=self.alien['pos']
         start_people=[p['pos'] for p in self.people]
@@ -711,12 +703,12 @@ class Es01(ARCBaseGame):
         else:
             if self.control is None or self.supply>0:
                 if self.control is not None and self.level_index>0:self.supply-=1
-                self._effect=self._spray(actor['pos'],actor['dir'],1 if self.control is None else 3)
+                self._spray(actor['pos'],actor['dir'],1 if self.control is None else 3)
             else:
                 self._events.append((self._snapshot(),[('refuse',actor['pos'])],None))
         motion_snapshot=self._snapshot()
         if self.level_index>0:
-            self._effect+=self._alien_turn()
+            self._alien_turn()
             self._infected_turn()
             self._hostile_turn()
             self._civilian_turn()

@@ -1,6 +1,8 @@
 # ARC-AGI-3 candidate task se01 (Shrine Exploration).
-# Updated: 05-November-2026, Claude Code -- the game is se01 (it reported itself as xb02); the unused per-level
+# Updated: 05-November-2026, Claude Fable 5.1 -- the game is se01 (it reported itself as xb02); the unused per-level
 #   "order" list is gone (no rule ever read it).
+# Updated: 06-November-2026, Claude Fable 5.1 -- a RESET or a new level restarts the art's animation beat too, so the
+#   first frame no longer carries the old run's flame, pond and flower phase; unused constants removed.
 #
 # Author: Claude Sonnet 5.5 Max
 # Date: 31-October-2026
@@ -11,8 +13,8 @@
 #          barred seal slabs that join into gates, braziers, brick shrine buildings with roofs, a sanctum door
 #          with a stair, oaks, pines, ponds and flowers. Walking, patrols and scrolling slide over three frames
 #          and settle on the last.
-# SRP/DRY check: Pass. The art helpers below are the sprite_book.py cartridge set, extended and inlined as the
-#          packaged build does; the rules (Ground, Arrangement, passable, _step_foes, _caught, _send_back) are
+# SRP/DRY check: Pass. The art helpers below are a small sprite set kept in this file so it stands alone;
+#          the rules (Ground, Arrangement, passable, _step_foes, _caught, _send_back) are
 #          the xb01 code unchanged.
 # CHANGELOG
 # 31-Oct-2026 (Claude Sonnet 5.5 Max): xb02, sprite glow-up of xb01. Art and a three-frame slide only.
@@ -33,7 +35,7 @@ from arcengine import (
 )
 
 # Palette names used by the art only (the rule colours are the named constants further down).
-WHT, OFFW, BLK, MAG, PNK, RED, BLU, LBL, YEL, ORG, MAR, GRN, PUR = 0, 1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+WHT, BLK, MAG, PNK, RED, BLU, LBL, YEL, ORG, MAR, GRN, PUR = 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 LEGEND = dict(k=BLK, w=WHT, m=MAR, o=ORG, y=YEL, g=GRN, b=BLU, l=LBL, p=PNK, c=MAG, r=RED, u=PUR, t=MAR, s=GRN)
 
 
@@ -178,18 +180,15 @@ def flower(petal: int, centre: int, open_: bool) -> np.ndarray:
 VOID, STONE_HUE, GROUND_HUE = 5, 14, 11
 BRICK_FACE, BRICK_MORTAR = 12, 13
 SEAL_HUE = (8, 9, 15, 1)
-PLATE_OFF, PLATE_ON = 7, 0
-SANCTUM_HUE = 10
-BODY = 5
+PLATE_OFF = 7
 FOE_BODY = 6
 PROP_HUE = (6, 7, 10, 0, 12, 15)
-SHADE, TRUNK, WATER, CREST = 5, 13, 9, 10
 
 CELL = 4
 VIEW = 16
 SCREEN = VIEW * CELL
 
-STONE_CH, GROUND_CH, ROUGH_CH, THORN_CH = "#", ".", ",", "x"
+STONE_CH, THORN_CH = "#", "x"
 CORNERS = ((-1, -1, 0, 0), (1, -1, 3, 0), (-1, 1, 0, 3), (1, 1, 3, 3))
 
 
@@ -613,6 +612,7 @@ class Se01(ARCBaseGame):
                      for f in lv.foes]
         self.flash = 0
         self.hit = 0
+        self.beat = 0                                  # the art's animation phase starts over with the level
         self.face, self.just, self.bump = (0, 1), None, None
         self.tick, self.tail = 3, 0
         self._follow()

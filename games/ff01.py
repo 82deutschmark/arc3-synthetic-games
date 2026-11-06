@@ -5,16 +5,16 @@
 #   away from bigger fish, which bite (three lives). Currents run through the sea and carry you and
 #   every other fish; on every turn of the tide (shown by the yellow pips top right) each current
 #   and each fish takes a new heading, and the yellow pixel on each current's arrows and on each
-#   fish shows the heading it takes next. Fish you can eat that are off the window show as small
-#   marks in their colour on the window's edge. Later levels have a time bar (bottom HUD row);
+#   fish shows the heading it takes next. Every fish off the window, food and danger alike, shows
+#   as a small mark in its colour on the window's edge. Later levels have a time bar (bottom HUD row);
 #   running it out, or losing the last life, ends the run. Arrows only; nothing to click.
-#   Rebuilt from fr01 (one 64x64 screen, five levels) at the Boss's ask, 15-Oct-2026: a bigger
-#   world behind the window, directions that keep changing inside a level, finer fish art.
-#   Level data below is written by the generator (polish/ff01/ff01_gen.py); never hand-edit it.
-# Updated: 05-November-2026, Claude Code -- every fish off the window is marked on its edge, predators included
+#   Rebuilt from fr01 (one 64x64 screen, five levels), 15-Oct-2026: a bigger world behind the
+#   window, directions that keep changing inside a level, finer fish art.
+#   Level data below came from a level generator that is not part of this repository.
+# Updated: 05-November-2026, Claude Fable 5.1 -- every fish off the window is marked on its edge, predators included
 #   (only food was marked before, so bites arrived from nowhere); keyword arguments to the engine.
 # SRP/DRY check: Pass -- one self-contained game file (the site execs it alone); level data is
-#   generated elsewhere and pasted between the GENERATED markers.
+#   generated outside this repository and pasted between the GENERATED markers.
 
 import math
 

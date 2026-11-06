@@ -1,13 +1,14 @@
 # Author: GPT-6 Astra Ultra; wind flags by Claude Opus 5.5 High (01-November-2026)
 # Date: 27-October-2026 (edited 01-November-2026)
-# CHANGELOG: 01-Nov-2026 (Claude Opus 5.5 High) -- the Boss: no arrows on screen. The three wind arrows are now
+# CHANGELOG: 01-Nov-2026 (Claude Opus 5.5 High) -- no arrows on screen. The three wind arrows are now
 #   three flags whose banners stream downwind. Art only; rules and levels unchanged.
 # PURPOSE: WB02 native ARC game; boats shelter one another from fixed wind,
 # steer to matching docks, and lower sails when handing control away at a dock.
 # SRP/DRY check: Pass. Native engine sprites/rendering; one shared transition for
 # gameplay and verification; no copied renderer, external assets, or hidden text.
-# Updated: 05-November-2026, Claude Code -- the dead tie-breaking loop is gone (one fixed wind can never send two
+# Updated: 05-November-2026, Claude Fable 5.1 -- the dead tie-breaking loop is gone (one fixed wind can never send two
 #   boats to one cell).
+# Updated: 06-November-2026, Claude Fable 5.1 -- header chat leftover and an unused 'shelter' switch removed.
 from arcengine import ARCBaseGame, Camera, GameAction, Level, Sprite, BlockingMode
 
 DIRECTIONS = ((0, -1), (0, 1), (-1, 0), (1, 0))
@@ -46,8 +47,6 @@ def screen(spec, cell):
 
 def sheltered(spec, positions, moored, boat):
     """An upright sail stops wind along the downstream row or column."""
-    if not spec.get('shelter', True):
-        return False
     x, y = xy(spec, positions[boat])
     dx, dy = spec['wind']
     for other, cell in enumerate(positions):

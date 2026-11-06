@@ -2,14 +2,16 @@
 # Date: 13-October-2026
 # PURPOSE: pt01, Perfect Target: a turn-based ship game, eight levels, enemy fire on a fixed script.
 # SRP/DRY check: Pass -- rules in one pure function (advance), pictures below it, engine glue last.
-# Updated: 05-November-2026, Claude Code -- a sunk player ends the run as GAME_OVER instead of silently rebuilding
+# Updated: 05-November-2026, Claude Fable 5.1 -- a sunk player ends the run as GAME_OVER instead of silently rebuilding
 #   the level; RESET restarts the level; keyword arguments to the engine.
+# Updated: 06-November-2026, Claude Fable 5.1 -- comments only: no internal names, no solver that is not in
+#   this repo, and the level-entry note no longer claims a sinking rebuilds the level.
 """pt01 (game source).
 
-Author: Claude Sonnet 5.5, for the Boss (Mark Barney), 13-October-2026.
+Author: Claude Sonnet 5.5, for Mark Barney, 13-October-2026.
 Purpose: grow the three-level ship game to eight levels. Turn based, whole numbers only. Enemy fire is a
 fixed script per level (the same on every retry) and every volley is drawn one action before it lands.
-Rules live in `advance`, one pure function used by the game and by the level solver; the rest is picture.
+Rules live in `advance`, one pure function the game calls for every action; the rest is picture.
 """
 
 import math
@@ -307,7 +309,7 @@ class Spec:
 SPECS = [Spec(d) for d in LEVEL_DEFS]
 
 
-# ── the rules: one pure function, used by the game and by the solver ──────────
+# ── the rules: one pure function, called once per action ─────────────────────
 
 def _lane(spec, i, d, px, py, hps):
     """Cells a volley from ship i travels along heading d, and whether it reaches you."""
@@ -601,8 +603,7 @@ class Pt01(ARCBaseGame):
         else:
             self.level_reset()
 
-
-    # ── entering a level: the one place that builds it, used for start, next level, RESET and a sinking ──
+    # ── entering a level: the one place that builds it, used for start, next level and RESET ──
 
     def on_set_level(self, level: Level) -> None:
         self._enter(level)

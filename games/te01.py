@@ -2,8 +2,8 @@
 # Date: 25-October-2026
 # PURPOSE: Expand te01 to eight cable-routing stages with named readable sprites,
 # safe level retries, and intact short movement using the original contact geometry.
-# SRP/DRY check: Pass — reuses the parent cable/cover rules and shared sprite-book art.
-# Updated: 05-November-2026, Claude Code -- cable tightening no longer raises inside the engine when a shortening
+# SRP/DRY check: Pass — cable, cover and blade rules are pure functions; sprite art and engine glue come last.
+# Updated: 05-November-2026, Claude Fable 5.1 -- cable tightening no longer raises inside the engine when a shortening
 #   step would lengthen the path (the step is skipped instead); keyword arguments to the engine.
 """te01: an eight-stage revision."""
 from functools import lru_cache
@@ -15,7 +15,7 @@ import numpy as np
 from arcengine import ARCBaseGame, Camera, GameState, Level, Sprite
 
 
-# --- shared art, inlined at packaging time ---
+# --- art helper ---
 def pixel_art(rows: tuple, colours: dict) -> list[list[int]]:
     """Letters to colour indices; '.' is -1, so the ground shows through."""
     return [[-1 if ch == "." else colours[ch] for ch in row] for row in rows]
@@ -381,7 +381,7 @@ def exposed_intervals(cutter,guard_start,guard_end):
     return tuple(intervals)
 
 
-def motion_contact(level,state,destination,guard_destination,body_only=False):
+def motion_contact(level,state,destination,guard_destination):
     """First actual exposed-blade contact; hood motion never grants early safety."""
     contacts=[]
     for number,cutter in enumerate(level["cutters"]):
@@ -390,10 +390,9 @@ def motion_contact(level,state,destination,guard_destination,body_only=False):
             finish=position_at(state.rover,destination,high)
             one=dict(cutters=(cutter,))
             body=body_cutter_hit(one,start,finish)
-            possibilities=[(body,"blade")]
-            if not body_only:
-                path=tighten(state.path+(start,),level["obstacles"])
-                possibilities.append((cable_sweep_hit(path,finish,level["obstacles"],(cutter,)),"cut"))
+            path=tighten(state.path+(start,),level["obstacles"])
+            possibilities=[(body,"blade"),
+                           (cable_sweep_hit(path,finish,level["obstacles"],(cutter,)),"cut")]
             for contact,kind in possibilities:
                 if contact is None:continue
                 fraction=low+(high-low)*contact[0]

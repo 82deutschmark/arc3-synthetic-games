@@ -9,15 +9,17 @@
 #   scars and may never be entered again. Walking on through a dark pit drops you back to the
 #   entrance; looking at it from the next cell is safe. Light every key, light the ring, walk in.
 #   If the way is cut so the level can no longer be won, the walker dies on the spot (a short
-#   visible fade) and the level starts again as entered.
+#   visible fade) and the run ends as GAME_OVER; RESET starts the level again as entered.
 #   Changes from the first version: the retreat moved from ACTION7 (Undo on the site) to
 #   ACTION5; walking forward no longer lights anything, so the lantern is the only way to see;
 #   every effect is animated (the walker slides back, the cell flares, the mark burns, the key
 #   flies to the top row); known ground is green and dark ground purple (pink now only means
 #   a pit rim or a shut ring); the walker is a small creature, not a diamond.
-# SRP/DRY check: Pass -- self-contained. Rule state lives in Core, which the solver imports.
-# Updated: 05-November-2026, Claude Code -- a dead end now ends the run as GAME_OVER instead of silently
+# SRP/DRY check: Pass -- self-contained. Rule state lives in Core, apart from the drawing.
+# Updated: 05-November-2026, Claude Fable 5.1 -- a dead end now ends the run as GAME_OVER instead of silently
 #   restarting the level (RESET restarts it); the action-count workaround and two unused helpers are gone.
+# Updated: 06-November-2026, Claude Fable 5.1 -- header and catalog now say a dead end ends the run;
+#   dropped mentions of a solver that is not in this repository; engine arguments passed by name.
 """Echo -- the lantern is how you see.
 
 ACTION1-4 walk up/down/left/right. ACTION5 (Space) steps back the way you just came and lights
@@ -147,7 +149,7 @@ LEVELS = [
 
 
 # ---------------------------------------------------------------------------
-# Rules, as one small object: the game, the solver and the checks all drive this.
+# Rules, as one small object: the game drives this and the drawing only reads it.
 # ---------------------------------------------------------------------------
 
 def parse(rows):
@@ -298,7 +300,7 @@ class Core:
 
     def lost(self):
         """True when the level can no longer be won. Every test here is a necessary condition for
-        winning, so a True is a true dead end; solve2.py audits that no dead state escapes."""
+        winning, so a True is a true dead end."""
         if self.free:
             return False
         p = self.passable()
@@ -586,12 +588,13 @@ class Eh01(ARCBaseGame):
         levels = [Level(sprites=[], grid_size=(64, 64), data=ldef, name=ldef["name"])
                   for ldef in LEVELS]
         super().__init__(
-            "eh01",
-            levels,
-            Camera(0, 0, 64, 64, C_ROCK, C_ROCK, [self.display]),
-            False,
-            len(levels),
-            list(ACTIONS),
+            game_id="eh01",
+            levels=levels,
+            camera=Camera(x=0, y=0, width=64, height=64, background=C_ROCK, letter_box=C_ROCK,
+                          interfaces=[self.display]),
+            debug=False,
+            win_score=len(levels),
+            available_actions=list(ACTIONS),
         )
 
     def on_set_level(self, level: Level) -> None:

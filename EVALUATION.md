@@ -3,6 +3,9 @@ Author: Gemini 3.8 Flash High
 Date: 05-Nov-2026
 PURPOSE: Guide for testing Open-Weights models on ARC-AGI-3 and using synthetic games as holdouts
 SRP/DRY check: Pass — integrates with tools/runtime.py and mirrors arcengine conventions
+Updated: 06-Nov-2026, Claude Opus 5.5 — removed claims the repository does not support (a human-playtested set, hardcoded
+  game counts, LT03's "eight revisions", cousin games with no source); the sample loop now uses the engine's real state
+  names; local Windows paths replaced with repository-relative ones; the featured table points at the catalog instead.
 -->
 
 # Evaluating Open-Weights Models on ARC-AGI-3 & Holdout Testing
@@ -21,7 +24,7 @@ AI agents are placed inside unfamiliar, turn-based 2D grid environments powered 
 * **Zero Instructions:** The agent is given no rules, no goals, no tutorial, and no explanations.
 * **Active Hypothesis Testing:** The agent must take actions, observe state transitions, deduce the rules and win condition through trial and error, and clear sequential levels.
 * **The Public 25:** ARC Prize released 25 demonstration games (such as `ls20`, `ft09`, `vc33`, `dc22`, `g50t`, `m0r0`, `sc25`, `sk48`, `tn36`, `tr87`). Because these games are public, any agent tuned, prompted, or trained on them risks severe overfitting. ARC-AGI-3 holds back its official evaluation games in a private evaluation sandbox.
-* **Synthetic Holdouts:** This repository provides 50 clean, human-playtested games built on the identical engine (`arcengine`) to serve as unseen holdout environments.
+* **Synthetic Holdouts:** This repository provides ARC-AGI-3 style games built on the same engine (`arcengine`) to serve as unseen holdout environments. The list is `docs/catalog.json`.
 
 ---
 
@@ -31,39 +34,30 @@ Testing an open-weights model on ARC3 requires setting up the environment runtim
 
 ### 2.1 The Environment & Runtime
 
-The official benchmark runs on the `arcengine` Python package (or the `arc-agi` arcade SDK):
+The games run on the `arcengine` Python package. This repository pins the version it was checked with in `requirements.txt`:
 
 ```sh
-pip install arcengine==0.9.3
+pip install -r requirements.txt
 ```
 
-In the ARC-AGI arcade client:
-```python
-import arc_agi
-from arcengine import GameAction
-
-arc = arc_agi.Arcade()
-env = arc.make("ls20")  # Example public game ID
-obs = env.reset()
-```
+To run the public 25 themselves, use ARC Prize's own toolkit and follow its documentation; this repository does not ship or test that client.
 
 ### 2.2 Observation & Action Space
 
 At every step, the environment returns an observation:
 * **`frames`**: A 64×64 grid represented as a 2D array of integers (color palette IDs 0–15) or rendered RGB image frames.
-* **`state`**: Current game status (`0`: ONGOING, `1`: WIN, `2`: GAME_OVER).
+* **`state`**: Current game status, as a name: `NOT_PLAYED`, `NOT_FINISHED` (still playing), `WIN` or `GAME_OVER`.
 * **`levels_completed`**: Count of sequential levels cleared.
 * **`available_actions`**: List of valid action IDs for the current step.
 
 The action space consists of 8 discrete actions:
 * `0`: **Reset** (restarts the current level or game).
-* `1`: **Up** (move up / north).
-* `2`: **Down** (move down / south).
-* `3`: **Left** (move left / west).
-* `4`: **Right** (move right / east).
-* `5`: **Space** (interact / toggle / use item).
-* `6`: **Click** (interactive coordinate selection; requires `x` and `y` between 0 and 63).
-* `7`: **Undo** (reverts the previous move).
+* `1` to `4`: usually **Up**, **Down**, **Left**, **Right**.
+* `5`: a game-defined action (interact, toggle, fire, use an item).
+* `6`: **Click** (coordinate selection; requires `x` and `y` between 0 and 63).
+* `7`: game-defined; often **Undo**.
+
+Each game decides what its actions mean and which ones it offers, so read `available_actions` rather than assuming a fixed meaning. In this repository, for example, ACTION7 is undo in WB02 and TE01 but waits a turn in LT03.
 
 ### 2.3 The Open-Weights Agent Harness
 
@@ -97,7 +91,7 @@ Pure reactive policies (predicting next-action directly from the frame) achieve 
 ### 2.4 Metrics & Scoring
 
 * **Relative Human Action Efficiency (RHAE):** ARC Prize's primary metric comparing the agent's total action count against median human action counts to solve each level.
-* **Completion Rate:** Percentage of levels completed within an allotted action budget (e.g., 200–500 steps per level).
+* **Completion Rate:** Percentage of levels completed within an action budget you fix in advance and report.
 * **Zero-Shot Generalization:** Success rate on games where the agent has never seen level layouts or mechanic definitions.
 
 ---
@@ -106,7 +100,7 @@ Pure reactive policies (predicting next-action directly from the frame) achieve 
 
 When an agent has been developed or fine-tuned against the 25 public demonstration games, its performance on those 25 no longer measures fluid intelligence—it measures memorization or overfitting.
 
-This repository provides 50 synthetic games designed to serve as an out-of-distribution holdout suite.
+This repository's games are meant to serve as an out-of-distribution holdout suite.
 
 ### 3.1 The Air-Gap Rule (Preventing Data Leakage)
 
@@ -118,14 +112,14 @@ This repository provides 50 synthetic games designed to serve as an out-of-distr
 
 ### 3.2 Drop-in Integration via `tools/runtime.py`
 
-This repository provides a shared runtime interface in [`tools/runtime.py`](file:///c:/Projects/arc3-synthetic-games/tools/runtime.py). It exposes clean, JSON-serializable observations without modifying game files:
+This repository provides a shared runtime interface in [`tools/runtime.py`](tools/runtime.py). It exposes clean, JSON-serializable observations without modifying game files:
 
 ```python
 import sys
 from pathlib import Path
 
-# Add tools/ to path
-sys.path.insert(0, str(Path("c:/Projects/arc3-synthetic-games/tools")))
+# Add tools/ to path (run from the repository root)
+sys.path.insert(0, str(Path("tools").resolve()))
 from runtime import load_game, perform, frame_record
 
 # 1. Load any pinned game from docs/catalog.json
@@ -138,42 +132,27 @@ obs = frame_record(frame)
 # obs is a JSON-safe dictionary:
 # {
 #   'frames': [...],           # 64x64 grid
-#   'state': 0,                # 0 = ONGOING, 1 = WIN, 2 = GAME_OVER
+#   'state': 'NOT_FINISHED',   # or 'WIN' or 'GAME_OVER'
 #   'levels_completed': 0,     # Int
 #   'available_actions': [1, 2, 3, 4, 5]
 # }
 
 # 3. Step through the game with your model harness
-while obs["state"] == 0:
+while obs["state"] == "NOT_FINISHED":
     action = agent.decide_action(obs)
     # perform(game, action_id, x=32, y=32)
     frame = perform(game, action["id"], x=action.get("x", 32), y=action.get("y", 32))
     obs = frame_record(frame)
 
-if obs["state"] == 1:
+if obs["state"] == "WIN":
     print("Game cleared!")
 ```
 
-### 3.3 Recommended Holdout Suite: The 12 Featured Games
+### 3.3 Recommended Holdout Suite: The Highlighted Games
 
-The repository highlights 12 hand-curated games that underwent human playtesting and iterative tuning (e.g., `LT03` went through eight revisions) to eliminate procedural slop and guarantee they are solvable cold by a human.
+The `featured` list in `docs/catalog.json` is Mark Barney's hand-picked best: the games he liked most and thinks a person can play. They are not a human-playtested set; some have no recorded human play at all, and `docs/reviews/` says which. Each highlighted game's `spoiler` entry in the catalog (shown on the browse page) says what makes it hard for a bot, and names the **Slippery Seven** game it is a cousin of where there is one. The Slippery Seven are the seven public games where our agents fail most (`DC22`, `G50T`, `M0R0`, `SC25`, `SK48`, `TN36`, `TR87`).
 
-Many of these games were engineered specifically as cousins to the **Slippery Seven**—the seven public ARC3 games where AI agents fail most frequently (`DC22`, `G50T`, `M0R0`, `SC25`, `SK48`, `TN36`, `TR87`):
-
-| Holdout Game ID | Name | Cousin Of | Benchmark Evaluation Purpose |
-| :--- | :--- | :--- | :--- |
-| **`LT03`** | Lock Target | `SC25` | **Delayed Action & Motion Prediction:** Projectile flight times require leading walking targets; indiscriminate firing summons crowds and ambulances. |
-| **`PT01`** | Perfect Target | `SC25` / `TU93` | **Facing Direction Rules:** Ships only take damage from the rear; front/side hits deflect back and damage the player. |
-| **`ST01`** | Shadow Topple | `TN36` | **Indirect Control:** You never move pieces directly; rotating the light source causes shadows to topple blocks into goals. |
-| **`WF02`** | Water Flip | `DC22` | **Global State Interdependence:** Toggling a single color lever flips all corresponding pipes simultaneously across the board. |
-| **`BS01`** | Bell Stealth | `G50T` | **Herding Non-Player Entities:** Ringing bells steers patrolling guards onto pressure plates without exposing the player to detection. |
-| **`TE01`** | Tethered Extraction | `SK48` | **Topological Constraints:** The player pulls a trailing cable of fixed length around posts; passing obstacles on the wrong side depletes cable slack. |
-| **`ES01`** | Extreme Sneeze | `SK48` | **Identity Hopping:** Infecting entities creates new controllable bodies, forcing the agent to track multi-body state without losing its focal point. |
-| **`EH01`** | Eroding Horizons | *Novel* | **Exploration Budgeting:** Stepping forward wears out the terrain behind you, penalizing exhaustive random walk exploration. |
-| **`DZ01`** | Dig Zone | `BP35` | **Resource Budgeting vs. Poking:** Dig durability meter depletes with actions; random poking drains the bar before goals are uncovered. |
-| **`WB02`** | Windy Boats | *Novel* | **Undocumented Environmental Dynamics:** Steering one vessel causes wind currents to move all unselected vessels; hidden anchoring rules. |
-| **`FF01`** | Feeding Frenzy | `AS66` / `BP35` | **Rhythmic Timing & World Shifts:** Tidal pulses shift all entities on a synchronized beat; size-based predator/prey hierarchies. |
-| **`SE01`** | Shrine Exploration | `DC22` | **Distant Causal Effects:** Activating a shrine opens gates in distant, non-visible sections of a multi-screen map. |
+Read those write-ups to choose holdouts and splits, but keep them away from the agent being tested (section 3.1).
 
 ### 3.4 Holdout Splitting Discipline
 
@@ -184,20 +163,20 @@ If you use part of this synthetic collection for training/fine-tuning and part f
 ### 3.5 Integrity Check
 
 Always run the smoke test before benchmarking to confirm game file hashes match the catalog:
-```powershell
+```sh
 python tools/validate.py
 ```
-A clean run verifies that all 50 games load, reset, and execute valid actions against the real `arcengine`.
+A clean run checks that every game in the catalog matches its pinned hash, loads, resets and takes one action against the real `arcengine`. It does not check that any game can be won.
 
 ---
 
 ## 4. Summary Checklist for Researchers
 
-1. **Setup:** Install `arcengine==0.9.3` and verify all 50 games pass `python tools/validate.py`.
+1. **Setup:** Install `requirements.txt` and confirm every game passes `python tools/validate.py`.
 2. **Harness:** Build an action loop wrapping your open-weights model using `tools/runtime.py`.
 3. **Isolation:** Ensure model prompts and tool calls have zero access to the filesystem (`games/`, `docs/catalog.json`).
 4. **Baseline:** Run your model zero-shot on the 25 public ARC3 demonstration games.
-5. **Holdout Evaluation:** Run the identical harness on the 12 featured synthetic games. Compare level completion rates and action efficiency to verify true out-of-distribution reasoning.
+5. **Holdout Evaluation:** Run the identical harness on the highlighted synthetic games (`featured` in `docs/catalog.json`). Compare level completion rates and action efficiency to verify true out-of-distribution reasoning.
 
 ---
 

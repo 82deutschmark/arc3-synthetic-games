@@ -3,8 +3,10 @@
 # Date: October 2026
 # PURPOSE: lt03, Lock Target: aim late-landing rounds at a walking city of four districts over nine missions.
 # SRP/DRY check: Pass -- the Lt03 class holds the rules; the city_art_* functions below it only draw.
-# Updated: 05-November-2026, Claude Code -- clicking a round in the tray selects it (it only flashed before); the
+# Updated: 05-November-2026, Claude Fable 5.1 -- clicking a round in the tray selects it (it only flashed before); the
 #   per-mission time_limit that no rule ever read is gone.
+# Updated: 06-November-2026, Claude Fable 5.1 -- a click on the top edge of a tray pod now selects that round too;
+#   unused helpers and drawing branches that changed nothing are gone.
 
 from __future__ import annotations
 from copy import deepcopy
@@ -16,30 +18,11 @@ from arcengine import ARCBaseGame, Camera, GameAction, Level, Sprite
 def block(colour: int, cell: int = 4) -> list[list[int]]:
     return [[colour] * cell for _ in range(cell)]
 
-def rounded(colour: int, cell: int = 4) -> list[list[int]]:
-    px = block(colour, cell)
-    for (y, x) in ((0, 0), (0, cell - 1), (cell - 1, 0), (cell - 1, cell - 1)):
-        px[y][x] = -1
-    return px
-
 def ring(colour: int, cell: int = 4) -> list[list[int]]:
     px = block(colour, cell)
     for y in range(1, cell - 1):
         for x in range(1, cell - 1):
             px[y][x] = -1
-    return px
-
-def pips(colour: int, count: int, cell: int = 6) -> list[list[int]]:
-    px = [[-1] * cell for _ in range(cell)]
-    if count <= 0:
-        return px
-    n = 0
-    for y in range(cell - 2, 0, -1):
-        for x in range(1, cell - 1):
-            if n >= count:
-                return px
-            px[y][x] = colour
-            n += 1
     return px
 
 def pixel_art(rows: tuple, colours: dict) -> list[list[int]]:
@@ -160,11 +143,8 @@ def build_district(index):
         a['pos']=a['observed']=a['home']=a['route'][0]
     if index>=2:
         buildings[(0,2,3,5,0,2)[index-2]]['kind']='courtyard'
-    tools=['heavy'] if index==0 else ['heavy','precision']
-    if index>=2: tools+=['beacon']
-    if index>=5: tools=['heavy','precision','fire','aid','beacon']
-    return dict(buildings=buildings,roads=roads,actors=actors,tools=tools,
-                sensor_period=3 if index>=6 else 1, initial_incident=index>=5)
+    return dict(buildings=buildings,roads=roads,actors=actors,
+                sensor_period=3 if index>=6 else 1)
 
 
 def offset_actor(original, offset, prefix):
@@ -337,9 +317,6 @@ class Lt03(ARCBaseGame):
             if b['kind']=='courtyard' or b['integrity']<=0:continue
             x,y,w,h=b['rect']
             self.blocked_cells.update((xx,yy) for xx in range(x,x+w) for yy in range(y,y+h))
-
-    def screen_position(self, point):
-        return point[0]-self.view_x,point[1]-self.view_y
 
     def _paint_frame(self):
         fraction=(self.frame_index+1)/FRAME_COUNT
@@ -571,7 +548,7 @@ class Lt03(ARCBaseGame):
         elif action==6:
             x,y=data.get('x',-1),data.get('y',-1)
             if isinstance(x,(int,np.integer)) and isinstance(y,(int,np.integer)):
-                if 54<=y<=63:
+                if 53<=y<=63:
                     i=int(x)//12
                     if 0<=i<len(TOOL_ORDER):
                         if TOOL_ORDER[i] in self.tools:
@@ -1045,7 +1022,7 @@ def city_art_frame(game, phase, frames):
             cross = pixel_art(('..p..','..p..','ppppp','..p..','..p..'), {'p':7})
             _city_put(game, 'rescue_mark_'+actor['id'], cross, x-5, y-2, 22,
                       ['responder','medical_cross'], True)
-        elif shown.get('vehicle') or shown.get('vehicles'):
+        elif shown.get('vehicle'):
             accent = 2 if shown.get('accent', 3) in (9,10,11) else 3
             art = np.array(pixel_art(('.aaaaaa.', 'abbbbbba', 'abbbbbba', 'abbbbbba',
                                      'abbbbbba', 'abbbbbba', '.a....a.'),
@@ -1070,8 +1047,6 @@ def city_art_frame(game, phase, frames):
         else:
             body = _city_contact_art(shown)
             body[1:3, 1:3] = -1
-            if shown.get('traffic'):
-                body[body == 3] = 3
             _city_put(game, 'contact_'+actor['id'], body,
                       x-1, y-1, 20, ['contact'], True)
         if not has_seats:

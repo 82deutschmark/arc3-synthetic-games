@@ -1,6 +1,7 @@
 """wf02"""
 # Author: Claude Sonnet 5.5 Medium; water buttons and lever stops by Claude Opus 5.5 High (01-November-2026)
 # Date: 30-October-2026 (edited 01-November-2026)
+# Updated: 06-November-2026, Claude Fable 5.1 -- header and import tidy only (an unused import removed); no behaviour change
 # PURPOSE: A bank of linked water tanks; click a wheel to pour one or two blocks along its pipe, flip the
 #   flow lever to reverse a circuit, and match every tank to its white target marks.  A wheel shows water
 #   waiting on the side it will leave.
@@ -8,14 +9,12 @@
 #   them; the glyph set (GATE / DROP_ONE / DROP_TWO / RING) is drawn once.
 #
 # CHANGELOG
-# 01-Nov-2026 Claude Opus 5.5 High: the Boss still read the comets as arrows. Wheels now show water behind a black
+# 01-Nov-2026 Claude Opus 5.5 High: playtesters still read the comets as arrows. Wheels now show water behind a black
 #   gate, on the side it leaves (one block for one unit, two for two); the lever ends are plain stops. Art only.
 # 30-Oct-2026 Claude Sonnet 5.5 Medium: the chevron arrows on the wheels and lever are replaced by a comet
 #   glyph (a four-point star leading, a spark trailing; a fat gem for two-block pipes; a ring while spinning).
 #   Direction is read by which side the spark trails.  Level 1 is lengthened: taller tanks, a full left tank,
 #   a mark of one left and five across, so it takes five presses instead of two.  Other levels untouched.
-import copy
-
 import numpy as np
 from arcengine import ARCBaseGame, Camera, GameAction, Level, Sprite
 

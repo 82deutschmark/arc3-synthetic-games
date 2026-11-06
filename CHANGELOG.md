@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.7 — 6 November 2026
+
+Claude Opus 5.5, at Mark Barney's call: a second pass over the 5-Nov fixes, plan in `docs/06-Nov-2026-featured-fixes-followup-plan.md`. The 0.8.4 review and 0.8.5 fixes are credited to Claude Fable 5.1, who made them (they said "Claude Code"). Fixed: the write-ups for pt01, st01, bs01, eh01 and dz01 still said a loss restarts the level by itself; they now say it ends the run and a reset starts the level again. dz01's perched hand was drawn beside the hero's new row, not the wall he climbed against. lt03's tray missed clicks on the top row of each pod. se01 kept the dead run's animation beat across a reset. bs01 no longer re-runs its level analysis on every level start. Dead code out of wb02, wf02, te01, es01, lt03 and se01; eh01 passes engine arguments by name. Headers no longer cite internal tools, generators or files that are not in this repository, or "the Boss"; st01 gets a full header. `EVALUATION.md` no longer calls the games human-playtested or hardcodes counts, drops LT03's unsourced "eight revisions" and cousins with no source, and its sample loop uses the engine's real state names (it compared against numbers and never ran). The catalog version now matches this changelog. Every game passes `tools/validate.py` and a short random-play run through the real engine. Difficulty, levels, the dead-end detectors and the other design calls in the reviews are unchanged.
+
 ## 0.8.6 — 6 November 2026
 
 Claude Sonnet 5.5, at Mark Barney's call: a review of the 0.8.5 fixes and the docs around them, in `docs/reviews/2026-11-06-fixes-and-docs-review.md`, linked from `AGENTS.md`. The fixes check out on a fresh clone and in the real engine. The open items are recorded there, the main one being that `EVALUATION.md` calls the games human-playtested and hardcodes counts, which is wrong. No game or guide was changed. The missing blank line before 0.8.3 is restored.
@@ -8,11 +12,11 @@ Claude Sonnet 5.5, at Mark Barney's call: a review of the 0.8.5 fixes and the do
 
 Merged onto 0.8.3 on 6 November 2026 by Claude Opus 5.5 Low, at Mark Barney's call; the game fixes are unchanged.
 
-Claude Code, at Mark Barney's call: the defects found by the review are fixed, and only those. A loss now reaches the engine as GAME_OVER in pt01, st01, bs01, eh01 and dz01 (they used to restart the level silently), and RESET restarts the level; the four copies of the action-count workaround are gone. st01, bs01 and se01 report their own ids (they said g014, g019 and xb02). te01 no longer raises inside the engine while tightening the cable. lt03's tray selects a round when clicked and its unused time limit is gone. ff01 marks predators off the window, not just food. dz01 shows a perched hero. Dead code out of se01, eh01 and wb02; headers on pt01, lt03 and es01. Catalog hashes, class names and the st01, wb02, ff01 and lt03 write-ups refreshed. The review records every fix and what was deliberately left alone.
+Claude Fable 5.1, at Mark Barney's call: the defects found by the review are fixed, and only those. A loss now reaches the engine as GAME_OVER in pt01, st01, bs01, eh01 and dz01 (they used to restart the level silently), and RESET restarts the level; the four copies of the action-count workaround are gone. st01, bs01 and se01 report their own ids (they said g014, g019 and xb02). te01 no longer raises inside the engine while tightening the cable. lt03's tray selects a round when clicked and its unused time limit is gone. ff01 marks predators off the window, not just food. dz01 shows a perched hero. Dead code out of se01, eh01 and wb02; headers on pt01, lt03 and es01. Catalog hashes, class names and the st01, wb02, ff01 and lt03 write-ups refreshed. The review records every fix and what was deliberately left alone.
 
 ## 0.8.4 — 5 November 2026
 
-Claude Code, at Mark Barney's call: an adversarial review of the twelve featured games, in `docs/reviews/2026-11-05-featured-twelve-review.md`. Every featured source file read in full; a random-action probe and a brute-force solver run against the real engine; findings ranked, with a card per game. No game was changed.
+Claude Fable 5.1, at Mark Barney's call: an adversarial review of the twelve featured games, in `docs/reviews/2026-11-05-featured-twelve-review.md`. Every featured source file read in full; a random-action probe and a brute-force solver run against the real engine; findings ranked, with a card per game. No game was changed.
 
 ## 0.8.3 — 5 November 2026
 

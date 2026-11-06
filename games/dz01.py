@@ -1,27 +1,29 @@
 # Author: Claude Opus 5.5 High (the build); Mark Barney (the design, 18-Oct-2026); hero, hearts, guard faces,
 #   progress bar and finish animation adapted from fn01 (Claude Opus 5.5 High, Claude Fable 5.1 Low, Claude Opus 5)
 # Date: 18-October-2026 (energy cells, 22-October-2026)
-# CHANGELOG: 22-Oct-2026 (Claude Opus 5.5 Medium) -- energy cells and a looser bar, the Boss's ask: the old budget was
+# CHANGELOG: 22-Oct-2026 (Claude Opus 5.5 Medium) -- energy cells and a looser bar, at Mark Barney's ask: the old budget was
 #   the cheapest line plus two clicks, so one wrong dig lost the level. Budgets now leave about a third spare, and
 #   each level has energy cells (a blue battery in the sand) that refill the bar by ENERGY_FILL clicks, capped at
 #   full. They fall like hearts. can_go_on now digs too once a refill on foot has put clicks back.
 # 18-Oct-2026 (Claude Opus 5.5 High) -- first version. fn01's climb turned upside down into a dig
-#   through a desert underworld, to the Boss's design (fn01-rethink/design.md). Arrows move (one cell of climb
+#   through a desert underworld, to Mark Barney's design. Arrows move (one cell of climb
 #   against sand or earth), a click digs a neighbouring cell (sand one click, packed earth two, rock three,
 #   bedrock never) out of a click budget drawn as the side bar's draining background, space lights a carried
 #   star for eight free moves. Sand, hearts, stars and red-eyed droppers fall into any pocket opened under them.
 #   Creatures wear their strength as stripes; a fight trades punches until the last stripe goes, and a dropper
 #   that lands on the hero's head starts one by itself (it "drops in on you while you dig"). Eight levels,
-#   written by gen_dig.py between the LEVELS markers.
-# Updated: 05-November-2026, Claude Code -- a hero who breaks ends the run as GAME_OVER instead of silently
+#   written by a level generator that is not part of this repository.
+# Updated: 05-November-2026, Claude Fable 5.1 -- a hero who breaks ends the run as GAME_OVER instead of silently
 #   restarting the level (RESET restarts it); a perched hero shows a hand on the wall; keyword arguments to the engine.
+# Updated: 06-November-2026, Claude Opus 5.5 -- the perched hand is drawn on the wall the hero actually climbed
+#   against (the row he left), not on whatever is beside his new cell; header no longer cites files not in this repo.
 # PURPOSE: dz01 -- dig down a shaft of sand, packed earth and rock to the checkered finish at the bottom.
 #   The rules live in pure functions on a small DigState (act, settle, can_go_on), shared by the game (which
-#   animates the frames act() records), by gen_dig.py (whose search plays the same act() to find each level's
-#   cheapest line) and by the checks in this folder. Reads nothing; the levels are the LEVELS list below.
+#   animates the frames act() records) and by the dead-end test can_go_on. Reads nothing; the levels are the
+#   LEVELS list below.
 #   Plugs into arcengine 0.9.3 as an ARCBaseGame with actions 1-6 (6 is a click with x, y).
-# SRP/DRY check: Pass -- the hero art, heart and star shapes, the guard-style faces, the death poof and the
-#   restart-without-losing-progress fix come from fn01 (../fn01-next5/fn01.py); the world, the actions and the
+# SRP/DRY check: Pass -- the hero art, heart and star shapes, the guard-style faces and the death poof come from
+#   fn01, an earlier game not in this repository; the world, the actions and the
 #   creatures are new. Nothing here duplicates a helper elsewhere in the repo (games must be one file).
 """Dz01 -- dig down to the checkered floor.
 
@@ -35,7 +37,7 @@ import numpy as np
 from arcengine import ARCBaseGame, Camera, GameAction, GameState, Level, RenderableUserDisplay
 
 # ---------------------------------------------------------------------------
-# Palette (ARC-3 indices). No greys anywhere: the early-console look the Boss asked for.
+# Palette (ARC-3 indices). No greys anywhere: the early-console look Mark Barney asked for.
 # ---------------------------------------------------------------------------
 C_WHITE, C_BLACK = 0, 5
 C_RED, C_BLUE, C_LBLUE = 8, 9, 10
@@ -353,7 +355,7 @@ def _dig(s, cell, res, snap):
 
 def can_go_on(s):
     """Can the level still be finished? While clicks are left (or a lit star can dig sand), yes, as far as this
-    test goes: the brief restarts the level only when the budget is out and the finish is out of reach. With no
+    test goes: the run ends only when the budget is out and the finish is out of reach. With no
     clicks, search the moves on foot (and a lit hero's free sand digs) for the finish; a long search says yes. An energy
     cell reached on foot puts clicks back, and from there the level can go on."""
     if s.clicks > 0:
@@ -381,7 +383,7 @@ def can_go_on(s):
 
 
 # ---------------------------------------------------------------------------
-# Levels (written by gen_dig.py between the markers; do not hand-edit)
+# Levels (written by a level generator between the markers; do not hand-edit)
 # ---------------------------------------------------------------------------
 # BEGIN LEVELS
 LEVELS = [
@@ -763,8 +765,9 @@ class Dz01Display(RenderableUserDisplay):
             if st.star and not st.lit:
                 _rect(f, hx + 3, hy - 1, hx + 3, hy - 1, C_YELLOW)     # the carried star, a yellow spark on his head
             if st.perched and not fx.get("poof"):
-                # perched: a hand on the wall he is holding, so the held state is on screen
-                side = -1 if st.at(st.r, st.c - 1) in CLIMB else 1
+                # perched: a hand on the wall he is holding, so the held state is on screen. He climbed against
+                # the wall beside the cell he left, one row down, so that is the side act() checked
+                side = -1 if st.at(st.r + 1, st.c - 1) in CLIMB else 1
                 _rect(f, hx + (0 if side < 0 else CELL - 1), hy + 2, hx + (0 if side < 0 else CELL - 1), hy + 2, C_WHITE)
         # the impact: a white spark on the edge between the hero and the creature he is fighting
         if fx.get("spark") and not fx.get("poof"):

@@ -1,8 +1,8 @@
 # Adversarial review of the twelve featured games
 
-Date: 5 November 2026. Reviewer: Claude Code, asked by Mark Barney to read every featured game's source as a hostile senior engineer and game designer and report what does not hold up against the games ARC Prize ships.
+Date: 5 November 2026. Reviewer: Claude Fable 5.1, asked by Mark Barney to read every featured game's source as a hostile senior engineer and game designer and report what does not hold up against the games ARC Prize ships.
 
-Scope: the twelve games in `featured` in `docs/catalog.json`, read in full (8,644 lines), plus `tools/`, `examples/`, the engine package (arcengine 0.9.3) and the catalog write-ups. Nothing was changed in any game. All numbers below come from scripts run against the real engine in this checkout; the scripts are described at the end.
+Scope: the twelve games in `featured` in `docs/catalog.json`, read in full (8,644 lines), plus `tools/`, `examples/`, the engine package (arcengine 0.9.3) and the catalog write-ups. Nothing was changed in any game while this review was written; the fixes made afterwards are in the last section, and a second pass is in `docs/06-Nov-2026-featured-fixes-followup-plan.md`. All numbers below come from scripts run against the real engine in this checkout; the scripts are described at the end.
 
 ## Verdict in one paragraph
 

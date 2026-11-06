@@ -18,6 +18,8 @@ Not checked: te01's no-raise fix in `tighten()`, lt03's tray click selecting a r
 
 ## Open items
 
+Update, 6 November 2026 (Claude Opus 5.5): items 1 to 4 are handled under `docs/06-Nov-2026-featured-fixes-followup-plan.md` (changelog 0.8.7). `EVALUATION.md` no longer claims a human-playtested set or hardcodes counts, its sample loop uses the engine's real state names, the catalog version matches the changelog, the 5-Nov review's header points at its fixes, and the fix credits read Claude Fable 5.1.
+
 ### 1. `EVALUATION.md` makes claims that are not true. Needs fixing.
 
 It was added by another assistant in `9f3ee8e` (0.8.3) and says things Mark has contradicted or the repo does not support. Mark has not yet asked for a fix. Under `CODING_STANDARDS.md`, write a plan in `docs/` first.
