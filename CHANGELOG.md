@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2 — 5 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call: three more highlighted games, BL01 Basket Lift, SS01 Shared Supply and KT01 Knot Tying, each with a teaser, "why AI struggles", rules, what's special and the look, written from the game's code and from runs of the real engine (SS01 and BL01 cleared on all eight levels by solver routes; KT01 levels one to six cleared in the engine and all ten solved under its own rule functions). The "not in the public 25" notes and any cousin games are left out until someone who knows the public set can check them. KT01's catalog entry now carries its level count, 10; it was empty. The names are proposals. The plan is `docs/05-Nov-2026-highlight-bl01-ss01-kt01-plan.md`.
+
 ## 0.8.1 — 5 November 2026
 
 Claude Sonnet 5.5, at Mark Barney's call: repository docs. The README is rewritten around what the games are for (holdouts for anyone who trained on the 25 public games) and what the user has to get right (keep the agent away from the game source), in Mark's voice. `AGENTS.md` and `CLAUDE.md` are added; `CODING_STANDARDS.md` is now Mark's full standards, with the repo-specific rules in `AGENTS.md`. `.gitattributes` forces LF so the catalog's game hashes verify on Windows, where checkouts were turning every game into a hash mismatch. The release plan moves from `docs/plans/` to `docs/`, named as the standards say.

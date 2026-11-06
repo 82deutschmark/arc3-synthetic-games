@@ -13,6 +13,8 @@
 // Updated: 05-November-2026, Claude Opus 5.5 — a panel leads with "why AI struggles" (catalog spoiler.hard, plain gamer talk, with the
 //   Slippery Seven cousin where there is one); the long write-up folds under FULL RULES. Play links go to the lab, which records plays.
 // Updated: 04-November-2026, Claude Opus 5.5 High — each card face shows the game's short teaser (catalog "spoiler.teaser").
+// Updated: 05-November-2026, Claude Sonnet 5.5 — the count line says "N best games", with no "of M": the catalog is only the games
+//   in this repository, not everything the team made, and Mark's picks are a hand-picked few from far more.
 // PURPOSE: Render the highlighted games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
 'use strict';
@@ -120,7 +122,7 @@ fetch('catalog.json', { cache: 'no-cache' }).then(response => {
     line.hidden = false;
   }
   const picks = catalog.featured.map(id => catalog.games.find(game => game.id === id));
-  document.querySelector('#count').textContent = `${picks.length} best of ${catalog.games.length} games`;
+  document.querySelector('#count').textContent = `${picks.length} best games`;
   document.querySelector('#featured').append(...picks.map(card));
 }).catch(() => {
   const error = document.querySelector('#error');

@@ -13,7 +13,10 @@
     "wb02",
     "bs01",
     "wf02",
-    "st01"
+    "st01",
+    "bl01",
+    "ss01",
+    "kt01"
   ],
   "highlight": {
     "games": [
@@ -853,7 +856,22 @@
         6,
         7
       ],
-      "play": "https://arc3.sonpham.net/games/bl01"
+      "play": "https://arc3.sonpham.net/games/bl01",
+      "spoiler": {
+        "teaser": "Basket Lift. Get the fruit to the basket on lifts that weigh you.",
+        "hard": "Down doesn't mean down. It tips the scale: you stand on a pan, the lighter side goes up and the heavier side goes down, and you count as one block while every fruit you carry adds two or three. On the first level you rise when your hands are empty and sink once you're holding an apple. Later the Up key flips gravity and a lever turns blue crystal blocks solid. A bot that mashes the arrow keys never works out that the weights are doing the moving.",
+        "rules": [
+          "Left and right walk the farmer one square at a time. He stays on the ground, ledges and pans, and can't step off an edge into the air.",
+          "Space picks up a fruit next to him, or drops what he's carrying into the basket when he's next to it. With empty hands beside the basket, Space takes a banked fruit back out, heaviest first. Clicking a fruit, the basket or the lever does the same job.",
+          "Down is the lift. The lifts are pairs of pans hung over pulleys, with grey weight blocks hanging under one side. Press Down while standing on a pan and the scale tips one step: the heavier side sinks, the lighter side rises, and if they match nothing moves. The farmer weighs one block, a carried fruit adds two or three, and the grey blocks count too.",
+          "A bar along the bottom is your allowance, 320 presses a level. Every press spends one, refused moves included. Empty the bar and you've lost the level. Undo gives the press back.",
+          "On levels four, five, seven and eight, Up flips gravity, so the farmer falls toward the ceiling and walks it. A small leaf on the right edge shows which way is down.",
+          "From level six there is a lever and blue crystal blocks. Flip the lever and the crystals go solid: pans, the farmer and fruit can't pass through them, and a fruit inside one can't be picked up. Flip it again and they're gone. The lever won't flip if a crystal would land on you or on a pan.",
+          "Clear a level by getting every fruit into the basket with your hands empty."
+        ],
+        "special": "Fruit is cargo and ballast at once. What you hold changes which way the lift takes you, and the basket doubles as a place to park weight and take it back out when you need it. Then gravity and the crystals change what you can stand on and what is in the way.",
+        "look": "A white sky over a green-topped maroon ground. Orange ropes run over little pulley wheels to flat orange pans, with grey weight blocks hanging under one side. Red fruit and heavier orange ones sit on green-topped ledges, an orange woven basket waits on the ground, and the farmer is small, in a yellow hat and a blue shirt. Later levels add a ceiling beam, a leaf that shows gravity, a lever and light blue crystal blocks. A row of grey pips along the top marks the level, and the orange bar along the bottom is your allowance."
+      }
     },
     {
       "id": "co01",
@@ -1160,7 +1178,7 @@
       "class_name": "G036",
       "path": "games/kt01.py",
       "sha256": "1f90cb01ac31a7de8a91a1e0e8c8c5be934fd03234b42d42b4370f233d7c6948",
-      "levels": null,
+      "levels": 10,
       "human": null,
       "preview": "previews/kt01.png",
       "media": {
@@ -1176,7 +1194,21 @@
         5,
         7
       ],
-      "play": "https://arc3.sonpham.net/games/g036"
+      "play": "https://arc3.sonpham.net/games/g036",
+      "spoiler": {
+        "teaser": "Knot Tying. Lay a cord over and under, then pull the knot tight.",
+        "hard": "You only find out a knot is wrong when you pull it. Lay the cord, press Space at the finish, and if any crossing has the wrong strand on top the cord snaps back and the level starts over. The cord can't touch the same spot twice, it runs straight through crossings, and over or under is decided by which pass came second. So the whole route has to be planned before the first inch goes down. A bot that wanders the slats until it reaches the end will tie the wrong knot.",
+        "rules": [
+          "The arrow keys lay the cord along the slats from the black start eyelet. It can't leave the slats and can't go back over a spot it already covers.",
+          "Space at the purple finish eyelet pulls the cord tight. If every crossing is right the knot holds and you move on. If not, the cord snaps back and the level starts again. Space anywhere else does nothing.",
+          "Undo takes the cord back one step at a time, as far as the start eyelet, as often as you like, so a dead end never traps you.",
+          "At a crossing the cord goes straight through, never turning. Each crossing takes one pass across and one pass up and down, and the second pass is the one that ends up on top.",
+          "A blue bar on a crossing says the across strand must end on top. A white bar says the up and down strand must. Every crossing has to be crossed twice, and only the second pass counts.",
+          "There are ten levels, from a single winding run with no crossings to a lattice with five."
+        ],
+        "special": "Over and under isn't a button, it's the order you visit things in. Choosing a route is also choosing which strand ends up on top at every crossing, and the route can never double back on itself.",
+        "look": "A green bench cloth with orange wooden slats, rimmed in black, laid out as a lattice. The cord is a light blue strand that turns black where it goes under at a crossing, and its head is purple with a black eye that looks the way it last moved. A black eyelet marks the start and a purple one the finish. Daisies in the corners change with every move and do nothing."
+      }
     },
     {
       "id": "fp01",
@@ -1327,7 +1359,21 @@
         6,
         7
       ],
-      "play": "https://arc3.sonpham.net/games/ss01"
+      "play": "https://arc3.sonpham.net/games/ss01",
+      "spoiler": {
+        "teaser": "Shared Supply. Thread the fruit from the tray onto the skewers, in order.",
+        "hard": "There's no way to lose and nothing tells you you've got it wrong. The next fruit goes on whichever skewer is selected, right or wrong, and the only sign is a skewer's base turning green when its stack matches. Skewers often start with the same fruits, so which one should take this fruit only matters several fruits later. The whole tray is in plain view, so it's pure planning: a bot that threads greedily ends up with full skewers it has to back out of one fruit at a time.",
+        "rules": [
+          "Each skewer hangs at the top in a white box showing the stack of fruit it needs, bottom to top. The tray along the bottom holds every fruit you have, in the order it will come.",
+          "Click a skewer's base to select it. Space threads the next fruit from the tray onto the selected skewer. Undo takes the last fruit you threaded back off.",
+          "A skewer can't take more fruit than its order has. Press Space on a full one and nothing happens.",
+          "A fruit goes on whichever skewer is selected, even the wrong one. You win the level when every fruit is threaded and every skewer holds exactly its order.",
+          "A skewer's base is orange while its stack is wrong, light blue while it's selected and green once its stack matches.",
+          "Early levels hand you each skewer's fruit in a tidy order. Later ones make several orders begin with the same fruits, let some orders close early, bring a fruit back, and make you hold one back for the right skewer."
+        ],
+        "special": "It's a sorting puzzle where the sorting is the order you do things in. You can see the whole future in the tray, so nothing is hidden. The work is seeing, from the fruit still to come, which skewer this fruit has to go on.",
+        "look": "A pale grey room with an orange strip along the top. Each skewer hangs in a white box showing the fruit it needs, with a thin rod below it and a base plate that changes colour. Threaded fruit stacks up the rod. Along the bottom a dark tray winds back and forth, and the fruit you haven't used yet waits in it, in the order it will come. The fruit is small pixel art in red, green, orange, purple, yellow, pink and maroon. Four little blue dots mark where you last clicked and turn red when a press was refused."
+      }
     },
     {
       "id": "te01",
