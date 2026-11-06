@@ -33,3 +33,4 @@ Out:
 5. Add top entry `0.8.3` in `CHANGELOG.md` crediting Gemini 3.8 Flash High.
 6. Verify `tools/validate.py` passes using `.venv\Scripts\python`.
 7. Commit `0.8.3` and push to `origin/main`.
+
