@@ -16,6 +16,19 @@
 #   small functions (parts three to five) and never touches the rules; the game class (part six) only owns the
 #   state, the counter and the animation frames. Nothing is copied from another game here except the idea of a
 #   scrolling window drawn by a display layer.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- calm round: quieter water (fewer, sparser ripples, no bubbles or random
+#   glints, far fewer floating props, sparser night stars), flat sand/grass/shoal/reef fields without speckle, one
+#   halo of surf round each island, a single glint per sheltered cell. Rules and animation timing untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- animation round (rules untouched): every move now has a small
+#   anticipation, a slide, a settle dip and a stagger of idle beats so water, flags, fire and sails keep moving through
+#   the frames; a blocked move bumps the bow and rebounds with a spark; undo rewinds by sliding; switching boats
+#   pulses the corner marks in and rings the anchor splash; reaching a berth rings in the boat's colour; a sunk boat
+#   goes under before it bursts and the sea turns dim red; a spent counter sags the boats under the dim red swap; a
+#   cleared sea closes with an iris on the boat; ships and barrels bob out of step with one another.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- final look (rules untouched): each sea and each reset opens with an iris
+#   growing from the boat; moves end with a short idle tail so the water and flags keep stirring; the loss no longer
+#   swaps the sea to purple (it just goes flat and still under the red frame); win sparks are fewer and shorter;
+#   rings and sparks stay inside the window when a boat sits at its edge; a shoved barrel gets a splash ring.
 # CHANGELOG: 07-Nov-2026 (Claude Sonnet 5.5) -- first version of WB03, a new game id built from WB02's idea.
 """WB03 -- a windy sea of boats.
 
@@ -536,14 +549,14 @@ def disc(frame, cx, cy, r, colour, ring=False):
 # ---- theme colours -------------------------------------------------------------------------------------------
 # water and its ripples, a glint colour, and what a shoal is dotted with; one look per sea
 THEMES = {
-    'day':     dict(water=BLU, ripple=LBL, glint=WHT, shoal=LBL, speck=YEL, density=9),
-    'cove':    dict(water=GRN, ripple=LBL, glint=WHT, shoal=YEL, speck=GRN, density=7),
-    'deep':    dict(water=BLK, ripple=PUR, glint=LBL, shoal=BLU, speck=LBL, density=7),
-    'pirate':  dict(water=PUR, ripple=PNK, glint=YEL, shoal=PNK, speck=YEL, density=8),
-    'stream':  dict(water=LBL, ripple=BLU, glint=WHT, shoal=YEL, speck=WHT, density=7),
-    'night':   dict(water=BLK, ripple=BLU, glint=WHT, shoal=BLU, speck=LBL, density=4),
-    'serpent': dict(water=BLU, ripple=GRN, glint=YEL, shoal=YEL, speck=GRN, density=8),
-    'dusk':    dict(water=BLU, ripple=ORG, glint=YEL, shoal=ORG, speck=YEL, density=4),
+    'day':     dict(water=BLU, ripple=LBL, glint=WHT, shoal=LBL, speck=YEL, density=4),
+    'cove':    dict(water=GRN, ripple=LBL, glint=WHT, shoal=YEL, speck=GRN, density=3),
+    'deep':    dict(water=BLK, ripple=PUR, glint=LBL, shoal=BLU, speck=LBL, density=3),
+    'pirate':  dict(water=PUR, ripple=PNK, glint=YEL, shoal=PNK, speck=YEL, density=3),
+    'stream':  dict(water=LBL, ripple=BLU, glint=WHT, shoal=YEL, speck=WHT, density=3),
+    'night':   dict(water=BLK, ripple=BLU, glint=WHT, shoal=BLU, speck=LBL, density=2),
+    'serpent': dict(water=BLU, ripple=GRN, glint=YEL, shoal=YEL, speck=GRN, density=3),
+    'dusk':    dict(water=BLU, ripple=LBL, glint=YEL, shoal=ORG, speck=YEL, density=2),
 }
 
 # ---- the boats ------------------------------------------------------------------------------------------------
@@ -983,8 +996,6 @@ def paint_ripples(img, sea, phase, theme, rng_salt):
                     y = cy * CELL + (1 + (n // 4 + k * 3) % 5)
                     if x + 2 < W and y < H:
                         img[y, x:x + 2 + (n % 2)] = theme['ripple']
-            if v % 29 == 0:
-                img[cy * CELL + 2, cx * CELL + 3] = theme['glint']
 
 
 def paint_island(img, sea, mask, theme, phase):
@@ -996,14 +1007,10 @@ def paint_island(img, sea, mask, theme, phase):
     ring1 = dilate(mask) & ~mask
     ring2 = dilate(ring1) & ~mask & ~ring1
     yy, xx = np.mgrid[0:H, 0:W]
-    img[ring2 & ((xx + yy * 2 + phase * 2) % 5 == 0)] = theme['ripple']
-    img[ring1 & ((xx + yy + phase) % 2 == 0)] = WHT
-    img[ring1 & ((xx + yy + phase) % 2 == 1)] = theme['ripple']
-    img[mask] = YEL
-    img[mask & ~inner1 & ((xx * 3 + yy * 5) % 7 == 0)] = ORG
+    img[ring1] = theme['ripple']                                # a calm halo of shallows, with surf that creeps round it
+    img[ring1 & ((xx + yy + phase) % 3 == 0)] = WHT
+    img[mask] = YEL                                             # flat sand, flat grass: no speckle
     img[inner2] = GRN
-    img[inner2 & ((xx * 7 + yy * 3) % 11 == 0)] = YEL
-    img[inner3 & ((xx * 5 + yy * 7) % 53 == 0)] = PNK
 
 
 def paint_shoal(img, sea, theme, phase):
@@ -1012,11 +1019,9 @@ def paint_shoal(img, sea, theme, phase):
         return
     H, W = img.shape
     yy, xx = np.mgrid[0:H, 0:W]
-    img[mask] = theme['shoal']
-    img[mask & ((xx * 5 + yy * 3) % 6 == 0)] = theme['speck']
-    img[mask & ((xx + yy * 4) % 9 == 0)] = theme['water']
+    img[mask] = theme['shoal']                                 # one flat field; only the edge glints
     edge = dilate(mask) & ~mask
-    img[edge & ((xx + yy + phase) % 3 == 0)] = WHT
+    img[edge & ((xx + yy + phase) % 4 == 0)] = WHT
 
 
 def paint_reef(img, sea, theme, phase):
@@ -1032,9 +1037,6 @@ def paint_reef(img, sea, theme, phase):
             sides = [rocky(cx, cy - 1), rocky(cx, cy + 1), rocky(cx - 1, cy), rocky(cx + 1, cy)]
             if all(sides):
                 img[y0:y0 + CELL, x0:x0 + CELL] = MAR
-                for k in range(3):
-                    h = hashed(cx, cy, 30 + k)
-                    img[y0 + h % CELL, x0 + (h >> 4) % CELL] = ORG if k == 0 else BLK
                 continue
             for k in range(CELL):                                   # surf only on the sides that face the water
                 if (k + phase) % 2:
@@ -1071,17 +1073,19 @@ TUFT = art(("g.g", "ggg"), dict(g=GRN))
 LILY = art((".ggg.", "gggpg", ".ggg."))
 BUBBLES = art(("w.", ".w", "w."))
 RIBS = art(("m.m.m", "mmmmm"))
-DECOR = {'day': (PLANK, BUBBLES), 'cove': (TUFT, TUFT, BUBBLES), 'deep': (BUBBLES, RIBS), 'pirate': (PLANK, RIBS),
-         'stream': (BUBBLES, TUFT), 'night': (BUBBLES,), 'serpent': (LILY, LILY, TUFT), 'dusk': (PLANK, BUBBLES)}
+DECOR = {'day': (PLANK,), 'cove': (TUFT,), 'deep': (RIBS,), 'pirate': (PLANK, RIBS),
+         'stream': (TUFT,), 'night': (), 'serpent': (LILY, TUFT), 'dusk': (PLANK,)}
 
 
 def paint_decor(img, sea, theme, phase):
     """Small things that float or grow in open water and never block a boat: planks, tufts, lilies, bubbles."""
     kinds = DECOR[sea.theme]
+    if not kinds:
+        return
     for cy in range(sea.h):
         for cx in range(sea.w):
             v = hashed(cx, cy, 21)
-            if v % 13 != 0 or sea.grid[cy][cx] != '.' or (cx, cy) in sea.current:
+            if v % 37 != 0 or sea.grid[cy][cx] != '.' or (cx, cy) in sea.current:
                 continue
             spr = kinds[(v >> 4) % len(kinds)]
             blit(img, cx * CELL + (v >> 8) % 3, cy * CELL + 1 + (v >> 10) % 3, np.where(spr == WHT, theme['glint'], spr))
@@ -1096,7 +1100,7 @@ def paint_world(sea, phase):
     paint_decor(img, sea, theme, phase)
     if sea.theme == 'night':
         yy, xx = np.mgrid[0:H, 0:W]
-        img[(hashed(xx, yy, 9) % 211 == 0)] = theme['glint']
+        img[(hashed(xx, yy, 9) % 640 == 0)] = theme['glint']
     paint_shoal(img, sea, theme, phase)
     paint_island(img, sea, cell_mask(sea, 'L'), theme, phase)
     paint_reef(img, sea, theme, phase)
@@ -1299,7 +1303,7 @@ class Window(RenderableUserDisplay):
                 elif cell in calm:                              # the lee of an island: glassy water, a lattice of glints
                     for py in range(CELL):
                         for px in range(CELL):
-                            if 0 <= x + px < 64 and 0 <= y + py < VIEW_H and (px + beat % 2) % 3 == 1 and py % 3 == 1:
+                            if 0 <= x + px < 64 and 0 <= y + py < VIEW_H and px == 1 + 2 * (beat % 2) and py == 2:
                                 frame[y + py, x + px] = theme['glint']
                             elif 0 <= x + px < 64 and 0 <= y + py < VIEW_H and frame[y + py, x + px] == theme['ripple']:
                                 frame[y + py, x + px] = theme['water']
@@ -1351,14 +1355,18 @@ class Window(RenderableUserDisplay):
             if -8 <= x < 66 and -8 <= y < VIEW_H + 8:
                 things.append((y + CELL - 1, x + 4, y - 8, streamer('flag', v['wind'], beat % 2, BOAT_COLOURS[boat])))
         for (px, py) in v['barrels']:
-            things.append((py + 3, px - cam_x - 2, py - cam_y - 2 + (beat % 2), BARREL))
+            things.append((py + 3, px - cam_x - 2, py - cam_y - 2 + ((beat + int(px) // CELL) % 2), BARREL))
         self.creatures(things, v, sea, beat, cam_x, cam_y)
         for boat, (px, py) in enumerate(v['boats']):
             if boat in v['hidden']:
                 continue
             bob = (beat + boat) % 2
             spr = boat_art(boat, v['face'][boat], v['status'][boat], v['wind'], beat)
-            things.append((int(py) - cam_y + 3, int(px) - cam_x - 4, int(py) - cam_y - 8 + bob, spr))
+            under = v['sink'].get(boat, 0)                       # a sinking boat slides down and the sea hides her hull
+            if under:
+                spr = spr[:max(1, spr.shape[0] - under)]
+            things.append((int(py) - cam_y + 3, int(px) - cam_x - 4,
+                           int(py) - cam_y - 8 + bob + v['dyoff'].get(boat, 0) + under, spr))
         for (wx, wy, dx, dy) in v['wake']:                      # foam trailing behind a boat that is sliding
             for k in (1, 2, 3):
                 fx = int(wx) - cam_x - dx * (2 + 2 * k) + (dy and (k % 2 * 2 - 1) * 2)
@@ -1373,25 +1381,38 @@ class Window(RenderableUserDisplay):
         px, py = v['boats'][sel]
         bx, by = int(px) - cam_x - 4, int(py) - cam_y - 4
         mark = RED if v['refused'] else WHT
-        for (ox, oy, w, h) in ((-1, -1, 3, 1), (-1, -1, 1, 3), (7, -1, 3, 1), (9, -1, 1, 3),
-                               (-1, 8, 3, 1), (-1, 6, 1, 3), (7, 8, 3, 1), (9, 6, 1, 3)):
+        out = v['mark_out']                                      # the marks start wide and close in on a newly chosen boat
+        for (ox, oy, w, h, sgx, sgy) in ((-1, -1, 3, 1, -1, -1), (-1, -1, 1, 3, -1, -1), (7, -1, 3, 1, 1, -1),
+                                         (9, -1, 1, 3, 1, -1), (-1, 8, 3, 1, -1, 1), (-1, 6, 1, 3, -1, 1),
+                                         (7, 8, 3, 1, 1, 1), (9, 6, 1, 3, 1, 1)):
             for yy in range(h):
                 for xx in range(w):
-                    sx, sy = bx + ox + xx, by + oy + yy
+                    sx, sy = bx + ox + xx + sgx * out, by + oy + yy + sgy * out
                     if 0 <= sx < 64 and 0 <= sy < VIEW_H:
                         frame[sy, sx] = mark
 
         if v['streak'] is not None:                              # the gust: white dashes sweeping downwind
             self.gust(frame, v['wind'], v['streak'])
-        for (bx, by, r, colour) in v['bursts']:
-            disc(frame, int(bx) - cam_x, int(by) - cam_y, r, colour, ring=True)
-            disc(frame, int(bx) - cam_x, int(by) - cam_y, max(1, r - 2), WHT if colour != WHT else LBL, ring=True)
+        for (bx, by, r, colour) in v['bursts']:                  # rings keep their centre inside the window at its edge
+            rx = min(max(int(bx) - cam_x, 3), 60)
+            ry = min(max(int(by) - cam_y, 3), VIEW_H - 4)
+            disc(frame, rx, ry, r, colour, ring=True)
+            disc(frame, rx, ry, max(1, r - 2), WHT if colour != WHT else LBL, ring=True)
         for (sx, sy, k, colour) in v['sparks']:
             spr = SPARK[k % 3]
-            blit(frame, int(sx) - cam_x - spr.shape[1] // 2, int(sy) - cam_y - spr.shape[0] // 2, np.where(spr >= 0, colour, -1))
+            ex = min(max(int(sx) - cam_x, 2), 61)                # sparks stay on screen when the boat hugs the window edge
+            ey = min(max(int(sy) - cam_y, 2), VIEW_H - 3)
+            blit(frame, ex - spr.shape[1] // 2, ey - spr.shape[0] // 2, np.where(spr >= 0, colour, -1))
         for boat, mx, my, (vx, vy) in edge_markers(v['cam'], v['boats']):
             spr = arrow_sprite(vx, vy, BOAT_COLOURS[boat])
             blit(frame, mx - 3, my - 3, spr)
+        if v['swap']:                                            # loss: the sea goes flat and still (ripples drop out)
+            lut = np.arange(16)
+            lut[theme['ripple']] = theme['water']                # the sea goes flat and still: ripples vanish, no loud colour swap
+            frame[:VIEW_H, :] = lut[frame[:VIEW_H, :].astype(np.intp)]
+        if v['wipe'] is not None:                                # level clear: an iris closes on the steered boat
+            yy, xx = np.ogrid[:VIEW_H, :64]
+            frame[:VIEW_H, :][(xx - (px - cam_x)) ** 2 + (yy - (py - cam_y - 3)) ** 2 > v['wipe'] ** 2] = BLK
         if v['flash'] is not None:
             frame[0, :VIEW_H] = v['flash']
             frame[0, :] = v['flash']
@@ -1437,12 +1458,12 @@ class Window(RenderableUserDisplay):
                     spr = SERPENT_HUMP
                 h, w = spr.shape
                 things.append((int(hy) - cam_y + h // 2 - k, int(hx) - cam_x - w // 2, int(hy) - cam_y - h // 2, spr))
-        for s in sea.ships:
+        for n, s in enumerate(sea.ships):
             a, b = ship_cell(s, t0), ship_cell(s, t1)
             px = (a[0] + (b[0] - a[0]) * u) * CELL + CELL // 2
             py = (a[1] + (b[1] - a[1]) * u) * CELL + CELL // 2
             spr = ship_art(s['aim'], s['every'], t1 % s['every'], beat)
-            things.append((int(py) - cam_y + 5, int(px) - cam_x - 10, int(py) - cam_y - 9 + (beat % 2), spr))
+            things.append((int(py) - cam_y + 5, int(px) - cam_x - 10, int(py) - cam_y - 9 + ((beat + n) % 2), spr))
 
     def gust(self, frame, wind, progress):
         """Streaks of wind blown across the window; they move with the wind's own direction."""
@@ -1547,9 +1568,14 @@ class Wb03(ARCBaseGame):
         self.used = 0
         self.history = []
         self.frames = []
+        opening = self.pending == 'opening'
         self.pending = None
         self.beat = 0
         self.view = self.make_view(self.state)
+        if opening:
+            self.frames = self.opening()
+            self.view = self.frames.pop(0)                       # no full-sea flash before the iris
+            self.pending = 'opened'
 
     def calm_for(self, wind):
         key = (self.index, wind)
@@ -1567,7 +1593,7 @@ class Wb03(ARCBaseGame):
             boats=centres, face=list(self.face), status=sail_status(sea, positions, moored, t),
             wind=wind_at(sea, t), selected=selected, barrels=[cell_centre(c) for c in barrels],
             t_from=t, t_to=t, u=1.0, beat=self.beat, refused=False, streak=None, bursts=[], sparks=[], wake=[],
-            flash=None, hidden=(), warn=hazards(sea, t + 1, barrels) - sea.whirlpools,
+            flash=None, hidden=(), dyoff={}, sink={}, mark_out=0, swap=False, wipe=None, warn=hazards(sea, t + 1, barrels) - sea.whirlpools,
             hud=dict(home=sum(1 << b for b, c in enumerate(positions) if c == sea.goals[b]), tick=t,
                      level=self.index, counter=COUNTERS[self.index], left=COUNTERS[self.index] - self.used))
         view['cam'] = camera_for(sea, centres[selected])
@@ -1595,38 +1621,67 @@ class Wb03(ARCBaseGame):
         half = [cell_centre(c) for c in mid]
         end = [cell_centre(c) for c in pos1]
         pushed0 = [b for b in barrels0 if b not in barrels1]
+        pushed1 = [b for b in barrels1 if b not in barrels0]   # where a shoved barrel came to rest: a splash rings it
         barrels_start = [cell_centre(b) for b in barrels0]
         barrels_mid = [cell_centre((b[0] + dx, b[1] + dy)) if b in pushed0 else cell_centre(b) for b in barrels0]
         frames = []
         base = self.make_view(mid_state, warn=frozenset())
+        back = [tuple(c) for c in start]                         # anticipation: the bow dips back a pixel before the surge
+        back[sel] = (start[sel][0] - dx, start[sel][1] - dy)
+        frames.append({**base, 'boats': back, 'barrels': barrels_start, 'cam': camera_for(sea, start[sel]),
+                       'status': sail_status(sea, tuple(pos0), moored1, t0), 'wake': []})
         for u in (0.5, 1.0):
             boats = [(lerp(start[i][0], half[i][0], u), lerp(start[i][1], half[i][1], u)) for i in range(len(start))]
             barrels = [(lerp(a[0], b[0], u), lerp(a[1], b[1], u)) for a, b in zip(barrels_start, barrels_mid)]
+            nudge = [(b[0], b[1], 2, LBL) for a, b in zip(barrels_start, barrels_mid) if a != b] if u == 1.0 else []
             frames.append({**base, 'boats': boats, 'barrels': barrels, 'streak': 0.2 if u == 1.0 else None,
                            'cam': camera_for(sea, boats[sel]), 'status': sail_status(sea, tuple(pos0), moored1, t0),
-                           'wake': [(boats[sel][0], boats[sel][1], dx, dy)]})
+                           'wake': [(boats[sel][0], boats[sel][1], dx, dy)], 'bursts': nudge})
         for u in (0.5,):
             boats = [(lerp(half[i][0], end[i][0], u), lerp(half[i][1], end[i][1], u)) for i in range(len(half))]
             drifting = [(boats[i][0], boats[i][1], int(np.sign(end[i][0] - half[i][0])), int(np.sign(end[i][1] - half[i][1])))
                         for i in range(len(half)) if end[i] != half[i]]
             frames.append({**base, 'boats': boats, 'barrels': [cell_centre(b) for b in barrels1], 'streak': 0.7,
-                           'wake': drifting,
+                           'wake': drifting, 'bursts': [(cell_centre(b)[0], cell_centre(b)[1], 4, LBL) for b in pushed1],
                            't_from': t0, 't_to': t1, 'u': u, 'cam': camera_for(sea, boats[sel]),
                            'beat': self.beat})
+        frames.append({**base, 'boats': list(end), 'barrels': [cell_centre(b) for b in barrels1], 'wake': [],
+                       'dyoff': {sel: 1}, 't_from': t0, 't_to': t1, 'u': 1.0, 'cam': camera_for(sea, end[sel])})
         return frames
+
+    def stagger(self, frames, tail=1):
+        """Give each frame of an action its own idle beat, ending on the action's own beat, so the water, flags,
+        fire and sails keep moving through the frames. tail is how many frames follow that carry the beat themselves."""
+        for i, f in enumerate(frames):
+            f['beat'] = self.beat - (len(frames) + tail - 1 - i)
+        return frames
+
+    def opening(self):
+        """A new sea (or a reset) opens with an iris growing out from the steered boat."""
+        frames = [self.make_view(self.state, wipe=r) for r in (7, 18, 34)]
+        return self.stagger(frames, 1) + [self.make_view(self.state)]
+
+    def rings(self, state, boats, r, colour=LBL):
+        """Small splash rings round the named boats (an anchor drop, a berth reached)."""
+        return [(c[0], c[1], r, colour) for c in (cell_centre(state[0][b]) for b in boats)]
 
     def step(self):
         if self.action.id == GameAction.RESET:
-            self.complete_action()
-            return
-        if not self.frames:
+            if self.pending != 'opened':                         # queue the iris once; the engine keeps calling step
+                self.frames = self.opening()
+                self.pending = 'opened'
+        elif not self.frames:
             self.plan()
         self.view = self.frames.pop(0)
         if not self.frames:
+            if self.pending == 'win' and not self.is_last_level():   # the next sea opens with an iris on the steered boat
+                self.pending = 'opening'                         # on_set_level queues the iris once the engine switches seas
+                self.next_level()
+                return
+            if self.pending == 'win':
+                self.next_level()
             if self.pending == 'lose':
                 self.lose()
-            elif self.pending == 'win':
-                self.next_level()
             self.pending = None
             self.complete_action()
 
@@ -1639,7 +1694,15 @@ class Wb03(ARCBaseGame):
             if self.history:
                 self.state, self.face = self.history.pop()      # undo restores the board, never the spent moves
                 self.beat += 1
-                self.frames = [self.make_view(before, refused=False), self.make_view(self.state)]
+                a0, a1 = before[0], self.state[0]                # rewind: the boats slide back to where they were
+                cam0 = camera_for(sea, cell_centre(a0[before[1]]))
+                cam1 = camera_for(sea, cell_centre(a1[self.state[1]]))
+                self.frames = [self.make_view(self.state, cam=(int(lerp(cam0[0], cam1[0], u)), int(lerp(cam0[1], cam1[1], u))),
+                                              boats=[(lerp(cell_centre(p)[0], cell_centre(q)[0], u),
+                                                      lerp(cell_centre(p)[1], cell_centre(q)[1], u))
+                                                     for p, q in zip(a0, a1)], wake=[], warn=frozenset())
+                               for u in (0.33, 0.66)] + [self.make_view(self.state)]
+                self.stagger(self.frames[:2], 1)
             else:
                 self.frames = [self.make_view(before, refused=True), self.make_view(before)]
             return
@@ -1649,7 +1712,19 @@ class Wb03(ARCBaseGame):
             command = self.click_target(int(self.action.data.get('x', -1)), int(self.action.data.get('y', -1)))
         after, outcome = advance(sea, before, command)
         if outcome == 'refused':
-            self.frames = [self.make_view(before, refused=True), self.make_view(before)]
+            if command in STEER:                                 # a bump: the bow noses into the wall, sparks, rebounds
+                ddx, ddy = STEER[command]
+                c = cell_centre(before[0][before[1]])
+                cam = camera_for(sea, c)
+                bumped = []
+                for push, spark in ((2, 1), (-1, None), (1, None)):
+                    boats = list(self.make_view(before)['boats'])
+                    boats[before[1]] = (c[0] + ddx * push, c[1] + ddy * push)
+                    bumped.append(self.make_view(before, refused=push > 0, boats=boats, cam=cam, mark_out=push > 0,
+                                                 sparks=[(c[0] + ddx * 6, c[1] + ddy * 6 - 3, 1, WHT)] if spark else []))
+                self.frames = self.stagger(bumped, 1) + [self.make_view(before)]
+            else:
+                self.frames = [self.make_view(before, refused=True), self.make_view(before)]
             if self.used >= COUNTERS[self.index]:
                 self.run_out()
             return
@@ -1658,37 +1733,57 @@ class Wb03(ARCBaseGame):
         if outcome == 'switched':
             old = camera_for(sea, cell_centre(before[0][before[1]]))
             new = camera_for(sea, cell_centre(after[0][after[1]]))
-            self.frames = [self.make_view(before, cam=(int(lerp(old[0], new[0], u)), int(lerp(old[1], new[1], u))))
-                           for u in (0.25, 0.5, 0.75)] + [self.make_view(after)]
+            self.frames = [self.make_view(before, selected=after[1], mark_out=out,
+                                          cam=(int(lerp(old[0], new[0], u)), int(lerp(old[1], new[1], u))))
+                           for u, out in ((0.25, 3), (0.5, 2), (0.75, 1))]
+            anchored = [b for b in range(len(after[0])) if after[2] >> b & 1 and not before[2] >> b & 1]
+            if anchored:                                         # the boat left in its berth drops anchor with a splash
+                self.frames.append(self.make_view(after, bursts=self.rings(after, anchored, 3)))
+            self.stagger(self.frames, 1)
+            self.frames.append(self.make_view(after))
             if self.used >= COUNTERS[self.index]:
                 self.run_out()
             return
         moved_dx = STEER[command][0]
         if moved_dx:
             self.face[before[1]] = moved_dx
-        self.frames = self.sail_frames(before, after, command)
+        self.frames = self.stagger(self.sail_frames(before, after, command), 1)
         end = self.make_view(after)
         if outcome == 'sunk':
             lost = self.sunk_boats(before, after)
             centres = [cell_centre(after[0][b]) for b in lost]
+            for depth in (3, 6):                                 # the hull goes under before she bursts
+                self.frames.append({**end, 'sink': {b: depth for b in lost}, 'warn': frozenset(), 'mark_out': 0})
             for r in (2, 4, 6):
                 self.frames.append({**end, 'bursts': [(c[0], c[1], r, WHT if r % 4 else LBL) for c in centres],
-                                    'flash': RED, 'hidden': tuple(lost), 'warn': frozenset()})
+                                    'flash': RED, 'hidden': tuple(lost), 'warn': frozenset(), 'swap': r > 2})
             self.pending = 'lose'
         elif won(sea, after):
-            for k in range(4):
+            for k in range(3):
                 sparks = []
+                cam = end['cam']
                 for i, c in enumerate(end['boats']):
-                    for n in range(8):
-                        angle = n * math.pi / 4 + k * 0.3
-                        reach = 5 + 4 * (k + 1)
+                    if not (4 <= c[0] - cam[0] < 60 and 4 <= c[1] - cam[1] < VIEW_H - 4):
+                        continue                                 # only boats you can see sparkle
+                    for n in range(5):
+                        angle = n * 2 * math.pi / 5 + k * 0.5
+                        reach = 5 + 3 * (k + 1)
                         sparks.append((c[0] + math.cos(angle) * reach, c[1] - 3 + math.sin(angle) * reach * 0.8,
                                        k + n, (YEL, WHT, BOAT_COLOURS[i])[(n + k) % 3]))
                 lift = 1 if k % 2 else 0
                 self.frames.append({**end, 'sparks': sparks, 'warn': frozenset(), 'beat': self.beat + k,
                                     'boats': [(c[0], c[1] - lift) for c in end['boats']]})
+            for radius in (30, 17, 7):                           # the iris closes on the winning boat
+                self.frames.append({**end, 'wipe': radius, 'warn': frozenset(), 'beat': self.beat + radius % 2})
             self.pending = 'win'
         else:
+            arrived = [b for b in range(len(after[0])) if after[0][b] == sea.goals[b] and before[0][b] != sea.goals[b]]
+            if arrived:                                          # a boat reaches its berth: rings in its own colour
+                for r in (2, 4):
+                    self.frames.append({**end, 'bursts': [(c[0], c[1], r, BOAT_COLOURS[b])
+                                                          for b, c in zip(arrived, (cell_centre(sea.goals[b]) for b in arrived))]})
+            if not arrived:                                      # a short idle tail: the sea keeps moving as the boats settle
+                self.frames += [{**end, 'beat': self.beat - 2}, {**end, 'beat': self.beat - 1}]
             self.frames.append(end)
             if self.used >= COUNTERS[self.index]:
                 self.run_out()
@@ -1696,7 +1791,8 @@ class Wb03(ARCBaseGame):
     def run_out(self):
         """The move counter is empty: the sails go slack and the window flashes red; the run is over."""
         view = self.make_view(self.state, status=['slack'] * len(self.state[0]))
-        self.frames += [{**view, 'flash': RED if k % 2 == 0 else None} for k in range(4)]
+        self.frames += [{**view, 'flash': RED if k % 2 == 0 else None, 'swap': k > 0,
+                         'dyoff': {b: min(k, 2) for b in range(len(self.state[0]))}} for k in range(4)]
         self.pending = 'lose'
 
     def click_target(self, x, y):

@@ -4,6 +4,16 @@
 #          rules unchanged. Layouts, solutions, cable lengths, blade geometry, the cover's rail, inputs, undo and reset are
 #          the same code as te01; only the pictures are new: each stage is its own room with its own floor, frame, shelf,
 #          posts and gentle life, and every object is a named sprite with a face or a texture, drawn in the early-console look.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round A, calm and readable. Floors turned down to one hue family and one quiet line or less
+#   (no speckle, dither or stars of colour), far fewer and better-spaced props in every room, fewer border bulbs. Rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round B, animation. A move now eases and hops over four frames with dust at the feet
+#   (and at the cover when it is pushed); pickup and latch pop a little star burst; every refused or missed input gets a short drawn
+#   reaction (a nudge or head-shake, closing target brackets, a cable flash when taut); the rover's head lamp pulses; a level clear ends
+#   in an iris that closes on the rover and opens on the next stage. Rules untouched; idle motion still rides only on action frames.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round C, final look (the loss no longer rains: cloud and drops removed). A move now crouches, leaps and lands with a squash (the rover
+#   flattens a pixel on take-off and landing and stands tall again on the last frame); dust puffs are bigger with a dark rim so they
+#   show on the bright stages; a pulled-tight cable now rings like a plucked string for a few frames; the whole screen shakes when
+#   the run is lost; the level-clear is one frame shorter. Rules untouched; idle motion still rides only on action frames.
 # SRP/DRY check: Pass -- the rule functions come first and are copied from te01 untouched; the art below only reads the state.
 #
 # CHANGELOG
@@ -884,42 +894,33 @@ def lib(name, swap=None):
 def floor_slab(xx, yy):
     """Workshop: painted concrete slabs with lit, bevelled joints, paint chips and a dashed yellow safety line inside the wall."""
     art = np.full(xx.shape, BLUE, dtype=np.int8)
-    art[(xx % 18 == 1) | (yy % 18 == 1)] = SKY
-    art[(xx % 18 == 0) | (yy % 18 == 0)] = PURPLE
-    art[(xx * 7 + yy * 13) % 41 == 0] = SKY
+    art[(xx % 24 == 0) | (yy % 24 == 0)] = PURPLE          # one quiet joint line a step darker than the slab, no speckle
     right, bottom = xx.max() - 3, yy.max() - 3
     along = ((yy == 3) | (yy == bottom)) & (xx >= 3) & (xx <= right)
     down = ((xx == 3) | (xx == right)) & (yy >= 3) & (yy <= bottom)
-    art[(along | down) & ((xx + yy) % 6 < 4)] = YELLOW
+    art[(along | down) & ((xx + yy) % 8 < 3)] = YELLOW
     return art
 
 
 def floor_tiles(xx, yy):
     """Kitchen: big white tiles with pale-blue grout, a blue plus where four meet and a small yellow diamond in every other tile."""
     art = np.full(xx.shape, WHITE, dtype=np.int8)
-    art[(xx % 12 == 0) | (yy % 12 == 0)] = SKY
-    art[((xx % 12 == 0) & np.isin(yy % 12, (0, 1, 11))) | ((yy % 12 == 0) & np.isin(xx % 12, (1, 11)))] = BLUE
-    odd = ((xx // 12) + (yy // 12)) % 2 == 0
-    art[odd & (((xx % 12 == 6) & np.isin(yy % 12, (5, 7))) | ((yy % 12 == 6) & np.isin(xx % 12, (5, 7))))] = YELLOW   # a tiny diamond
-    art[odd & (xx % 12 == 6) & (yy % 12 == 6)] = ORANGE
+    art[(xx % 18 == 0) | (yy % 18 == 0)] = SKY            # pale grout only: no pluses, no diamonds
     return art
 
 
 def floor_icing(xx, yy):
     """Candy: pink frosting with a wavy magenta piping line every twelve pixels, a white gloss above it and a little drip under it."""
     art = np.full(xx.shape, PINK, dtype=np.int8)
-    line = (yy + np.round(2 * np.sin(xx / 5.0)).astype(int)) % 16
-    art[(line == 15) & (xx % 9 < 4)] = WHITE                # a broken gloss above the piping, so the floor stays quiet
-    art[line == 0] = MAGENTA
+    line = (yy + np.round(2 * np.sin(xx / 5.0)).astype(int)) % 24
+    art[line == 0] = MAGENTA                                # one wavy piping line, widely spaced; no gloss
     return art
 
 
 def floor_grate(xx, yy):
     """Power plant: black steel grating, maroon bars every third pixel, black plate seams every twelve and a yellow rivet at each crossing."""
     art = np.full(xx.shape, BLACK, dtype=np.int8)
-    art[xx % 3 == 1] = MAROON
-    art[(yy % 12 == 0) | (xx % 12 == 0)] = BLACK
-    art[(xx % 12 == 0) & (yy % 12 == 0)] = YELLOW
+    art[xx % 6 == 1] = MAROON                               # a bar every sixth pixel; no rivets, no seams
     return art
 
 
@@ -927,9 +928,7 @@ def floor_nebula(xx, yy):
     """Space: deep black with half-toned haze of purple, magenta and blue drifting in broad patches."""
     cloud = np.sin(xx * .13 + 1) + np.sin(yy * .11) + np.sin((xx + yy) * .07) + np.sin((xx - yy) * .05 + 2)
     art = np.full(xx.shape, BLACK, dtype=np.int8)
-    art[(cloud > 0.7) & ((xx + yy) % 2 == 0)] = PURPLE
-    art[(cloud > 1.9) & (xx % 2 == 0) & (yy % 2 == 0)] = MAGENTA
-    art[(cloud < -1.3) & ((xx + yy) % 2 == 0)] = BLUE
+    art[(cloud > 1.3) & ((xx + yy) % 2 == 0)] = PURPLE      # one hue, only in the densest patches
     return art
 
 
@@ -938,28 +937,22 @@ def floor_water(xx, yy):
     art = np.full(xx.shape, SKY, dtype=np.int8)
     shifted = yy + np.round(1.5 * np.sin(xx / 4.0)).astype(int)         # the ripple rows bend with the wave, band by band
     band, line = shifted // 8, shifted % 8
-    art[(line == 0) & ((xx + band * 5) % 12 < 7)] = BLUE
-    art[(line == 7) & ((xx + band * 5) % 12 < 3)] = WHITE
+    art[(line == 0) & (band % 2 == 0) & ((xx + band * 5) % 16 < 6)] = BLUE
     return art
 
 
 def floor_lawn(xx, yy):
     """Meadow: green grass in mown stripes; every other stripe is flecked yellow where the sun hits it."""
     art = np.full(xx.shape, GREEN, dtype=np.int8)
-    art[((xx // 12) % 2 == 1) & ((xx * 5 + yy * 3) % 17 == 0)] = YELLOW
     return art
 
 
 def floor_cobble(xx, yy):
     """Crystal cave: rough paving, courses of purple stones (a few blue) with a pink lit top edge, maroon underside and black mortar."""
-    row, shifted = yy // 6, xx + (yy // 6 % 2) * 5
+    shifted = xx + (yy // 6 % 2) * 5
     across, down = shifted % 10, yy % 6
-    blue = ((row * 7 + shifted // 10 * 3) % 17 == 0)       # blue stones are rare so they never glare
-    art = np.where(blue, BLUE, PURPLE).astype(np.int8)
-    lit = (down == 1) & (across >= 1) & (across <= 4)
-    art[lit] = np.where(blue, PURPLE, MAGENTA)[lit]
-    art[(down == 5) | (across == 9)] = MAROON
-    art[(across == 0) | (down == 0)] = BLACK
+    art = np.full(xx.shape, PURPLE, dtype=np.int8)
+    art[(across == 9) | (down == 0)] = MAROON               # plain purple stones with one maroon mortar line
     return art
 
 
@@ -1062,10 +1055,10 @@ FEET = ('.KOK.KOK.', '..KOKOK..')
 
 
 @lru_cache(maxsize=None)
-def rover_art(facing, carrying, expression, foot, body='G'):
+def rover_art(facing, carrying, expression, foot, body='G', lamp='R', squash=False):
     """The robot at nine pixels: a face that looks where it is going and reacts (blink, wince at a refused move, cheer on a win,
     droop and cry when the run is over), feet that alternate, and the glowing core on its head while it carries it."""
-    head = ('..KYWYK..' if carrying else '...K' + ('R' if expression != 'win' else 'Y') + 'K...', '.KKKKKKK.')
+    head = ('..KYWYK..' if carrying else '...K' + (lamp if expression != 'win' else 'Y') + 'K...', '.KKKKKKK.')
     if facing == (0, -1):
         face = (BACK.get(expression) or FACES[expression][:2]) + BACK_TAIL
     else:
@@ -1076,6 +1069,8 @@ def rover_art(facing, carrying, expression, foot, body='G'):
         rows = rows[:2] + ['K' + row[2:8] + 'G' + 'K' for row in rows[2:7]] + rows[7:]
         if facing == (1, 0):
             rows = [row[::-1] for row in rows]
+    if squash:
+        rows.pop(1)            # a squashed rover loses its top outline row: eight pixels tall, feet kept on the ground
     dead = expression == 'dead'
     return pic(rows, {'G': 'R' if dead else body, 'Z': 'O' if dead else 'Y'})
 
@@ -1202,9 +1197,31 @@ def confetti_art(kind):
     return np.array([[colour, colour], [colour, -1], [-1, colour]] if kind % 2 else [[colour, colour], [colour, colour], [-1, -1]], dtype=np.int8)
 
 
-CLOUD = pic(('..KKK.KKK..', '.KNNNKNNNK.', 'KNNNNNNNNNK', 'KNNNNNNNNNK', '.KKKKKKKKK.'))
-DROP = np.array([[SKY], [BLUE]], dtype=np.int8)
 SHARD_COLOURS = (YELLOW, WHITE, RED, ORANGE, YELLOW, WHITE)
+
+
+# Round B motion pieces. Dust puffs: a plus, an x, then two last specks, all white.
+DUST = tuple(pic_rows for pic_rows in (
+    np.array([[-1 if ch == '.' else (WHITE if ch == 'W' else BLACK) for ch in row] for row in rows], dtype=np.int8)
+    for rows in (('.KKK.', 'KWWWK', 'KWWWK', '.KKK.'),
+                 ('KK...KK', 'KWK.KWK', 'KK...KK'),
+                 ('K...K', '.....', 'K...K'))))
+FRACTIONS = (0., .3, .8, 1.)           # how far along its step the rover is on each animation frame (ease-out)
+HOP = (0, 0, -2, 0)                    # the leap, in pixels: crouch, up, then landing (squashed) on the last animation frame
+SQUASH = (False, True, False, True)    # the rover is flattened by a pixel on the crouch and on the landing
+SHAKE = ((0, 0), (2, 1), (-2, -1), (2, 0), (-1, 1), (1, 0), (0, 0))   # the whole screen shudders when the run is lost
+TWANG = (3, -3, 2, -1, 1, 0)           # how far a plucked cable bows sideways, frame by frame
+BUMP = (2, -1, 1, 0)                   # the nudge of a refused move, in pixels toward the way it was pushing
+SIDEWAYS_REFUSALS = ('far', 'loaded', 'refused', 'undo-empty', 'reel-stop')
+QUIET_FEEDBACK = ('ready', 'move', 'reel', 'pickup', 'push', 'latch')
+WIPE_RADIUS = {4: 30, 5: 16, 6: 5}     # the closing iris on the last frames of a level clear
+OPEN_RADIUS = {2: 6, 1: 22}            # ...and the opening iris on the next stage
+
+
+def wipe_art(centre, radius):
+    """A black screen with a round hole: an iris. Everything outside `radius` of `centre` is black."""
+    yy, xx = np.ogrid[:64, :64]
+    return np.where((xx - centre[0]) ** 2 + (yy - centre[1]) ** 2 > radius ** 2, BLACK, -1).astype(np.int8)
 
 
 def corner_art(scene, alarm):
@@ -1241,89 +1258,79 @@ SCENES = [
          post=('hazard', YELLOW, WHITE, BLACK, BLACK),
          shelf=dict(wall=(MAROON, ORANGE, ORANGE)),
          decor=[item('belt', 2, 12, period=1),
-                item('crate', 6, 6, move=('slide', 1, -8, 66)), item('crate', 30, 6, move=('slide', 1, -8, 66), swap={'Y': 'G', 'O': 'S'}),
-                item('crate', 54, 6, move=('slide', 1, -8, 66)),
-                item('puddle', 14, 44, period=4), item('barrel', 50, 42), item('barrel', 56, 46), item('welder', 28, 44, period=1),
-                item('nut', 34, 22), item('nut', 10, 38), item('nut', 26, 36), item('nut', 56, 30)]
-         + shelf(('toolbox', 4, 0, None), ('lamp', 18, 4, None), ('buddy', 28, 4, None), ('gear', 40, 2, None), ('spray', 52, 0, None))),
+                item('crate', 6, 6, move=('slide', 1, -8, 66)), item('crate', 36, 6, move=('slide', 1, -8, 66), swap={'Y': 'G', 'O': 'S'}),
+                item('puddle', 14, 44, period=4), item('barrel', 52, 44), item('welder', 28, 44, period=1),
+                item('nut', 34, 22), item('nut', 10, 38)]
+         + shelf(('toolbox', 4, 0, None), ('lamp', 18, 4, None), ('buddy', 28, 4, None), ('gear', 44, 2, None))),
     # 2. KITCHEN: white tile, a rug, a cat that blinks, a mouse running the bottom, a rolling orange, a fly, a jam splat.
     dict(name='kitchen', pad=(RED, YELLOW), floor='tiles', rim=('stripe', RED, WHITE), bulbs=(RED, YELLOW),
          post=('bands', RED, WHITE, MAROON, YELLOW),
          shelf=dict(wall=(YELLOW, ORANGE, MAROON)),
-         decor=[item('rug', 36, 40), item('cat', 4, 6, period=3), item('splat', 26, 10, swap={'R': 'M'}),
+         decor=[item('rug', 36, 40), item('cat', 4, 6, period=3),
                 item('orange', 24, 24, period=1, move=('slide', .5, 4, 56)), item('mouse', 0, 48, period=1, move=('slide', 1, -10, 64)),
                 item('fly', 30, 14, period=1, move=('loop', 9, 5, 28), layer=-7)]
-         + shelf(('pot', 3, 2, None), ('cake', 18, 0, None), ('cups', 28, 0, None), ('jar', 42, 0, None), ('bottle', 52, 0, None))),
+         + shelf(('pot', 3, 2, None), ('cake', 18, 0, None), ('cups', 28, 0, None), ('bottle', 50, 0, None))),
     # 3. POWER PLANT: grating, a steam pipe along the top, dials with swinging needles, a turbine, steam vents, flickering bolts.
     dict(name='power-plant', pad=(YELLOW, BLACK), floor='grate', rim=('hazard', YELLOW, BLACK), bulbs=(RED, YELLOW),
          post=('bands', BLUE, SKY, BLACK, YELLOW),
          shelf=dict(wall=(BLUE, SKY, YELLOW)),
          decor=[item('pipe', 2, 3), item('gauge', 14, 12, period=3), item('gauge', 36, 12, period=3, phase=2),
-                item('fan', 42, 40, period=1), item('vent', 25, 46), item('vent', 52, 34),
-                item('puff', 26, 44, period=3, move=('rise', 16)), item('puff', 27, 44, period=3, move=('rise', 16), phase=3),
-                item('puff', 53, 32, period=3, move=('rise', 14), phase=2)]
-         + spread('bolt', 4, 5, BOX, period=3)
-         + shelf(('tesla', 3, 1, None), ('fuse', 15, 3, None), ('battery', 26, 0, None), ('bulb', 36, 3, None), ('beacon', 48, 2, None))),
+                item('fan', 42, 40, period=1), item('vent', 25, 46),
+                item('puff', 26, 44, period=3, move=('rise', 16)), item('puff', 27, 44, period=3, move=('rise', 16), phase=3)]
+         + spread('bolt', 2, 5, BOX, period=3)
+         + shelf(('tesla', 3, 1, None), ('fuse', 15, 3, None), ('battery', 28, 0, None), ('beacon', 46, 2, None))),
     # 4. SPACE: nebula haze, a spiral galaxy, a ringed planet with a moon that goes round it, a comet, a rocket, a satellite, an astronaut.
     dict(name='space', pad=(SKY, BLUE), floor='nebula', rim=('dash', BLUE, PURPLE), bulbs=(SKY, WHITE),
          post=('windows', PURPLE, WHITE, BLACK, SKY), shelf=None,
          decor=[item('galaxy', 8, 8, period=3), item('ice', 24, 6), item('rock', 52, 32), item('mars', 33, 42), item('moon', 42, 46, move=('loop', 14, 6, 40)),
                 item('comet', -14, 6, period=1, move=('glide', 2, -14, 66, .3)),
                 item('rocket', 26, 56, period=1, move=('drift', -1, -12, 66)),
-                item('sat', 20, 20, period=3, move=('slide', .5, -14, 68)), item('astro', 26, 30, move=('loop', 3, 5, 36)),
-                item('saucer', 8, 30, period=2, move=('slide', 1, 6, 56)), item('rock', 6, 50)]
-         + spread('asteroid', 4, 23, BOX, move=('loop', 3, 2, 30))
-         + spread('star', 8, 21, BOX, period=1) + spread('star', 6, 22, BOX, period=1, swap={'Y': 'S'})
-         + spread('star', 4, 24, BOX, period=1, swap={'Y': 'M'}) + spread('star', 4, 25, BOX, period=1, swap={'W': 'Y', 'Y': 'O'}) + spread('star', 8, 26, BOX, period=1)),
+                item('astro', 26, 30, move=('loop', 3, 5, 36)),
+                item('saucer', 8, 30, period=2, move=('slide', 1, 6, 56))]
+         + spread('asteroid', 2, 23, BOX, move=('loop', 3, 2, 30))
+         + spread('star', 5, 21, BOX, period=1) + spread('star', 4, 22, BOX, period=1, swap={'Y': 'S'})),
     # 5. CANDY: frosting floor, a spinning lollipop swirl, a donut, a gingerbread man, cookies, gumballs bobbing about.
     dict(name='candy', pad=(WHITE, YELLOW), floor='icing', rim=('stripe', WHITE, RED), bulbs=(YELLOW, WHITE),
          post=('candy', WHITE, WHITE, MAROON, RED),
          shelf=dict(wall=(SKY, WHITE, YELLOW)),
-         decor=[item('swirl', 6, 4, period=2), item('donut', 28, 8), item('ginger', 50, 42), item('cookie', 24, 48), item('cookie', 52, 28),
+         decor=[item('swirl', 6, 4, period=2), item('donut', 28, 8), item('ginger', 50, 42), item('cookie', 24, 48),
                 item('gumball', 26, 22, swap={'G': 'S'}, move=('bob', 2, 10)),
                 item('gumball', 50, 34, swap={'G': 'Y'}, move=('bob', 2, 10), phase=4),
-                item('gumball', 12, 30, move=('slide', .5, 2, 56))]
-         + shelf(('jar-red', 3, 0, None), ('lolly', 13, 3, None), ('cupcake', 22, 0, None), ('gummy', 32, 4, None), ('jar-green', 43, 0, None),
+                ]
+         + shelf(('jar-red', 3, 0, None), ('cupcake', 22, 0, None), ('jar-green', 40, 0, None),
                  ('cane', 53, 0, None))
-         + spread('sprinkle', 12, 8, BOX, period=3)),
+         + spread('sprinkle', 4, 8, BOX, period=3)),
     # 6. AQUARIUM: water light on the floor, a big whale gliding by, a crab, a chest that opens, seaweed, starfish, jellyfish, fish, bubbles.
     dict(name='aquarium', pad=(WHITE, YELLOW), floor='water', rim=('dash', YELLOW, ORANGE), bulbs=(WHITE, SKY),
          post=('coral', MAGENTA, PINK, PURPLE, YELLOW), shelf=None,
-         decor=spread('ripple', 4, 31, BOX, period=3) + spread('bubble', 7, 32, BOX, period=1, move=('rise', 24))
+         decor=spread('bubble', 4, 32, BOX, period=1, move=('rise', 24))
          + [item('whale', -8, 22, period=1, move=('slide', .5, -26, 64)),
             item('seaweed', 26, 46, period=3), item('seaweed', 38, 47, period=3, phase=2), item('seaweed', 56, 34, period=3, phase=1),
-            item('chest', 50, 52, period=3), item('starfish', 36, 54), item('starfish', 24, 32),
-            item('jelly', 24, 12, period=3, move=('bob', 3, 14)), item('jelly', 40, 34, period=3, move=('bob', 3, 14), phase=5),
+            item('chest', 50, 52, period=3), item('starfish', 36, 54),
+            item('jelly', 24, 12, period=3, move=('bob', 3, 14)),
             item('crab', 0, 56, period=2, move=('slide', 1, -9, 64)),
-            item('bubble2', 14, 30, move=('rise', 20)), item('bubble2', 46, 44, move=('rise', 28), phase=3),
-            item('fish', 6, 12, period=2, move=('slide', 1, 4, 56)),
-            item('fish', 40, 30, period=2, move=('slide', 1, 4, 56), phase=9, swap={'O': 'M'}),
-            item('shell', 52, 51), item('shell', 8, 53)]),
+            item('fish', 6, 12, period=2, move=('slide', 1, 4, 56))]),
     # 7. MEADOW: mown lawn, a pond with lily pads, a frog and a dragonfly, sunflowers, a hopping bunny, a bee, butterflies, bushes, flowers.
     dict(name='meadow', pad=(WHITE, MAROON), floor='lawn', rim=('dash', WHITE, MAROON), bulbs=(WHITE, YELLOW),
          post=('bark', MAROON, ORANGE, BLACK, BLACK), shelf=None,
          decor=[item('pond', 4, 6, period=3), item('lily', 8, 11, layer=-8), item('lily', 16, 9, layer=-8),
                 item('frog', 16, 5, period=5, layer=-7), item('dragonfly', 18, 14, period=1, move=('loop', 8, 3, 18), layer=-7),
-                item('sunflower', 38, 8, period=3), item('sunflower', 24, 26, period=3, phase=1), item('sunflower', 54, 38, period=3, phase=2),
+                item('sunflower', 38, 8, period=3), item('sunflower', 54, 38, period=3, phase=2),
                 item('bunny', 0, 46, period=2, move=('slide', .5, -10, 68)),
                 item('bee', 28, 30, period=1, move=('loop', 6, 4, 22), layer=-7),
                 item('butterfly', 44, 22, period=2, move=('loop', 10, 6, 34), swap={'M': 'S'}, layer=-7),
-                item('butterfly', 10, 36, period=2, move=('loop', 8, 5, 28), swap={'M': 'O'}, layer=-7, phase=3),
-                item('bush', 28, 52), item('bush', 52, 52), item('bush', 38, 26)]
-         + spread('flower', 3, 41, BOX, period=3, swap={'P': 'W', 'R': 'O'}) + spread('flower', 3, 44, BOX, period=3, swap={'P': 'S', 'R': 'B'})
-         + spread('flower', 3, 45, BOX, period=3, swap={'P': 'Y', 'R': 'R'}) + spread('tuft', 6, 46, BOX)
-         + spread('mushroom', 3, 42, BOX) + spread('wing', 2, 43, BOX, period=1, move=('slide', 1, 4, 56))),
+                item('bush', 30, 52), item('bush', 52, 52)]
+         + spread('flower', 2, 41, BOX, period=3, swap={'P': 'W', 'R': 'O'}) + spread('flower', 2, 44, BOX, period=3, swap={'P': 'S', 'R': 'B'})
+         + spread('tuft', 2, 46, BOX) + spread('mushroom', 1, 42, BOX)),
     # 8. CRYSTAL CAVE: cobbles, stalactites and stalagmites, crystals in three colours, bats, a glowing pool, glow-mushrooms, eyes in the dark.
     dict(name='crystal-cave', pad=(SKY, MAGENTA), floor='cobble', rim=('dash', MAROON, BLACK), bulbs=(SKY, MAGENTA),
          post=('facets', BLUE, SKY, BLACK, PURPLE), shelf=None,
-         decor=[item('stalactite', 4, 2), item('stalactite', 26, 2), item('stalactite', 40, 2), item('stalactite', 53, 2),
+         decor=[item('stalactite', 4, 2), item('stalactite', 30, 2), item('stalactite', 53, 2),
                 item('stalagmite', 26, 56), item('stalagmite', 40, 56), item('eyes', 25, 36, period=3), item('pool', 37, 46, period=3),
                 item('bat', 0, 12, period=1, move=('slide', 1.5, -9, 64)), item('bat', 30, 30, period=1, move=('slide', 1, -9, 64), phase=4),
-                item('orb', 12, 20, period=2, move=('loop', 4, 6, 30)), item('orb', 44, 14, period=2, move=('loop', 5, 4, 24), phase=3),
-                item('orb', 28, 46, period=2, move=('loop', 3, 5, 26), phase=6)]
-         + spread('crystal', 3, 51, BOX, period=3) + spread('crystal', 2, 53, BOX, period=3, swap={'S': 'M', 'B': 'V'})
-         + spread('crystal', 2, 54, BOX, period=3, swap={'S': 'Y', 'B': 'O'}) + spread('glowshroom', 4, 56, BOX, period=3)
-         + spread('glow', 8, 52, BOX, period=1)),
+                item('orb', 12, 20, period=2, move=('loop', 4, 6, 30)), item('orb', 44, 14, period=2, move=('loop', 5, 4, 24), phase=3)]
+         + spread('crystal', 2, 51, BOX, period=3) + spread('crystal', 1, 53, BOX, period=3, swap={'S': 'M', 'B': 'V'})
+         + spread('glowshroom', 2, 56, BOX, period=3) + spread('glow', 3, 52, BOX, period=1)),
 ]
 for scene in SCENES:
     for entry in scene['decor']:
@@ -1344,8 +1351,8 @@ def bulb_frames(scene, alarm):
         for index, (x, y) in enumerate(perimeter()):
             if alarm:
                 art[y, x] = RED if (index // 4 + phase) % 2 == 0 else -1
-            elif (index + phase) % 9 == 0:
-                art[y, x] = scene['bulbs'][(index // 9) % 2]
+            elif (index + phase) % 12 == 0:
+                art[y, x] = scene['bulbs'][(index // 12) % 2]
         frames.append(art)
     return frames
 
@@ -1353,8 +1360,9 @@ def bulb_frames(scene, alarm):
 class Te02(ARCBaseGame):
     def __init__(self):
         self.lvl, self.st = LEVELS[0], initial(LEVELS[0])
-        self.animation, self.history, self.objects, self.keys = None, [], {}, {}
+        self.animation, self.history, self.objects, self.keys, self.home, self.shaken = None, [], {}, {}, {}, False
         self.fx, self.tick, self.look, self.scene, self.life = None, 0, 'calm', SCENES[0], []
+        self.intro, self.pending_intro = 0, 0
         levels = [Level(sprites=[], grid_size=(64, 64), data={}, name=level['name']) for level in LEVELS]
         super().__init__(game_id='te02', levels=levels, camera=Camera(0, 0, 64, 64, BLACK, BLACK),
                          win_score=len(levels), available_actions=[1, 2, 3, 4, 5, 6, 7])
@@ -1363,6 +1371,7 @@ class Te02(ARCBaseGame):
     def put(self, name, pixels, x, y, layer, tags=(), key=None):
         """Create the named sprite once, then only swap its picture (when `key` says it changed) and move it."""
         sprite = self.objects.get(name)
+        self.home[name] = (round(x), round(y))       # where it belongs, so a screen shake can always put it back
         if sprite is None:
             sprite = Sprite(np.array(pixels, dtype=np.int8), name=name, x=round(x), y=round(y), layer=layer,
                             collidable=False, tags=list(tags))
@@ -1386,7 +1395,8 @@ class Te02(ARCBaseGame):
         """All per-level state is made here, so the engine's own RESET refills the cable and restarts the stage."""
         self.lvl, self.scene = LEVELS[self.level_index], SCENES[self.level_index]
         self.st, self.animation, self.history = initial(self.lvl), None, []
-        self.objects, self.keys, self.fx, self.tick, self.look = {}, {}, None, 0, 'calm'
+        self.objects, self.keys, self.home, self.shaken, self.fx, self.tick, self.look = {}, {}, {}, False, None, 0, 'calm'
+        self.intro, self.pending_intro = self.pending_intro, 0
         level.remove_all_sprites()
         width, height = self.lvl['size']
         scene = self.scene
@@ -1432,13 +1442,15 @@ class Te02(ARCBaseGame):
             self.put(f'confetti-{number}', confetti_art(number), 0, 0, 11, ('effect',), key=number).set_visible(False)
         for number in range(6):
             self.put(f'shard-{number}', np.full((2, 2), SHARD_COLOURS[number], dtype=np.int8), 0, 0, 11, ('effect',), key=number).set_visible(False)
-        self.put('rain-cloud', CLOUD, 0, 0, 11, ('effect',), key=0).set_visible(False)
-        for number in range(4):
-            self.put(f'rain-{number}', DROP, 0, 0, 11, ('effect',), key=0).set_visible(False)
         for number in range(2):
             self.put(f'tear-{number}', pic((('S.', 'SB', '.B'))), 0, 0, 11, ('effect',), key=0).set_visible(False)
         for number in range(3):
             self.put(f'smoke-{number}', smoke_art(0), 0, 0, 11, ('effect',), key=0).set_visible(False)
+        for number in range(2):
+            self.put(f'dust-{number}', DUST[0], 0, 0, 6, ('effect',), key=0).set_visible(False)
+        for number in range(4):
+            self.put(f'pop-{number}', spark_art(1), 0, 0, 11, ('effect',), key=0).set_visible(False)
+        self.put('wipe', wipe_art((32, 32), 64), 0, 0, 12, ('effect',)).set_visible(False)
         self.sync()
 
     def build_rail(self):
@@ -1488,7 +1500,8 @@ class Te02(ARCBaseGame):
         state, level = self.st, self.lvl
         animation, fx = self.animation, self.fx
         before = animation['before'] if animation else state
-        fraction = min(1., animation['index'] / 3) if animation else 1.
+        step_no = min(3, animation['index']) if animation else 0
+        fraction = FRACTIONS[step_no] if animation else 1.
         rover = position_at(before.rover, state.rover, fraction)
         guard = position_at(before.guard, state.guard, fraction) if state.guard is not None else None
         path = tighten(before.path + (rover,), level['obstacles']) if animation else state.path
@@ -1515,7 +1528,15 @@ class Te02(ARCBaseGame):
             steps = max(1, round(hypot(b[0] - a[0], b[1] - a[1]) * 2))
             for fraction_along in np.linspace(0, 1, steps + 1):
                 point = position_at(a, b, fraction_along)
-                rect(wire, point[0], point[1], 1, 1, YELLOW if (count + tick) % 9 == 0 else ORANGE)
+                colour = YELLOW if (count + tick) % 9 == 0 else ORANGE
+                if fx and fx['kind'] == 'bump' and state.feedback == 'taut':
+                    if fx['i'] <= 1:
+                        colour = RED if fx['i'] % 2 == 0 else WHITE      # the cable flashes when it is pulled tight...
+                    length = max(1., hypot(b[0] - a[0], b[1] - a[1]))
+                    # ...then rings like a plucked string: bowed sideways, the bow shrinking frame by frame
+                    side = TWANG[min(5, fx['i'])] * sin(pi * fraction_along)
+                    point = (point[0] - round(side * (b[1] - a[1]) / length), point[1] + round(side * (b[0] - a[0]) / length))
+                rect(wire, point[0], point[1], 1, 1, colour)
                 count += 1
         self.put('cable', wire, 0, 0, 5, ('cable',))
         dock_x, dock_y = pixel(level['dock'])
@@ -1536,30 +1557,90 @@ class Te02(ARCBaseGame):
         core_frame = 2 if tick % 11 == 4 else (tick // 2) % 2          # now and then the core blinks
         core_sprite = self.centered('core', CORE_PICS[core_frame], core_position, 8, ('core', 'sys_click'), key=core_frame)
         core_sprite.set_visible(not state.carrying or pickup)
-        shake = (0, 0)
+        shake = (0, HOP[step_no]) if animation else (0, 0)
+        squash = bool(animation) and SQUASH[step_no]
         expression = 'blink' if tick % 13 == 5 else 'ok'
         if state.feedback in ('taut', 'bumper', 'guard-stop', 'undo-empty') and not state.dead and not animation:
             expression = 'wince'                       # a refused move: the robot squeezes its eyes shut for a moment
         if fx and fx['kind'] == 'lose':
             shake = (fx['i'] % 2 * 2 - 1, min(2, fx['i'] // 2))      # shudder, then droop
         elif fx and fx['kind'] == 'win':
-            shake = (0, (0, -3, -4, -3, -1, 0, -2, 0)[min(7, fx['i'])])      # a happy hop
+            shake = (0, (0, -3, -4, -2, 0, 0, 0, 0)[min(7, fx['i'])])      # a happy hop
+        elif fx and fx['kind'] == 'bump':
+            nudge = BUMP[min(3, fx['i'])]                                # a refused move: a shove back and a wobble
+            shake = (nudge * fx['dir'][0], nudge * fx['dir'][1])
         if state.dead:
             expression = 'dead'
         elif fx and fx['kind'] == 'win':
             expression = 'win'
         art = rover_art(state.facing, bool(state.carrying and not pickup), expression,
-                        tick % 2 if (state.rover != before.rover or animation) else 0, scene_body(self.scene))
-        self.centered('rover', art, rover, 9, ('player',), shift=shake)
-        radius = 2 + state.pulse
-        quiet = state.feedback in ('ready', 'move', 'reel', 'pickup', 'push', 'latch')
+                        tick % 2 if (state.rover != before.rover or animation) else 0, scene_body(self.scene),
+                        'R' if tick % 6 < 3 else 'O', squash)
+        self.centered('rover', art, rover, 9, ('player',), shift=(shake[0], shake[1] + squash))
+        radius = (4, 3, 2, 2)[min(3, fx['i'])] if fx and fx['kind'] == 'bump' else 2 + state.pulse     # brackets close in on a refusal
+        quiet = state.feedback in QUIET_FEEDBACK
         cue = self.centered('contact-feedback', cue_art(state.dead, radius, YELLOW if state.feedback == 'undo' else RED, tick % 2),
                             state.focus, 10, ('feedback',), key=(state.dead, radius, state.feedback == 'undo', tick % 2, quiet))
         if quiet and not state.dead:
             cue.set_visible(False)
         else:
             cue.set_visible(True)
+        self.play_motion(before, rover, guard, step_no)
         self.play_effects(rover)
+        self.shake_screen()
+
+    def shake_screen(self):
+        """When the run is lost every drawn piece (not the effects) is knocked a pixel or two together, then settles."""
+        fx = self.fx
+        knock = SHAKE[min(6, fx['i'])] if fx and fx['kind'] == 'lose' else (0, 0)
+        if knock == (0, 0) and not self.shaken:
+            return
+        self.shaken = knock != (0, 0)
+        for name, sprite in self.objects.items():
+            if 'effect' not in sprite.tags:
+                home = self.home[name]
+                sprite.set_position(home[0] + knock[0], home[1] + knock[1])
+
+    def play_motion(self, before, rover, guard, step_no):
+        """Dust at the feet of a moving rover (at the cover when it is shoved), a star pop on pickup and latch, and the level iris."""
+        state, animation = self.st, self.animation
+        moved = bool(animation) and state.rover != before.rover
+        for number in range(2):
+            sprite = self.objects[f'dust-{number}']
+            if moved and step_no >= 1:
+                if number == 0:
+                    point = before.rover
+                elif state.feedback == 'push' and before.guard is not None:
+                    point = before.guard
+                else:
+                    point = position_at(before.rover, rover, .5)
+                x, y = pixel(point)
+                puff = DUST[min(2, step_no - 1 + number)]
+                sprite.pixels = puff
+                sprite.set_position(max(0, min(64 - puff.shape[1], round(x) - puff.shape[1] // 2)),
+                                    max(0, min(64 - puff.shape[0], round(y) + 5 - puff.shape[0])))
+                sprite.set_visible(True)
+            else:
+                sprite.set_visible(False)
+        popping = bool(animation) and state.feedback in ('pickup', 'latch') and step_no >= 1
+        centre = pixel(guard if state.feedback == 'latch' and guard is not None else rover)
+        for number in range(4):
+            sprite = self.objects[f'pop-{number}']
+            angle, reach = pi / 4 + number * pi / 2, 4 + 3 * step_no
+            x, y = centre[0] + reach * cos(angle) - 2, centre[1] + reach * sin(angle) - 2
+            sprite.set_position(max(0, min(59, round(x))), max(0, min(59, round(y))))
+            sprite.set_visible(popping and 0 <= x <= 59 and 0 <= y <= 59)
+        radius, hole = None, pixel(rover)
+        if self.fx and self.fx['kind'] == 'win' and not self.is_last_level():
+            radius = WIPE_RADIUS.get(self.fx['i'])
+        elif self.intro:
+            radius, hole = OPEN_RADIUS.get(self.intro), pixel(self.lvl['dock'])
+        wipe = self.objects['wipe']
+        if radius is None:
+            wipe.set_visible(False)
+        else:
+            wipe.pixels = wipe_art(hole, radius)
+            wipe.set_visible(True)
 
     def play_effects(self, rover):
         """Win sparkle and loss smoke: two small families of named sprites, hidden until an effect runs."""
@@ -1599,13 +1680,6 @@ class Te02(ARCBaseGame):
                 sprite.set_visible(2 <= x <= 60 and 2 <= y <= 60 and fx['i'] < 5)
             else:
                 sprite.set_visible(False)
-        cloud = self.objects['rain-cloud']
-        cloud.set_position(max(0, min(53, round(centre[0] - 5))), max(0, round(centre[1] - 15)))
-        cloud.set_visible(shown and fx['i'] >= 1)
-        for number in range(4):
-            sprite = self.objects[f'rain-{number}']
-            sprite.set_position(max(0, min(63, round(centre[0] - 4 + number * 3))), max(0, min(62, round(centre[1] - 9 + ((fx['i'] if fx else 0) * 3 + number * 2) % 9))))
-            sprite.set_visible(shown and fx['i'] >= 1)
         for number in range(2):
             sprite = self.objects[f'tear-{number}']
             if fx and fx['kind'] == 'lose':
@@ -1631,7 +1705,13 @@ class Te02(ARCBaseGame):
             self.fx = {'kind': 'lose', 'i': 0, 'n': 6}
             self.sync()
         elif self.st.done:
-            self.fx = {'kind': 'win', 'i': 0, 'n': 8}
+            self.fx = {'kind': 'win', 'i': 0, 'n': 6}
+            self.sync()
+        elif self.st.feedback not in QUIET_FEEDBACK:
+            # a refused or missed input: a short drawn reaction (shove, head-shake or just closing brackets) before control returns
+            side = (1, 0) if self.st.feedback in SIDEWAYS_REFUSALS else (0, 0)
+            direction = self.st.facing if self.st.feedback in ('taut', 'bumper', 'guard-stop') else side
+            self.fx = {'kind': 'bump', 'i': 0, 'n': 5 if self.st.feedback == 'taut' else 3, 'dir': direction}
             self.sync()
         else:
             self.complete_action()
@@ -1642,6 +1722,12 @@ class Te02(ARCBaseGame):
             self.sync()
             self.complete_action()
             return
+        if self.intro:
+            self.intro -= 1
+            self.sync()
+            if not self.intro:
+                self.complete_action()
+            return
         if self.fx is not None:
             self.fx['i'] += 1
             self.sync()
@@ -1649,13 +1735,18 @@ class Te02(ARCBaseGame):
                 kind, self.fx = self.fx['kind'], None
                 if kind == 'lose':
                     self.lose()
-                else:
-                    self.next_level()
+                elif kind == 'win':
+                    if self.is_last_level():
+                        self.next_level()
+                    else:
+                        self.pending_intro = 2          # the next stage opens with an iris before play returns
+                        self.next_level()
+                        return
                 self.complete_action()
             return
         if self.animation is not None:
             self.animation['index'] += 1
-            if self.animation['index'] >= 3:
+            if self.animation['index'] >= 4:
                 self.finish_action()
             else:
                 self.sync()

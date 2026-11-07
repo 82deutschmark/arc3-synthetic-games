@@ -15,6 +15,20 @@
 #   Plain black key niches with solid keys, a level-clear confetti shower, the top band and set pieces redden in a lost run.
 #   Nothing on the play surface is text. Dark ground is still purple (now with a cave-specific surface in its lower half), lit ground is still green, pink
 #   is still only a pit rim or a shut ring, and a cell the walker cannot reach is still drawn as rubble inside a dark ring.
+# Updated: 07-November-2026, Claude Sonnet 5.5 (Round A, calm and readable): the Boss said nothing should be too busy.
+#   Backdrops are now one base colour with a single quieter step of the same hue (big bricks, long lines, a few flat crystal
+#   prisms), with all the scattered moss, cracks, inlay, shells and seeds gone; dark ground is plain with one cool dash, lit
+#   ground keeps its lip and one flower; the top band is flat; each cave has three or four set pieces instead of five or six,
+#   one wall prop, and fewer drifters. Every animation is kept. Rules identical.
+# Updated: 07-November-2026, Claude Sonnet 5.5 (Round B, animation): a step is now a hop (arcing slide, dust kicked up behind,
+#   a low squashed landing); the walker breathes out slowly and blinks when standing about; a blocked step leans into the wall
+#   with a thinner red ring and rocks back; "nothing to light" is a shake of the head; a pit is a flinch, a drop and a pop
+#   back at the start; the open portal glances aside now and then; a won level ends with a black curtain closing in; a lost
+#   run now goes still (drifters gone, fewer stones, props settle) while the walker sags. Rules identical.
+# Updated: 07-November-2026, Claude Sonnet 5.5 (Round C, final look): the marks flicker now (two flame shapes on a slow
+#   checkerboard of beats) and the dash on every dark floor tile is gone, so the corridors are calmer; the shut portal's
+#   eye twitches now and then; after a step the walker stands up in one more frame, so its blink and breath show; RESET and
+#   the start of every new cave open with the curtain lifting instead of a hard cut. Rules identical.
 # SRP/DRY check: Pass -- rules live in Core (no art); the art helpers (art, put, tiles, themes) never read a rule except
 #   through the Core the game hands them; one paint() turns (Core, per-frame vis) into sprites. eh01 is untouched.
 # CHANGELOG
@@ -344,6 +358,9 @@ GATE_SHUT = art(("....P....",
                  "MPPMMMPPM",
                  ".MMPPPMM.",
                  "....P...."))
+# The shut portal's eye twitches now and then: the lid cracks open a slit (swapped in slowly while shut).
+GATE_SHUT_B = GATE_SHUT.copy()
+GATE_SHUT_B[4, 3:6] = C_BLACK
 GATE_OPEN = art(("....W....",
                  ".LLWWWLL.",
                  "LWWLLLWWL",
@@ -383,6 +400,13 @@ FLAME = art((".Y.",
 FLAME_HOT = art((".Y.",
                  "ROR",
                  "RRR"))
+# The same two flames a beat later: the tip leans to the right, so a mark flickers instead of standing like a sticker.
+FLAME_B = art(("..Y",
+               "OYO",
+               "OOO"))
+FLAME_HOT_B = art(("..Y",
+                   "ROR",
+                   "RRR"))
 SPARK_BIG = art((".W.",
                 "WYW",
                 ".W."))
@@ -420,12 +444,17 @@ def ring_edge(colour):
 
 EDGE_WHITE = ring_edge(C_WHITE)
 EDGE_RED = ring_edge(C_RED)
-BUMP_BIG = blank(CELL, CELL, C_RED)
-BUMP_BIG[3:6, 3:6] = C_WHITE
+BUMP_BIG = ring_edge(C_RED)                      # a blocked step: a red ring that thins out (the walker leans into it)
 BUMP_SMALL = blank(CELL, CELL)
-BUMP_SMALL[2:CELL - 2, 2:CELL - 2] = C_RED
-BUMP_SMALL[CELL // 2, CELL // 2] = C_YELLOW
-BUMP_SMALL[CELL // 2 - 1:CELL // 2 + 2, CELL // 2] = C_YELLOW
+BUMP_SMALL[1, 1:CELL - 1] = BUMP_SMALL[CELL - 2, 1:CELL - 1] = C_RED
+BUMP_SMALL[1:CELL - 1, 1] = BUMP_SMALL[1:CELL - 1, CELL - 2] = C_RED
+# The open portal looks about: the same picture with the pupil one step to the side (swapped in slowly while open).
+GATE_OPEN_B = GATE_OPEN.copy()
+GATE_OPEN_B[4, 4] = C_WHITE
+GATE_OPEN_B[4, 5] = C_BLUE
+# The curtain that closes over the cave as a level is won: one black bar for the top and one for the bottom.
+OPENING = [{"curtain": 2}, {"curtain": 1}, {}]      # the same curtain, lifting, on RESET and at the start of each new cave
+CURTAINS = {1: blank(10, 64, C_BLACK), 2: blank(20, 64, C_BLACK)}
 
 
 # ---------------------------------------------------------------------------
@@ -436,10 +465,11 @@ BUMP_SMALL[CELL // 2 - 1:CELL // 2 + 2, CELL // 2] = C_YELLOW
 _WALKER_CACHE = {}
 
 
-def walker_pic(scale, body, look="R", blink=False, sad=False, stride=0, happy=False):
+def walker_pic(scale, body, look="R", blink=False, sad=False, stride=0, happy=False, squash=False):
     """The walker: a seven-wide, eight-tall round creature with a lit crown, big eyes whose pupils look where it is
-    heading, a mouth (small, grin, or frown with a tear) and two little feet that swap as it strides."""
-    key = (scale, body, look, blink, sad, stride, happy)
+    heading, a mouth (small, grin, or frown with a tear) and two little feet that swap as it strides. `squash` drops the chin
+    row so the body sits low and wide: the landing after a hop and the out-breath of the idle."""
+    key = (scale, body, look, blink, sad, stride, happy, squash)
     if key in _WALKER_CACHE:
         return _WALKER_CACHE[key]
     hi = C_LBLUE if body == C_YOU else C_YELLOW
@@ -459,7 +489,7 @@ def walker_pic(scale, body, look="R", blink=False, sad=False, stride=0, happy=Fa
         else:
             mouth = ["KBBBBBK", "KBBKBBK"]
         feet = (".KK.KK.", "KK...KK")[stride]
-        rows = [".KKKKK.", "KLLBBBK"] + eyes + mouth + [".KBBBK.", feet]
+        rows = [".KKKKK.", "KLLBBBK"] + eyes + mouth + ([] if squash else [".KBBBK."]) + [feet]
     elif scale == 1:
         rows = [".KKK.", "KLBBK", "KBBBK" if blink else "KWKWK", "KBBBK", ".K.K."]
     else:
@@ -496,7 +526,7 @@ def _facets(base, line, crack, step_a=12, step_b=20):
     a = blank(64, 64, base)
     for y in range(64):
         for x in range(64):
-            if (x + y) % step_a == 0 or (x + y) % step_a == 1 and (x // 3) % 2:
+            if (x + y) % step_a == 0:
                 a[y, x] = line
             if (x - y) % step_b == 0:
                 a[y, x] = crack
@@ -504,11 +534,11 @@ def _facets(base, line, crack, step_a=12, step_b=20):
 
 
 def _spires(base):
-    """Crystal cave: big cut prisms growing from the roof and the floor. Each has a pale lit left face, a white ridge,
-    a shaded right face (blue checked with black) and a black outline, and a white glint at the tip."""
+    """Crystal cave: a few big flat prisms growing from the roof and the floor, one step lighter than the rock (no
+    outline, no checks, no glints): a quiet backdrop for the floor to stand out on."""
     a = blank(64, 64, base)
-    ups = [(0, 12, 22), (13, 8, 12), (26, 14, 26), (44, 9, 15), (53, 11, 23)]      # from the roof: x, width, length
-    downs = [(1, 15, 22), (17, 14, 26), (33, 11, 15), (46, 17, 24)]                  # from the floor: wide at the base
+    ups = [(2, 14, 20), (30, 12, 24), (50, 12, 16)]        # from the roof: x, width, length
+    downs = [(8, 16, 22), (34, 14, 26), (52, 11, 14)]      # from the floor: wide at the base
     for grow_down, spires in ((True, ups), (False, downs)):
         for x, w, ln in spires:
             cx = x + w // 2
@@ -517,32 +547,17 @@ def _spires(base):
                 y = k if grow_down else 63 - k
                 for dx in range(-hw, hw + 1):
                     xx = cx + dx
-                    if not 0 <= xx < 64:
-                        continue
-                    if abs(dx) == hw:
-                        c = C_BLACK
-                    elif dx < 0:
-                        c = C_LBLUE
-                    elif dx == 0:
-                        c = C_WHITE
-                    else:
-                        c = C_BLACK if (xx + y) % 2 == 0 else C_BLUE
-                    a[y, xx] = c
-            ty = ln - 1 if grow_down else 64 - ln
-            if 0 <= cx < 64:
-                a[ty if grow_down else ty, cx] = C_WHITE
-    for gx, gy in ((9, 31), (24, 33), (41, 30), (58, 34), (33, 36), (15, 29)):
-        a[gy, gx] = C_WHITE
-        a[gy - 1, gx] = a[gy + 1, gx] = a[gy, gx - 1] = a[gy, gx + 1] = C_LBLUE
+                    if 0 <= xx < 64:
+                        a[y, xx] = C_LBLUE
     return a
 
 
 def _strata(base, line, glow):
     a = blank(64, 64, base)
     for y in range(64):
-        if y % 6 == 3:
+        if y % 12 == 6:
             for x in range(64):
-                if (x + (y // 6) * 5) % 11 < 5:
+                if (x + (y // 12) * 9) % 20 < 11:
                     a[y, x] = line
         if y % 12 == 9:
             for x in range(64):
@@ -554,11 +569,11 @@ def _strata(base, line, glow):
 def _waves(base, wave, foam):
     a = blank(64, 64, base)
     for x in range(64):
-        for k in range(0, 64, 8):
+        for k in range(0, 64, 12):
             y = k + int(round(1.6 * math.sin(x / 3.2 + k)))
             if 0 <= y < 64:
                 a[y, x] = wave
-                if x % 7 == 2 and y > 0:
+                if foam != base and x % 7 == 2 and y > 0:
                     a[y - 1, x] = foam
     return a
 
@@ -567,9 +582,9 @@ def _lattice(base, line, dot):
     a = blank(64, 64, base)
     for y in range(64):
         for x in range(64):
-            if (x + y) % 12 == 0 or (x - y) % 12 == 0:
+            if (x + y) % 20 == 0 or (x - y) % 20 == 0:
                 a[y, x] = line
-            if (x % 12 == 6) and (y % 12 == 0 or y % 12 == 6):
+            if dot != base and (x % 12 == 6) and (y % 12 == 0 or y % 12 == 6):
                 a[y, x] = dot
     return a
 
@@ -582,7 +597,7 @@ def _moon(a):
             bite = (x - 4) ** 2 + (y + 2) ** 2
             if d <= 64 and bite > 52:
                 a[26 + y, 49 + x] = C_WHITE if d > 50 else C_YELLOW
-    for x, y in ((10, 20), (22, 24), (36, 18), (58, 52), (6, 46), (30, 56)):
+    for x, y in ((10, 20), (36, 18)):
         a[y, x] = C_WHITE
         a[y, x + 1] = C_BLUE
     return a
@@ -590,11 +605,10 @@ def _moon(a):
 
 def _glow(a):
     """Lava cave: molten seams (orange over yellow) welling between a few of the courses."""
-    for y in (14, 33, 52):
+    for y in (24, 48):
         for x in range(64):
-            if (x // 5) % 2 == 0:
+            if (x // 12) % 2 == 0:
                 a[y, x] = C_ORANGE
-                a[y + 1, x] = C_YELLOW if x % 3 == 0 else C_ORANGE
     return a
 
 
@@ -617,15 +631,17 @@ FROST = art(("L.L", ".L.", "L.L"))
 RUBBLE = art(("NN.", "KNK"))
 SEED = art((".G.", "GYG"))
 
+# Round A (calm): every backdrop is one base colour with ONE quieter step of the same hue for its texture, big blocks,
+# long lines, nothing scattered. The things the player reads (floor, walker, flames, ring) sit on top and pop.
 BACKDROPS = {
-    "cellar": lambda: _scatter(_scatter(_bricks(C_MAROON, C_BLACK, C_RED, 8, 4), 3, 9, MOSS), 7, 7, CRACK),
-    "crystal": lambda: _scatter(_spires(C_BLUE), 4, 6, GLINT[1:4, 1:4]),
-    "night": lambda: _moon(_strata(C_BLACK, C_MAROON, C_BLUE)),
-    "lava": lambda: _scatter(_glow(_bricks(C_RED, C_MAROON, C_ORANGE, 10, 5)), 5, 8, RUBBLE),
-    "ice": lambda: _scatter(_facets(C_WHITE, C_LBLUE, C_BLUE, 14, 22), 6, 9, FROST),
-    "temple": lambda: _scatter(_bricks(C_MAROON, C_BLACK, C_RED, 12, 6, band=C_BLACK), 2, 12, INLAY),
-    "sea": lambda: _scatter(_scatter(_waves(C_LBLUE, C_BLUE, C_WHITE), 8, 6, SHELL), 9, 5, SEED),
-    "vault": lambda: _lattice(C_BLUE, C_YELLOW, C_LBLUE),
+    "cellar": lambda: _bricks(C_MAROON, C_BLACK, C_MAROON, 16, 8),
+    "crystal": lambda: _spires(C_BLUE),
+    "night": lambda: _moon(_strata(C_BLACK, C_MAROON, C_BLACK)),
+    "lava": lambda: _glow(_bricks(C_RED, C_MAROON, C_RED, 16, 8)),
+    "ice": lambda: _facets(C_WHITE, C_LBLUE, C_WHITE, 20, 64),
+    "temple": lambda: _bricks(C_MAROON, C_RED, C_MAROON, 16, 8),
+    "sea": lambda: _waves(C_LBLUE, C_BLUE, C_LBLUE),
+    "vault": lambda: _lattice(C_BLUE, C_LBLUE, C_BLUE),
 }
 
 # -- wall props: 9x9, two frames each (a flicker, a blink or a sway) --------------------------------------------
@@ -1072,30 +1088,30 @@ DROP = [art(("L", "B")), art(("B", "L"))]
 
 # theme: rock colour, outline round the corridor, ring on rubble, flower, backdrop, prop(+how many), drifters
 THEMES = [
-    dict(rock=C_MAROON, edge=C_BLACK, rubble=C_BLACK, flower=C_YELLOW, back="cellar", prop="torch", props=4,
-         pieces=("door", "cauldron", "window", "window"),
-         roam=[("bob", SPIDER, 2), ("rise", MOTE, 4), ("row", RAT, 1), ("fall", DROP, 3)]),
-    dict(rock=C_BLUE, edge=C_BLACK, rubble=C_BLACK, flower=C_WHITE, back="crystal", prop="crystal", props=3,
-         pieces=("crystals", "spire", "cluster", "spire"),
-         roam=[("twinkle", GLITTER, 8), ("rise", MOTE, 3)]),
-    dict(rock=C_BLACK, edge=C_BLUE, rubble=C_BLUE, flower=C_YELLOW, back="night", prop="owl", props=2,
-         pieces=("tree", "lamp", "mushrooms", "lamp"),
-         roam=[("row", BAT, 2), ("twinkle", STAR, 8), ("rise", MOTE, 3)]),
-    dict(rock=C_RED, edge=C_BLACK, rubble=C_BLACK, flower=C_YELLOW, back="lava", prop="fire", props=2,
-         pieces=("demon", "lavafall", "volcano", "lavafall"),
-         roam=[("rise", EMBER, 8), ("row", EMBER, 2)]),
-    dict(rock=C_WHITE, edge=C_BLACK, rubble=C_BLACK, flower=C_BLUE, back="ice", prop="snowman", props=2,
-         pieces=("snowman", "igloo", "fir", "fir", "igloo"),
-         roam=[("fall", SNOW, 10), ("twinkle", GLITTER, 3)]),
-    dict(rock=C_MAROON, edge=C_BLACK, rubble=C_BLACK, flower=C_ORANGE, back="temple", prop="idol", props=2,
-         pieces=("sun", "altar", "totem", "altar", "totem"),
-         roam=[("twinkle", GLITTER, 4), ("rise", MOTE, 3), ("row", SCARAB, 2)]),
-    dict(rock=C_LBLUE, edge=C_BLACK, rubble=C_BLUE, flower=C_WHITE, back="sea", prop="kelp", props=2,
-         pieces=("coral", "chest", "reef", "reef", "kelp", "reef"),
-         roam=[("row", FISH, 3), ("rise", BUBBLE, 6), ("rise", JELLY, 2)]),
-    dict(rock=C_BLUE, edge=C_BLACK, rubble=C_BLACK, flower=C_YELLOW, back="vault", prop="banner", props=3,
-         pieces=("shield", "armor", "treasure", "pillar", "armor", "pillar"),
-         roam=[("twinkle", GLITTER, 8), ("rise", MOTE, 3)]),
+    dict(rock=C_MAROON, edge=C_BLACK, rubble=C_BLACK, flower=C_YELLOW, back="cellar", prop="torch", props=2,
+         pieces=("door", "cauldron", "window"),
+         roam=[("bob", SPIDER, 1), ("rise", MOTE, 2), ("row", RAT, 1), ("fall", DROP, 1)]),
+    dict(rock=C_BLUE, edge=C_BLACK, rubble=C_BLACK, flower=C_WHITE, back="crystal", prop="crystal", props=1,
+         pieces=("crystals", "spire", "cluster"),
+         roam=[("twinkle", GLITTER, 3), ("rise", MOTE, 1)]),
+    dict(rock=C_BLACK, edge=C_BLUE, rubble=C_BLUE, flower=C_YELLOW, back="night", prop="owl", props=1,
+         pieces=("tree", "lamp", "mushrooms"),
+         roam=[("row", BAT, 1), ("twinkle", STAR, 3), ("rise", MOTE, 1)]),
+    dict(rock=C_RED, edge=C_BLACK, rubble=C_BLACK, flower=C_YELLOW, back="lava", prop="fire", props=1,
+         pieces=("demon", "lavafall", "volcano"),
+         roam=[("rise", EMBER, 3), ("row", EMBER, 1)]),
+    dict(rock=C_WHITE, edge=C_BLACK, rubble=C_BLACK, flower=C_BLUE, back="ice", prop="snowman", props=1,
+         pieces=("snowman", "igloo", "fir"),
+         roam=[("fall", SNOW, 5), ("twinkle", GLITTER, 1)]),
+    dict(rock=C_MAROON, edge=C_BLACK, rubble=C_BLACK, flower=C_ORANGE, back="temple", prop="idol", props=1,
+         pieces=("sun", "altar", "totem"),
+         roam=[("twinkle", GLITTER, 2), ("rise", MOTE, 1), ("row", SCARAB, 1)]),
+    dict(rock=C_LBLUE, edge=C_BLACK, rubble=C_BLUE, flower=C_WHITE, back="sea", prop="kelp", props=1,
+         pieces=("coral", "chest", "reef"),
+         roam=[("row", FISH, 2), ("rise", BUBBLE, 3), ("rise", JELLY, 1)]),
+    dict(rock=C_BLUE, edge=C_BLACK, rubble=C_BLACK, flower=C_YELLOW, back="vault", prop="banner", props=1,
+         pieces=("shield", "armor", "treasure", "pillar"),
+         roam=[("twinkle", GLITTER, 3), ("rise", MOTE, 1)]),
 ]
 
 
@@ -1130,45 +1146,14 @@ def _outline(t, mask, edge):
 # Surface details for dark ground, per cave. Each is (row, col, colour) pixels inside the lower half of the 9x9 tile.
 # Lower half only: the retreat flames sit in rows 1-3 and must read on clean ground.
 def _surface(ti, variant):
-    v = variant % 3
-    sx = (0, 1, 2)[v]
-    if ti == 0:       # cellar flagstones: a mortar seam with a staggered joint
-        return [(5, c, C_BLACK) for c in range(1, 8)] + [(r, 3 + sx, C_BLACK) for r in (6, 7)] + [(6, 7, C_LBLUE)]
-    if ti == 1:       # crystal cave: frosted facets, a bright cross glint
-        return [(5, 2 + sx, C_LBLUE), (6, 1 + sx, C_LBLUE), (6, 2 + sx, C_WHITE), (6, 3 + sx, C_LBLUE), (7, 2 + sx, C_LBLUE),
-                (5, 7, C_BLUE), (6, 6, C_BLUE), (7, 5, C_BLUE)]
-    if ti == 2:       # night cave: damp ground with blue starlit puddles
-        return [(5, 1 + sx, C_BLUE), (5, 2 + sx, C_BLUE), (6, 4 + sx, C_BLUE), (6, 5 + sx, C_BLUE), (7, 2, C_BLACK), (7, 7, C_BLACK)]
-    if ti == 3:       # lava cave: hot red cracks with an orange core
-        return [(5, 1 + sx, C_RED), (6, 2 + sx, C_RED), (7, 3 + sx, C_RED), (6, 4 + sx, C_ORANGE), (7, 5 + sx, C_RED), (5, 6, C_RED)]
-    if ti == 4:       # ice cave: slick diagonal sheen
-        return [(5, 6, C_LBLUE), (6, 5, C_LBLUE), (7, 4, C_LBLUE), (6, 2 + sx, C_WHITE), (7, 1 + sx, C_LBLUE)]
-    if ti == 5:       # temple: carved studs set in the slab
-        return [(5, 2, C_BLACK), (5, 3, C_BLACK), (5, 5, C_BLACK), (5, 6, C_BLACK), (7, 2 + sx, C_BLACK), (7, 3 + sx, C_BLACK)]
-    if ti == 6:       # sea ruin: wet ripples, two swells deep
-        return [(5, 1, C_BLUE), (5, 2, C_BLUE), (5, 5 + sx % 2, C_BLUE), (6, 3, C_BLUE), (6, 4, C_BLUE), (7, 1 + sx, C_BLUE),
-                (7, 2 + sx, C_BLUE)]
-    return [(5, 2, C_BLUE), (5, 4, C_BLUE), (5, 6, C_BLUE), (6, 3, C_LBLUE), (6, 5, C_LBLUE), (7, 2, C_BLUE), (7, 4, C_BLUE),
-            (7, 6, C_BLUE)]    # vault: a checker of tiny studs
+    """Round C: dark ground is plain purple, nothing on it, so the flames above it read at a glance. The caves differ by
+    their walls, not by floor speckle."""
+    return []
 
 
 # The sparkle on lit ground, per cave: two or three pixels inside the lower half.
 def _lit_detail(ti):
-    if ti == 0:
-        return [(7, 2, C_BLACK), (7, 3, C_BLACK), (6, 6, C_BLACK)]            # moss crumbs
-    if ti == 1:
-        return [(6, 6, C_WHITE), (7, 2, C_LBLUE)]
-    if ti == 2:
-        return [(7, 2, C_BLUE), (6, 6, C_BLUE), (7, 7, C_BLUE)]
-    if ti == 3:
-        return [(7, 3, C_ORANGE), (6, 7, C_ORANGE), (7, 4, C_YELLOW)]
-    if ti == 4:
-        return [(7, 3, C_LBLUE), (6, 6, C_LBLUE), (7, 4, C_WHITE)]
-    if ti == 5:
-        return [(7, 2, C_BLACK), (7, 6, C_BLACK), (6, 4, C_YELLOW)]
-    if ti == 6:
-        return [(7, 3, C_LBLUE), (7, 4, C_LBLUE), (6, 6, C_BLUE)]
-    return [(7, 3, C_YELLOW), (6, 6, C_LBLUE), (7, 7, C_YELLOW)]
+    return []          # Round A: lit ground keeps its bright lip and (on plain floor) one flower; no crumbs or sparkle
 
 
 def tile(kind, ti, mask, variant):
@@ -1189,7 +1174,6 @@ def tile(kind, ti, mask, variant):
         _outline(t, mask, th["edge"])
     elif kind == "dark":
         t = blank(CELL, CELL, C_DARK)
-        t[1, 1:3] = C_LBLUE if variant % 4 == 0 else C_DARK    # now and then a faint glimmer on the slab edge
         for r, c, col in _surface(ti, variant):
             t[r, c] = col
         _outline(t, mask, th["edge"])
@@ -1220,16 +1204,17 @@ def tile(kind, ti, mask, variant):
     return t
 
 
-def marks_pic(n, hot):
-    """The row of flames above a cell's corner: n of them (0-2); `hot` of them burning red."""
-    key = ("marks", n, hot)
+def marks_pic(n, hot, beat=0):
+    """The row of flames above a cell's corner: n of them (0-2); `hot` of them burning red. `beat` (0 or 1) picks which of
+    the two flickers each flame is on; the two flames of one cell are always on opposite beats."""
+    key = ("marks", n, hot, beat)
     if key in _TILE_CACHE:
         return _TILE_CACHE[key]
     a = blank(3, CELL)
     if n >= 1:
-        a[:, 1:4] = FLAME_HOT if hot >= n else FLAME
+        a[:, 1:4] = (FLAME_HOT, FLAME_HOT_B)[beat] if hot >= n else (FLAME, FLAME_B)[beat]
     if n >= 2:
-        a[:, CELL - 4:CELL - 1] = FLAME_HOT if hot >= 1 else FLAME
+        a[:, CELL - 4:CELL - 1] = (FLAME_HOT, FLAME_HOT_B)[1 - beat] if hot >= 1 else (FLAME, FLAME_B)[1 - beat]
     _TILE_CACHE[key] = a
     return a
 
@@ -1256,11 +1241,6 @@ def band_pic(ti, x0, x1):
     th = THEMES[ti]
     x0, x1 = max(0, x0), min(64, x1)
     a = blank(HUD_H, 64, th["rock"])
-    for y in range(HUD_H):                                   # small brick courses in the rock colour
-        for x in range(64):
-            off = 3 if (y // 3) % 2 else 0
-            if y % 3 == 2 or (x + off) % 6 == 5:
-                a[y, x] = th["edge"] if th["edge"] != th["rock"] else C_BLACK
     a[HUD_H - 1, :] = C_ORANGE                               # gold trim along the bottom
     a[0, :] = C_BLACK
     a[0:HUD_H - 1, x0:x1] = C_BLACK                          # the plate behind the slots, the gate and the bar
@@ -1309,6 +1289,7 @@ L_BACK, L_PIECE, L_ROAM, L_FLOOR, L_OBJ, L_MARK, L_FX, L_WALK, L_BAND, L_HUD, L_
 class Eh02(ARCBaseGame):
     def __init__(self):
         self.core = Core(LEVELS[0])
+        self.opening = None          # the frames still to play when a won level hands over to the next cave
         self.vis = {}
         self.anim = None
         self.budget = self.steps = BUDGETS[0]
@@ -1404,7 +1385,7 @@ class Eh02(ARCBaseGame):
         self.lane = max(range(GH), key=lambda r: (sum(1 for c in range(GW) if rows[r][c] == WALL), -r))
         if ti not in _BACKS:
             _BACKS[ti] = BACKDROPS[self.theme["back"]]()
-        self.paint({})
+        self.paint(OPENING[0] if self.opening else {})     # after a win the new cave starts behind the closed curtain
 
     # -- layout of the top band ---------------------------------------------
 
@@ -1486,16 +1467,25 @@ class Eh02(ARCBaseGame):
             show("dark")
         if not core.free and cell != core.start:
             hot = v.get("hot", {}).get(cell, 0)
-            self.put(mark_name, marks_pic(max(0, min(2, n)), hot), px, py + 1, L_MARK, ["marks"])
+            beat = (self.clock // 2 + cell[0] + cell[1]) % 2          # a slow flicker, a checkerboard of beats
+            self.put(mark_name, marks_pic(max(0, min(2, n)), hot, beat), px, py + 1, L_MARK, ["marks"])
         else:
             self.hide(mark_name)
         if lit and what == KEY:
             self.put(obj_name, SEAT_PIC, px, py, L_OBJ, ["seat"])
         elif lit and what == EXIT:
             shown_open = core.ring_open() if v.get("ring") is None else v["ring"]
-            self.put(obj_name, GATE_OPEN if shown_open else GATE_SHUT, px, py, L_OBJ, ["gate"])
+            self.put(obj_name, self._gate(shown_open), px, py, L_OBJ, ["gate"])
         else:
             self.hide(obj_name)
+
+    def _gate(self, opened):
+        """The open portal glances to one side now and then; the shut one stays put."""
+        if opened and (self.clock // 5) % 3 == 2:
+            return GATE_OPEN_B
+        if not opened and (self.clock // 5) % 3 == 2:
+            return GATE_SHUT_B
+        return GATE_OPEN if opened else GATE_SHUT
 
     # -- the top band ----------------------------------------------------------
 
@@ -1512,7 +1502,7 @@ class Eh02(ARCBaseGame):
             self.put("slot_key_%d" % i, KEY_PIC if i < taken else KEY_EMPTY, x, y + 1, L_HUD + 1, ["hud", "key"])
         ex, ey = self.ring_xy()
         opened = core.ring_open() if v.get("taken") is None else (v["taken"] >= n)
-        self.put("hud_gate", GATE_OPEN if opened else GATE_SHUT, ex, ey - 1, L_HUD, ["hud", "gate"])
+        self.put("hud_gate", self._gate(opened), ex, ey - 1, L_HUD, ["hud", "gate"])
         half = (self.budget + 1) // 2
         self.put("step_bar", bar_pic(self.budget, max(0, self.steps), self.clock), (64 - half) // 2 - 1,
                  HUD_H - 2, L_HUD, ["hud", "steps"])
@@ -1529,16 +1519,31 @@ class Eh02(ARCBaseGame):
         scale = v.get("wscale", 2)
         if scale <= 0:
             self.hide("walker")
+            for i in range(3):
+                self.hide("puff_%d" % i)
+            self.hide("dust")
             return
         wp = v.get("wp") or origin(v.get("wcell") or self.core.pos)
         col = v.get("wcolor")
-        blink = (self.clock % 29) in (13, 14) and not v
+        # calm = nothing but standing about: only then does it blink or breathe (a slow out-breath, drawn low and wide)
+        calm = not (v.get("wp") or "wscale" in v or v.get("sad") or v.get("happy") or v.get("dying") or v.get("bounce"))
+        blink = (self.clock % 29) in (13, 14) and calm
+        breath = calm and (self.clock // 3) % 4 == 3
+        squash = bool(v.get("squash")) or breath
         stride = (wp[0] + wp[1]) // 3 % 2
         face = v.get("face", self.face)
         pix = walker_pic(scale, col if col is not None else C_YOU, face, blink, bool(v.get("sad")), stride,
-                         bool(v.get("happy")))
+                         bool(v.get("happy")), squash and scale == 2)
         ox, oy = (CELL - pix.shape[1]) // 2, (CELL - pix.shape[0]) // 2
+        if squash and scale == 2:
+            oy += 1                                          # feet stay on the ground
         self.put("walker", pix, wp[0] + ox, wp[1] + oy - v.get("bounce", 0), L_WALK, ["player"])
+        if v.get("dust"):                                    # a small puff kicked up behind a step
+            dx, dy, k = v["dust"]
+            ax, ay = origin(v["dustcell"])
+            self.put("dust", PUFF[k % 2], ax + 2 - dx * (k - 1), ay + 5 - dy * (k - 1), L_FX, ["fx"])
+        else:
+            self.hide("dust")
         if v.get("puff"):                                    # a dust cloud as the walker gives up
             k = v["puff"]
             for i, (dx, dy) in enumerate(((-4, 3), (4, 3), (0, -3))):
@@ -1585,7 +1590,7 @@ class Eh02(ARCBaseGame):
                      cx + 4 + int(round(rad * math.cos(ang))) - (1 if (i + k) % 2 == 0 else 0),
                      cy + 4 + int(round(rad * math.sin(ang))) - (1 if (i + k) % 2 == 0 else 0), L_TOP, ["fx"])
         k = v.get("conf")
-        for i in range(16):
+        for i in range(10):
             name = "conf_%d" % i
             if k is None:
                 self.hide(name)
@@ -1594,12 +1599,20 @@ class Eh02(ARCBaseGame):
             cy = HUD_H + k * 8 + (i * 13) % 17 - 6
             self.put(name, CONFETTI[i % len(CONFETTI)], cx, cy, L_TOP, ["fx"])
         d = v.get("dying", 0)
-        for i in range(5):
+        for i in range(3):
             name = "chunk_%d" % i
             if d >= 2:
-                self.put(name, CHUNK[i % 2], 6 + i * 12, HUD_H + ((d - 2) * 7 + i * 9) % 50, L_TOP, ["fx"])
+                self.put(name, CHUNK[i % 2], 10 + i * 20, HUD_H + ((d - 2) * 6 + i * 14) % 44, L_TOP, ["fx"])
             else:
                 self.hide(name)
+        cu = v.get("curtain")                                # the level is won: black closes in from top and bottom
+        if cu:
+            h = 10 * cu
+            self.put("curtain_top", CURTAINS[cu], 0, HUD_H, L_TOP + 2, ["fx"])
+            self.put("curtain_bot", CURTAINS[cu], 0, 64 - h, L_TOP + 2, ["fx"])
+        else:
+            self.hide("curtain_top")
+            self.hide("curtain_bot")
         if v.get("vignette"):
             self.put("vignette", _VIGNETTE, 0, 0, L_TOP + 1, ["fx"])
         else:
@@ -1627,15 +1640,16 @@ class Eh02(ARCBaseGame):
             f = frames[cyc[((t // 4) + i) % len(cyc)]]
             if dying:
                 x, y = origin((c, r))
-                f = frames[0]
-                self.put("prop_%d" % i, f, x + ((i % 3) - 1) * (dying // 3), y + dying * (2 + i % 3), L_ROAM,
-                         ["prop", th["prop"]])
+                self.put("prop_%d" % i, frames[0], x, y + dying // 4, L_ROAM, ["prop", th["prop"]])
                 continue
             x, y = origin((c, r))
             self.put("prop_%d" % i, f, x, y, L_ROAM, ["prop", th["prop"]])
         for j, (mode, frames, count) in enumerate(th["roam"]):
             for i in range(count):
-                self._roamer("roam_%d_%d" % (j, i), mode, frames, i, count, t, j)
+                if dying:                                    # a lost run: the cave goes still
+                    self.hide("roam_%d_%d" % (j, i))
+                else:
+                    self._roamer("roam_%d_%d" % (j, i), mode, frames, i, count, t, j)
 
     def _roamer(self, name, mode, frames, i, count, t, j):
         walls = self.walls
@@ -1680,33 +1694,51 @@ class Eh02(ARCBaseGame):
             dx, dy = b[0] - a[0], b[1] - a[1]
             if dx:
                 self.face = "R" if dx > 0 else "L"
+            # a little hop: slide across in three frames (arcing up and down) with dust kicked up behind, then settle low
             for k in (1, 2, 3):
-                frames.append({"wp": (ax + dx * 3 * k, ay + dy * 3 * k), "wcell": a})
+                f = {"wp": (ax + dx * 3 * k, ay + dy * 3 * k), "wcell": a, "bounce": (1, 2, 1)[k - 1]}
+                if k >= 2:
+                    f["dust"] = (dx, dy, k)
+                    f["dustcell"] = a
+                frames.append(f)
             if core.won():
-                for k in range(6):                       # sparkle ring round the walker plus a shower of confetti
-                    frames.append({"wcell": b, "spark": k, "sparkcell": b, "bounce": (0, 2, 3, 3, 1, 0)[k],
-                                   "happy": True, "conf": k})
+                for k in range(6):                       # sparkle ring round the walker, a shower of confetti, a curtain
+                    f = {"wcell": b, "spark": k, "sparkcell": b, "bounce": (0, 2, 3, 3, 1, 0)[k],
+                         "happy": True, "conf": k}
+                    if k >= 4:
+                        f["curtain"] = k - 3
+                    frames.append(f)
                 frames[-1]["win"] = True
+            else:
+                frames.append({"squash": True, "dust": (dx, dy, 4), "dustcell": a})
+                frames.append({})                        # then it stands up, so blinks and the breath show after a step
         elif kind == "fall":
             cell = e[1]
-            frames.append({"wcell": cell, "wscale": 2, "wcolor": C_RED, "sad": True})
-            frames.append({"wcell": cell, "wscale": 1})
-            frames.append({"wcell": cell, "wscale": 0.5})
+            ox, oy = origin(cell)
+            frames.append({"wp": (ox - 1, oy), "wscale": 2, "wcolor": C_RED, "sad": True})      # a flinch
+            frames.append({"wp": (ox + 1, oy), "wscale": 2, "wcolor": C_RED, "sad": True})
+            frames.append({"wcell": cell, "wscale": 1, "bounce": -1})                          # then it drops in
+            frames.append({"wcell": cell, "wscale": 0.5, "bounce": -2})
             frames.append({"wcell": cell, "wscale": 0})
-            frames.append({"edge": (core.start, C_WHITE)})
-            frames.append({})
+            frames.append({"wscale": 1, "edge": (core.start, C_WHITE)})                       # and pops back at the start
+            frames.append({"squash": True})
         elif kind == "block":
             cell = e[1]
             inside = cell[0] in range(GW) and cell[1] in range(GH)
-            for big in (True, False):
+            ux, uy = DIRS[e[2]]
+            px, py = origin(core.pos)
+            for big, lean in ((True, 2), (False, 1)):    # the walker leans into the wall, thuds, and rocks back
+                f = {"wp": (px + ux * lean, py + uy * lean), "squash": lean == 2}
                 if inside:
-                    frames.append({"redcell": (cell, big)})
+                    f["redcell"] = (cell, big)
                 else:
-                    frames.append({"edge": (core.pos, C_RED)})
+                    f["edge"] = (core.pos, C_RED)
+                frames.append(f)
             frames.append({})
         elif kind == "empty":
-            frames.append({"edge": (core.pos, C_WHITE)})
-            frames.append({"edge": (core.pos, C_WHITE)})
+            px, py = origin(core.pos)
+            frames.append({"edge": (core.pos, C_WHITE), "wp": (px - 1, py)})     # a small shake of the head: nothing here
+            frames.append({"edge": (core.pos, C_WHITE), "wp": (px + 1, py)})
             frames.append({})
         elif kind == "scar":
             frames.append({"flare": e[1]})
@@ -1722,7 +1754,7 @@ class Eh02(ARCBaseGame):
             pips_old = {back: pips_before}
             hud_old = len(core.taken) - (1 if took else 0)
             for k in (1, 2, 3):
-                frames.append({"wp": (xx + dx * 3 * k, xy + dy * 3 * k), "wcell": x,
+                frames.append({"wp": (xx + dx * 3 * k, xy + dy * 3 * k), "wcell": x, "bounce": (1, 2, 1)[k - 1],
                                "hide": hide, "pips": pips_old, "taken": hud_old,
                                "ring": (hud_old >= len(core.keys))})
             frames[-1]["wp"] = None
@@ -1755,6 +1787,7 @@ class Eh02(ARCBaseGame):
         fr = []
         for t in range(8):
             fr.append({"dying": t + 1, "vignette": True, "sad": True, "puff": (t - 3) if t >= 4 else 0,
+                       "bounce": (0, 0, 0, -1, -1, -2, -2, -2)[t],       # the walker sags toward the floor
                        "wcolor": C_RED if t < 4 else None,
                        "wscale": 2 if t < 3 else (1 if t < 5 else (0.5 if t < 7 else 0))})
         fr[-1]["lose"] = True
@@ -1766,11 +1799,18 @@ class Eh02(ARCBaseGame):
         self.clock += 1
         aid = self.action.id.value
         if aid == 0:
-            self.vis = {}
-            self.anim = None
-            self.paint({})
-            self.complete_action()
+            # RESET: the cave opens like a curtain going up, over a few frames (the same opening a new level gets)
+            if self.anim is None:
+                self.anim = list(OPENING)
+            frame = self.anim.pop(0)
+            self.vis = frame
+            self.paint(frame)
+            if not self.anim:
+                self.anim = None
+                self.complete_action()
             return
+        if self.anim is None and self.opening:
+            self.anim, self.opening = list(self.opening), None
         if self.anim is None:
             ev = self.core.act(aid)
             frames = self._build(aid, ev) if ev else [{}]
@@ -1784,7 +1824,11 @@ class Eh02(ARCBaseGame):
         done = not self.anim
         self.paint(frame)
         if frame.get("win"):
+            last = self.is_last_level()
             self.next_level()
+            if not last:                                # the engine swaps the cave in next; it opens as the curtain lifts
+                self.opening = OPENING[1:]
+                done = False
         if frame.get("lose"):
             self.lose()
             done = True

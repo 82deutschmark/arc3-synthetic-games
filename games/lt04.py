@@ -23,6 +23,25 @@
 #   top-bar faces when they fit; confetti and five fireworks on a win; a storm cloud, rain and lightning on a loss.
 # 07-November-2026, Claude Sonnet 5.5: pass four, final polish: the night city's roofs get a blue outline (black vanished on
 #   the black ground); fewer ground specks so roofs and people read first; an unused leftover removed. Rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5: animation round (the Boss: not too busy, do not forget animations). Dust
+#   trails and a little rumble behind moving cars and ambulances; the chosen tool pod glints and its icon breathes and
+#   kicks when it fires; a top-bar raider face pops when it turns tame; the shield bar flashes when it is hit; a bump
+#   strip on the screen edge when a pan cannot go further; a refused tool blinks instead of staying red. Quieter
+#   streets (dimmer centre dashes) and fewer person hair and sleeve colours. Rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5: final-look round (the Boss: nothing too busy, keep the animation). Trees,
+#   props, landmarks, ground scatter and critters each sway on their own beat instead of all flipping together; a lost
+#   run now closes a clean red frame round a readable board (no speckled haze) with less rain; a won mission has half
+#   the confetti and stars. Rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5: calm-and-readable round (the Boss: nothing too busy). Roofs lose shingle
+#   speckle and keep one quiet seasonal accent; courtyard floors are flat; plank streets use a same-hue joint; far fewer
+#   trees, small props, ground scatter, critters and drifting specks, so the people, cars, targets and roofs pop; the
+#   scanning dots sit under the streets. Every animation stays. Rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5: quiet-backdrop round (the Boss: nothing too busy; missions five to nine were
+#   still a wall of colour). Each mission's ground, streets and roofs sit in one hue family a step apart (flat streets, no
+#   dashes or plank joints); roofs are flat with a same-hue outline, one skylight patch and one seasonal accent; the hospital
+#   alone keeps its own white; at most two trees, two tall landmarks and two small props per mission, one critter, two
+#   ground marks, fewer drifting specks, fewer chimney puffs, calmer cars, bottom bar and locked pods. People, identity
+#   squares and alert rings are untouched and now the brightest things. Every animation stays. Rules untouched.
 
 from __future__ import annotations
 from copy import deepcopy
@@ -692,42 +711,42 @@ def name_seed(text):
 # deco: scatter on the ground (kind, colour); critters: the two little animals that live in the spare corners of this
 # season; ambient: what drifts; floor: the two plaza tiles; border: (rail, post) of the world-edge fence.
 THEMES = (
-    dict(ground=GRN, mark=YEL, road=(WHT, BLK, YEL), roofs=(RED, ORG), roofs2=(BLU, LBL), rstyle='solar',
-         tree=('apple', GRN, YEL, RED), critters=('rabbit', 'duck'),
-         smalls=('flowers', 'bench', 'bush'), big=('windmill', 'pond'), plaza='fountain',
-         deco=('daisy', WHT), ambient='butterfly', floor=(WHT, LBL), border=(ORG, MAR)),
-    dict(ground=YEL, mark=MAR, road=(MAR, ORG, WHT), roofs=(BLU, LBL), roofs2=(MAG, PNK), rstyle='sand',
-         tree=('acacia', GRN, WHT, ORG), critters=('lizard', 'beetle'),
-         smalls=('cactus', 'rocks', 'bench'), big=('pyramid', 'tent'), plaza='oasis',
-         deco=('ripple', ORG), ambient='sand', floor=(WHT, YEL), border=(MAR, ORG)),
-    dict(ground=WHT, mark=WHT, road=(LBL, BLK, WHT), roofs=(VIO, MAG), roofs2=(BLU, LBL), rstyle='snow',
-         tree=('snowpine', GRN, WHT, RED), critters=('penguin', 'fox'),
-         smalls=('snowman', 'lamp', 'bush'), big=('igloo', 'snowfolk'), plaza='rink',
-         deco=('drift', LBL), ambient='snow', floor=(LBL, WHT), border=(BLU, LBL)),
-    dict(ground=VIO, mark=YEL, road=(LBL, BLK, YEL), roofs=(YEL, WHT), roofs2=(BLU, LBL), rstyle='spots',
-         tree=('toadtree', MAG, PNK, YEL), critters=('frog', 'cat'),
-         smalls=('mushroom', 'lamp', 'bench'), big=('toadstool', 'moonpond'), plaza='ring',
-         deco=('star', LBL), ambient='firefly', floor=(BLU, VIO), border=(MAG, PNK)),
-    dict(ground=LBL, mark=MAR, road=(MAR, ORG, MAR), roofs=(RED, WHT), roofs2=(BLU, WHT), rstyle='awning',
-         tree=('palm', GRN, YEL, MAR), critters=('crab', 'gull'),
-         smalls=('buoy', 'crate', 'barrel'), big=('lighthouse', 'boat'), plaza='dock',
-         deco=('wave', BLU), ambient='gull', floor=(WHT, BLU), border=(BLU, WHT)),
-    dict(ground=ORG, mark=YEL, road=(MAR, BLK, YEL), roofs=(BLU, WHT), roofs2=(VIO, MAG), rstyle='leaf',
-         tree=('maple', RED, YEL, ORG), critters=('squirrel', 'hedgehog'),
-         smalls=('pumpkin', 'bench', 'bush'), big=('haystack', 'scarecrow'), plaza='well',
-         deco=('leafpile', MAR), ambient='leaf', floor=(YEL, WHT), border=(ORG, YEL)),
-    dict(ground=BLU, mark=WHT, road=(PNK, BLK, WHT), roofs=(WHT, PNK), roofs2=(YEL, ORG), rstyle='frosting',
-         tree=('candytree', PNK, WHT, YEL), critters=('gummy', 'cookie'),
-         smalls=('lollipop', 'bench', 'flowers'), big=('cupcake', 'giantlolly'), plaza='candy',
-         deco=('sprinkle', WHT), ambient='heart', floor=(PNK, WHT), border=(WHT, PNK)),
-    dict(ground=BLK, mark=LBL, road=(VIO, BLK, LBL), roofs=(VIO, MAG), roofs2=(BLU, LBL), rstyle='moon', edge=BLU,
-         tree=('nightpine', VIO, LBL, YEL), critters=('owl', 'bat'),
-         smalls=('lamp', 'lamp', 'bench'), big=('observatory', 'campfire'), plaza='moonpool',
-         deco=('star', WHT), ambient='stars', floor=(BLU, VIO), border=(VIO, LBL)),
-    dict(ground=GRN, mark=WHT, road=(YEL, BLK, WHT), roofs=(BLU, WHT), roofs2=(RED, YEL), rstyle='bunting',
-         tree=('lighttree', MAG, PNK, YEL), critters=('monkey', 'seal'),
-         smalls=('balloon', 'lantern', 'balloon'), big=('bigtop', 'balloons'), plaza='carousel',
-         deco=('sprinkle', BLU), ambient='confetti', floor=(YEL, WHT), border=(BLU, WHT)),
+    dict(ground=GRN, mark=BLK, road=(BLK, BLK, BLK), roofs=(BLU, LBL), roofs2=(VIO, BLU), rstyle='none',
+         tree=('apple', GRN, GRN, RED), critters=('rabbit', 'duck'),
+         smalls=('flowers', 'bench'), big=('windmill', 'pond'), plaza='fountain',
+         deco=('daisy', WHT), ambient='butterfly', floor=(WHT, LBL), border=(BLK, BLK)),
+    dict(ground=YEL, mark=ORG, road=(ORG, ORG, ORG), roofs=(MAR, PNK), roofs2=(WHT, LBL), rstyle='none',
+         tree=('acacia', GRN, GRN, ORG), critters=('lizard', 'beetle'),
+         smalls=('cactus', 'rocks'), big=('pyramid', 'tent'), plaza='oasis',
+         deco=('ripple', ORG), ambient='sand', floor=(WHT, YEL), border=(ORG, ORG)),
+    dict(ground=WHT, mark=LBL, road=(LBL, LBL, LBL), roofs=(BLU, VIO), roofs2=(LBL, BLU), rstyle='snow',
+         tree=('snowpine', GRN, WHT, WHT), critters=('penguin', 'fox'),
+         smalls=('snowman', 'lamp'), big=('igloo', 'snowfolk'), plaza='rink',
+         deco=('drift', LBL), ambient='snow', floor=(LBL, WHT), border=(LBL, LBL)),
+    dict(ground=VIO, mark=BLK, road=(BLK, BLK, BLK), roofs=(MAG, PNK), roofs2=(PNK, MAG), rstyle='none',
+         tree=('toadtree', MAG, MAG, PNK), critters=('frog', 'cat'),
+         smalls=('mushroom', 'lamp'), big=('toadstool', 'moonpond'), plaza='ring',
+         deco=('star', LBL), ambient='firefly', floor=(BLU, VIO), border=(BLK, BLK)),
+    dict(ground=LBL, mark=LBL, road=(WHT, WHT, LBL), roofs=(BLU, VIO), roofs2=(WHT, LBL), rstyle='awning',
+         tree=('palm', GRN, GRN, YEL), critters=('crab', 'gull'),
+         smalls=('buoy', 'crate'), big=('lighthouse', 'boat'), plaza='dock',
+         deco=('wave', BLU), ambient='gull', floor=(WHT, BLU), border=(BLU, BLU)),
+    dict(ground=ORG, mark=MAR, road=(MAR, MAR, MAR), roofs=(YEL, PNK), roofs2=(WHT, LBL), rstyle='none',
+         tree=('maple', RED, RED, YEL), critters=('squirrel', 'hedgehog'),
+         smalls=('pumpkin', 'bench'), big=('haystack', 'scarecrow'), plaza='well',
+         deco=('leafpile', MAR), ambient='leaf', floor=(YEL, WHT), border=(MAR, MAR)),
+    dict(ground=PNK, mark=MAG, road=(MAG, MAG, MAG), roofs=(WHT, LBL), roofs2=(LBL, WHT), rstyle='frosting',
+         tree=('candytree', MAG, MAG, WHT), critters=('gummy', 'cookie'),
+         smalls=('lollipop', 'flowers'), big=('cupcake', 'giantlolly'), plaza='candy',
+         deco=('sprinkle', WHT), ambient='heart', floor=(PNK, WHT), border=(MAG, MAG)),
+    dict(ground=BLK, mark=VIO, road=(VIO, VIO, VIO), roofs=(BLU, LBL), roofs2=(LBL, BLU), rstyle='moon', edge=VIO,
+         tree=('nightpine', VIO, VIO, YEL), critters=('owl', 'bat'),
+         smalls=('lamp', 'bench'), big=('observatory', 'campfire'), plaza='moonpool',
+         deco=('star', WHT), ambient='stars', floor=(BLU, VIO), border=(VIO, VIO)),
+    dict(ground=BLU, mark=LBL, road=(LBL, LBL, LBL), roofs=(YEL, ORG), roofs2=(WHT, LBL), rstyle='none',
+         tree=('lighttree', VIO, VIO, PNK), critters=('monkey', 'seal'),
+         smalls=('balloon', 'lantern'), big=('bigtop', 'balloons'), plaza='carousel',
+         deco=('sprinkle', LBL), ambient='confetti', floor=(YEL, WHT), border=(LBL, LBL)),
 )
 
 # trees: A canopy, B highlight, C fruit or blossom, n trunk.  Each season grows its own kind of tree; the top rows lean for
@@ -874,10 +893,10 @@ TOOL_PIP = {'heavy': YEL, 'precision': LBL, 'fire': ORG, 'aid': GRN, 'beacon': Y
 # colour of the small ground tufts for each of the nine seasons
 TUFT_COLOUR = (YEL, MAR, LBL, MAG, WHT, YEL, YEL, VIO, YEL)
 PERSON_SKIN = (YEL, ORG, MAR)
-PERSON_HAIR = (MAR, VIO, BLU, ORG, WHT)
-PERSON_SLEEVE = (BLU, VIO, MAG, LBL, WHT)
+PERSON_HAIR = (MAR, VIO, BLU, MAR, VIO)
+PERSON_SLEEVE = (BLU, VIO, LBL, BLU, VIO)
 PERSON_TROUSERS = (BLU, MAR, VIO, BLK)
-CAR_BODY = (BLU, ORG, MAG, VIO, LBL, WHT, RED)
+CAR_BODY = (BLU, VIO, LBL, WHT, ORG)
 CONFETTI = (MAG, BLU, VIO, ORG, WHT, PNK, LBL, MAG)
 
 
@@ -965,58 +984,30 @@ def disc(size, fill, edge):
 
 
 # ───────────────────────────── buildings: roofs, damage, rubble, plazas ─────────────────────────────
-KIND_ROOFS = {'hospital': (WHT, LBL), 'school': (MAG, PNK), 'station': (BLU, LBL), 'depot': (ORG, MAR)}
-# the next-darker and next-lighter flat colour of each tile, so a roof can show shingles, a ridge and a shaded eave
+KIND_ROOFS = {'hospital': (WHT, LBL)}
+# the next-darker and next-lighter flat colour of each tile, so a roof can show a quiet outline and one lit edge
 DARKER = {WHT: LBL, LBL: BLU, BLU: VIO, MAG: VIO, PNK: MAG, YEL: ORG, ORG: MAR, RED: MAR, MAR: BLK, VIO: BLK, GRN: BLK}
 LIGHTER = {MAR: ORG, ORG: YEL, BLU: LBL, LBL: WHT, VIO: MAG, MAG: PNK, RED: ORG, PNK: WHT, WHT: WHT, YEL: WHT}
 
 
 def roof_pixels(kind, w, h, integrity, theme, variant=0):
-    """One roof, drawn as a picture: black outline, a pitched roof (light upper slope, ridge, darker lower slope, shaded
-    eave), shingle ticks, a trim that says what the building is, and cracks, scorch and a hole as it takes damage."""
+    """One roof, drawn flat: one body colour, an outline a step darker in the same hue, and one simple accent.  The
+    hospital is white; every other building wears the season's roof colour (what it is shows in its mark).  Damage
+    (cracks, scorch, a hole) still draws over it, because that is rule state."""
     if kind == 'courtyard':
         return plaza_pixels(w, h, theme)
     if integrity <= 0:
         return rubble_pixels(w, h)
     a, b = KIND_ROOFS.get(kind, theme['roofs'])
-    if kind == 'home' and variant == 1:                      # one house in three wears the season's second roof colour
-        a, b = theme['roofs2']
-    px = np.full((h, w), theme.get('edge', BLK), dtype=np.int8)   # the night city gets a blue outline: black would vanish
-    ridge = h // 2
-    for row in range(1, h - 1):
-        for col in range(1, w - 1):
-            main = b if row < ridge else a                  # upper slope catches the light
-            if row == ridge:
-                main = DARKER.get(a, BLK)                   # the ridge line, a shadow between the two slopes
-            elif (row + col * 2) % 5 == 0 and row != 1 and DARKER.get(main, BLK) != BLK:     # shingle ticks
-                main = DARKER[main]
-            px[row, col] = main
-    px[1, 1:w - 1] = LIGHTER.get(b, WHT)                    # a lit top edge
-    px[1, 1] = WHT                                          # catch-light on the corner
-    if kind == 'hospital':
-        px[1, 1:w - 1] = PNK
-        px[h - 2, 1:w - 1] = PNK
-        px[1:h - 1, 1] = PNK
-        px[1:h - 1, w - 2] = PNK
-        px[2:h - 2, 2:w - 2] = WHT
-        px[h - 3, 2:w - 2] = LBL
-        px[2:h - 2, w - 3] = LBL
-    elif kind == 'station':
-        px[ridge, 1:w - 1] = WHT                            # white band
-        px[ridge + 1, 1:w - 1] = BLU
-    elif kind == 'depot':
-        for col in range(1, w - 1):
-            px[h - 2, col] = BLK if col % 2 else YEL         # hazard stripe along the loading edge
-        for col in range(2, w - 2, 3):                      # roll-up doors seen from above
-            px[2:4, col:col + 2] = LBL
-            px[4, col:col + 2] = BLU
-    elif kind == 'school':
-        px[ridge, 1:w - 1] = YEL                            # a gold ridge cap
-        px[ridge - 1, 1:w - 1:2] = WHT
-    elif kind == 'home' and w >= 8 and h >= 6:
-        px[1:3, w - 4:w - 2] = [[LBL, WHT], [RED, MAR]]    # brick chimney stack
-        px[3, w - 4:w - 2] = BLK                            # its shadow
+    if kind != 'hospital' and variant == 1:                  # one building in three wears the season's second colour
+        a = theme['roofs2'][0]
+    px = np.full((h, w), a, dtype=np.int8)
+    edge = theme.get('edge', DARKER.get(a, BLK))
+    px[0, :] = px[h - 1, :] = edge
+    px[:, 0] = px[:, w - 1] = edge
     px[0, 0] = px[0, w - 1] = px[h - 1, 0] = px[h - 1, w - 1] = -1
+    if w >= 8 and h >= 6 and kind != 'hospital':
+        px[2:4, 2:4] = LIGHTER.get(a, WHT) if LIGHTER.get(a, WHT) != a else DARKER.get(a, BLK)   # one skylight patch
     if integrity >= 2 and kind != 'hospital':
         roof_style(px, theme['rstyle'], kind, w, h, variant)
     if integrity < 3:                                      # cracks run across the roof, with scorch around them
@@ -1039,49 +1030,13 @@ def roof_pixels(kind, w, h, integrity, theme, variant=0):
 
 
 def roof_style(px, style, kind, w, h, variant):
-    """What the season lays on a roof: snow caps, frosting with sprinkles, bunting, leaves, sand drifts, awnings, solar
-    panels, moonlit skylights, red spots.  Picture only; it is drawn into the roof and cracks run over it."""
-    home = kind == 'home' and w >= 8 and h >= 6
-    if style == 'snow':
-        px[1, 1:w - 1] = WHT                                # a thick cap of snow along the top edge
-        px[2, 1:w - 1:2] = WHT                              # with icicle drips below it
-        px[h - 2, 1:w - 1:3] = WHT
-    elif style == 'frosting':
+    """The one accent a season lays on a roof: a cap of snow or frosting, a pale awning stripe, a lit skylight."""
+    if style in ('snow', 'frosting'):
         px[1, 1:w - 1] = WHT
-        px[2, 1:w - 1:2] = WHT
-        for column in range(2, w - 2, 3):                   # sprinkles
-            px[3 + (variant + column) % 2, column] = (RED, YEL, GRN, VIO)[(variant + column) % 4]
-    elif style == 'bunting':
-        for column in range(1, w - 1):                      # a string of flags from edge to edge
-            px[3, column] = (RED, YEL, BLU, WHT, GRN)[(column + variant) % 5]
-        px[4, 1:w - 1:2] = (YEL, RED, WHT)[variant % 3]
-    elif style == 'leaf':
-        for n in range(7):                                  # fallen leaves lying on the tiles
-            r, c = mix(variant, n, w) % (h - 2), (mix(variant, n, h) >> 3) % (w - 2)
-            px[1 + r, 1 + c] = (ORG, YEL, RED)[n % 3]
-    elif style == 'sand':
-        px[1, 1:3] = px[2, 1] = YEL                         # sand blown into the corners
-        px[h - 2, w - 4:w - 1] = px[h - 3, w - 2] = YEL
-        if home:
-            px[3, 2:w - 2:2] = (WHT, RED, YEL)[variant % 3]  # washing on a line
     elif style == 'awning':
-        for column in range(1, w - 1):                      # a striped awning along the lower edge
-            px[h - 3, column] = RED if column % 2 else WHT
-            px[h - 2, column] = WHT if column % 2 else RED
-    elif style == 'solar' and home:
-        if variant % 2:
-            px[h - 4:h - 2, 2:5] = [[BLU, LBL, BLU], [LBL, BLU, LBL]]      # solar panel
-        else:
-            px[h - 3, 2:w - 4] = GRN                                         # a roof garden
-            px[h - 4, 3:w - 5:2] = (YEL, WHT)[variant % 2]
+        px[h - 2, 1:w - 1] = WHT
     elif style == 'moon':
-        px[2, 2:4] = YEL                                    # lit skylights
-        px[h - 3, w - 5:w - 3] = YEL
-        px[h - 2, 1:w - 1:2] = LBL                          # moonlit edge
-    elif style == 'spots':
-        for r, c in ((2, 2), (4, 4), (3, w - 3), (h - 3, 3)):
-            if r < h - 1 and c < w - 1:
-                px[r, c] = RED
+        px[2, 2:4] = YEL
 
 
 def rubble_pixels(w, h):
@@ -1111,11 +1066,11 @@ def plaza_pixels(w, h, theme):
     px = np.zeros((h, w), dtype=np.int8)
     for row in range(h):
         for col in range(w):
-            px[row, col] = first if ((row // 2) + (col // 2)) % 2 == 0 else second
-    px[0, :] = BLK
-    px[-1, :] = BLK
-    px[:, 0] = BLK
-    px[:, -1] = BLK
+            px[row, col] = first if 1 < row < h - 2 and 1 < col < w - 2 else second   # a flat floor with a pale inset rim
+    px[0, :] = DARKER.get(second, BLK)
+    px[-1, :] = DARKER.get(second, BLK)
+    px[:, 0] = DARKER.get(second, BLK)
+    px[:, -1] = DARKER.get(second, BLK)
     return px
 
 
@@ -1188,15 +1143,15 @@ def road_pixels(width, height, style):
     if horizontal:
         px[0, :] = kerb
         px[-1, :] = kerb
-        if surface == ORG:                                 # planks
-            px[:, ::4] = mark
+        if surface == YEL:                                 # planks, joints in the kerb colour (same hue, quiet)
+            px[:, ::4] = kerb
         else:
             px[height // 2, 2::6] = mark
     else:
         px[:, 0] = kerb
         px[:, -1] = kerb
-        if surface == ORG:
-            px[::4, :] = mark
+        if surface == YEL:
+            px[::4, :] = kerb
         else:
             px[2::6, width // 2] = mark
     return px
@@ -1259,18 +1214,20 @@ def art_init(game):
     rng = np.random.default_rng(seed)
     game._props = []
     smalls = theme['smalls']
+    count = {'tree': 0, 'big': 0, 'small': 0}           # a few props with room round them, not one on every building
     for index, building in enumerate(game.buildings):
         x, y, w, h = building['rect']
         bid = building['id']
         if building['kind'] == 'courtyard':
             game._props.append(('fountain_' + bid, theme['plaza'], x + w // 2 - 3, y + h // 2 - 2, -4, ['fountain']))
             continue
-        if index % 2 == 0:
+        if index % 4 == 0 and count['tree'] < 2:
+            count['tree'] += 1
             game._props.append(('tree_' + bid, 'tree', x + w - 2, y + h - 1, -4, ['tree']))
             solids.append((x + w - 2, y + h - 1, 7, 8))
         small = smalls[index % len(smalls)]
         placed_landmark = False
-        if index % 2:                                   # the tall ward landmark stands in the gap beside the building
+        if index % 4 == 1 and count['big'] < 2:         # the tall ward landmark stands in the gap beside the building
             landmark = theme['big'][(index // 2) % 2]
             for label, pictures, need in (('wide', LANDMARKS, 5), ('thin', LANDMARKS_NARROW, 3)):
                 tall = len(pictures[landmark][0])
@@ -1283,8 +1240,11 @@ def art_init(game):
                     game._props.append(('landmark_' + bid, label + ':' + landmark, x + w, y + 1, -4, ['landmark']))
                     solids.append((x + w, y + 1, need, tall))
                     placed_landmark = True
+                    count['big'] += 1
                     break
-        if not placed_landmark:                         # no room for a tall shape: a small prop sits below the building
+        if not placed_landmark and index % 4 == 3 and count['small'] < 2:
+            count['small'] += 1
+                # a small prop sits below some buildings, never all
             game._props.append(('small_' + bid, small, x + 1, y + h + 1, -9, ['decoration']))
             solids.append((x + 1, y + h + 1, 5, 4))
         if building['kind'] == 'school':
@@ -1294,34 +1254,34 @@ def art_init(game):
     # the little animals of the season live in the spare corners (seven wide so they can wander a step or two)
     game._critters = []
     for attempt in range(220):
-        if len(game._critters) >= 7:
+        if len(game._critters) >= 1:                        # one little animal per season, with room round it
             break
         x, y = int(rng.integers(3, W - 9)), int(rng.integers(6, H - 6))
         rect = (x, y - 1, 7, 5)
-        if _overlaps(rect, solids, 0):
+        if _overlaps(rect, solids, 2):
             continue
         solids.append(rect)
         game._critters.append(('critter_' + str(len(game._critters)), theme['critters'][len(game._critters) % 2], x, y,
                                mix(seed, len(game._critters))))
     game._decos = []
     for attempt in range(400):                              # two kinds of scatter: the season's own, and small tufts
-        kind, colour = theme['deco'] if attempt % 3 else ('tuft', TUFT_COLOUR[game.mission_index % len(TUFT_COLOUR)])
+        kind, colour = theme['deco']
         x, y = int(rng.integers(3, W - 7)), int(rng.integers(5, H - 5))
         size = art(DECO_PICTURES[kind][0], {'A': colour})
         rect = (x, y, size.shape[1], size.shape[0])
-        if _overlaps(rect, solids, 1):
+        if _overlaps(rect, solids, 3):
             continue
         solids.append(rect)
         game._decos.append(('deco_' + str(len(game._decos)), kind, colour, x, y))
-        if len(game._decos) >= 16:                        # a calmer ground: fewer, so the roofs and people read first
+        if len(game._decos) >= 2:                        # a calmer ground: fewer, so the roofs and people read first
             break
     game._static = set(game._used)
     game._building_cache = {}
     game._crater_cache = {}
     # drifting life: things that only ride the air and mean nothing
     ambient = theme['ambient']
-    count = {'butterfly': 8, 'sand': 10, 'snow': 22, 'firefly': 12, 'gull': 4, 'leaf': 12, 'heart': 8,
-             'stars': 14, 'confetti': 16}[ambient]
+    count = {'butterfly': 2, 'sand': 3, 'snow': 5, 'firefly': 3, 'gull': 2, 'leaf': 3, 'heart': 2,
+             'stars': 4, 'confetti': 3}[ambient]
     speed = {'butterfly': (1, 0), 'sand': (2, 0), 'snow': (0, 1), 'firefly': (0, 0), 'gull': (2, 0),
              'leaf': (1, 1), 'heart': (0, -1), 'stars': (0, 0), 'confetti': (1, 1)}[ambient]
     game._drift = []
@@ -1436,6 +1396,21 @@ AMBULANCE = ('..kkkkkk....', '.kwwwwwwkkk.', 'kwwprpwwklbk', 'kwprrrpwklbk', 'kw
              '..kkk..kkk..')
 
 
+def dust_pixels(phase, theme):
+    """A small puff behind a moving car: a 2x2 clump that breaks into single specks and fades (a pale colour that shows
+    on this season's street)."""
+    colour = LBL
+    px = np.full((2, 3), -1, dtype=np.int8)
+    if phase < 2:
+        px[0, 0:2] = colour
+        px[1, 1:3] = colour
+    elif phase < 4:
+        px[0, 0] = px[1, 2] = colour
+    else:
+        px[1, 1] = colour
+    return px
+
+
 def contact_core(actor):
     """The identity colours, exactly as before: how many of the four cells are red says how sure the track is."""
     confidence = max(0, min(4, actor.get('confidence', 0)))
@@ -1518,9 +1493,21 @@ def draw_contacts(game, phase):
         seed = name_seed(aid)
         core = contact_core(shown)
         seat_people, has_seats = [], False
+        rumble, trail = 0, None
+        if shown['role'] == 'responder' or shown.get('vehicle'):
+            ox, oy = old.get('observed', old['pos'])
+            nx, ny = shown.get('observed', shown['pos'])
+            if shown.get('observed_at', game.tick) == game.tick and (ox, oy) != (nx, ny) and abs(nx - ox) + abs(ny - oy) <= 12:
+                rumble = 1 if phase in (1, 3) else 0
+                trail = (int(np.sign(nx - ox)), int(np.sign(ny - oy)))
+        if trail and phase < 5:                            # a puff of dust left behind, thinning out as it drifts back
+            sx, sy = trail
+            back = 6 + phase // 2
+            put(game, 'dust_' + aid, dust_pixels(phase, game._theme), x - sx * back - 1 if sx else x - 1,
+                y - sy * (back - 2) + 1 if sy else y + 1, 19, ['dust'], True, key=('dust', phase, game.mission_index))
         if shown['role'] == 'responder':
-            put(game, 'contact_' + aid, lambda: art(AMBULANCE), x - 6, y - 2, 20, ['contact', 'responder'], True,
-                key='ambulance')
+            put(game, 'contact_' + aid, lambda: art(AMBULANCE), x - 6, y - 2 - rumble, 20, ['contact', 'responder'], True,
+                key=('ambulance', ))
             flash = (t // 2) % 2
             put(game, 'siren_' + aid, lambda: art(('rr.bb',) if flash else ('bb.rr',)), x - 4, y - 3, 22,
                 ['responder', 'siren'], True, key=('siren', flash))
@@ -1533,7 +1520,7 @@ def draw_contacts(game, phase):
             put(game, 'contact_' + aid,
                 lambda: art(CAR_SEATS if has_seats else CAR_SOLO, {'B': body, 'D': DARKER.get(body, BLK),
                                                                    'W': LIGHTER.get(body, WHT)}),
-                x - 4, y - 3, 20, ['contact', 'traffic_vehicle'], True, key=('car', has_seats, body))
+                x - 4, y - 3 - rumble, 20, ['contact', 'traffic_vehicle'], True, key=('car', has_seats, body))
             if has_seats:
                 for seat, occupant_id in enumerate(occupants[:4]):
                     occupant = by_id.get(occupant_id)
@@ -1787,14 +1774,15 @@ def puff_pixels(size):
 
 
 # ───────────────────────────── the console ─────────────────────────────
-def pod_pixels(border, fill, selected):
+def pod_pixels(border, fill, selected, glint=0):
     px = np.full((11, 11), fill, dtype=np.int8)
     px[0, :] = px[-1, :] = border
     px[:, 0] = px[:, -1] = border
     for cx, cy in ((0, 0), (10, 0), (0, 10), (10, 10)):
         px[cy, cx] = -1
     if selected:
-        px[1, 1] = px[1, 9] = px[9, 1] = px[9, 9] = YEL
+        px[1, 1] = px[9, 9] = YEL if glint else WHT         # the chosen pod glints on alternate corners
+        px[1, 9] = px[9, 1] = WHT if glint else YEL
         px[0, 3:8] = YEL
     return px
 
@@ -1803,13 +1791,17 @@ def draw_console(game, phase):
     t = game.tick * FRAME_COUNT + phase
     put(game, 'hud_top_mask', np.full((4, 64), BLK), 0, 0, 30, ['instrument'], key='top')
     bottom = np.full((12, 64), MAR, dtype=np.int8)
-    bottom[0, :] = ORG
     put(game, 'hud_bottom_mask', bottom, 0, 52, 30, ['instrument'], key='bottom')
     remaining = game.remaining_hostiles()
     targets = np.full((4, 29), -1, dtype=np.int8)
     pitch = 4 if game.total_hostiles * 4 <= 29 else 3    # a pixel of air between the faces whenever they fit
+    before_alive = sum(bool(a.get('alive')) and a['role'] == 'hostile'
+                       for a in getattr(game, 'before_actors', {}).values()) if phase < 4 else remaining
     for index in range(min(9, game.total_hostiles)):
-        if index < remaining:                              # a scowling raider, horns up, fangs showing
+        popped = remaining <= index < before_alive
+        if popped:                                         # a raider that just turned tame: the face flashes
+            glyph = art(('.y.', 'ywy', 'ywy', '.y.') if phase % 2 else ('.w.', 'wgw', 'wwy', '.w.'))
+        elif index < remaining:                              # a scowling raider, horns up, fangs showing
             glyph = art(('r.r', 'krk', 'rrr', '.w.') if (t // 6 + index) % 9 else ('r.r', 'rrr', 'rrr', '.w.'))
         else:                                              # the same one, tamed: a happy green face
             glyph = art(('.g.', 'kgk', 'gwg', '.g.') if (t // 6 + index) % 9 else ('.g.', 'ggg', 'gwg', '.g.'))
@@ -1822,6 +1814,8 @@ def draw_console(game, phase):
             if col in (3, 8) and row < 3:
                 continue
             shield[row, col] = shield_colour if game.risk >= (col + 1) * 120 // 12 else MAR
+    if game.risk < getattr(game, '_risk_before', game.risk) and phase < 4 and phase % 2 == 0:
+        shield[shield >= 0] = WHT                          # the shield bar flashes white when it is hit
     put(game, 'civilian_condition', shield, 30, 0, 40, ['condition'])
     pressure = np.full((4, 2), -1, dtype=np.int8)
     load = min(4, max(0, (getattr(game, 'response_load', 0) + 1) // 2))
@@ -1851,6 +1845,7 @@ def draw_console(game, phase):
         sensor[sensor == WHT] = YEL
     put(game, 'sensor_freshness', sensor, 57, 0, 40, ['sensor'])
     selected_tool = game.tools[game.tool_index]
+    fired = next((s['tool'] for s in game.pending if s['due'] - TOOLS[s['tool']]['delay'] == game.tick), None)
     switched = any(e.get('kind') == 'switch' for e in game.events)
     for index, tool in enumerate(TOOL_ORDER):
         x = 2 + index * 12
@@ -1858,14 +1853,20 @@ def draw_console(game, phase):
         selected = enabled and tool == selected_tool
         border = WHT if selected else LBL if enabled else MAR
         fill = BLU if selected else BLK
-        if getattr(game, 'flash_tool', None) == tool:
+        if getattr(game, 'flash_tool', None) == tool and phase % 2 == 0 and phase < 5:
             border, fill = RED, MAR
-        put(game, 'payload_slot_' + tool, pod_pixels(border, fill, selected), x - 1, 53, 40, ['payload'],
-            key=('pod', border, fill, selected))
+        glint = (t // 3) % 2 if selected else 0
+        put(game, 'payload_slot_' + tool, pod_pixels(border, fill, selected, glint), x - 1, 53, 40, ['payload'],
+            key=('pod', border, fill, selected, glint))
         icon = art(ICON_PICTURES[tool])
         if not enabled:
             icon[icon >= 0] = MAR
-        put(game, 'payload_icon_' + tool, icon, x + 1, 54, 41, ['payload'], key=('icon', tool, enabled))
+        lift = 0
+        if selected:                                       # the chosen payload breathes, and kicks up when it fires
+            lift = 1 if (t // 5) % 4 == 3 else 0
+            if tool == fired and phase < 2:
+                lift = -1
+        put(game, 'payload_icon_' + tool, icon, x + 1, 54 + lift, 41, ['payload'], key=('icon', tool, enabled))
         stock = game.ammo.get(tool, 0) if enabled else 0
         if enabled and stock < TOOLS[tool]['stock']:
             recharge = PRACTICE_RECHARGE if game.mission_index == 0 else RECHARGE_TURNS
@@ -1883,7 +1884,7 @@ def draw_console(game, phase):
                 rounds[row, col:col + 2] = TOOL_PIP[tool] if n < stock else MAR
         put(game, 'payload_stock_' + tool, rounds, x, 60, 41, ['ammunition'])
         if not enabled:
-            put(game, 'payload_locked_' + tool, lambda: art(('.www.', 'w...w', 'yyyyy', 'yykyy', 'yyyyy')), x + 2, 54,
+            put(game, 'payload_locked_' + tool, lambda: art(('.lll.', 'l...l', 'lllll', 'llkll', 'lllll')), x + 2, 54,
                 42, ['locked'], key='padlock')
         if selected and switched and phase < 5:
             orbit = np.full((11, 11), -1, dtype=np.int8)
@@ -1926,6 +1927,24 @@ def draw_edge_cues(game):
         put(game, 'bearing_' + edge, arrow, x, y, 35, ['contact_bearing'], key=('arrow', edge, colour))
 
 
+def draw_bump(game, phase):
+    """A blocked pan: when the view is already at the edge of the city, a bright strip blinks along that screen edge."""
+    try:
+        action = game.action.id.value
+    except Exception:
+        return
+    if action not in PAN or phase >= 4 or game.outro_phase >= 0 or (game.view_x, game.view_y) != game.before_view:
+        return
+    strip = {1: ((2, 64), 0, 4), 2: ((2, 64), 0, 50), 3: ((48, 2), 0, 4), 4: ((48, 2), 62, 4)}[action]
+    (h, w), x, y = strip
+    px = np.full((h, w), YEL if phase % 2 == 0 else ORG, dtype=np.int8)
+    if h == 2:
+        px[1 if action == 1 else 0, :] = WHT if phase < 2 else ORG
+    else:
+        px[:, 1 if action == 3 else 0] = WHT if phase < 2 else ORG
+    put(game, 'edge_bump', px, x, y, 36, ['edge_bump'])
+
+
 # ───────────────────────────── feedback: win sparkle, run over ─────────────────────────────
 SAD_FACE = ('....kkkkk....', '..kkyyyyykk..', '.kyyyyyyyyyk.', '.kyyyyyyyyyk.', 'kyyykyyykyyyk', 'kyyykyyykyyyk',
             'kyyylyyylyyyk', 'kyyylyyylyyyk', 'kyyyykkkyyyyk', 'kyykkyyykkyyk', '.kyyyyyyyyyk.', '..kkyyyyykk..',
@@ -1963,7 +1982,7 @@ def draw_feedback(game, phase):
     if game.ending == 'win' and phase >= 1:
         # a shower of confetti and five fireworks; the shower keeps falling while the curtain closes (outro_phase)
         shower = phase + (game.outro_phase + 1) * 2 if game.outro_phase >= 0 else phase
-        for number in range(16):
+        for number in range(8):
             h = mix(game.mission_index, number, 7)
             x = 3 + h % 58
             y = 4 + ((h >> 8) % 44 + shower * (2 + number % 3)) % 46
@@ -1983,7 +2002,7 @@ def draw_feedback(game, phase):
                         spark[sy, sx] = colour if age < 4 else (WHT if (dx + dy) % 2 else colour)
             spark[6, 6] = WHT if age < 2 else -1
             put(game, 'win_firework_' + str(number), spark, bx - 6, by - 6, 53, ['win_sparkle'])
-        for number in range(9):
+        for number in range(4):
             h = mix(game.mission_index, number)
             x = 5 + h % 54
             y = 8 + (h >> 8) % 38
@@ -2007,16 +2026,19 @@ def draw_feedback(game, phase):
         burst[4:7, 4:7] = WHT
         put(game, 'win_burst', burst, 26, 19, 51, ['win_sparkle'])
     if game.ending == 'lose' and phase >= 1:
-        level = min(2, phase)                              # a light red haze that never hides the wincing faces
+        level = min(3, phase)                              # a clean red frame closes in; the board stays readable inside it
         tint = np.full((48, 64), -1, dtype=np.int8)
-        for row in range(48):
-            for col in range(64):
-                if BAYER[row % 4][col % 4] < level * 3:
-                    tint[row, col] = MAR if (row + col) % 3 else RED
+        side, cap = 1 + level, (level + 1) // 2
+        tint[:, :side] = MAR
+        tint[:, 64 - side:] = MAR
+        tint[:cap, :] = MAR
+        tint[48 - cap:, :] = MAR
+        tint[cap:48 - cap, side - 1] = RED
+        tint[cap:48 - cap, 64 - side] = RED
         put(game, 'loss_tint', tint, 0, 4, 50, ['run_over'])
         if phase >= 2:
             put(game, 'loss_cloud', cloud_pixels, 18, 5, 54, ['run_over'], key='cloud')
-            for number in range(14):                       # rain falling out of the cloud over the whole field
+            for number in range(8):                        # rain falling out of the cloud over the whole field
                 h = mix(game.mission_index, number, 3)
                 x = 4 + h % 56
                 y = 14 + ((h >> 8) % 36 + phase * (3 + number % 3) * 3) % 36
@@ -2094,10 +2116,7 @@ def draw_world(game, phase):
             elif kind == 'station':
                 put(game, 'roof_mark_' + bid, lambda: siren_pixels((t // 2) % 2), x + w // 2 - 1, y + h // 2, -2,
                     ['building_mark'], True, key=('siren', (t // 2) % 2))
-            elif kind == 'depot' and w >= 10:
-                put(game, 'roof_mark_' + bid, lambda: art(SMALL_PICTURES['crate'][0]), x + w - 6, y + 2, -2,
-                    ['building_mark'], True, key='crate')
-            elif kind == 'home' and seed % 3 == 0 and w >= 8 and h >= 6:
+            elif kind == 'home' and seed % 6 == 0 and w >= 8 and h >= 6:
                 put(game, 'chimney_smoke_' + bid, lambda: smoke_column((t // 3) % 3), x + w - 5, y - 4, 12,
                     ['smoke_chimney'], True, key=('chimney', (t // 3) % 3))
             if integrity == 1:
@@ -2106,7 +2125,7 @@ def draw_world(game, phase):
     for name, kind, x, y, layer, tags in game._props:
         seed = name_seed(name)
         if kind == 'tree':
-            lean = ((t // 5) + seed) % 2
+            lean = ((t // (4 + seed % 3)) + seed) % 2      # each tree sways on its own beat
             put(game, name, lambda: tree_pixels(tree_kind, canopy, high, fruit, lean), x, y, layer, tags, True,
                 key=('tree', tree_kind, canopy, high, fruit, lean))
         elif kind == 'fountain':
@@ -2117,19 +2136,19 @@ def draw_world(game, phase):
             put(game, name, lambda: art(PLAZAS[kind][frame]), x, y, layer, tags, True, key=('plaza', kind, frame))
         elif ':' in kind:                                   # a landmark: 'wide:name' or 'thin:name'
             label, which = kind.split(':')
-            frame = (t // 6 + seed) % 2
+            frame = (t // (5 + seed % 3) + seed) % 2
             pictures = (LANDMARKS if label == 'wide' else LANDMARKS_NARROW)[which]
             put(game, name, lambda: art(pictures[frame]), x, y, layer, tags, True, key=('landmark', kind, frame))
         else:
-            frame = (t // 7 + seed) % 2
+            frame = (t // (6 + seed % 3) + seed) % 2
             put(game, name, lambda: small_art(kind, theme, frame), x, y, layer, tags, True,
                 key=('small', kind, game.mission_index, frame % len(SMALL_PICTURES[kind])))
     for number, (name, kind, colour, x, y) in enumerate(game._decos):          # the ground scatter twinkles and sways
-        frame = (t // 9 + number) % 2
+        frame = (t // (8 + number % 3) + number) % 2
         put(game, name, lambda: art(DECO_PICTURES[kind][frame], {'A': colour}), x, y, -10, ['decoration'], True,
             key=('deco', kind, colour, frame))
     for name, kind, x, y, seed in game._critters:                              # little animals: blink, hop, wander a step
-        step = t // 7 + seed
+        step = t // (6 + seed % 3) + seed
         frame = step % 2
         wander = (0, 1, 2, 2, 1, 0, 0, 0)[(step // 3) % 8]
         put(game, name, lambda: art(CRITTERS[kind][frame]), x + wander, y - (1 if frame and step % 4 == 1 else 0), -8,
@@ -2137,14 +2156,17 @@ def draw_world(game, phase):
     draw_craters(game)
     row = (game.tick * 3 + phase) % 48
     scan = np.full((1, 60), -1, dtype=np.int8)
-    scan[0, ::3] = theme['mark'] if theme['mark'] != theme['ground'] else WHT
-    put(game, 'sensor_scan', scan, int(game.camera.x) + 2, int(game.camera.y) + 4 + row, -1, ['sensor_texture'],
+    scan[0, ::3] = theme['mark'] if theme['mark'] != theme['ground'] else DARKER.get(theme['ground'], VIO)
+    put(game, 'sensor_scan', scan, int(game.camera.x) + 2, int(game.camera.y) + 4 + row, -13, ['sensor_texture'],
         True, key=('scan', theme['mark']))
     draw_drift(game, phase)
 
 
 def art_frame(game, phase, frames):
     game._used = set(game._static)
+    if phase == 0:                                         # what the last picture showed, so a drop can flash this one
+        game._risk_before = getattr(game, '_risk_seen', game.risk)
+    game._risk_seen = game.risk
     if not hasattr(game, '_facing'):
         game._facing = {}
     draw_world(game, phase)
@@ -2154,6 +2176,7 @@ def art_frame(game, phase, frames):
     draw_contacts(game, phase)
     draw_console(game, phase)
     draw_edge_cues(game)
+    draw_bump(game, phase)
     draw_feedback(game, phase)
     for name in list(game._sprites):
         if name not in game._used:

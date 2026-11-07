@@ -10,6 +10,20 @@
 # SRP/DRY check: Pass. Rules are pure functions near the top (untouched from bs01); art tables and tile builders come next;
 #   the engine glue at the bottom only shows what the rules decided. bs01 stays as it is; nothing is shared with it.
 #
+# Updated: 07-November-2026, Claude Sonnet 5.5: final look, clarity and motion. Calmer worlds (fewer props and decals, softer
+#   plank, slab and facet marks, a lighter danger checker, fewer motes), a real iris wipe to black that closes on the door
+#   after a win and on the fallen heap after a loss (the muddy purple darkening and the rain are gone), a bigger hop and
+#   bigger dust puffs, guards that hop when they step, and a stronger blocked move (you lean in, wince, and a star bursts at
+#   the edge). No rule changed.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round three, motion. You hop between squares with dust kicked up behind,
+#   a blocked move bursts a bright puff at the edge you pushed, a pad that takes its load, a waking door and a rung bell
+#   each glint with a small four-point spark, a win fades the world out before the next level, and the rain and the win
+#   shower are thinner so nothing feels busy. Frames stay few per action. No rule changed.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round two, calm and readable. Quieter backdrop so you, the guards, the
+#   pads, bells and door pop: dry ground no longer twinkles with lone white specks and a third of its squares are plain
+#   flat colour, fewer props, one big floor picture and a few decals per world, fewer drifting motes, softer plank and
+#   slab lines in the harbour and castle. Every animation stays (water shimmer, props, wanderer, flyer, motes). No rule changed.
+#
 # CHANGELOG
 # 07-Nov-2026 (Claude Sonnet 5.5): pass three, variety and life. Six living props per world (three new each, taller and
 #   moving: sunflowers, igloos, frogs, lighthouses, armour, a small volcano...), flat ground decals, a wanderer that paces a
@@ -439,6 +453,16 @@ PATTERNS = {
         ("aaaaaaa", "b...b..", ".......", "aaaaaaa", "..b...b", ".......", "......."),
         (".......", ".......", "aaaaaaa", ".b...b.", ".......", "aaaaaaa", "b...b.."),
     ),
+    "boards": (
+        (".......", "aaaaaaa", ".......", ".......", ".......", ".......", "......b"),
+        (".......", ".......", ".......", ".......", ".......", ".......", "......."),
+        (".......", ".......", ".......", ".......", "aaaaaaa", ".......", "b......"),
+    ),
+    "stones": (
+        (".......", ".aaa...", ".......", ".......", ".......", "....a..", "......b"),
+        (".......", ".......", ".......", ".......", ".......", ".......", "......."),
+        (".......", ".......", ".......", "...aaa.", ".......", ".a.....", "b......"),
+    ),
     "slabs": (
         (".......", "..a....", "..a.b..", "aaaaaaa", "....a..", ".b..a..", "......."),
         (".......", "....a..", ".b..a..", "aaaaaaa", "..a....", "..a..b.", "......."),
@@ -474,7 +498,7 @@ THEMES = (
          tiers=((PURPLE, MAGENTA, BLACK, GREEN, MAGENTA, "ripple"),
                 (GREEN, YELLOW, MAROON, YELLOW, ORANGE, "leaves"),
                 (YELLOW, WHITE, ORANGE, ORANGE, MAROON, "slabs"))),
-    dict(name="crystal", rim=("ice", BLUE, MAGENTA), pad=MAGENTA, door=PURPLE, scarf=ORANGE, zone=MAGENTA,
+    dict(name="crystal", rim=("ice", BLUE, LBLUE), pad=MAGENTA, door=PURPLE, scarf=ORANGE, zone=MAGENTA,
          tiers=((PURPLE, BLUE, BLACK, BLUE, MAGENTA, "facets"),
                 (BLUE, LBLUE, PURPLE, LBLUE, WHITE, "facets"),
                 (LBLUE, WHITE, BLUE, WHITE, MAGENTA, "facets"))),
@@ -484,12 +508,12 @@ THEMES = (
                 (YELLOW, WHITE, ORANGE, ORANGE, WHITE, "specks"))),
     dict(name="harbour", rim=("rope", YELLOW, ORANGE), pad=LBLUE, door=BLUE, scarf=MAGENTA, zone=MAGENTA,
          tiers=((BLUE, LBLUE, PURPLE, LBLUE, WHITE, "ripple"),
-                (ORANGE, YELLOW, MAROON, MAROON, YELLOW, "planks"),
-                (YELLOW, WHITE, ORANGE, ORANGE, WHITE, "planks"))),
+                (ORANGE, YELLOW, MAROON, YELLOW, YELLOW, "boards"),
+                (YELLOW, WHITE, ORANGE, ORANGE, WHITE, "boards"))),
     dict(name="castle", rim=("brick", BLUE, YELLOW), pad=LBLUE, door=ORANGE, scarf=YELLOW, zone=YELLOW,
          tiers=((BLUE, LBLUE, BLACK, LBLUE, WHITE, "ripple"),
-                (PURPLE, LBLUE, BLUE, LBLUE, BLUE, "slabs"),
-                (LBLUE, WHITE, PURPLE, WHITE, BLUE, "slabs"))),
+                (PURPLE, LBLUE, BLUE, BLUE, BLUE, "stones"),
+                (LBLUE, WHITE, PURPLE, WHITE, BLUE, "stones"))),
 )
 
 # ---------------------------------------------------------------------------------------------
@@ -728,7 +752,7 @@ def _emblem_spots(index, m):
     found.sort()
     spots = []
     for _, x, y in found:
-        if all(abs(x - sx) > 2 or abs(y - sy) > 2 for sx, sy in spots) and len(spots) < 2:
+        if all(abs(x - sx) > 2 or abs(y - sy) > 2 for sx, sy in spots) and len(spots) < 1:
             spots.append((x, y))
     return spots
 
@@ -793,6 +817,7 @@ DECAL_PICTURES = tuple(tuple(px(d) for d in per) for per in DECALS)
 
 
 _SCENES: dict = {}
+PROP_CAP = (3, 3, 3, 3, 2, 3, 2, 2)     # living things per world: the busy worlds (crystal, harbour, castle) get fewer
 
 
 def _scene(index: int) -> dict:
@@ -823,11 +848,11 @@ def _scene(index: int) -> dict:
     props, decals = [], []
     for (x, y) in sorted(free, key=lambda c: (c[1], c[0])):
         h = (x * 5 + y * 3 + index * 7 + x * y) % 4
-        if h == 0 and len(props) < 10:
+        if h == 0 and len(props) < PROP_CAP[ti]:
             kind = (len(props) * 5 + index) % 6
             shape = PROPS[ti][kind][1][0].shape
             props.append((kind, (x, y), (CELL - shape[1]) // 2, CELL - shape[0]))
-        elif h == 2 and len(decals) < 8:
+        elif h == 2 and len(decals) < 2:
             decals.append(((len(decals) + index * 2) % 3, (x, y)))
     _SCENES[index] = {"emblems": emblems, "props": props, "decals": decals, "lane": lane}
     return _SCENES[index]
@@ -848,7 +873,7 @@ MOTES = (
     (((".w.", "w.w", ".w."), ("...", ".w.", "...")), 1, -1),                 # harbour: spray
     (((".y.", "ywy", ".y."), ("y.y", ".w.", "y.y")), -1, 0),                 # castle: dust in the light
 )
-MOTE_SPRITES = 5
+MOTE_SPRITES = 2
 MOTE_PICTURES = tuple([px(f) for f in frames] for frames, _, _ in MOTES)
 
 # ---------------------------------------------------------------------------------------------
@@ -950,7 +975,7 @@ def player_tile(pose: str, look: tuple, walk: int, tick: int, scarf: int, blink:
                 a[4, eyes[0]] = a[4, eyes[1]] = ORANGE
                 a[3, eyes[0]] = a[3, eyes[1]] = BLACK
                 a[5, 2:5] = MAROON
-            elif pose == "hit":            # eyes squeezed, mouth gaping
+            elif pose in ("hit", "bump"):  # eyes squeezed, mouth gaping
                 a[3:5, eyes[0]] = BLACK
                 a[3:5, eyes[1]] = BLACK
                 a[5, 2:5] = MAROON
@@ -958,7 +983,7 @@ def player_tile(pose: str, look: tuple, walk: int, tick: int, scarf: int, blink:
                 a[4, eyes[0]] = a[4, eyes[1]] = ORANGE if blink else BLACK
                 a[5, 3] = BLACK
         a[6 if tick % 2 == 0 else 7, 6] = scarf          # the scarf tail flutters
-        if pose == "hit":                  # you turn red: this sent you back
+        if pose == "hit":                  # you turn red: this sent you back (a bump only winces, it does not turn red)
             flash = WHITE if tick % 2 else RED
             a[a == BLACK] = flash
         elif pose == "half":               # stepping into the door
@@ -981,21 +1006,14 @@ def cached(key, build):
     return _TILES[key]
 
 
-# When a run is over the world goes dark: every colour steps to a deeper one. (Guards and you keep theirs and stand out.)
-DIM = {WHITE: LBLUE, LBLUE: BLUE, BLUE: PURPLE, YELLOW: ORANGE, ORANGE: MAROON, GREEN: PURPLE, PURPLE: BLACK,
-       MAROON: BLACK, MAGENTA: MAROON, PINK: MAGENTA, RED: MAROON}
-_DIMMED: dict = {}
-
-
-def dim_of(a: np.ndarray) -> np.ndarray:
-    """The dimmed twin of a cached picture, itself cached (the original is kept so its id stays unique)."""
-    hit = _DIMMED.get(id(a))
-    if hit is None:
-        out = a.copy()
-        for src, dst in DIM.items():
-            out[a == src] = dst
-        hit = _DIMMED[id(a)] = (a, out)
-    return hit[1]
+def curtain_tile(cx: int, cy: int, radius: int) -> np.ndarray:
+    """The iris: black over the whole picture except a round window of `radius` pixels round (cx, cy). Radius zero is all black."""
+    def build():
+        ys, xs = np.ogrid[:64, :64]
+        a = np.full((64, 64), BLACK, dtype=np.int8)
+        a[(xs - cx) ** 2 + (ys - cy) ** 2 < radius * radius] = -1
+        return a
+    return cached(("curtain", cx, cy, radius), build)
 
 
 def ground_tile(ti: int, tier: int, lower: tuple, variant: int, phase: int) -> np.ndarray:
@@ -1006,12 +1024,15 @@ def ground_tile(ti: int, tier: int, lower: tuple, variant: int, phase: int) -> n
             rows = mirrored(rows[::-1])
         a = np.full((CELL, CELL), fill, dtype=np.int8)
         drift = phase // 2 if tier == 0 else 0           # the low ground shimmers sideways, the rest stands still
+        calm = pattern != "ripple" and variant % 3 == 1      # round two: a third of the dry squares stay flat, a quiet field
         for y, row in enumerate(rows):
             for x, ch in enumerate(row):
+                if calm:
+                    break
                 if ch == "a":
                     a[y, (x + drift) % CELL] = ca
-                elif ch == "b" and (phase + variant + x + y) % 4 != 0:
-                    a[y, x] = cb
+                elif ch == "b" and pattern == "ripple" and (phase + variant + x + y) % 4 != 0:
+                    a[y, x] = cb         # only the water twinkles; dry ground has no lone specks
         up, right, down, left = lower
         # a raised edge: a sunlit lip on the up and left sides, a cliff face on the down and right sides, black outside
         if up:
@@ -1035,11 +1056,13 @@ def rock_tile(ti: int, flip: int) -> np.ndarray:
 
 
 def zone_tile(ti: int, parity: int) -> np.ndarray:
-    """The danger dither: a checker over the inside of a square, coloured per world."""
+    """The danger dither: a checker round the inside edge of a square (the middle stays clear), coloured per world."""
     def build():
         a = np.full((CELL, CELL), -1, dtype=np.int8)
         for y in range(1, CELL - 1):
             for x in range(1, CELL - 1):
+                if 1 < x < CELL - 2 and 1 < y < CELL - 2:
+                    continue
                 if (x + y + parity) % 2 == 0:
                     a[y, x] = THEMES[ti]["zone"]
         return a
@@ -1118,6 +1141,9 @@ def star_tile(kind: str) -> np.ndarray:
     """A sparkle: kind is 's' + size (3 or 5) + colour letter."""
     if kind[0] == "r":                                  # a raindrop (the sad weather after a loss)
         return cached(("drop",), lambda: px(("l", "l", "b")))
+    if kind[0] == "d":                                  # dust: a round puff ("d5"), a little ring ("d3") or a single speck ("d1")
+        shapes = {"5": (".AAA.", "AAwAA", "AwwwA", "AAwAA", ".AAA."), "3": (".A.", "A.A", ".A."), "1": ("A",)}
+        return cached(("dust", kind), lambda: px(shapes[kind[1]], A=STAR_COLOURS[kind[2]], w=WHITE))
     big, colour = kind[1] == "5", STAR_COLOURS[kind[2]]
     centre = WHITE if colour != WHITE else YELLOW
     return cached(("star", kind), lambda: px(STAR5 if big else STAR3, A=colour, w=centre))
@@ -1191,6 +1217,7 @@ def fuse_tile(full: int, left: int, phase: int) -> np.ndarray:
 # ---------------------------------------------------------------------------------------------
 LAYER_GROUND, LAYER_EMBLEM, LAYER_PROP, LAYER_ZONE, LAYER_THING = -6, -5, -4, -3, -2
 LAYER_BORDER, LAYER_EXIT, LAYER_GUARD, LAYER_PLAYER, LAYER_FX, LAYER_FUSE = -1, 0, 1, 3, 4, 9
+LAYER_CURTAIN = 10
 FLIGHTS = 6
 SPARKS = 28
 RISE = 2                      # the creatures are nine pixels tall and stand two pixels above their square
@@ -1292,6 +1319,7 @@ def build_levels() -> list:
         sprites.append(_sprite(border_tile(ti, "normal", 0), "border", 0, 0, LAYER_BORDER, ("border",)))
         full = MOVE_BUDGET[index]
         sprites.append(_sprite(fuse_tile(full, full, 0), "fuse", MARGIN, 61, LAYER_FUSE, ("counter",)))
+        sprites.append(_sprite(curtain_tile(32, 32, 0), "curtain", 0, 0, LAYER_CURTAIN, ("curtain",), visible=False))
         levels.append(Level(sprites=sprites, grid_size=(64, 64)))
     return levels
 
@@ -1330,8 +1358,8 @@ def _lerp(a, b, num, den):
 
 class Bs02(ARCBaseGame):
 
-    HIT_FRAMES = 5
-    FALL_FRAMES = 4
+    HIT_FRAMES = 4
+    FALL_FRAMES = 3
     PUFF_FRAMES = 2
 
     def __init__(self) -> None:
@@ -1362,7 +1390,7 @@ class Bs02(ARCBaseGame):
         self.look = (0, 1)
         self._refs = {s.name: s for s in level.get_sprites()}
         for s in self._refs.values():     # a level is cloned on entry and the clone shows everything: hide the helpers again
-            if s.name.startswith(("zone_", "flight_", "spark_")):
+            if s.name.startswith(("zone_", "flight_", "spark_", "curtain")):
                 s.set_visible(False)
         self._shown = {}
         self._zone_on = set()
@@ -1381,12 +1409,10 @@ class Bs02(ARCBaseGame):
                 "g": [_pixel(c) for c in guards], "loads": list(loads), "face": _faces(m, guards, target),
                 "grin": [False] * len(guards), "lit": list(flags), "live": live, "bell": target,
                 "ring": "live" if live else "normal", "flights": [],
-                "zone": _danger(m, guards, target), "shade": False, "fx": []}
+                "zone": _danger(m, guards, target), "iris": None, "lift": [0] * len(guards), "fx": []}
 
-    def _put(self, sprite, pixels, dim=False) -> None:
-        """Swap a sprite's picture only when it really changed. `dim` shows the world's dark twin of the picture."""
-        if dim:
-            pixels = dim_of(pixels)
+    def _put(self, sprite, pixels) -> None:
+        """Swap a sprite's picture only when it really changed."""
         if self._shown.get(sprite.name) is not pixels:
             sprite.pixels = pixels
             self._shown[sprite.name] = pixels
@@ -1399,23 +1425,22 @@ class Bs02(ARCBaseGame):
         ti = index % len(THEMES)
         m = model(index)
         refs = self._refs
-        dim = view["shade"]
         # the ground: the low terrace shimmers, every tile twinkles a little
         for cell in m["floor"]:
             lower = _lower_sides(m, cell)
             self._put(refs[f"ground_{cell[0]}_{cell[1]}"],
-                      ground_tile(ti, m["height"][cell], lower, _variant(index, *cell), phase), dim)
+                      ground_tile(ti, m["height"][cell], lower, _variant(index, *cell), phase))
         for sprite, pixels in self._rocks:
-            self._put(sprite, pixels, dim)
+            self._put(sprite, pixels)
         deco = self._deco
         for i in range(len(deco["emblems"])):
-            self._put(refs[f"emblem_{i}"], emblem_tile(ti, phase % 2), dim)
+            self._put(refs[f"emblem_{i}"], emblem_tile(ti, phase % 2))
         for i, (variant, cell) in enumerate(deco["decals"]):
-            self._put(refs[f"decal_{i}"], DECAL_PICTURES[ti][variant], dim)
+            self._put(refs[f"decal_{i}"], DECAL_PICTURES[ti][variant])
         for i, (kind, cell, ox, oy) in enumerate(deco["props"]):
             name, frames, drifts = PROPS[ti][kind]
             s = refs[f"prop_{i}"]
-            self._put(s, frames[(phase + i) % len(frames)], dim)
+            self._put(s, frames[(phase + i) % len(frames)])
             bx, by = _pixel(cell)
             dx, dy = DRIFT[(phase + i) % 4] if drifts else (0, 0)
             s.set_position(bx + ox + dx, by + oy + dy)
@@ -1426,14 +1451,14 @@ class Bs02(ARCBaseGame):
             span = (len(deco["lane"]) - 1) * CELL + 1
             t = (self.beat + index * 5) % (2 * span)
             going = t < span
-            self._put(s, (right if going else left)[(self.beat // 2) % 2], dim)
+            self._put(s, (right if going else left)[(self.beat // 2) % 2])
             bx, by = _pixel(deco["lane"][0])
             s.set_position(bx + (t if going else 2 * span - t), by + 3 + (self.beat // 2) % 2)
-            s.set_visible(not dim)
+            s.set_visible(True)
         s = refs["flyer"]
-        self._put(s, FLYER_PICTURES[ti][(self.beat // 2) % 2], dim)
+        self._put(s, FLYER_PICTURES[ti][(self.beat // 2) % 2])
         s.set_position(MARGIN + (index * 13 + self.beat) % 50, MARGIN + 8 + (index * 11) % 30 + round(3 * math.sin(self.beat / 5 + index)))
-        s.set_visible(not dim)
+        s.set_visible(True)
         # the motes drift across the board, one pixel every two painted frames, and go out when the run is lost
         pictures, vx, vy = MOTE_PICTURES[ti], MOTES[ti][1], MOTES[ti][2]
         for i in range(MOTE_SPRITES):
@@ -1441,7 +1466,7 @@ class Bs02(ARCBaseGame):
             self._put(s, pictures[(phase + i) % len(pictures)])
             s.set_position(MARGIN + (i * 23 + index * 11 + vx * (self.beat // 2)) % 56,
                            MARGIN + (i * 37 + index * 5 + vy * (self.beat // 2)) % 56)
-            s.set_visible(not dim)
+            s.set_visible(True)
         # the danger squares
         want = set(view["zone"])
         for cell in self._zone_on - want:
@@ -1455,22 +1480,22 @@ class Bs02(ARCBaseGame):
         for cell, kind in _things(m).items():
             held_now = view["lit"][plate_at[cell]] if cell in plate_at else False
             self._put(refs[f"thing_{cell[0]}_{cell[1]}"],
-                      _thing_tile(ti, m, cell, kind, held_now, cell == active, phase), dim)
-        self._put(refs["exit"], door_tile(ti, view["live"], phase), dim)
+                      _thing_tile(ti, m, cell, kind, held_now, cell == active, phase))
+        self._put(refs["exit"], door_tile(ti, view["live"], phase))
         # guards: they laugh when they have caught you
         for i, (gx, gy) in enumerate(view["g"]):
             s = refs[f"guard_{i}"]
             grin = (1 + view["tick"] % 2) if view["grin"][i] else 0
             self._put(s, guard_tile(min(view["loads"][i], 6), view["face"][i], grin,
                                     phase == 3 and not view["walk"] and not grin, view["walk"]))
-            s.set_position(gx, gy - RISE)
+            s.set_position(gx, gy - RISE - view["lift"][i])
         # you
         s = refs["player"]
         pose = view["pose"]
-        tick = view["tick"] if pose in ("hit", "fall", "puff") else phase
+        tick = view["tick"] if pose in ("hit", "fall", "puff", "bump") else phase
         self._put(s, player_tile(pose, view["look"], view["walk"], tick, THEMES[ti]["scarf"],
                                  phase == 3 and pose == "idle" and not view["walk"]))
-        s.set_position(view["p"][0], view["p"][1] - RISE - (1 if pose == "cheer" else 0))
+        s.set_position(view["p"][0], view["p"][1] - RISE - (2 if pose == "cheer" else 0))
         # the loads in flight, the sparks
         for i in range(FLIGHTS):
             s = refs[f"flight_{i}"]
@@ -1484,7 +1509,7 @@ class Bs02(ARCBaseGame):
             if i < len(view["fx"]):
                 kind, fx, fy = view["fx"][i]
                 self._put(s, star_tile(kind))
-                off = 2 if kind[1] == "5" else 1
+                off = {"5": 2, "3": 1}.get(kind[1], 0)
                 s.set_position(fx - off, fy - off)
                 s.set_visible(True)
             else:
@@ -1493,6 +1518,13 @@ class Bs02(ARCBaseGame):
         self._put(refs["border"], border_tile(ti, view["ring"], phase))
         full = MOVE_BUDGET[index]
         self._put(refs["fuse"], fuse_tile(full, self.moves_left, phase))
+        # the iris: a black curtain with a round window that closes on the door (a win) or on the fallen heap (a loss)
+        s = refs["curtain"]
+        if view["iris"] is None:
+            s.set_visible(False)
+        else:
+            self._put(s, curtain_tile(*view["iris"]))
+            s.set_visible(True)
 
     # -- one action --------------------------------------------------------------------------
     def step(self) -> None:
@@ -1534,20 +1566,40 @@ class Bs02(ARCBaseGame):
         op, og, ol, ot = old
         np_, ng, nl, nt = new
         bumped = np_ == op
-        moved = any(a != b for a, b in zip(og, ng))
-        steps = 3 if (not bumped or moved) else 2
         before = self._settled(old)
         after = self._settled(new)
         frames = []
-        for k in range(1, steps + 1):
+        foot_old = (_pixel(op)[0] + 3, _pixel(op)[1] + 6)
+        foot_new = (_pixel(np_)[0] + 3, _pixel(np_)[1] + 6)
+        for k in (1, 2, 3):
             v = dict(before)
-            v["p"] = _lerp(_pixel(op), _pixel(np_), k, steps)
-            if bumped and k < steps:
-                v["p"] = (v["p"][0] + move[0], v["p"][1] + move[1])
-            v["g"] = [_lerp(_pixel(a), _pixel(b), k, steps) for a, b in zip(og, ng)]
+            v["p"] = _lerp(_pixel(op), _pixel(np_), k, 3)
+            v["g"] = [_lerp(_pixel(a), _pixel(b), k, 3) for a, b in zip(og, ng)]
             v["face"] = [self._heading(m, a, b, f) for a, b, f in zip(og, ng, before["face"])]
+            v["lift"] = [2 if (a != b and k < 3) else 0 for a, b in zip(og, ng)]     # guards hop as they step
             v["walk"] = k % 2
             v["flights"] = []
+            if not bumped:
+                if k < 3:                        # a hop between squares, with a round puff of dust left where you pushed off
+                    v["p"] = (v["p"][0], v["p"][1] - 2)
+                    v["fx"] = [("d5w" if k == 1 else "d3w", foot_old[0] - move[0] * 2, foot_old[1] - move[1] * 2)]
+                else:                            # the landing: a puff trails behind and two specks skip out to the sides
+                    side = (move[1], move[0])
+                    v["fx"] = [("d5w", foot_new[0] - move[0] * 4, foot_new[1] - move[1] * 4),
+                               ("d1w", foot_new[0] - move[0] * 3 + side[0] * 4, foot_new[1] - move[1] * 3 + side[1] * 4),
+                               ("d1w", foot_new[0] - move[0] * 3 - side[0] * 4, foot_new[1] - move[1] * 3 - side[1] * 4)]
+            elif k < 3:                          # blocked: you lean hard into the edge, wince, and a bright star bursts there
+                v["pose"] = "bump"
+                v["tick"] = k
+                lean = 2 if k == 1 else -1
+                v["p"] = (v["p"][0] + move[0] * lean, v["p"][1] + move[1] * lean)
+                edge = (_pixel(op)[0] + 3 + move[0] * 7, _pixel(op)[1] + 3 + move[1] * 7)
+                side = (move[1], move[0])
+                if k == 1:
+                    v["fx"] = [("s5w", edge[0], edge[1])]
+                else:
+                    v["fx"] = [("s3w", edge[0] + side[0] * 3, edge[1] + side[1] * 3),
+                               ("s3w", edge[0] - side[0] * 3, edge[1] - side[1] * 3), ("d1y", edge[0], edge[1])]
             frames.append(v)
         # a load in flight: the giver shows what it keeps, the taker what it had
         if flows and not dies:
@@ -1562,13 +1614,18 @@ class Bs02(ARCBaseGame):
                                       (_pixel(ng[j])[0] + 2, _pixel(ng[j])[1] + 3), k, 4) for i, j in flows]
                 frames.append(v)
             frames.append(dict(after))
-        else:
-            last = dict(after)
-            frames[-1] = last
+        elif not (dies or won):
+            if bumped:
+                frames[-1] = dict(after)         # the recoil is the last feedback frame; then you stand still
+            else:
+                frames.append(dict(after))
+        if not dies and not won:
+            frames += self._pops(m, before, after, ot, nt)
         if dies:
             grin = [grid_distance(g, np_) <= 1 for g in ng]
             centre = (after["p"][0] + 3, after["p"][1] + 2)
             plan = (("hit", self.HIT_FRAMES), ("fall", self.FALL_FRAMES), ("puff", self.PUFF_FRAMES))
+            closing = (30, 21, 14, 10, 8)        # the iris closes on the heap during the fall and the poof
             tick = 0
             for pose, count in plan:
                 for _ in range(count):
@@ -1580,7 +1637,6 @@ class Bs02(ARCBaseGame):
                     v["lit"] = [False] * len(after["lit"])
                     v["live"] = False
                     v["zone"] = []
-                    v["shade"] = pose != "hit"          # the world goes dark once you are down
                     if pose == "hit":          # shake
                         v["p"] = (after["p"][0] + (1 if tick % 2 else -1), after["p"][1])
                     elif pose == "fall":       # dizzy stars circle the heap
@@ -1590,13 +1646,14 @@ class Bs02(ARCBaseGame):
                     else:                      # the poof, and stars flung out
                         v["fx"] = [("s3w" if n % 2 else "s3y", centre[0] + dx, centre[1] + dy)
                                    for n, (dx, dy) in enumerate(((-6, -3), (6, -3), (-5, 3), (5, 3)))]
-                    if pose != "hit":          # it rains on the dark world
-                        v["fx"] = v["fx"] + [("rl", MARGIN + (i * 13 + 5) % 56, MARGIN + (i * 17 + tick * 6) % 50) for i in range(10)]
+                    if pose != "hit":
+                        v["iris"] = (centre[0], centre[1], closing[tick - self.HIT_FRAMES])
                     tick += 1
                     frames.append(v)
             frames.append({"end": "lose"})
         elif won:
             door = (_pixel(m["exit"])[0] + 3, _pixel(m["exit"])[1] + 3)
+            closing = (30, 20, 10, 0)             # the iris closes on the door, to black, before the next world
             for pose, count in (("cheer", 1), ("half", 2), ("gone", 4)):
                 for n in range(count):
                     v = dict(after)
@@ -1616,12 +1673,32 @@ class Bs02(ARCBaseGame):
                         v["fx"] += [("s3" + SPARK_COLOURS[(a + n + 3) % 6],
                                      door[0] + round(r * 0.6 * math.cos((a + 0.5) * math.pi / 2)),
                                      door[1] + round(r * 0.6 * math.sin((a + 0.5) * math.pi / 2))) for a in range(4)]
-                        # and a shower of small stars falls across the whole world
-                        v["fx"] += [("s3" + SPARK_COLOURS[(a + n) % 6], MARGIN + (a * 19 + n * 7) % 56,
-                                     MARGIN + (a * 11 + n * 12) % 52) for a in range(10)]
+                        v["iris"] = (door[0], door[1], closing[n])
                     frames.append(v)
             frames.append({"end": "next"})
         return frames
+
+    @staticmethod
+    def _pops(m, before, after, old_target, new_target) -> list:
+        """Quick glints where something just switched on: a pad that now holds its load, the door waking, a bell rung."""
+        spots = []
+        for i, (cell, _) in enumerate(m["plates"]):
+            if after["lit"][i] and not before["lit"][i]:
+                spots.append((_pixel(cell), "y"))
+        if after["live"] and not before["live"]:
+            spots.append((_pixel(m["exit"]), "c"))
+        if new_target is not None and new_target != old_target:
+            spots.append((_pixel(m["bells"][new_target]), "o"))
+        if not spots:
+            return []
+        out = []
+        for r in (2, 4):
+            v = dict(after)
+            v["fx"] = [("s3" + colour, p[0] + 3 + dx * r, p[1] + 3 + dy * r)
+                       for p, colour in spots[:3] for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1))]
+            out.append(v)
+        out.append(dict(after))
+        return out
 
     @staticmethod
     def _heading(m, a, b, face):

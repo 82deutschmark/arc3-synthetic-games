@@ -1,5 +1,23 @@
 # Author: Claude Sonnet 5.5 (the art pass); Claude Opus 5.5 High and Mark Barney (dz01, the game and its rules)
 # Date: 07-November-2026
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round A, calm and readable: quieter ground, thinner pocket walls, fewer props and
+#   little lives, one clean win curtain. Rules and levels untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round C, final look: the curtain that lifts on a new level keeps the colour of the
+#   level just won, a long fall glides all the way down (the in-between frames are spread through the fall, not spent on its
+#   first rows), and hearts, stars and cells bob while creatures breathe. Rules, levels and inputs untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round B, animation: the hero and the view glide between cells (a little hop on a
+#   sideways step, dust behind it, a puff on landing), loose sand and finds drop smoothly, a dig swings a glove and the dust cloud opens
+#   then thins, a cracked stone shivers, a bump rebounds with a small burst, a pickup rises from the head, and the next level lifts
+#   out from behind the closing curtain. At most about fifteen frames an action. Rules, levels and inputs untouched.
+# CHANGELOG: 07-Nov-2026 (Claude Sonnet 5.5) -- round B, animation only. The rules' frames are dressed after the fact (dress, drop_set):
+#   in-between frames slide the hero and scroll the view a few pixels at a time, loose cells drop a step a frame, step dust and
+#   landing dust, a dig lunge, a two-frame dust cloud, a shivering crack, a bump rebound and burst, a rising pickup icon, a
+#   shorter win (flash, sink, three-drop curtain) and a curtain that lifts on the next level. Frame budget kept near fifteen.
+# CHANGELOG: 07-Nov-2026 (Claude Sonnet 5.5) -- round A, calm and readable. Sand, earth and bedrock keep at most one small mark a
+#   tile in their own darker step (no white speckle, no dense glitter); bricks lose their busy bevel; bedrock lost its dotted
+#   look and its bright rims; pocket walls are thinner solid lines; buried finds are one every third row in a quiet single
+#   colour; the sky dither is one clean stripe; fewer scenery props, drifting lives (six, three) and confetti (twenty); the
+#   moon level's pink band is white dust; the win curtain is one calm sheet. Rules untouched.
 # CHANGELOG: 07-Nov-2026 (Claude Sonnet 5.5) -- pass 3, variety and life. Sand drawn in strata bands (a second colour ramp
 #   per level, so no level is one flat field); level four's white moon dust is now blue and pink; a horizon of two hill
 #   layers shaped per level in the sky strip; big buried set pieces (ribs, mushroom, arch, rocket, skull, crystals, a
@@ -588,37 +606,42 @@ def _hash(a, b=0, c=0):
 # S = speck colour, set per level. Three sand patterns so a wall of sand never tiles in a line.
 # Four ways to draw sand (a theme picks one): ripples, grass tufts, gravel, glitter. S = the theme's speck colour.
 SAND_STYLES = {
-    "dune": (["YYYYYYY", "YOOYYYY", "YYYOOYY", "YYYYYYY", "YYYYYWY", "YSYYYYY", "YYYYYYY"],
-             ["YYYYYYY", "YYYYYSY", "YYWYYYY", "YYYYYYY", "YOOYYYY", "YYYOOYY", "YYYYYYY"],
-             ["YYYYYYY", "YYYYYYY", "YSYYYOO", "YYYYOYY", "YYYYYYY", "YYWYYYY", "YYYYYSY"],
-             ["YYYYYYY", "YOOOYYY", "YYYYYYW", "YYYYYYY", "YYSYOOO", "YYYYYYY", "YYYYYYY"],
-             ["YYYYYYY", "YYYYYYY", "YWYYYYY", "YYYYSYY", "OOOYYYY", "YYYYYYO", "YYYYYYY"]),
-    "tuft": (["YYYYYYY", "YYYYYYY", "YSYSYYY", "YYSYYYY", "YYYYYOY", "YYYYYYY", "YYWYYYY"],
-             ["YYYYYYY", "YYYYSYS", "YYYYYSY", "YYYYYYY", "YOYYYYY", "YYYWYYY", "YYYYYYY"],
-             ["YYYYYYY", "YWYYYYY", "YYYYYYY", "YYYYSYS", "YYYYYSY", "YYOYYYY", "YYYYYYY"],
-             ["YYYYYYY", "YYYYYYY", "YSYSYWY", "YYSYYYY", "YYYYYYY", "YYYYSYS", "YYYYYSY"],
-             ["YYYYYYY", "YYYSYSY", "YYYYSYY", "YYYYYYY", "YOYYYYY", "YYYYYWY", "YYYYYYY"]),
-    "gravel": (["YYYYYYY", "YSSYYYY", "YYYYYYY", "YYYYSSY", "YYYYYYY", "YOOYYYY", "YYYYYYY"],
-               ["YYYYYYY", "YYYYYSS", "YYYYYYY", "YSSYYYY", "YYYYYYY", "YYYYOOY", "YYYYYYY"],
-               ["YYYYYYY", "YYSSYYY", "YYYYYYY", "YYYYYOO", "YSSYYYY", "YYYYYYY", "YYYWYYY"],
-               ["YYYYYYY", "YYYYYYY", "YOOYSSY", "YYYYYYY", "YYYYYYY", "YSSYYOO", "YYYYYYY"],
-               ["YYYYYYY", "YSYYYYY", "YSSYYYY", "YYYYYYY", "YYYYSOO", "YYYYYYY", "YYWYYYY"]),
-    "glitter": (["YYYYYYY", "YYYWYYY", "YYWSWYY", "YYYWYYY", "YYYYYYY", "YYYYYOY", "YOYYYYY"],
-                ["YYYYYYY", "YYYYYYY", "YYWYYYY", "YWSWYYY", "YYWYYYY", "YYYYYYY", "YYYYOYY"],
-                ["YYYYYYY", "YYYYWYY", "YYYWSWY", "YYYYWYY", "YYYYYYY", "YOYYYYY", "YYYYYYY"],
-                ["YYYYYYY", "YYYYYYY", "YOYYYYY", "YYYWYYY", "YYWSWYY", "YYYWYYY", "YYYYYOY"],
-                ["YYYYYYY", "YWYYYYY", "WSWYYYY", "YWYYYYY", "YYYYYYY", "YYYYYWY", "YYYYWSW"]),
+    # Calm sand (round A): at most one small mark a tile and some tiles bare, marks in the sand's own darker step, so the
+    # field reads as one warm surface and the things that matter stand out on it.
+    "dune": (["YYYYYYY", "YYYYYYY", "YOOYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+             ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYOOY", "YYYYYYY"],
+             ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYOOYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+             ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+             ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"]),
+    "tuft": (["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYSYSYY", "YYYSYYY", "YYYYYYY", "YYYYYYY"],
+             ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+             ["YYYYYYY", "YYYYYYY", "YSYSYYY", "YYSYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+             ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+             ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"]),
+    "gravel": (["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYOOY", "YYYYYYY", "YYYYYYY"],
+               ["YYYYYYY", "YYYYYYY", "YOOYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+               ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+               ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYOOYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+               ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"]),
+    "glitter": (["YYYYYYY", "YYYWYYY", "YYWSWYY", "YYYWYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+                ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYSYY", "YYYYYYY"],
+                ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+                ["YYYYYYY", "YYYYYYY", "YYOYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"],
+                ["YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY", "YYYYYYY"]),
 }
 EARTH_ROWS = (
-    ["OOOOOOO", "OMMOOOO", "OMMOOPO", "OOOOOOO", "OOOOMMO", "OPOOMMO", "OOOOOOO"],
-    ["OOOOOOO", "OOPOOOO", "GOOOMMM", "OGOOOOO", "OOOOOPO", "MMMOOOO", "OOOOOOO"],
+    ["OOOOOOO", "OOOOOOO", "OOOOOOO", "OOOOMMO", "OOOOMMO", "OOOOOOO", "OOOOOOO"],
+    ["OOOOOOO", "OOOOOOO", "OOPOOOO", "OOOOOOO", "OOOOOOO", "OMMOOOO", "OOOOOOO"],
 )
-# bevelled brick: H high light, R face, M shadow, K joint
+# bevelled brick, kept plain: H high light (top and left edge only), R face, M shadow, K joint
 ROCK_ROWS = (
-    ["KKKKKKK", "KHHHHRK", "KHRRRMK", "KHRRMMK", "KRRMMMK", "KRMMMMK", "KKKKKKK"],
-    ["KKKKKKK", "KHHRRRK", "KHRKRMK", "KRRRRMK", "KRMRMMK", "KRMMMMK", "KKKKKKK"],
+    ["KKKKKKK", "KHHHHHK", "KHRRRMK", "KHRRRMK", "KHRRRMK", "KMMMMMK", "KKKKKKK"],
+    ["KKKKKKK", "KHHHHRK", "KHRRRMK", "KRRRRMK", "KRRRRMK", "KRMMMMK", "KKKKKKK"],
 )
-BED_ROWS = ["BBBBBBB", "BKKKKKK", "BKPKKPK", "BKKKKKK", "BKKPKKK", "BKKKKPK", "BKKKKKK"]
+# bedrock: a dark block with its rim colour; at most one glint, and some blocks bare
+BED_ROWS = (["BBBBBBB", "BKKKKKK", "BKKKKKK", "BKKPKKK", "BKKKKKK", "BKKKKKK", "BKKKKKK"],
+            ["BBBBBBB", "BKKKKKK", "BKKKKKK", "BKKKKKK", "BKKKKKK", "BKKKKKK", "BKKKKKK"],
+            ["BBBBBBB", "BKKKKKK", "BKKKKKK", "BKKKKKK", "BKKKKKK", "BKKKKKK", "BKKKKKK"])
 CRACK_A = ["...K...", "..K....", "...K...", "....K..", "...K...", "..K....", "...K..."]
 CRACK_B = [".......", "K......", ".K...K.", "..K.K..", "...K...", "....K..", "......."]
 
@@ -655,53 +678,49 @@ THEMES = [
          earth_c=(C_ORANGE, C_MAROON, C_YELLOW, C_RED), peb=C_MAROON, eg=C_GREEN, ecrack=C_BLACK,
          rock_c=(C_RED, C_MAROON, C_ORANGE), crack=C_YELLOW, rim=C_BLUE, frame=C_ORANGE,
          deco=("bone", "shell", "gem"), glint=C_YELLOW, shade=C_LBLUE, mote="firefly", mmove="twinkle",
-         props=[("sun", 47, 0, "twirl"), ("cloud", 6, 0, "drift"), ("cactus", 20, 1, "still"), ("cactus", 36, 2, "still")]),
+         props=[("sun", 47, 0, "twirl"), ("cloud", 6, 0, "drift"), ("cactus", 24, 1, "still")]),
     dict(name="oasis", sand="tuft", sky=C_LBLUE, sky2=C_WHITE, hill=C_YELLOW, pa=C_BLUE, pb=C_PURPLE, wall="waves",
          sand_c=(C_YELLOW, C_ORANGE, C_WHITE, C_MAROON), spk=C_GREEN,
          earth_c=(C_GREEN, C_BLUE, C_YELLOW, C_BLUE), peb=C_YELLOW, eg=C_WHITE, ecrack=C_BLACK,
          rock_c=(C_BLUE, C_PURPLE, C_LBLUE), crack=C_YELLOW, rim=C_GREEN, frame=C_GREEN,
          deco=("fish", "bubble", "root"), glint=C_WHITE, shade=C_LBLUE, mote="bubble", mmove="rise",
-         props=[("palm", 3, 0, "sway"), ("palm", 19, 0, "sway2"), ("cloud", 30, 1, "drift"), ("sun", 50, 0, "twirl")]),
+         props=[("palm", 5, 0, "sway"), ("palm", 22, 0, "sway2"), ("sun", 50, 0, "twirl")]),
     dict(name="ruins", sand="gravel", sky=C_ORANGE, sky2=C_YELLOW, hill=C_MAROON, pa=C_MAROON, pb=C_BLACK, wall="bricks",
          sand_c=(C_ORANGE, C_MAROON, C_YELLOW, C_RED), spk=C_WHITE,
          earth_c=(C_PURPLE, C_MAROON, C_MAG, C_BLACK), peb=C_YELLOW, eg=C_ORANGE, ecrack=C_YELLOW,
-         rock_c=(C_YELLOW, C_ORANGE, C_WHITE), crack=C_BLACK, rim=C_LBLUE, frame=C_YELLOW,
+         rock_c=(C_YELLOW, C_ORANGE, C_YELLOW), crack=C_BLACK, rim=C_BLUE, frame=C_YELLOW,
          deco=("coin", "pot", "bone"), glint=C_YELLOW, shade=C_YELLOW, mote="dust", mmove="drift",
-         props=[("sun", 38, 1, "twirl"), ("pillar", 7, 0, "still"), ("broken", 15, 2, "still"), ("bird", 24, 1, "fly")]),
+         props=[("sun", 40, 1, "twirl"), ("pillar", 8, 0, "still"), ("bird", 24, 1, "fly")]),
     dict(name="moon", sand="glitter", sky=C_BLUE, sky2=C_PURPLE, hill=C_BLACK, pa=C_BLACK, pb=C_PURPLE, wall="craters",
          sand_c=(C_WHITE, C_LBLUE, C_YELLOW, C_BLUE), spk=C_BLUE,
          earth_c=(C_BLUE, C_PURPLE, C_LBLUE, C_BLACK), peb=C_LBLUE, eg=C_LBLUE, ecrack=C_WHITE,
          rock_c=(C_PURPLE, C_BLACK, C_LBLUE), crack=C_YELLOW, rim=C_PURPLE, frame=C_LBLUE,
          deco=("gem", "crystal", "bone"), glint=C_LBLUE, shade=C_BLUE, mote="sparkle", mmove="twinkle",
-         props=[("moon", 46, 1, "still"), ("star", 6, 1, "blink0"), ("star", 18, 3, "blink1"), ("star", 34, 0, "blink2"),
-                ("cactus", 24, 1, "still")]),
+         props=[("moon", 46, 1, "still"), ("star", 8, 1, "blink0"), ("star", 34, 0, "blink2")]),
     dict(name="ember", sand="gravel", sky=C_MAG, sky2=C_ORANGE, hill=C_MAROON, pa=C_BLACK, pb=C_MAROON, wall="cracks",
          sand_c=(C_RED, C_MAROON, C_ORANGE, C_BLACK), spk=C_YELLOW,
          earth_c=(C_MAROON, C_BLACK, C_RED, C_BLACK), peb=C_ORANGE, eg=C_YELLOW, ecrack=C_BLACK,
-         rock_c=(C_ORANGE, C_RED, C_YELLOW), crack=C_BLACK, rim=C_ORANGE, frame=C_RED,
+         rock_c=(C_ORANGE, C_RED, C_ORANGE), crack=C_BLACK, rim=C_ORANGE, frame=C_RED,
          deco=("ember", "bone", "coin"), glint=C_ORANGE, shade=C_MAG, mote="ember", mmove="rise",
-         props=[("sun", 24, 0, "twirl"), ("pyramid", 3, 1, "still"), ("pyramid", 42, 2, "still"), ("bird", 12, 0, "fly")]),
+         props=[("sun", 24, 0, "twirl"), ("pyramid", 4, 1, "still"), ("bird", 38, 0, "fly")]),
     dict(name="grove", sand="tuft", sky=C_GREEN, sky2=C_LBLUE, hill=C_GREEN, pa=C_BLACK, pb=C_GREEN, wall="roots",
          sand_c=(C_GREEN, C_BLUE, C_YELLOW, C_BLUE), spk=C_YELLOW,
          earth_c=(C_MAROON, C_BLACK, C_ORANGE, C_BLACK), peb=C_ORANGE, eg=C_GREEN, ecrack=C_ORANGE,
          rock_c=(C_PURPLE, C_MAROON, C_MAG), crack=C_YELLOW, rim=C_GREEN, frame=C_YELLOW,
          deco=("root", "gem", "shell"), glint=C_WHITE, shade=C_GREEN, mote="firefly", mmove="drift",
-         props=[("palm", 8, 0, "sway"), ("flower", 22, 4, "bloom"), ("flower", 31, 5, "bloom2"), ("sun", 48, 0, "twirl"),
-                ("moth", 40, 2, "fly")]),
+         props=[("palm", 8, 0, "sway"), ("flower", 28, 4, "bloom"), ("sun", 48, 0, "twirl")]),
     dict(name="dusk", sand="glitter", sky=C_PURPLE, sky2=C_MAG, hill=C_BLACK, pa=C_MAROON, pb=C_PURPLE, wall="dots",
          sand_c=(C_PURPLE, C_BLUE, C_MAG, C_BLUE), spk=C_PINK,
          earth_c=(C_BLUE, C_BLACK, C_LBLUE, C_BLACK), peb=C_LBLUE, eg=C_LBLUE, ecrack=C_BLACK,
-         rock_c=(C_ORANGE, C_MAROON, C_YELLOW), crack=C_WHITE, rim=C_MAG, frame=C_MAG,
+         rock_c=(C_ORANGE, C_MAROON, C_YELLOW), crack=C_WHITE, rim=C_BLUE, frame=C_MAG,
          deco=("gem", "crystal", "fish"), glint=C_PINK, shade=C_PURPLE, mote="sparkle", mmove="twinkle",
-         props=[("moon", 8, 1, "still"), ("star", 24, 1, "blink1"), ("star", 40, 3, "blink0"), ("pillar", 50, 0, "still"),
-                ("bird", 30, 2, "fly")]),
+         props=[("moon", 8, 1, "still"), ("star", 28, 1, "blink1"), ("bird", 40, 2, "fly")]),
     dict(name="crystal", sand="glitter", sky=C_BLACK, sky2=C_BLUE, hill=C_BLUE, pa=C_BLACK, pb=C_BLUE, wall="facets",
          sand_c=(C_LBLUE, C_BLUE, C_WHITE, C_PURPLE), spk=C_WHITE,
          earth_c=(C_BLUE, C_PURPLE, C_LBLUE, C_BLACK), peb=C_LBLUE, eg=C_WHITE, ecrack=C_WHITE,
-         rock_c=(C_MAG, C_PURPLE, C_PINK), crack=C_WHITE, rim=C_LBLUE, frame=C_LBLUE,
+         rock_c=(C_MAG, C_PURPLE, C_PINK), crack=C_WHITE, rim=C_BLUE, frame=C_LBLUE,
          deco=("crystal", "gem", "crystal"), glint=C_WHITE, shade=C_BLACK, mote="shine", mmove="twinkle",
-         props=[("star", 5, 1, "blink0"), ("star", 15, 4, "blink2"), ("star", 27, 0, "blink1"), ("star", 44, 3, "blink0"),
-                ("moon", 52, 0, "still"), ("comet", 34, 2, "fly")]),
+         props=[("star", 6, 1, "blink0"), ("star", 24, 0, "blink1"), ("moon", 52, 0, "still"), ("comet", 36, 2, "fly")]),
 ]
 
 # Pass 3 per-level extras, merged into THEMES: bands = sand colour ramps (base, dark, light, darkest) that alternate every
@@ -715,7 +734,7 @@ _EXTRA = [
     dict(bands=[(C_ORANGE, C_MAROON, C_YELLOW, C_RED), (C_RED, C_MAROON, C_ORANGE, C_BLACK)], horizon="ruins",
          setp=("arch", "arch"), critter=("bat", "flit"), shower="star"),
     dict(sand_c=(C_LBLUE, C_BLUE, C_WHITE, C_PURPLE), spk=C_WHITE,
-         bands=[(C_LBLUE, C_BLUE, C_WHITE, C_PURPLE), (C_PINK, C_MAG, C_WHITE, C_PURPLE)], horizon="moon",
+         bands=[(C_LBLUE, C_BLUE, C_WHITE, C_PURPLE), (C_WHITE, C_LBLUE, C_WHITE, C_BLUE)], horizon="moon",
          setp=("rocket", "rocket"), critter=("alien", "hover"), shower="flake"),
     dict(bands=[(C_RED, C_MAROON, C_ORANGE, C_BLACK), (C_MAG, C_PURPLE, C_PINK, C_BLACK)], horizon="ember",
          setp=("skull", "skull"), critter=("spark", "rise"), shower="ember"),
@@ -794,7 +813,7 @@ def tile_art(th, v, var, open_above, open_below, band=0):
         if v == ROCK2:
             base = _overlay(base, CRACK_B, th["crack"])
         return base
-    return _art(BED_ROWS, {"B": th["rim"], "P": th["glint"]})
+    return _art(BED_ROWS[var % 3], {"B": th["rim"], "P": th["glint"]})
 
 
 # --- things in the ground: hearts, stars, energy cells (two frames each so they twinkle) ----------------------------
@@ -908,9 +927,15 @@ SPARK_BIG = _art([".W.", "WYW", ".W."])
 CARRY = _art([".Y.", "YWY", ".Y."])
 STARCHIP = ["..Y..", ".YWY.", "YYYYY", ".YYY.", ".Y.Y."]
 HEARTCHIP = ["RW.RR", "RRRRR", ".RRR.", "..R.."]
+# Dust kicked up behind a step (two frames, thinning) and puffed out at the feet when he lands; pickups that rise from his head
+DUST_A = _art(["W.W", ".W."])
+DUST_B = _art(["W.W"])
+DUST_L = _art(["W.....W", ".W...W."])
+DUST_ART = (DUST_A, DUST_B, DUST_L)
+GAIN_ART = {"heart": HEARTCHIP, "star": STARCHIP, "energy": ["..Y..", ".YY..", "BYYYB", "..YY.", "..Y.."]}
 GLINT_A = _art([".W.", "WYW", ".W."])
 GLINT_B = _art(["...", ".Y.", "..."])
-# Confetti for a won level: blocks, pluses and streamers in seven colours (21 pictures, cycled over 32 sprites)
+# Confetti for a won level: blocks, pluses and streamers in seven colours (21 pictures, cycled over 20 sprites)
 _CONF_COLOURS = (C_RED, C_YELLOW, C_BLUE, C_GREEN, C_ORANGE, C_PURPLE, C_LBLUE)
 CONFETTI = ([_recolour2(["XXX", "XXX"], c) for c in _CONF_COLOURS] + [_recolour2([".X.", "XXX", ".X."], c) for c in _CONF_COLOURS]
             + [_recolour2(["XX", "X.", "X.", "XX"], c) for c in _CONF_COLOURS])
@@ -962,23 +987,23 @@ def _wall_on(kind, x, y, seed):
     level's hollows look like their own place: strata, ripples, old bricks, craters, cracks, roots, facets or stars."""
     n = _hash(x, y, seed)
     if kind == "strata":                    # wavy layers of rock
-        return (y + int(1.8 * math.sin(x / 5.0 + y // 7))) % 7 == 3 and n % 5 != 0
+        return (y + int(1.8 * math.sin(x / 5.0 + y // 7))) % 14 == 3
     if kind == "waves":                     # the slow ripple of a flooded cave
-        return (y + int(2 * math.sin(x / 3.0 + y // 7))) % 6 == 0 and n % 6 != 0
+        return (y + int(2 * math.sin(x / 3.0 + y // 7))) % 12 == 0
     if kind == "bricks":                    # a tomb wall: rows of bricks, every other row shifted
-        return y % 4 == 3 or (x + (4 if (y // 4) % 2 else 0)) % 9 == 0
+        return y % 8 == 7 or ((y // 8) * 5 + x) % 14 == 0
     if kind == "craters":                   # a ring round a hash-chosen centre in each 14-pixel block
         bx, by = x // 14, y // 14
         hh = _hash(bx, by, seed)
         r2 = (x - (bx * 14 + 3 + hh % 8)) ** 2 + (y - (by * 14 + 3 + (hh >> 4) % 8)) ** 2
-        return (4 <= r2 <= 9 and (hh >> 9) % 3 == 0) or n % 41 == 0
+        return 4 <= r2 <= 9 and (hh >> 9) % 3 == 0
     if kind == "cracks":                    # hot seams
-        return ((x + 2 * y) % 17 == 0 and n % 3 != 0) or ((x - 3 * y) % 23 == 0 and n % 3 == 0)
+        return (x + 2 * y) % 23 == 0 and n % 2 == 0
     if kind == "roots":                     # hanging roots
-        return (x + int(2.5 * math.sin(y / 4.0 + x // 9))) % 8 == 0 and n % 4 != 0
+        return (x + int(2.5 * math.sin(y / 4.0 + x // 9))) % 12 == 0 and n % 3 != 0
     if kind == "facets":                    # crystal planes
-        return ((x + y) % 11 == 0 or (x - y) % 13 == 0) and n % 5 != 0
-    return n % 19 == 0                      # dots: a scatter of small stars
+        return ((x + y) % 21 == 0 or (x - y) % 25 == 0) and n % 4 != 0
+    return n % 97 == 0                      # dots: a faint scatter of small stars
 
 
 def _horizon(kind, x, seed):
@@ -1009,10 +1034,10 @@ def backdrop_art(th, h, seed):
         for x in range(W * CELL):
             if _wall_on(th["wall"], x, y, seed):
                 pic[y, x] = th["pb"]
-    for rr in range(1, h):                  # small buried finds, shown only where a pocket opens
-        n = _hash(rr, 5, seed)
+    for rr in range(1, h, 3):               # small buried finds, shown only where a pocket opens: one every third row, drawn in
+        n = _hash(rr, 5, seed)              # the wall's own second colour so they sit in the wall instead of shouting from it
         kind = th["deco"][n % len(th["deco"])]
-        art = _art(DECO[kind])
+        art = np.where(_art(DECO[kind]) >= 0, th["pb"] if th["pb"] != th["pa"] else th["sky"], -1).astype(np.int8)
         x = (n >> 5) % (W * CELL - art.shape[1] - 2) + 1
         y = rr * CELL + (n >> 11) % (CELL - art.shape[0] + 1)
         sub = pic[y:y + art.shape[0], x:x + art.shape[1]]
@@ -1026,9 +1051,7 @@ def backdrop_art(th, h, seed):
         pic[y:y + art.shape[0], x:x + art.shape[1]] = np.where(art >= 0, art, sub)
     for x in range(W * CELL):               # the sky strip: sky, a lighter band, two layers of hills shaped per level
         pic[0:CELL, x] = th["sky"]
-        for y in (2, 3, 4):
-            if (x + y) % 2 == 0 and y >= 3 - (x % 3 == 0):
-                pic[y, x] = th["sky2"]
+        pic[2, x] = th["sky2"]            # one clean lighter stripe instead of a dither
         far = _horizon(th["horizon"], x, seed)
         near = 1 + (1 if math.sin(x / 3.1 + seed) > 0.3 else 0)
         pic[CELL - far:CELL, x] = th["pb"] if th["pb"] != th["sky"] else th["sky2"]
@@ -1048,14 +1071,14 @@ def finish_tile(col, flash):
 
 
 def curtain_art(th, k):
-    """The wipe that closes a won level: the theme's sky colours coming down in stripes, k quarters of the way, with a
+    """The wipe that closes a won level: the theme's sky colour coming down as one calm sheet, k quarters of the way, with a
     scalloped white hem."""
     pic = np.full((VIEW * CELL, PANEL_X), -1, dtype=np.int8)
     rows = 16 * k
     full = rows >= VIEW * CELL
     for x in range(PANEL_X):
         hem = VIEW * CELL - 1 if full else rows - 1 - 3 * ((x // 4) % 2)      # alternate 4-pixel scallops, 3 pixels apart
-        pic[:hem + 1, x] = th["sky"] if (x // 4) % 2 == 0 else th["sky2"]
+        pic[:hem + 1, x] = th["sky"]            # one calm colour (no stripes); the white scalloped hem leads it down
         if not full:
             pic[hem, x] = C_WHITE
     return pic
@@ -1123,9 +1146,11 @@ def _open(st, row, col):
 
 
 class Scene:
-    def __init__(self, level, theme_index, h):
+    def __init__(self, level, theme_index, h, curtain_index=None):
         self.level, self.h = level, h
         self.th = THEMES[theme_index % len(THEMES)]
+        # the curtain that lifts on a new level is still the colour of the level just won
+        self.cth = THEMES[(theme_index if curtain_index is None else curtain_index) % len(THEMES)]
         self.seed = theme_index + 3
         self.shown = {}                    # id(sprite) -> the key last drawn on it, so a sprite is redrawn only on change
         self.pic_cache = {}
@@ -1138,21 +1163,22 @@ class Scene:
             sp = self._add(scenery_art(kind, 0, th), kind, x, y, L_SCENE, ["scenery", motion])
             self.props.append((sp, kind, x, y, motion, k))
         self.motes = []                    # the pocket's little lives: they live under the ground, so show only in hollows
-        for i in range(12):
+        for i in range(6):
             n = _hash(i, 9, self.seed)
             wy = CELL * (1 + n % max(1, h - 1)) + (n >> 9) % 5
             self.motes.append((self._add(self._mote(0), th["mote"], 0, 0, L_SCENE, ["mote"]), (n >> 4) % (PANEL_X - 4) + 1, wy))
         ck, self.cmove = th["critter"]      # the little inert creatures: they live under the ground like the motes
         self.critter_kind = ck
         self.critters = []
-        for i in range(6):
+        for i in range(3):
             n = _hash(i, 21, self.seed)
             wy = CELL * (2 + n % max(1, h - 2)) + (n >> 9) % 4
             self.critters.append((self._add(self._critter(0), ck, 0, 0, L_SCENE, ["critter"]), (n >> 4) % PANEL_X, wy))
-        self.tiles = [[self._add(tile_art(th, SAND, 0, False, False), "ground", c * CELL, vr * CELL, L_GROUND, ["ground"])
-                       for c in range(W)] for vr in range(VIEW)]
-        self.items = [[self._add(HEART_A_ART, "item", c * CELL, vr * CELL, L_ITEM, ["item"], False)
-                       for c in range(W)] for vr in range(VIEW)]
+        # the pools hold a spare row above and below (index vr + 1) so the view can glide between rows
+        self.tiles = [[self._add(tile_art(th, SAND, 0, False, False), "ground", c * CELL, (vr - 1) * CELL, L_GROUND, ["ground"])
+                       for c in range(W)] for vr in range(VIEW + 2)]
+        self.items = [[self._add(HEART_A_ART, "item", c * CELL, (vr - 1) * CELL, L_ITEM, ["item"], False)
+                       for c in range(W)] for vr in range(VIEW + 2)]
         self.hero = self._add(hero_art(), "hero", 0, 0, L_HERO, ["hero"])
         self.cloud = self._add(_art(SADCLOUD[0]), "sad-cloud", 0, 0, L_FX, ["fx"], False)
         self.poof = self._add(POOF_A, "poof", 0, 0, L_FX, ["fx"], False)
@@ -1160,15 +1186,17 @@ class Scene:
         self.sparks = [self._add(SPARK_DOT, "spark", 0, 0, L_FX, ["fx"], False) for _ in range(8)]
         self.cursor = self._add(CURSOR, "cursor", 0, 0, L_FX, ["fx"], False)
         self.impact = self._add(IMPACT, "impact", 0, 0, L_FX, ["fx"], False)
+        self.dust = self._add(DUST_A, "dust", 0, 0, L_VEIL, ["fx"], False)
+        self.gain = self._add(CARRY, "pickup-icon", 0, 0, L_FX, ["fx"], False)
         self.mark = self._add(MARK, "mark", 0, 0, L_FX, ["fx"], False)
         self.point = self._add(MARK, "point", 0, 0, L_FX, ["fx"], False)
         self.puffs = [self._add(PUFF_A, "puff", 0, 0, L_FX, ["fx"], False) for _ in range(VIEW + 1)]
         self.veil = self._add(dim_art(), "run-over-veil", 0, 0, L_VEIL, ["fx"], False)
-        self.curtain = self._add(curtain_art(th, 1), "curtain", 0, 0, L_CURTAIN, ["fx"], False)
+        self.curtain = self._add(curtain_art(self.cth, 1), "curtain", 0, 0, L_CURTAIN, ["fx"], False)
         # a themed shower (coins, leaves, flakes...) falls among the confetti, and three fireworks open over the shaft
         rain = _art(SHOWERS[th["shower"]])
         self.confetti = [self._add(rain if i % 2 else CONFETTI[i % len(CONFETTI)], "confetti", 0, 0, L_CONFETTI, ["fx"], False)
-                         for i in range(32)]
+                         for i in range(20)]
         self.fireworks = [self._add(burst_art(1, C_YELLOW), "firework", 0, 0, L_CONFETTI, ["fx"], False) for _ in range(3)]
         self.ghost = self._add(_art(GHOST), "ghost", 0, 0, L_FX, ["fx"], False)
         # the panel
@@ -1223,30 +1251,33 @@ class Scene:
 
     # -- one frame ----------------------------------------------------------------------------------------------------
     def show(self, st, fx, broken, tick, budget):
-        th, h = self.th, st.h
+        h = st.h
         top = cam_top(st.r, h)
+        tw = fx.get("tw")                  # a slide between two cells: the view glides with the hero
+        cy = top * CELL if not tw else int(round(((1 - tw[2]) * top + tw[2] * cam_top(tw[0], h)) * CELL))
         win = bool(fx.get("finish") or fx.get("sink") or fx.get("fade"))
         flash = fx.get("finish", 0) % 2 == 1
         poof = fx.get("poof", 0)
         self.dim = bool(broken or poof >= 3)
         self._look(self.backdrop, 0, lambda: self.backdrop_pic, True)
-        self.backdrop.set_position(0, -top * CELL)
-        self._scenery(top, tick)
-        for vr in range(VIEW):
-            row = top + vr
+        self.backdrop.set_position(0, -cy)
+        self._scenery(cy, tick)
+        trow, sub = divmod(cy, CELL)
+        for vr in range(-1, VIEW + 1):
+            row = trow + vr
             for col in range(W):
-                self._cell(st, fx, row, col, vr, tick, flash)
-        self._hero(st, fx, top, tick, broken, win, poof)
-        self._effects(st, fx, top, tick, win)
+                self._cell(st, fx, row, col, vr, tick, flash, sub)
+        self._hero(st, fx, cy, tick, broken, win, poof)
+        self._effects(st, fx, cy, tick, win)
         self._panel(st, fx, budget)
         self._vis(self.veil, broken or poof >= 3)
-        k = fx.get("fade", 0)
+        k = fx.get("fade", 0) or fx.get("open", 0)
         self._vis(self.curtain, bool(k))
         if k:
-            self._look(self.curtain, k, lambda: self._cached(("curtain", k), lambda: curtain_art(th, k)))
+            self._look(self.curtain, k, lambda: self._cached(("curtain", k), lambda: curtain_art(self.cth, k)))
 
-    def _scenery(self, top, tick):
-        th, sky = self.th, top == 0
+    def _scenery(self, cy, tick):
+        th, sky = self.th, cy < 16
         for sp, kind, x, y, motion, k in self.props:
             self._vis(sp, sky)
             if not sky:
@@ -1267,10 +1298,10 @@ class Scene:
             elif motion.startswith("bloom"):
                 frame = (tick // 6 + (motion == "bloom2")) % 2
             self._look(sp, (kind, frame), lambda: self._cached(("sc", kind, frame, th["name"]), lambda: scenery_art(kind, frame, th)), True)
-            sp.set_position(px, py)
+            sp.set_position(px, py - cy)
         mv = th["mmove"]
         for i, (sp, gx, wy) in enumerate(self.motes):
-            x, y = gx, wy - top * CELL
+            x, y = gx, wy - cy
             if mv == "rise":                # bubbles and embers climb, then start again low
                 y -= (tick // 2 + 5 * i) % 12
             elif mv == "drift":             # dust and fireflies wander in small loops
@@ -1284,7 +1315,7 @@ class Scene:
                 sp.set_position(x, y)
         mv = self.cmove
         for i, (sp, gx, wy) in enumerate(self.critters):
-            x, y = gx, wy - top * CELL
+            x, y = gx, wy - cy
             if mv in ("walk", "swim"):      # crawl or swim along, wrapping round the shaft; fish also bob
                 x = (gx + (1 if i % 2 else -1) * tick // 2) % (PANEL_X + 10) - 5
                 if mv == "swim":
@@ -1305,9 +1336,19 @@ class Scene:
                 self._look(sp, frame, lambda: self._cached(("k", th["name"], frame), lambda: self._critter(frame)), True)
                 sp.set_position(x, y)
 
-    def _cell(self, st, fx, row, col, vr, tick, flash):
-        tile, item = self.tiles[vr][col], self.items[vr][col]
+    def _cell(self, st, fx, row, col, vr, tick, flash, sub):
+        tile, item = self.tiles[vr + 1][col], self.items[vr + 1][col]
         h, th = st.h, self.th
+        px, py = col * CELL, vr * CELL - sub
+        if (row, col) in fx.get("mv", ()):                      # a loose cell dropping one row, a step per frame
+            py += int(round(CELL * fx["tw"][2]))
+        if fx.get("crack") == (row, col):                       # the cracked stone shivers
+            px += fx.get("j", 1)
+        tile.set_position(px, py)
+        if (vr == VIEW and sub == 0) or row < 0:                # the spare rows show only while the view is between rows
+            self._vis(tile, False)
+            self._vis(item, False)
+            return
         if row == h:
             self._vis(tile, True)
             self._look(tile, ("fin", col, flash), lambda: finish_tile(col, flash), True)
@@ -1333,7 +1374,7 @@ class Scene:
             frame = (tick // 3 + row + col) % 2
             self._vis(item, True)
             self._look(item, (v, frame), lambda: self._cached(("i", v, frame), lambda: _art(ITEM_ROWS[v][frame])), True)
-            item.set_position(col * CELL, vr * CELL)
+            item.set_position(px, py - frame)                 # a gentle bob with its twinkle
             self._name(item, ("heart", "star", "energy-cell")[ITEMS.index(v)])
         elif is_cre(v):
             out, red, dx, dy, flat = 0, False, 0, 0, False
@@ -1353,17 +1394,29 @@ class Scene:
             self._look(item, (v, out, red, flat, blink, look),
                        lambda: self._cached(("c", v, out, red, flat, blink, look),
                                             lambda: creature_art(v, out, red, blink, flat, look)), True)
-            item.set_position(col * CELL + dx, vr * CELL + dy)
+            item.set_position(px + dx, py + dy - ((tick // 3 + row + 2 * col) % 4 == 0))   # a small breath: hops up now and then
             self._name(item, CRE_NAMES[cre_stripes(v)])
         else:
             self._vis(item, False)
 
-    def _hero(self, st, fx, top, tick, broken, win, poof):
-        hx, hy = st.c * CELL, (st.r - top) * CELL
+    def _hero(self, st, fx, cy, tick, broken, win, poof):
+        fr, fc, tw = st.r, st.c, fx.get("tw")
+        if tw:                                         # sliding to the next cell, with a little hop when he walks sideways
+            fr, fc = st.r + (tw[0] - st.r) * tw[2], st.c + (tw[1] - st.c) * tw[2]
+        hx, hy = int(round(fc * CELL)), int(round(fr * CELL)) - cy
+        if tw and tw[0] == st.r:
+            hy -= int(round(8 * tw[2] * (1 - tw[2])))
         if fx.get("lean"):
             dr, dc = fx["lean"]
             hx, hy = hx + dc, hy + dr
+        if fx.get("recoil"):                           # bounced back off the wall
+            dr, dc = fx["recoil"]
+            hx, hy = hx - dc, hy - dr
         sign = 0
+        dig = fx.get("cursor") or fx.get("crack") or (fx.get("puff") or (None,))[0]
+        if dig and not poof and fx.get("pk", 0) == 0:  # a swing at the cell he digs: a glove out and a lunge
+            hx, hy = hx + (dig[1] > st.c) - (dig[1] < st.c), hy + (dig[0] > st.r) - (dig[0] < st.r)
+            sign = (dig[1] > st.c) - (dig[1] < st.c) if dig[0] == st.r else 0
         if fx.get("punch") and not poof:
             pr, pc = fx["punch"]
             hx, hy = hx + 2 * (pc - st.c), hy + 2 * (pr - st.r)
@@ -1404,6 +1457,18 @@ class Scene:
             fr = (tick // 3) % 2
             self._look(self.cloud, fr, lambda: _art(SADCLOUD[fr]))
             self.cloud.set_position(hx - 1, hy - 4)
+        # a pickup: the thing rises from his head and fades
+        gn = fx.get("gain")
+        self._vis(self.gain, bool(gn) and not poof)
+        if gn and not poof:
+            self._look(self.gain, gn[0], lambda: _art(GAIN_ART[gn[0]]))
+            self.gain.set_position(hx + 1, hy - 3 - 2 * gn[1])
+        # dust: kicked up behind a step, or puffed out at the feet on landing
+        du = fx.get("dust")
+        self._vis(self.dust, bool(du) and not poof)
+        if du and not poof:
+            self._look(self.dust, du[0], lambda: DUST_ART[du[0]])
+            self.dust.set_position(hx + du[1], hy + 5 + du[2])
         # a carried star: a small twinkle over his head
         carrying = st.star and not st.lit and not poof and not broken
         self._vis(self.carry, carrying)
@@ -1423,33 +1488,38 @@ class Scene:
                 self._look(sp, (big, light), lambda: SPARK_BIG if big else _recolour(SPARK_DOT, C_YELLOW))
                 sp.set_position(hx + sx - (1 if big else 0), hy + sy - (1 if big else 0))
 
-    def _effects(self, st, fx, top, tick, win):
+    def _effects(self, st, fx, cy, tick, win):
+        top = cy // CELL
         poof = fx.get("poof", 0)
         cur = fx.get("cursor")
         self._vis(self.cursor, bool(cur))
         if cur:
-            self.cursor.set_position(cur[1] * CELL, (cur[0] - top) * CELL)
+            self.cursor.set_position(cur[1] * CELL, cur[0] * CELL - cy)
         pf = fx.get("puff", ())
         for i, sp in enumerate(self.puffs):
             on = i < len(pf)
             self._vis(sp, on)
             if on:
-                self._look(sp, (tick // 2) % 2, lambda: PUFF_A if (tick // 2) % 2 == 0 else PUFF_B)
-                sp.set_position(pf[i][1] * CELL, (pf[i][0] - top) * CELL)
+                pk = fx.get("pk", 0)           # the dust cloud opens (A) and thins as it lifts (B)
+                self._look(sp, pk, lambda: PUFF_B if pk else PUFF_A)
+                sp.set_position(pf[i][1] * CELL, pf[i][0] * CELL - cy - pk * 2)
         mk = fx.get("mark")
         on = bool(mk) and 0 <= mk[1] < W and top <= mk[0] < top + VIEW
         self._vis(self.mark, on)
         if on:
-            self.mark.set_position(mk[1] * CELL + 2, (mk[0] - top) * CELL + 2)
+            self.mark.set_position(mk[1] * CELL + 2, mk[0] * CELL - cy + 2)
         pt = fx.get("point")
         self._vis(self.point, bool(pt))
         if pt:
             self.point.set_position(pt[0] - 1, pt[1] - 1)
         sp_ = fx.get("spark")
-        self._vis(self.impact, bool(sp_) and not poof)
+        bonk = fx.get("bonk")                  # a blocked move: a small burst on the wall where he bumped
+        self._vis(self.impact, (bool(sp_) or bool(bonk)) and not poof)
         if sp_ and not poof:
             pr, pc = sp_
-            self.impact.set_position((st.c + pc) * CELL // 2 + 1, (st.r + pr - 2 * top) * CELL // 2 + 1)
+            self.impact.set_position((st.c + pc) * CELL // 2 + 1, (st.r + pr) * CELL // 2 - cy + 1)
+        elif bonk and not poof:
+            self.impact.set_position(st.c * CELL + 1 + 4 * bonk[1], st.r * CELL - cy + 1 + 4 * bonk[0])
         # the win: confetti raining down the shaft over the flashing floor and the closing curtain
         stage = 0
         if fx.get("finish"):
@@ -1505,6 +1575,86 @@ def _toward(st, r, c):
 
 
 HEART_A_ART = _art(HEART_A)
+FRAME_BUDGET = 15                # about this many frames to an action, however much is going on
+
+
+def drop_set(p, c):
+    """The cells of state p that drop one row on the way to the next fall frame c (the same bottom-up rule as settle: a loose
+    cell with air under it falls, and everything loose stacked above it falls too; the hero holds up whatever rests on him)."""
+    out = set()
+    for col in range(W):
+        for row in range(p.h - 2, -1, -1):
+            if falls(p.g[row * W + col]) and p.g[(row + 1) * W + col] == AIR and not (p.r, p.c) == (row + 1, col) == (c.r, c.c):
+                rr = row
+                while rr >= 0 and falls(p.g[rr * W + col]):
+                    out.add((rr, col))
+                    rr -= 1
+    return frozenset(out)
+
+
+def dress(old, frames, room):
+    """Turn the rules' frames into a livelier run, never touching the rules: a pickup rises from his head, a bump rebounds, a
+    cracked stone shivers and a dug cell's dust cloud opens then thins (all kept short), then, with the frames that are left, the
+    hero and the view glide between cells (two frames a step, one a fall tick), loose cells drop smoothly and dust trails him."""
+    out = []
+    for s, fx in frames:
+        out.append((s, fx))
+        if fx.get("pick") and room > 1:
+            room -= 2
+            for k in (1, 2):
+                out.append((s, {"gain": (fx["pick"], k), "slot_flash": fx["pick"] == "star"}))
+        if fx.get("lean"):
+            out.append((s, {"recoil": fx["lean"]}))
+            fx["bonk"] = fx["lean"]
+        if fx.get("crack") and room > 0:
+            room -= 1
+            out.append((s, dict(fx, j=-1)))
+            fx["j"] = 1
+        if fx.get("puff") and room > 0:
+            room -= 1
+            fx["pk"] = 0
+            out.append((s, dict(fx, pk=1)))
+    # which steps get in-between frames: all of them if the room allows, else an even spread through the whole run (so a long fall
+    # glides from top to bottom, not just in its first rows)
+    wants, prev = [], old
+    for i, (s, fx) in enumerate(out):
+        moved = (prev.r, prev.c) != (s.r, s.c)
+        fall = bool(fx.get("fall"))
+        mv = drop_set(prev, s) if fall else frozenset()
+        if moved or mv:
+            wants.append((i, 1 if fall else 2))
+        prev = s
+    need = sum(n for _, n in wants)
+    if need > room:
+        keep, acc = set(), 0.0
+        share = max(0, room) / max(1, len(wants))
+        for i, n in wants:
+            acc += share
+            if acc >= 1:
+                acc -= 1
+                keep.add(i)
+        wants = [(i, n) for i, n in wants if i in keep]
+    give = dict(wants)
+    glided, prev = [], old
+    for i, (s, fx) in enumerate(out):
+        moved = (prev.r, prev.c) != (s.r, s.c)
+        fall = bool(fx.get("fall"))
+        mv = drop_set(prev, s) if fall else frozenset()
+        n = give.get(i, 0)
+        if n and room >= n:
+            room -= n
+            for k in range(1, n + 1):
+                t = k / (n + 1)
+                tfx = {"tw": (s.r, s.c, t), "mv": mv}
+                if moved and (s.r - prev.r) == 0 and not fall:
+                    tfx["dust"] = (k - 1, int(round(-(s.c - prev.c) * CELL * t)) + 2, 1 + int(round(8 * t * (1 - t))))
+                glided.append((prev, tfx))
+        nxt = out[i + 1][1] if i + 1 < len(out) else {}
+        if fall and moved and not nxt.get("fall"):
+            fx = dict(fx, dust=(2, 0, 0))               # the landing: a puff at his feet
+        glided.append((s, fx))
+        prev = s
+    return glided
 
 
 # ---------------------------------------------------------------------------
@@ -1521,6 +1671,8 @@ class Dz02(ARCBaseGame):
         self._busy = False
         self.broken = False            # the run is over: the veil is down and the hero is slumped
         self.tick = 0                  # advances once per frame shown; drives the gentle idle motion
+        self._wipe_in = False          # a level was just won: the next level opens from behind the curtain
+        self._opening = []             # the curtain's remaining quarters while it lifts
         self.scene = None
         levels = [Level(sprites=[], grid_size=(64, 64), data=ldef, name=ldef["name"]) for ldef in LEVELS]
         super().__init__(game_id="dz02", levels=levels,
@@ -1536,7 +1688,10 @@ class Dz02(ARCBaseGame):
         self._end = None
         self._busy = False
         self.broken = False
-        self.scene = Scene(level, self.level_index, self.st.h)
+        self.scene = Scene(level, self.level_index, self.st.h, self.level_index - 1 if self._wipe_in else None)
+        if self._wipe_in:                       # the curtain that closed on the last level is still down; it lifts in step()
+            self._wipe_in, self._opening = False, [3, 2, 0]
+            self.v = (self.st, {"open": 4})
         self._show()
 
     def view_state(self):
@@ -1571,12 +1726,15 @@ class Dz02(ARCBaseGame):
             self._end = None
             return
         new, res = act(self.st, a, cell, rec=lambda s, fx: frames.append((s.copy(), dict(fx))))
+        # frames left for the glide: the win's flash, sink and curtain are seven frames, the next level's opening wipe four more
+        room = FRAME_BUDGET - 1 - len(frames) - (11 if res.outcome == "win" else 0) - (5 if res.outcome == "die" else 0)
+        frames = dress(self.st, frames, room)
         if res.outcome == "win":
-            for k in range(1, 5):
+            for k in range(1, 3):
                 frames.append((new.copy(), {"finish": k}))
-            for k in range(1, 4):
+            for k in range(1, 3):
                 frames.append((new.copy(), {"finish": 4, "sink": 2 * k}))
-            for k in range(1, 5):
+            for k in range(2, 5):                       # the curtain comes down over the shaft in three drops
                 frames.append((new.copy(), {"sink": 7, "fade": k}))
             self._end = "next"
         elif res.outcome == "die":
@@ -1607,6 +1765,14 @@ class Dz02(ARCBaseGame):
             self.complete_action()
             return
 
+        if self._opening:
+            k = self._opening.pop(0)
+            self.v = (self.st, {"open": k}) if k else None
+            self._show()
+            if not self._opening:
+                self.complete_action()
+            return
+
         if not self._busy:
             self._busy = True
             self._begin()
@@ -1634,7 +1800,10 @@ class Dz02(ARCBaseGame):
         self._busy = False
         self.v = None
         if end == "next":
-            self.next_level()                   # builds the next level's scene and shows its opening picture
+            self._wipe_in = not self.is_last_level()
+            self.next_level()                   # builds the next level's scene; its curtain then lifts frame by frame
+            if self._wipe_in:
+                return
         elif end == "die":
             self.broken = True
             self.lose()

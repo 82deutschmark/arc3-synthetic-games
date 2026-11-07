@@ -10,11 +10,29 @@
 #          braziers, seal gates, portal and flags are live sprites; a lit shrine throws sparks and a melting seal
 #          crumbles into sparkles; reaching the sanctum bursts into stars; a lost run turns the world red and dim and
 #          leaves the pilgrim collapsed with spiral eyes. No letter, digit or word is drawn anywhere.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round A (calm and readable): quieter backdrop, so the pilgrim, patrols, seals,
+#          thorns, shrines and counter stand out; rules and animations unchanged.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round B (animation): a hop with a dust puff on every step and a settle,
+#          a bump-and-puff on a blocked step, a cheer on a lit shrine, a screen shake and knocked-up pilgrim on a catch,
+#          patrol footfalls, an iris closing on the portal between levels; fewer drifting creatures and shrine motes.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round C (final look): a loss now plays out over several beats (the pilgrim
+#          lands, the world dims, a storm cloud sails in and the rain starts), a refused step into a closed seal flashes
+#          the seal and sparks in its colour (a wall still gives the plain white puff), the first frame of a new level opens
+#          in an iris, water, flags and the portal move on every frame, the night level is dimmer, the snow and path
+#          speckle and the dune and swamp tree dots are gone. Rules unchanged.
 # SRP/DRY check: Pass. Parts: (1) palette and sprite helpers, (2) the six themes, (3) sprite sheets, (4) se01's
 #          rules and map, unchanged, (5) the pre-drawn world pictures, one per theme, (6) the camera window that draws
 #          live sprites over the world cut-out, (7) the game class, whose rule code is se01's. Nothing here is shared
 #          with another game; the art never feeds a rule.
 # CHANGELOG
+# 07-Nov-2026 (Claude Sonnet 5.5): se02, art pass 7, round C (final look): staged loss (land, dim, cloud sails in, rain), a
+#   seal refusal that flashes the seal in its colour, an opening iris on a new level, frame-by-frame water, flags and portal,
+#   a dimmer night, calmer snow and path ground, and plain-coloured dune and swamp trees. Rules untouched.
+# 07-Nov-2026 (Claude Sonnet 5.5): se02, art pass 6, round B (animation): step hop and dust, blocked-step bump and puff,
+#   shrine-lit cheer, catch shake, patrol footfalls, closing iris on a cleared level; calmer drift and motes. Rules untouched.
+# 07-Nov-2026 (Claude Sonnet 5.5): se02, art pass 5, round A (calm and readable): quieter floors and paths (rare decals,
+#   textures and pebbles), a third of the trees left out, solid tree shade instead of a dither, far fewer plants, critters
+#   and drifting life. Rules and animations untouched.
 # 07-Nov-2026 (Claude Sonnet 5.5): se02, art pass 4 (polish and check): every level opening, a walk, a win, a loss and the
 #   first frame after RESET were rendered and read; a dead variable removed (pyflakes clean); rules checked against se01 by
 #   random play, including from each later level. No rule or picture change needed.
@@ -155,9 +173,9 @@ THEMES = [
          pond=dict(water=LBL, deep=BLU, hi=WHT, shore=WHT, plant=LBL, bloom=WHT),
          slab=LBL, joint=BLU, wall=(MAR, BLK, LBL), roof=(WHT, LBL, BLU), glow=LBL, life="snow",
          props=("snowman", "igloo"), decor=("drift", "frostflower", "icicle"), house=2),
-    dict(name="night", path=MAR, path_lo=BLK, path_hi=RED, speck=ORG, base=BLK, base_lo=BLU, base_hi=PUR, rim=BLU,
-         t0=dict(k=BLK, a=BLU, h=LBL, d=PUR, e=YEL, f=WHT, t=MAR, u=BLK),
-         t1=dict(k=PUR, a=MAR, h=PNK, d=BLK, e=YEL, f=WHT, t=PUR, u=BLK, y=YEL), trees=("pine", "dead"),
+    dict(name="night", path=MAR, path_lo=BLK, path_hi=RED, speck=ORG, base=BLK, base_lo=MAR, base_hi=MAR, rim=PUR,
+         t0=dict(k=BLK, a=PUR, h=BLU, d=MAR, e=PUR, f=PUR, t=MAR, u=BLK),
+         t1=dict(k=BLK, a=MAR, h=PUR, d=BLK, e=MAR, f=MAR, t=PUR, u=BLK, y=YEL), trees=("pine", "dead"),
          pond=dict(water=BLU, deep=BLK, hi=WHT, shore=PUR, plant=PUR, bloom=LBL),
          slab=PUR, joint=BLU, wall=(PUR, BLK, MAG), roof=(BLU, BLK, LBL), glow=LBL, life="firefly",
          props=("crystal", "owl"), decor=("crystalbit", "glowcap", "star"), house=3),
@@ -195,8 +213,8 @@ EXTRA = dict(
                    (dict(a=GRN, h=LBL, e=RED, f=YEL), dict(t=MAR, y=YEL, u=BLK))),
               thin=0, decor_rate=3, tex="snow", ptex="snow", acc=BLU, life2="glint", confetti=(WHT, LBL, BLU, YEL, WHT),
               flora=("snowbush", "icecrystal"), critter="penguin", pet="glint", smoke=(BLU, LBL)),
-    night=dict(alt=((dict(a=PUR, h=LBL, e=WHT), dict(t=MAR, y=RED)),
-                    (dict(a=GRN, h=LBL, d=BLU, e=YEL, f=WHT), dict(t=BLU, u=BLK, y=WHT))),
+    night=dict(alt=((dict(a=MAR, h=PUR, e=MAR), dict(t=MAR, y=RED)),
+                    (dict(a=BLU, h=PUR, d=MAR, e=BLU, f=BLU), dict(t=PUR, u=BLK, y=YEL))),
                thin=0, decor_rate=4, tex="star", ptex="night", acc=LBL, life2="twinkle", confetti=(YEL, LBL, WHT, MAG, PUR),
                flora=("glowshroom", "starflower"), critter="bat", pet="stars", smoke=(LBL, WHT)),
     dune=dict(alt=((dict(a=GRN, h=WHT, e=PNK, f=YEL), dict(a=GRN, h=LBL, e=YEL)),
@@ -210,6 +228,14 @@ EXTRA = dict(
 )
 for _theme in THEMES:
     _theme.update(EXTRA[_theme["name"]])
+
+# Round A (calm): the season tables above stay as drawn, but how much of each is scattered is turned down. decor_rate: one
+# forest cell in n carries a decal (was one in three or four); thin: every n-th tree is left out so the woods have room
+# to breathe (was none, or three on the dunes).
+CALM = dict(meadow=dict(decor_rate=14, thin=3), autumn=dict(decor_rate=14, thin=3), snow=dict(decor_rate=16, thin=3),
+            night=dict(decor_rate=16, thin=3), dune=dict(decor_rate=16, thin=3), swamp=dict(decor_rate=14, thin=3))
+for _theme in THEMES:
+    _theme.update(CALM[_theme["name"]])
 
 # colour pairs used by the shaded sprites: a darker and a lighter cousin of each hue
 DARKER = {WHT: LBL, LBL: BLU, BLU: PUR, PNK: MAG, MAG: PUR, RED: MAR, ORG: RED, YEL: ORG, GRN: BLK, PUR: BLK}
@@ -272,11 +298,12 @@ def tree_art(theme: dict, which: int, variant: int, sway: int = 0, cv: int = 0) 
         shape = ALT[shape]
     rows = SHAPES[shape]
     rows = tuple("." * 10 for _ in range(TREE_H - len(rows))) + tuple(rows)
-    soft = tuple("".join("a" if ch == "d" and (x + y) % 2 == 0 else ch for x, ch in enumerate(r))
-                 for y, r in enumerate(rows))                          # the dark is laid on as a dither
+    soft = rows                                                        # the shade is a solid band (a dither read as noise)
     table = dict(theme["t0" if which == 0 else "t1"])
     if cv:
         table.update(theme["alt"][cv - 1][which])
+    if theme["name"] in ("dune", "swamp"):                          # round C: no little colour dots on these crowns
+        table.update(e=table["a"], f=table["a"])
     spr = art(soft, table)
     if variant % 2:
         spr = flip(spr)
@@ -1277,8 +1304,8 @@ def _stands(salt: int, rate: int) -> list:
     return out
 
 
-DRESS = _stands(23, 3)
-CRITS = _stands(29, 5)
+DRESS = _stands(23, 9)                    # round A: far fewer plants and animals, each with room round it
+CRITS = _stands(29, 8)
 
 
 def _paint_forest_cell(patch, theme, wx, wy, edges):
@@ -1288,7 +1315,7 @@ def _paint_forest_cell(patch, theme, wx, wy, edges):
     if k % theme["decor_rate"] == 0:
         kind = theme["decor"][(k >> 4) % len(theme["decor"])]
         blit(patch, 0, 0, decal_art(kind, theme, k >> 9))
-    elif k % 2:                                           # the season's own floor texture
+    elif k % 16 == 0 and theme["name"] != "snow":        # the season's own floor texture, rarer still in round C (none on snow)
         blit(patch, 0, 0, tex_art(FLOOR_TEX, theme["tex"], theme, k >> 4, "floor"))
     n, s, w, e = edges
     if n:
@@ -1310,13 +1337,11 @@ def _paint_path_cell(patch, theme, wx, wy, stone_n, stone_w):
     a cast shadow under every forest or wall edge to the north and west."""
     patch[:] = theme["path"]
     k = _hash(wx, wy, 11)
-    if k % 11 == 0:
+    if theme["name"] != "snow" and k % 53 == 0:          # round C: rarer pebbles, and none at all on the snow
         y, x = (k >> 3) % 2 + 1, (k >> 6) % 2
         patch[y, x:x + 2] = theme["path_hi"] if theme["path_hi"] != theme["path"] else theme["speck"]
         patch[y + 1, x:x + 2] = theme["speck"]
-    elif k % 13 == 5:
-        patch[(k >> 4) % 2 + 1, 1:3] = theme["path_hi"]
-    elif k % 9 == 2:                                      # a faint texture of the season (grass hairs, leaves, cobbles...)
+    elif theme["name"] not in ("snow", "night") and k % 41 == 2:     # a faint texture of the season (grass hairs, leaves, cobbles...)
         blit(patch, 0, 0, tex_art(PATH_TEX, theme["ptex"], theme, k >> 4, "path"))
     if stone_n:
         patch[0, :] = theme["path_lo"]
@@ -1448,6 +1473,7 @@ class Window(RenderableUserDisplay):
     def __init__(self, game: "Se02") -> None:
         super().__init__()
         self._g = game
+        self._k = 3                                              # the frame of the slide being drawn (set each render)
 
     def _lerp(self, a: int, b: int, k: int) -> int:
         """Pixel position a third (k=1), two thirds (k=2) or all (k=3) of the way from cell a to cell b."""
@@ -1455,7 +1481,7 @@ class Window(RenderableUserDisplay):
 
     # ---- the pieces, each a small method so render_interface reads as the layer list ----------------------------------
     def _ponds(self, frame, theme, camx, camy):
-        phase = self._g.beat % 4
+        phase = (self._g.beat * 3 + self._k) // 2 % 4          # round C: water moves on every frame, not once a move
         for (wx, wy) in PONDS:
             x, y = wx * CELL - 2 - camx, wy * CELL - camy
             shape = (wx // 2 + wy // 2) % 2
@@ -1522,6 +1548,8 @@ class Window(RenderableUserDisplay):
             colour = lv.seals[(wx, wy)]
             same = lambda c: c in live and lv.seals[c] == colour
             tile = seal_tile(colour, not same((wx, wy - 1)), not same((wx, wy + 1)), not same((wx - 1, wy)))
+            if g.refused_seal and k < 3 and colour == lv.seals.get(g.refused_seal):   # a refused closed seal: its whole gate flashes
+                tile[tile == SEAL_HUE[colour]] = (WHT if SEAL_HUE[colour] != WHT else YEL) if k == 1 else SEAL_LIGHT[colour]
             if colour == g.just and k < 3:
                 drop = 30 if k == 1 else 65
                 for ty in range(CELL):
@@ -1548,9 +1576,9 @@ class Window(RenderableUserDisplay):
             size = 0
             if i in g.lit:
                 size = (2, 4, 6)[k - 1] if (i == g.just and k < 3) else 6
-            blit(frame, x - 1, y - 6, cached(("brazier", size, g.beat % 2), lambda: brazier(size, g.beat)))
+            blit(frame, x - 1, y - 6, cached(("brazier", size, (g.beat * 3 + k) // 2 % 2), lambda: brazier(size, (g.beat * 3 + k) // 2)))
             if size == 6:                                          # a lit dais breathes: four gold motes round the bowl
-                for ox, oy in ((-3, 2), (6, 2), (-2, 4), (5, 4)):
+                for ox, oy in ((-3, 2), (6, 2)):
                     dot(frame, x + ox, y + oy, YEL if (g.beat + ox) % 2 else theme["glow"])
             if size == 6:                                          # two embers rise and fade over the beat
                 for j in range(2):
@@ -1559,17 +1587,17 @@ class Window(RenderableUserDisplay):
             if i == g.just and k < 3:
                 sparkle(frame, x + 2, y - 4, k, theme["glow"])
 
-    def _sanctum(self, frame, camx, camy):
+    def _sanctum(self, frame, camx, camy, k):
         """The portal on the win cell, and a banner on every roof."""
         g = self._g
         sx, sy = GROUND.sanctum
-        blit(frame, sx * CELL - 2 - camx, sy * CELL - 2 - camy, cached(("portal", g.beat % 12), lambda: portal_art(g.beat)))
+        blit(frame, sx * CELL - 2 - camx, sy * CELL - 2 - camy, cached(("portal", (g.beat * 3 + k) % 12), lambda: portal_art(g.beat * 3 + k)))
         theme = THEMES[g.level_index % len(THEMES)]
         for bx, by, ry in SHRINE_BOXES:
             x, y = bx * CELL + 1 - camx, ry * CELL - 5 - camy
             if -6 < x < SCREEN and -6 < y < PLAY_H:
                 colour = YEL if (bx, by) == GROUND.sanctum else theme["glow"]
-                blit(frame, x, y, cached(("flag", colour, g.beat % 2), lambda: flag_art(colour, g.beat)))
+                blit(frame, x, y, cached(("flag", colour, (g.beat * 3 + k) // 2 % 2), lambda: flag_art(colour, (g.beat * 3 + k) // 2)))
 
     def _houses(self, frame, theme, camx, camy, k):
         """Life in the buildings: candle-lit windows that flicker, a puff of chimney smoke that climbs and fades, and over
@@ -1609,7 +1637,7 @@ class Window(RenderableUserDisplay):
         """A few things that drift and do nothing: seen only over the forest, hidden behind it when they cross a path."""
         g = self._g
         t = g.beat * 3 + k
-        for kind, first, count in ((theme["life"], 0, 6), (theme["life2"], 10, 5)):
+        for kind, first, count in ((theme["life"], 0, 3), (theme["life2"], 10, 2)):
             for i in range(first, first + count):
                 dx, dy = life_position(kind, i, t, g.level_index)
                 sx, sy = (dx - camx // 2) % SCREEN, (dy - camy // 2) % PLAY_H
@@ -1623,6 +1651,7 @@ class Window(RenderableUserDisplay):
         caught, cheers on the portal and lies dizzy and tearful when the run is over; the patrol that caught him throws
         its fists up and grins and hops, the others look down."""
         g = self._g
+        lv_seals = g.arrangement.seals
         drawn = []
         gloater = ruined and any((f["x"], f["y"]) == (g.x, g.y) for f in g.foes)   # a patrol stands over the fallen
         for f in g.foes:
@@ -1634,7 +1663,8 @@ class Window(RenderableUserDisplay):
             hop = -((g.beat + k) % 2) if mood == "glee" and ruined else 0
             spr = cached(("imp", heading, (f["t"] + k // 2) % 2, mood), lambda: imp(heading, f["t"] + k // 2, mood))
             lean = 3 if (mood == "glee" and ruined) else 0                # it steps aside so both can be seen
-            drawn.append((fy, "imp", spr, fx - (spr.shape[1] - 7) // 2 - 2 + lean, fy - 4 + hop))
+            foot = -1 if (k == 2 and (f["px"], f["py"]) != (f["x"], f["y"])) else 0      # a footfall: the patrol lifts a pixel mid-stride
+            drawn.append((fy, "imp", spr, fx - (spr.shape[1] - 7) // 2 - 2 + lean, fy - 4 + hop + foot))
         if g.hit and k < 3 and g.bump is not None:
             half = (g.bump[0] - g.prev_x, g.bump[1] - g.prev_y)
             px = g.prev_x * CELL + int(round(half[0] * CELL * k / 6)) - camx
@@ -1643,12 +1673,29 @@ class Window(RenderableUserDisplay):
             px = self._lerp(g.prev_x, g.x, k) - camx
             py = self._lerp(g.prev_y, g.y, k) - camy
         hop = 0
+        moved = (g.prev_x, g.prev_y) != (g.x, g.y)
+        if g.blocked and k < 3 and not ruined:                # refused step: lean into the wall and bounce back
+            lean = (2, 1)[k - 1]
+            px += g.blocked[0] * lean
+            py += g.blocked[1] * lean
+            seal_c = lv_seals.get(g.refused_seal) if g.refused_seal else None
+            for j, c in enumerate((WHT, LBL, WHT) if seal_c is None else (SEAL_LIGHT[seal_c], WHT, SEAL_LIGHT[seal_c])):   # a small puff where he met the wall (a seal: in its colour)
+                dot(frame, px + 3 + g.blocked[0] * (4 + k) + (j - 1) * (1 + k) * abs(g.blocked[1]),
+                    py + 2 + g.blocked[1] * (3 + k) + (j - 1) * (1 + k) * abs(g.blocked[0]), c)
+        elif moved and not g.flash and not ruined:            # a hop between cells, then the settle, and dust behind
+            hop = (1, 2, 0)[k - 1]
+            if k >= 2:
+                for j in range(2):
+                    dot(frame, px + 3 - g.face[0] * (4 + 2 * j) + (j if g.face[1] else 0),
+                        py + 4 - g.face[1] * (2 + j) - j, theme["path_hi"])
+        if g.hit and k == 2 and not ruined:                   # a catch knocks him up and back
+            hop = 3
         if g.flash:                                         # the pilgrim leaps for joy on the portal
             hop = (0, 3, 5, 3, 1, 0)[min(5, g.FLASH_FRAMES - g.flash)]
         if ruined:
             drawn.append((py, "pilgrim", FALLEN, px - 3 - (2 if gloater else 0), py - 3))
         else:
-            mood = "cheer" if g.flash else ("wince" if (g.hit and k < 3) else
+            mood = "cheer" if (g.flash or (g.just is not None and k < 3)) else ("wince" if (g.hit and k < 3) else
                                             ("blink" if (g.beat * 3 + k) % 13 == 0 else "calm"))
             spr = cached(("pilgrim", g.face, (g.beat + k // 2) % 2, mood), lambda: pilgrim(g.face, g.beat + k // 2, mood))
             drawn.append((py - hop, "pilgrim", spr, px - 2 - (spr.shape[1] - 7) // 2, py - 6 - hop))
@@ -1658,17 +1705,21 @@ class Window(RenderableUserDisplay):
             elif kind == "imp":
                 frame[max(0, min(PLAY_H - 1, foot + 4)), max(0, x + 1):max(0, x + 6)] = theme["path_lo"]
             blit(frame, x, y, spr)
-        if ruined:                                          # dizzy stars circle the fallen pilgrim's head, a tear falls
-            for j in range(3):
-                a = (g.beat + j * 3) % 8
-                dot(frame, px + 1 + DIRS8[a][0] * 3, py - 4 + DIRS8[a][1], YEL)
-            blit(frame, px + 4, py - 3 + (g.beat % 2), FALLEN_TEAR)
-            cx, cy = max(0, px - 5), max(2, py - 16)             # a small storm cloud sulks over him and rains
+        if ruined:                                          # the run-over plays out: the cloud sails in, then it rains
+            lt = self.lt
+            if lt >= 2:                                      # dizzy stars circle the fallen pilgrim's head, a tear falls
+                for j in range(3):
+                    a = (g.beat + j * 3 + lt) % 8
+                    dot(frame, px + 1 + DIRS8[a][0] * 3, py - 4 + DIRS8[a][1], YEL)
+                blit(frame, px + 4, py - 3 + (lt % 2), FALLEN_TEAR)
+            cx = max(0, px - 5) - (0, 8, 4, 0)[min(3, lt)]    # a small storm cloud sails in from the left and drops down
+            cy = max(2, py - 16) - (0, 9, 4, 0)[min(3, lt)]
             blit(frame, cx, cy, CLOUD)
-            for j in range(5):
-                fall = (g.beat * 2 + k + 3 * j) % 9
-                dot(frame, cx + 2 + 2 * j, cy + 6 + fall, BLU if fall % 2 else LBL)
-            if g.beat % 3 == 0:                                  # and now and then a bolt
+            if lt >= 2:
+                for j in range(5):
+                    fall = (3 * lt + 3 * j + g.beat) % 9
+                    dot(frame, cx + 2 + 2 * j, cy + 6 + fall, BLU if fall % 2 else LBL)
+            if lt == 2:                                      # one bolt as it settles
                 for bx, by in ((cx + 6, cy + 6), (cx + 5, cy + 7), (cx + 6, cy + 8), (cx + 5, cy + 9)):
                     dot(frame, bx, by, YEL)
         return px, py
@@ -1678,7 +1729,10 @@ class Window(RenderableUserDisplay):
         lv = g.arrangement
         theme = THEMES[g.level_index % len(THEMES)]
         k = max(1, min(3, g.tick))
-        ruined = bool(g.dead and k >= 3)                    # the run is over: the slide has finished and the world dims
+        self._k = k
+        lt = max(0, g.tick - 3) if g.dead else 0            # round C: beats of the run-over played after the slide
+        self.lt = lt
+        ruined = bool(g.dead and lt >= 1)                   # the pilgrim has gone down and the world dims
         if g.hit and k < 3:                                  # a catch: the picture holds still while the burst plays
             camx, camy = g.prev_cam[0] * CELL, g.prev_cam[1] * CELL
         else:
@@ -1696,10 +1750,11 @@ class Window(RenderableUserDisplay):
         self._seals(frame, lv, camx, camy, k)
         self._houses(frame, theme, camx, camy, k)
         self._shrines(frame, theme, camx, camy, k, False)
-        self._sanctum(frame, camx, camy)
+        self._sanctum(frame, camx, camy, k)
         if ruined:                                           # dim and redden the world, then draw the creatures true
             frame[:PLAY_H] = LOSS_TINT[frame[:PLAY_H]]
-            frame[:PLAY_H][VIGNETTE] = BLK                   # and close the edges in
+            if self.lt >= 2:
+                frame[:PLAY_H][VIGNETTE] = BLK               # and close the edges in
         px, py = self._creatures(frame, theme, camx, camy, k, ruined)
         self._shrines(frame, theme, camx, camy, k, True)
 
@@ -1726,6 +1781,19 @@ class Window(RenderableUserDisplay):
                 reach = r + 3 + (j % 2) * 3
                 sparkle(frame, cx + dx * reach, cy + dy * reach - (g.FLASH_FRAMES - g.flash), 2 - (g.flash > 3),
                         (YEL, theme["glow"], WHT)[j % 3])
+        if g.hit and k < 3:                                  # the catch shakes the whole picture
+            frame[:PLAY_H] = np.roll(frame[:PLAY_H], 1 if k == 1 else -1, axis=1)
+        if g.flash and g.flash <= 2:                         # the iris closes on the portal before the next place
+            yy, xx = np.ogrid[:PLAY_H, :SCREEN]
+            ir = 12 * g.flash
+            frame[:PLAY_H][(xx - cx) ** 2 + (yy - cy) ** 2 > ir * ir] = BLK
+        if g.opening:                                        # a new place: the iris is still opening round the pilgrim
+            yy, xx = np.ogrid[:PLAY_H, :SCREEN]
+            d2 = (xx - (px + 3)) ** 2 + (yy - (py - 2)) ** 2
+            frame[:PLAY_H][d2 > 25 * 25] = BLK
+            frame[:PLAY_H][(d2 <= 25 * 25) & (d2 > 23 * 23)] = theme["glow"]
+        if g.closing:                                        # the iris is shut for the frame before the new place
+            frame[:PLAY_H] = BLK
         if g.hit:
             frame[0, :] = FOE_BODY
             frame[PLAY_H - 1, :] = FOE_BODY
@@ -1760,6 +1828,11 @@ class Se02(ARCBaseGame):
         self.face = (0, 1)
         self.just = None
         self.bump = None
+        self._arriving = False                 # art only: a cleared level is loading, so the next frame opens in an iris
+        self.closing = False                   # art only: the iris has shut and the next level is about to load
+        self.blocked = None                    # art only: the direction of a step that was refused
+        self.refused_seal = None               # art only: the closed seal cell a refused step ran into, if it was a seal
+        self.opening = False                   # art only: the first frame of a new level opens in an iris
         self.tick = 3
         self.tail = 0
         camera = Camera(width=SCREEN, height=SCREEN, background=VOID, letter_box=VOID,
@@ -1781,6 +1854,10 @@ class Se02(ARCBaseGame):
         self.hit = 0
         self.beat = 0                                  # the art's animation phase starts over with the level
         self.face, self.just, self.bump = (0, 1), None, None
+        self.blocked = None
+        self.refused_seal = None
+        self.opening, self._arriving = self._arriving, False   # a level reached by winning opens in an iris; a reset does not
+        self.closing = False
         self.tick, self.tail = 3, 0
         self._follow()
         self.prev_x, self.prev_y = self.x, self.y
@@ -1791,10 +1868,12 @@ class Se02(ARCBaseGame):
         self._enter(self.level_index)
 
     def level_reset(self) -> None:
+        self._arriving = False
         super().level_reset()
         self._enter(self.level_index)
 
     def full_reset(self) -> None:
+        self._arriving = False
         super().full_reset()
         self._enter(self.level_index)
 
@@ -1832,6 +1911,8 @@ class Se02(ARCBaseGame):
             self.flash -= 1
             self.tick = min(3, self.tick + 1)          # the last slide frames play while the door flares
             if self.flash == 0:
+                self.closing = True
+                self._arriving = True
                 self.next_level()
                 self.complete_action()
             return
@@ -1848,6 +1929,9 @@ class Se02(ARCBaseGame):
         self.beat += 1
         self.just = None
         self.bump = None
+        self.blocked = None
+        self.refused_seal = None
+        self.opening = False
         delta = {GameAction.ACTION1: (0, -1), GameAction.ACTION2: (0, 1),
                  GameAction.ACTION3: (-1, 0), GameAction.ACTION4: (1, 0)}.get(
                      self.action.id)
@@ -1866,7 +1950,11 @@ class Se02(ARCBaseGame):
         if GROUND.thorn(nx, ny):                       # a thorn: the pilgrim recoils and the run is lost
             self.bump = (nx, ny)
             self.hit = 1
-        elif self.passable(nx, ny):
+        elif not self.passable(nx, ny):
+            self.blocked = delta                       # art only: a bump and a puff
+            if (nx, ny) in self.arrangement.seals:     # art only: a closed seal answers with a flash, a wall does not
+                self.refused_seal = (nx, ny)
+        else:
             self.x, self.y = nx, ny
             if (nx, ny) in GROUND.shrines:
                 i = GROUND.shrines.index((nx, ny))
@@ -1888,4 +1976,4 @@ class Se02(ARCBaseGame):
         self.dead = bool(self.hit) or self.moves_left <= 0
         self._follow()
         self._sync()
-        self.tick, self.tail = 1, 2                    # play the slide: this frame, then two more
+        self.tick, self.tail = 1, 5 if self.dead else 2     # play the slide: this frame, then two more (a lost run plays three beats more)

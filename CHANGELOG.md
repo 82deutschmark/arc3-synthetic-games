@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1 — 7 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call ("I don't want anything to be too busy. Don't forget about animations."): a second art round on all fifteen rebuilt highlighted games (PT02, TE02, DZ02, LT04, ES02, EH02, FF02, SE02, BS02, WF03, ST02, BL02, KT02, WB03, SS02). Backgrounds are calmer, with quieter textures and fewer, larger props, so the pieces you play stand out. Motion is richer: pieces crouch, leap, slide and land with dust, blocked moves bump and wince, lost runs close in or shake, wins and new levels sweep or iris, and the scenery sways during the frames after each action. The game only draws frames when you act, so nothing moves while it waits for you. LT04's late missions get a further calming pass. Rules are unchanged: random play from every level on each game matches the 0.9.0 and 0.8.9 versions step for step.
+
 ## 0.9.0 — 7 November 2026
 
 Claude Sonnet 5.5, at Mark Barney's call, plan in `docs/07-Nov-2026-featured-art-glowup-plan.md`: the art of the other thirteen highlighted games is rebuilt, four passes each, as new games under new numbers: PT02, TE02, DZ02, LT04, ES02, EH02, FF02, SE02, BS02, WF03, ST02, BL02 and KT02. They take over the highlighted list; the old files stay in `games/`. Every scene is now named sprites with faces and layers, each level has its own backdrop, props and ambient life, and wins and losses are drawn. The files are roughly two to three times longer, almost all of it picture and animation data. The rules are unchanged: random play from every level on old and new gives identical state, level count and offered actions. Not human-tested; the busiest, LT04, may need a readability look.

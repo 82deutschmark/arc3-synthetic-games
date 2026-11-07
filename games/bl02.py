@@ -7,11 +7,31 @@
 #          sky, hills, earth, props and drifting life), a farmer with a face that blinks, looks the way he walks and
 #          cheers or weeps, fruit with leaves, pulleys that turn as the pans move, a pet on the shelf, a burning fuse
 #          for the move allowance, a sparkle burst on a won level and a dimmed red run-over look on a lost one.
+# Updated: 07-November-2026, Claude Sonnet 5.5: calm-and-readable round (the Boss: nothing too busy, keep the animation). Fewer and
+#          larger props per setting, flat low-contrast backdrops (cave wall, deep water, hills, margins, soil), one of each
+#          drifting creature, a quieter shelf. Every hero animation stays. Rules and behaviour unchanged.
+# Updated: 07-November-2026, Claude Sonnet 5.5: animation round (the Boss: nothing too busy, do not forget animation). The farmer
+#          now hops between cells with a puff of dust behind his boots, shakes his head on a refused press, and a pick-up, a
+#          drop, a switch flip, a gravity flip and a basket drop each get a small ring or streak of pops; a lost run sags the
+#          farmer; a won level ends with a round iris closing on him. Only extra frames inside an action; rules unchanged.
+# Updated: 07-November-2026, Claude Sonnet 5.5: final look round (the Boss: nothing too busy, do not forget animation). The farmer
+#          crouches before a walk and lands with a squash and two dust puffs; the dust is bigger; pans, ropes and fruit ease in and
+#          out; a won level closes in a round iris, then the next stage opens from a black iris around its farmer; the twilight
+#          tent is white and red so it no longer blends with the farmer's hat. Rules unchanged.
 # SRP/DRY check: Pass. Rule functions (transition, release, interact, ...) are the single source of truth and contain no
 #          drawing; picture() reads a state and returns sprites; motion() only interpolates between two pictures.
 #          Nothing is shared with bl01.py, which stays as it is.
 #
 # CHANGELOG
+# 07-Nov-2026 (Claude Sonnet 5.5): final look round, behaviour still identical to BL01. Crouch and landing frames for a walk, larger dust,
+#          eased pans and fruit, an opening iris on the next stage, a recoloured twilight tent. Frames only; rules untouched.
+# 07-Nov-2026 (Claude Sonnet 5.5): animation round, behaviour still identical to BL01. motion() adds a hop arc and dust puffs
+#          for the farmer and what he carries; effects() draws the pop rings, gravity streaks and the blocked-press shake;
+#          the loss frames sag the farmer; the win frames end in an iris wipe. All inside frames the action already emits.
+# 07-Nov-2026 (Claude Sonnet 5.5): calm-and-readable art round, behaviour still identical to BL01. Backdrops are flat and a step
+#          apart in tone (stone courses without highlights or ore, water with two shafts and no specks, hills in one hue family,
+#          plain margin strips, sparser pebbles in the soil); each setting keeps its hero props and its moving life but loses the
+#          small clutter (silo, hay, picnic, tulips, webs, gems, caps, doves, extra birds and cows, second string of lights).
 # 07-Nov-2026 (Claude Sonnet 5.5): final polish pass, behaviour still identical to BL01. A lost run now recolours the whole
 #          scene to a dim red-and-purple palette (the farmer, rain cloud and frame stay in full colour) instead of only
 #          adding the frame and cloud.
@@ -292,7 +312,7 @@ FARMER = ['..kkkkkk..', '.kyyyyyyk.', 'kyyrrrryyk', '.kppppppk.', '.kppppppk.',
 FARMER_STEP = '..kkk.kkk.'
 
 
-def farmer_grid(mood='idle', face=0, blink=False, step=False, hanging=False):
+def farmer_grid(mood='idle', face=0, blink=False, step=False, hanging=False, squash=False):
     """10x9 farmer: straw hat with a red band and a wide brim, a face with eyes that look the way he walks, a red shirt
     with hands, dungarees with buttons and boots. On a win both arms go up; on a loss the tears fall and the mouth
     droops. `hanging` turns him over for the flipped-gravity levels. face: -1 looks left, 0 front, 1 right."""
@@ -323,6 +343,8 @@ def farmer_grid(mood='idle', face=0, blink=False, step=False, hanging=False):
     else:
         rows[4][4] = rows[4][5] = 'k'
         rows[4][3] = rows[4][6] = 'p'
+    if squash:                                    # crouch or landing: one row of shirt squeezed out, boots stay put
+        del rows[5]
     grid = art([''.join(r) for r in rows], own={'9': BLU})
     return grid[::-1] if hanging else grid
 
@@ -509,30 +531,30 @@ def pet_sprite(index, mood, blink, tick, face=0):
 # soil/speck/grass/bloom: the earth tiles; shelf: (plank, seam); margin: the 4-pixel strips left and right of the board;
 # pet: index in PETS; ambient: names of the drifting life, drawn by ambient().
 THEMES = [
-    dict(key='meadow', sky=((8, BLU), (34, LBL), (64, LBL)), hills=((PUR, 38, 8, 24.0, 0.6), (GRN, 44, 4, 20.0, 1.9)),
-         soil=MAR, speck=ORG, grass=GRN, bloom=YEL, shelf=(ORG, MAR), margin='vine', pet=0, shade=LBL,
+    dict(key='meadow', sky=((8, BLU), (34, LBL), (64, LBL)), hills=((BLU, 38, 8, 24.0, 0.6), (GRN, 44, 4, 20.0, 1.9)),
+         soil=MAR, speck=RED, grass=GRN, bloom=YEL, shelf=(ORG, MAR), margin='vine', pet=0, shade=LBL,
          ambient=('clouds', 'birds', 'butterflies'), props=('sun',)),
-    dict(key='blossom', sky=((14, BLU), (64, LBL)), hills=((PUR, 37, 7, 28.0, 0.4), (GRN, 43, 4, 16.0, 1.2)), soil=MAR,
-         speck=ORG, grass=GRN, bloom=WHT, shelf=(GRN, MAR), margin='trunk', pet=1, shade=LBL,
-         ambient=('petals', 'butterflies', 'bees', 'clouds', 'smoke'), props=()),
-    dict(key='sunset', sky=((12, PUR), (22, MAG), (36, ORG), (64, YEL)), hills=((PUR, 40, 6, 28.0, 0.3), (BLU, 45, 3, 30.0, 0.0)),
-         soil=MAR, speck=ORG, grass=GRN, bloom=WHT, shelf=(MAR, BLK), margin='reed', pet=2, shade=MAG,
-         ambient=('windmill', 'birds', 'clouds', 'smoke'), props=('sunset',)),
-    dict(key='twilight', sky=((12, PUR), (28, BLU), (64, LBL)), hills=((BLU, 37, 7, 26.0, 1.0), (GRN, 45, 3, 18.0, 0.4)), soil=MAR, speck=ORG,
+    dict(key='blossom', sky=((14, BLU), (64, LBL)), hills=((BLU, 37, 7, 28.0, 0.4), (GRN, 43, 4, 16.0, 1.2)), soil=MAR,
+         speck=RED, grass=GRN, bloom=WHT, shelf=(GRN, MAR), margin='trunk', pet=1, shade=LBL,
+         ambient=('petals', 'butterflies', 'clouds', 'smoke'), props=()),
+    dict(key='sunset', sky=((14, PUR), (40, ORG), (64, YEL)), hills=((PUR, 40, 6, 28.0, 0.3), (BLU, 45, 3, 30.0, 0.0)),
+         soil=MAR, speck=RED, grass=GRN, bloom=WHT, shelf=(MAR, BLK), margin='reed', pet=2, shade=MAG,
+         ambient=('windmill', 'smoke'), props=('sunset',)),
+    dict(key='twilight', sky=((12, PUR), (28, BLU), (64, LBL)), hills=((BLU, 37, 7, 26.0, 1.0), (GRN, 45, 3, 18.0, 0.4)), soil=MAR, speck=RED,
          grass=GRN, bloom=YEL, shelf=(MAR, BLK), margin='vine', pet=3, shade=MAG,
-         ambient=('stars', 'fireflies', 'smoke'), props=('moon',)),
-    dict(key='balloons', sky=((12, BLU), (64, LBL)), hills=((WHT, 43, 5, 10.0, 0.5),), soil=MAR, speck=ORG,
+         ambient=('stars', 'fireflies'), props=('moon',)),
+    dict(key='balloons', sky=((12, BLU), (64, LBL)), hills=((GRN, 44, 3, 12.0, 0.5),), soil=MAR, speck=RED,
          grass=GRN, bloom=YEL, shelf=(BLU, BLK), margin='puff', pet=4, shade=LBL,
-         ambient=('airships', 'clouds', 'birds', 'smoke'), props=()),
-    dict(key='cave', sky=((64, PUR),), floor='cave', hills=((MAR, 45, 5, 12.0, 0.3),), soil=MAR, speck=ORG,
+         ambient=('airships', 'clouds'), props=()),
+    dict(key='cave', sky=((64, PUR),), floor='cave', hills=((MAR, 45, 5, 12.0, 0.3),), soil=MAR, speck=RED,
          grass=GRN, bloom=YEL, shelf=(MAR, BLK), margin='rock', pet=5, shade=PUR,
-         ambient=('bats', 'fireflies', 'gleam', 'lantern'), props=('spikes-dark',)),
-    dict(key='deep', sky=((64, BLK),), floor='deep', hills=((PUR, 38, 9, 18.0, 0.2), (BLK, 46, 4, 7.0, 1.4)), soil=MAR, speck=ORG,
+         ambient=('bats',), props=('spikes-dark',)),
+    dict(key='deep', sky=((64, BLK),), floor='deep', hills=((PUR, 38, 9, 18.0, 0.2), (BLK, 46, 4, 7.0, 1.4)), soil=MAR, speck=RED,
          grass=GRN, bloom=YEL, shelf=(PUR, BLK), margin='rock', pet=6, shade=BLK,
-         ambient=('waterfall', 'jellies', 'glow', 'gleam'), props=('spikes-purple',)),
-    dict(key='festival', sky=((10, BLK), (30, BLU), (64, BLU)), hills=((PUR, 41, 3, 30.0, 0.0),), soil=MAR, speck=ORG,
+         ambient=('waterfall', 'jellies'), props=('spikes-purple',)),
+    dict(key='festival', sky=((10, BLK), (30, BLU), (64, BLU)), hills=((PUR, 41, 3, 30.0, 0.0),), soil=MAR, speck=RED,
          grass=GRN, bloom=YEL, shelf=(MAR, BLK), margin='rock', pet=7, shade=BLU,
-         ambient=('ferris', 'fireworks', 'stars', 'windows'), props=('town',)),
+         ambient=('ferris', 'fireworks'), props=('town',)),
 ]
 
 SMOKE_AT = {'blossom': (56, 35), 'sunset': (16, 33), 'twilight': (31, 32), 'balloons': (55, 34)}
@@ -556,9 +578,7 @@ MOTIFS = {
 PAN_SKIN = {'meadow': (YEL, ORG, MAR), 'blossom': (WHT, LBL, BLU), 'sunset': (YEL, YEL, ORG), 'twilight': (LBL, BLU, PUR),
             'balloons': (WHT, LBL, BLU), 'cave': (ORG, ORG, MAR), 'deep': (GRN, LBL, BLU), 'festival': (YEL, MAG, ORG)}
 # far mountains pasted into the sky: colour, snow, and (centre x, height, half width) of each peak
-PEAKS = {'meadow': (BLU, WHT, ((10, 20, 18), (36, 26, 20), (58, 16, 14))),
-         'sunset': (MAR, YEL, ((8, 14, 14), (30, 20, 17), (54, 16, 15))),
-         'balloons': (PUR, WHT, ((12, 22, 16), (42, 30, 22)))}
+PEAKS = {}
 
 SNAIL = [['..kk..', '.kooyk', 'kooyok', 'kppppk', 'kpppp.'], ['..kk..', '.kooyk', 'kooyok', 'kpppp.', 'kppppp']]
 DRAGONFLY = [['w..w.', '.wwww', 'ggggg'], ['.w.w.', 'ggggg', '.w.w.']]
@@ -592,33 +612,13 @@ def pan_grid(th):
     return A(PAN, y=rim, o=plate, m=under)
 
 
-def life_extra(key, tick):
-    """The second small creature of each setting (the first is in life_<setting>)."""
-    out = []
-    if key == 'meadow':
-        out.append(sprite('snail', A(SNAIL[tick // 6 % 2]), 25 + tick // 9 % 8, 42, 3))
-        out.append(sprite('dragonfly', A(DRAGONFLY[tick % 2], g=LBL), 36 + round(5 * math.sin(tick / 6)), 22 + round(3 * math.sin(tick / 3.5)), 3))
-    elif key == 'blossom':
-        out.append(sprite('dragonfly', A(DRAGONFLY[tick % 2], g=GRN), 18 + round(7 * math.sin(tick / 8)), 30 + round(2 * math.sin(tick / 3)), 3))
-    elif key == 'twilight':
-        out.append(sprite('owl', A(OWL_SHUT if tick % 23 > 20 else OWL, u=BLU), 7, 20, 3))
-    elif key == 'cave':
-        out.append(sprite('glow-bug', A(GLOWBUG[tick // 4 % 2]), 20 + (tick // 5) % 14, 36, 3))
-    elif key == 'deep':
-        out.append(sprite('seahorse', A(SEAHORSE[tick // 4 % 2]), 29 + round(2 * math.sin(tick / 9)), 20 + round(3 * math.sin(tick / 7)), 3))
-    elif key == 'festival':
-        for i in range(2):
-            out.append(sprite(f'dove-{i}', A(DOVE[(tick // 2 + i) % 2], w=WHT), (tick // 2 + i * 40) % 84 - 10, 12 + i * 5 + round(math.sin(tick / 6 + i)), 3))
-    return out
-
-
 # 4x8 strip patterns for the margins; the right margin is the left one mirrored.
 MARGIN_TILES = {
-    'vine': ['.g.g', '.gg.', '..gg', '.yg.', '..g.', 'gg..', '.gwg', '.g..'],
-    'trunk': ['kmoo', 'kmoo', 'kmmo', 'kmoo', 'kooo', 'kmoo', 'kmom', 'kmoo'],
-    'reed': ['..g.', '..g.', '.mg.', '.mg.', '..g.', '..gg', '.g..', '.g..'],
-    'puff': ['..ww', '.www', 'wwww', '.www', '..ww', '.www', 'wwww', '.www'],
-    'rock': ['kuuu', 'kuMu', 'kuuu', 'kuuw', 'kMuu', 'kuuu', 'kuuM', 'kuuu'],
+    'vine': ['.g..', '.g..', '.gg.', '.g..', '.g..', '.g..', 'gg..', '.g..'],
+    'trunk': ['kmmo', 'kmmo', 'kmmo', 'kmmo', 'kmom', 'kmmo', 'kmmo', 'kmmo'],
+    'reed': ['..g.', '..g.', '..g.', '.gg.', '..g.', '..g.', '..g.', '..g.'],
+    'puff': ['....', '..ww', '.www', '..ww', '....', '....', '..ww', '.www'],
+    'rock': ['kuuu', 'kuuu', 'kuuu', 'kuMu', 'kuuu', 'kuuu', 'kuuu', 'kuuu'],
 }
 
 
@@ -684,8 +684,8 @@ def town_grid():
         for yy in range(44 - height, 49):
             for xx in range(x, min(64, x + width)):
                 grid[yy][xx] = PUR
-        for k in range(1, width - 2, 3):
-            for row in range(46 - height + 2, 46, 4):
+        for k in range(1, width - 2, 5):
+            for row in range(46 - height + 2, 46, 6):
                 grid[row][x + k] = YEL
                 grid[row + 1][x + k] = YEL
         for k in range(width // 2):                     # a stepped roof
@@ -797,14 +797,14 @@ def bunting(colours, y_sag=3):
 
 
 def rainbow(cx, cy, radius):
-    """Six one-pixel bands drawn as arcs (red outside to purple inside), then mirrored smoothly by the circle test."""
+    """Four two-pixel bands drawn as arcs (red outside to blue inside); few, wide bands keep the sky quiet."""
     grid = canvas(64, 53)
     for y in range(53):
         for x in range(64):
             d = math.hypot(x - cx, y - cy)
             band = radius - d
-            if y <= cy and 0 <= band < 7:
-                grid[y][x] = (RED, ORG, YEL, GRN, LBL, BLU, PUR)[int(band)]
+            if y <= cy and 0 <= band < 8:
+                grid[y][x] = (RED, YEL, GRN, BLU)[int(band) // 2]
     return grid
 
 
@@ -832,13 +832,13 @@ def wheel_grid(phase):
     c = 12
     for step in range(120):
         angle = step / 120 * 2 * math.pi
-        grid[round(c + math.sin(angle) * 11)][round(c + math.cos(angle) * 11)] = WHT
+        grid[round(c + math.sin(angle) * 11)][round(c + math.cos(angle) * 11)] = LBL
     for arm in range(8):
         angle = (arm * 45 + phase * 5.625) * math.pi / 180
         for r in range(0, 12):
-            grid[round(c + math.sin(angle) * r)][round(c + math.cos(angle) * r)] = YEL if r % 2 else WHT
+            grid[round(c + math.sin(angle) * r)][round(c + math.cos(angle) * r)] = LBL
         cx, cy = round(c + math.cos(angle) * 11), round(c + math.sin(angle) * 11)
-        car = (MAG, GRN, YEL, LBL, ORG, WHT, PUR, RED)[arm]
+        car = (MAG, YEL)[arm % 2]
         for dy in range(3):
             for dx in range(-1, 2):
                 if 0 <= cy + dy < size + 7 and 0 <= cx + dx < size:
@@ -859,7 +859,7 @@ def waterfall_grid(phase, width=7, height=30):
     for y in range(height):
         for x in range(width):
             streak = (y * 2 + phase * 2 + x * 5) % 9
-            grid[y][x] = WHT if streak < 2 else LBL if streak < 5 else BLU
+            grid[y][x] = LBL if streak < 2 else BLU
     for x in range(width):
         grid[height - 1][x] = WHT if (x + phase) % 2 else LBL
         grid[0][x] = BLK
@@ -1017,40 +1017,27 @@ def rays_grid(phase):
 
 
 def cave_wall():
-    """Stone blocks laid in courses, each with a lit top edge and a dark foot, so the cave is a built place rather than a
-    flat purple field. The mortar lines are maroon; every few blocks carries a chip of ore."""
+    """Stone blocks laid in courses a step apart in tone: purple stone, maroon mortar, nothing bright. Large blocks so the
+    wall is a quiet pattern behind the play pieces, not a texture fighting them."""
     grid = canvas(64, 64, PUR)
-    for course in range(0, 64, 8):
-        offset = 6 if (course // 8) % 2 else 0
-        for y in range(course, min(64, course + 8)):
+    for course in range(0, 64, 16):
+        offset = 12 if (course // 16) % 2 else 0
+        for y in range(course, min(64, course + 16)):
             for x in range(64):
-                local = (x + offset) % 12
-                if y == course or local == 0:
+                if y == course or (x + offset) % 24 == 0:
                     grid[y][x] = MAR
-                elif y == course + 1 and 0 < local < 11:
-                    grid[y][x] = MAG
-                elif y == course + 7:
-                    grid[y][x] = MAR if local % 2 else PUR
-        for block in range(-1, 6):
-            if hashed(course, block, 3) % 5 == 0:
-                x0 = block * 12 - offset + 4 + hashed(course, block, 4) % 4
-                for dx, dy in ((0, 3), (1, 3), (1, 4), (2, 4)):
-                    if 0 <= x0 + dx < 64 and course + dy < 64:
-                        grid[course + dy][x0 + dx] = ORG if dx else YEL
     return grid
 
 
 def deep_water():
-    """The deep: black water with slanting shafts of purple light and a sprinkle of drifting specks."""
+    """The deep: black water with two slow slanting shafts of purple light. Nothing else on the field."""
     grid = canvas(64, 64, BLK)
-    for shaft, width in ((6, 4), (24, 6), (43, 4), (55, 3)):
+    for shaft, width in ((10, 6), (40, 7)):
         for y in range(0, 50):
             left = shaft + y // 3
             for x in range(left, left + width - y // 18):
                 if 0 <= x < 64:
                     grid[y][x] = PUR
-    for i in range(26):
-        grid[4 + hashed(i, 1, 11) % 46][hashed(i, 2, 11) % 62 + 1] = BLU if i % 3 else PUR
     return grid
 
 
@@ -1114,33 +1101,13 @@ def prop_sprites(index):
         out.append(sprite(name, art(rows, own=own) if rows and isinstance(rows[0], str) else rows, x, y, layer))
     if key == 'meadow':
         put('barn', BARN, 43, 32)
-        put('silo', SILO, 37, 35, own={'b': ORG})
-        put('hay', HAY, 29, 43)
     elif key == 'blossom':
         put('cottage', COTTAGE, 47, 37, own={'b': MAR})
     elif key == 'sunset':
         put('cottage', COTTAGE, 7, 35, own={'w': PUR, 'b': PUR, 'm': PUR, 'y': YEL})
-        put('hay', HAY, 27, 44, own={'y': ORG, 'o': MAR})
-    elif key == 'twilight':
-        put('lodge', COTTAGE, 22, 34, own={'w': PUR, 'b': PUR, 'm': PUR, 'y': YEL})
     elif key == 'balloons':
         out.append(sprite('rainbow', rainbow(32, 50, 27), 0, 0, 2))
         put('hilltop-house', COTTAGE, 46, 36, own={'b': GRN})
-    elif key == 'cave':
-        out.append(sprite('beams', beams_grid(), 0, 0, 3))
-        out.append(sprite('teeth', stalagmites(), 0, 0, 2))
-        for i, (x, y, colour) in enumerate(((14, 22, GRN), (34, 16, YEL), (52, 30, WHT), (22, 36, YEL))):
-            put(f'gem-{i}', GEM_BIG, x, y, 3, own={'g': colour})
-        put('cap-0', CAP_SMALL, 25, 41)
-        put('cap-1', CAP_SMALL, 53, 38)
-    elif key == 'deep':
-        out.append(sprite('vines', vines_grid(GRN, YEL), 0, 0, 3))
-        put('cap-big-0', CAP_TALL, 24, 38, own={'g': GRN})
-        put('cap-big-1', CAP_TALL, 44, 40, own={'g': LBL})
-        for i, (x, y, colour) in enumerate(((22, 23, GRN), (40, 18, WHT))):
-            put(f'gem-{i}', GEM_BIG, x, y, 3, own={'g': colour})
-    elif key == 'festival':
-        out.append(sprite('bunting', bunting((MAG, YEL, GRN, LBL, ORG)), 0, 8, 3))
     return out
 
 
@@ -1179,7 +1146,7 @@ def backdrop(index):
         elif prop.startswith('spikes'):
             dark = prop.endswith('dark')
             items = [(5, 6, 9), (14, 5, 6), (25, 7, 10), (36, 5, 6), (47, 8, 9), (58, 6, 8)]
-            out.append(sprite('stalactites', spikes_grid(MAR if dark else MAG, items, tip=ORG if dark else PNK), 0, 0, 2))
+            out.append(sprite('stalactites', spikes_grid(MAR if dark else PUR, items), 0, 0, 2))
         elif prop == 'town':
             out.append(sprite('village', town_grid(), 0, 0, 2))
     out.extend(prop_sprites(index))
@@ -1217,23 +1184,23 @@ def ambient(index, tick):
             elif th['key'] == 'blossom':
                 own['w'] = WHT
             grid = art(CLOUD, own=own)
-            rows = {'meadow': ((11, 6, 7), (21, 41, 11)), 'blossom': ((17, 20, 9),), 'sunset': ((12, 30, 10),),
-                    'balloons': ((13, 8, 6), (24, 44, 9), (34, 24, 13))}[th['key']]
+            rows = {'meadow': ((11, 6, 7),), 'blossom': ((17, 20, 9),), 'sunset': ((12, 30, 10),),
+                    'balloons': ((13, 8, 6), (26, 40, 9))}[th['key']]
             for i, (y, x0, div) in enumerate(rows):
                 out.append(sprite(f'cloud-{i}', grid, (x0 + tick // div) % 92 - 22, y, 3))
         elif kind == 'birds':
             colour = {'meadow': BLK, 'sunset': BLK, 'balloons': MAG}[th['key']]
-            for i, (y, x0) in enumerate(((16, 12), (23, 50))):
+            for i, (y, x0) in enumerate(((16, 12),)):
                 frame = art(BIRD[(tick // 2 + i) % 2], own={'k': colour})
                 out.append(sprite(f'bird-{i}', frame, (x0 + tick // 2) % 80 - 12, y + (1 if (tick // 4 + i) % 2 else 0), 3))
         elif kind == 'butterflies':
-            for i, (x0, y0) in enumerate(((10, 36), (44, 30))):
+            for i, (x0, y0) in enumerate(((44, 30),)):
                 frame = art(BUTTERFLY[(tick // 2 + i) % 2], own={'p': (YEL, WHT)[i] if th['key'] == 'meadow' else MAG})
                 x = x0 + round(5 * math.sin((tick + i * 9) / 7)) + tick // 6 % 8
                 y = y0 + round(3 * math.sin((tick + i * 5) / 4))
                 out.append(sprite(f'butterfly-{i}', frame, x, y, 3))
         elif kind == 'petals':
-            for i in range(7):
+            for i in range(3):
                 x = (hashed(i, 1, 9) % 56 + 4 + tick // 3 + round(2 * math.sin((tick + i * 6) / 5))) % 56 + 4
                 y = (hashed(i, 2, 9) % 40 + 10 + tick // 4) % 40 + 10
                 out.append(sprite(f'petal-{i}', [[WHT if i % 2 else MAG, PNK]], x, y, 3))
@@ -1243,7 +1210,7 @@ def ambient(index, tick):
             out.append(sprite('windmill-tower', art(TOWER, own={'w': BLK, 'm': BLK}), 52, 38, 2))
             out.append(sprite('windmill-sails', WINDMILL_CACHE[tick // 3 % 4], 49, 31, 2))
         elif kind == 'stars':
-            pts = ((6, 9), (15, 5), (24, 11), (36, 7), (47, 12), (55, 6), (60, 17), (30, 20), (12, 24), (52, 26))
+            pts = ((6, 9), (24, 11), (36, 6), (55, 8), (30, 20), (52, 24))
             for i, (x, y) in enumerate(pts):
                 phase = (tick // 3 + i * 2) % 5
                 if phase == 0:
@@ -1251,14 +1218,14 @@ def ambient(index, tick):
                 else:
                     out.append(block(f'star-{i}', x, y, 1, 1, WHT if i % 2 else YEL, 2))
         elif kind == 'fireflies':
-            for i in range(4):
+            for i in range(2):
                 if (tick // 3 + i * 2) % 4:
                     x = hashed(i, 6, 4) % 50 + 6 + round(3 * math.sin((tick + i * 7) / 6))
                     y = 30 + hashed(i, 7, 4) % 14 + round(2 * math.cos((tick + i * 4) / 5))
                     out.append(block(f'firefly-{i}', x, y, 1, 1, YEL, 3))
         elif kind == 'airships':
             # two hot-air balloons, big and striped with baskets: scenery that sways, nothing like a fruit
-            for i, (a, b, x0, y0) in enumerate(((PUR, YEL, 3, 19), (ORG, WHT, 34, 27))):
+            for i, (a, b, x0, y0) in enumerate(((PUR, YEL, 4, 18),)):
                 out.append(sprite(f'airship-{i}', hot_air_cached(a, b), x0 + round(3 * math.sin((tick + i * 17) / 16)),
                                   y0 + round(2 * math.sin((tick + i * 9) / 11)), 3))
         elif kind == 'smoke':
@@ -1273,7 +1240,7 @@ def ambient(index, tick):
                 y = y0 + round(3 * math.sin((tick + i * 5) / 3))
                 out.append(sprite(f'bee-{i}', art(BEE[(tick + i) % 2]), x, y, 3))
         elif kind == 'jellies':
-            for i, x0 in enumerate((8, 36, 52)):
+            for i, x0 in enumerate((36,)):
                 y = (46 - (tick // 3 + i * 17)) % 40 + 8
                 out.append(sprite(f'jelly-{i}', art(JELLY[(tick // 2 + i) % 2]), x0 + round(2 * math.sin((tick + i * 7) / 8)), y, 3))
         elif kind == 'lantern':
@@ -1284,7 +1251,7 @@ def ambient(index, tick):
         elif kind == 'waterfall':
             out.append(sprite('waterfall', waterfall_grid(tick // 2 % 9), 21, 12, 3))
         elif kind == 'bats':
-            for i, (y, x0) in enumerate(((10, 6), (20, 40))):
+            for i, (y, x0) in enumerate(((12, 6),)):
                 frame = art(BAT[(tick // 2 + i) % 2])
                 out.append(sprite(f'bat-{i}', frame, (x0 + tick // 2 * (1 if i == 0 else -1)) % 80 - 10, y + round(2 * math.sin((tick + i * 6) / 5)), 3))
         elif kind == 'gleam':
@@ -1298,7 +1265,7 @@ def ambient(index, tick):
                     y = 16 + hashed(i, 4, 8) % 24 + round(2 * math.sin((tick + i * 5) / 6))
                     out.append(block(f'glowworm-{i}', x, y, 1, 1, YEL, 3))
         elif kind == 'fireworks':
-            for i, (cx, cy, colour, second) in enumerate(((16, 24, MAG, WHT), (46, 17, YEL, ORG))):
+            for i, (cx, cy, colour, second) in enumerate(((46, 17, YEL, ORG),)):
                 step = (tick // 2 + i * 6) % 14
                 out.append(sprite(f'firework-{i}', burst_grid(step, colour, second), cx - 6, cy - 6, 3))
         elif kind == 'windows':
@@ -1307,7 +1274,6 @@ def ambient(index, tick):
                     out.append(block(f'window-{i}', x, 40 + i % 2, 1, 2, YEL, 3))
     out.extend(trees(index, tick))
     out.extend(LIFE[th['key']](tick))
-    out.extend(life_extra(th['key'], tick))
     return out
 
 
@@ -1315,13 +1281,12 @@ def ambient(index, tick):
 # Trees: (name, picture, x, y, trunk rows that stay still, sway in pixels, colour overrides). They lean in the wind with
 # their own phase so a row of them never moves in step.
 TREES = {
-    'meadow': [('oak-far', OAK, 20, 24, 5, 1, None)],
+    'meadow': [],
     'blossom': [('cherry-0', CHERRY, 4, 28, 5, 1, None), ('cherry-1', CHERRY, 41, 27, 5, 1, None),
-                ('oak-far', OAK, 26, 29, 5, 1, None)],
-    'sunset': [('poplar-0', pine(4, 'u', 'o'), 22, 29, 3, 1, None), ('poplar-1', pine(3, 'u', 'o'), 30, 34, 3, 1, None)],
-    'twilight': [('pine-0', pine(4, 'u', 'b'), 5, 28, 3, 1, None), ('pine-1', pine(3, 'u', 'b'), 40, 30, 3, 1, None),
-                 ('pine-2', pine(4, 'u', 'b'), 54, 28, 3, 1, None)],
-    'balloons': [('hilltop-oak', OAK, 5, 33, 5, 1, None)],
+                ],
+    'sunset': [('poplar-0', pine(4, 'u', 'o'), 22, 29, 3, 1, None)],
+    'twilight': [('pine-0', pine(4, 'u', 'b'), 5, 28, 3, 1, None), ('pine-2', pine(4, 'u', 'b'), 54, 28, 3, 1, None)],
+    'balloons': [],
 }
 
 
@@ -1342,34 +1307,25 @@ def tuft_row(name, xs, y, tick, colours):
 
 def life_meadow(tick):
     out = [sprite('sun-rays', rays_grid(tick // 4), 41, 3, 2)]
-    for i, x in enumerate((7, 17)):
+    for i, x in enumerate((7,)):
         out.append(sprite(f'sunflower-{i}', sway(SUNFLOWER, 5, 1, tick // 5 + i * 2), x - 1, 31 + i * 2, 3))
-    out.extend(tuft_row('tulip', (24, 40), 42, tick, (RED, YEL)))
-    cow = A(COW if tick // 7 % 3 else COW_B)
-    out.append(sprite('cow', cow, 21, 40, 3))
-    flip = tick // 9 % 2
-    out.append(sprite('weathervane', A(VANE) if flip else mirror(A(VANE)), 48, 25, 3))
+    cow = A(COW if tick // 7 % 3 else COW_B, w=ORG)
+    out.append(sprite('cow', cow, 30, 40, 3))
     return out
 
 
 def life_blossom(tick):
-    out = tuft_row('tulip', (12, 16, 52, 56), 42, tick, (YEL, LBL, MAG, WHT))
+    out = []
     rab = RAB_EAR if tick // 6 % 5 == 0 else RAB_SIT
     hop = -3 if tick % 30 in (4, 5) else 0
-    out.append(sprite('rabbit', outlined(A(rab)), 9, 38 + hop, 3))
-    out.append(sprite('picnic-blanket', A(PICNIC), 28, 42, 3))
-    out.append(sprite('picnic-jug', A(JUG), 36, 38, 3))
-    hum = A(HUM_A if tick % 2 else HUM_B)
-    out.append(sprite('hummingbird', hum, 33 + round(3 * math.sin(tick / 9)), 27 + round(2 * math.sin(tick / 5)), 3))
+    out.append(sprite('rabbit', outlined(A(rab)), 36, 38 + hop, 3))
     return out
 
 
 def life_sunset(tick):
-    out = flock(5, 36, 10 + round(math.sin(tick / 14) * 2), tick, BLK)
+    out = flock(3, 36, 10 + round(math.sin(tick / 14) * 2), tick, BLK)
     ring = disc(12, -1, ORG if tick // 6 % 2 else YEL)
     out.append(sprite('sun-halo', ring, 23, 21, 1))
-    for i, x in enumerate((41, 53)):
-        out.append(sprite(f'cow-{i}', A(COW if (tick // 8 + i) % 4 else COW_B, w=PUR, p=MAG), x, 36 + i * 2, 3))
     glow = YEL if tick // 5 % 3 else WHT
     out.append(block('cottage-light', 11, 44, 2, 2, glow, 3))
     return out
@@ -1377,7 +1333,7 @@ def life_sunset(tick):
 
 def life_twilight(tick):
     out = [sprite('campfire', A(FIRE[tick // 2 % 3]), 33, 40, 3), sprite('campfire-logs', A(LOG), 32, 46, 3)]
-    out.append(sprite('tent', A(TENT), 17, 38, 3))
+    out.append(sprite('tent', A(TENT, y=WHT, o=RED), 17, 38, 3))
     out.extend(shooting_star(tick))
     for i, (x, y) in enumerate(((35, 36), (31, 33), (38, 31))):      # sparks lifting off the fire
         if (tick // 2 + i * 3) % 6 < 4:
@@ -1389,23 +1345,15 @@ def life_twilight(tick):
 def life_balloons(tick):
     out = []
     kx = 38 + round(2 * math.sin(tick / 9))
-    out.append(sprite('kite', outlined(A(KITE)), kx - 1, 10, 3))
+    out.append(sprite('kite', A(KITE), kx, 11, 3))
     for k in range(5):                                      # the tail, with a bow every other knot
         tx = kx + 3 + round(1.5 * math.sin((tick / 3) + k))
         out.append(block(f'kite-tail-{k}', tx, 21 + k * 2, 1, 2, BLK, 3))
-        if k % 2 == 0:
-            out.append(block(f'kite-bow-{k}', tx - 1, 22 + k * 2, 3, 1, (MAG, LBL, GRN)[k // 2], 3))
-    out.append(block('windsock-pole', 50, 29, 1, 9, BLK, 3))
-    out.append(sprite('windsock', A(WINDSOCK[tick // 4 % 2]), 51, 29, 3))
-    out.append(sprite('hawk', A(HAWK[tick // 3 % 2], k=BLK), (tick // 2) % 90 - 14, 18 + round(3 * math.sin(tick / 12)), 3))
     return out
 
 
 def life_cave(tick):
     out = [sprite('torch-0', A(TORCH[tick // 2 % 3]), 9, 20, 3), sprite('torch-1', mirror(A(TORCH[(tick // 2 + 1) % 3])), 50, 20, 3)]
-    out.append(sprite('web', A(COBWEB), 8, 10, 3))
-    out.append(sprite('web-mirror', mirror(A(COBWEB)), 48, 10, 3))
-    out.append(sprite('vein', A(VEIN), 44, 33, 3))
     drop = 14 + round(5 * (1 + math.sin(tick / 10)))
     out.append(block('spider-thread', 31, 8, 1, drop - 7, WHT, 3))
     out.append(sprite('spider', A(SPIDER[tick // 3 % 2]), 28, drop, 3))
@@ -1415,36 +1363,23 @@ def life_cave(tick):
 
 def life_deep(tick):
     out = []
-    for i, x in enumerate((8, 14, 49, 55)):
+    for i, x in enumerate((8, 55)):
         out.append(sprite(f'seaweed-{i}', sway(WEED, 4, 1, tick // 5 + i, {'g': GRN if i % 2 else LBL}), x - 1, 33 - i % 2 * 2, 3))
-    for i, (y, speed, colour, face) in enumerate(((20, 1, ORG, 1), (30, 2, MAG, -1), (14, 3, YEL, 1))):
-        fish = A(FISH_A if tick // 3 % 2 else FISH_B, f=colour, t=YEL if colour != YEL else ORG)
+    for i, (y, speed, colour, face) in enumerate(((26, 1, GRN, 1), (16, 2, LBL, -1))):
+        fish = A(FISH_A if tick // 3 % 2 else FISH_B, f=colour, t=YEL)
         x = (tick * speed // 2 + i * 31) % 84 - 14
         out.append(sprite(f'fish-{i}', fish if face > 0 else mirror(fish), x if face > 0 else 64 - x - 10,
                           y + round(2 * math.sin((tick + i * 8) / 8)), 3))
-    lure = YEL if tick // 4 % 3 else WHT
-    out.append(sprite('angler', A(ANGLER), 7, 38, 3))
-    out.append(block('angler-lure', 14, 36 + (1 if tick // 4 % 2 else 0), 2, 2, lure, 3))
-    out.append(sprite('coral-0', A(CORAL), 22, 40, 3))
-    out.append(sprite('coral-1', A(CORAL, o=LBL), 52, 41, 3))
-    for i in range(5):
-        rise = (tick + i * 11) % 44
-        out.append(sprite(f'bubble-{i}', A(BUBBLE) if i % 2 else [[LBL]], 12 + i * 11 + round(1.5 * math.sin((tick + i * 4) / 4)),
+    out.append(sprite('coral-1', A(CORAL, o=LBL), 44, 41, 3))
+    for i in range(3):
+        rise = (tick + i * 15) % 44
+        out.append(sprite(f'bubble-{i}', A(BUBBLE) if i % 2 else [[LBL]], 22 + i * 14 + round(1.5 * math.sin((tick + i * 4) / 4)),
                           48 - rise, 3))
     return out
 
 
 def life_festival(tick):
-    out = [sprite('string-lights', pole_lights(tick // 2 % 5), 4, 14, 3), sprite('string-lights-b', pole_lights((tick // 2 + 2) % 5), 4, 18, 3)]
-    for i, (x, colour) in enumerate(((7, MAG), (13, YEL), (19, GRN))):
-        bob = round(2 * math.sin((tick + i * 7) / 7))
-        out.append(block(f'balloon-string-{i}', x + 2, 31, 1, 6 + bob, BLK, 3))
-        out.append(sprite(f'balloon-{i}', A(BALLOON, c=colour), x, 22 + bob, 3))
-    out.append(sprite('popcorn-cart', A(POP_CART), 28, 41, 3))
-    for i, (x, colour) in enumerate(((10, RED), (24, ORG))):
-        sw = round(1.5 * math.sin((tick + i * 9) / 8))
-        out.append(sprite(f'paper-lantern-{i}', A(LANTERN_PAPER, c=colour), x + sw, 20 - i * 2, 3))
-    return out
+    return [sprite('string-lights', pole_lights(tick // 2 % 5), 4, 12, 3)]
 
 
 LIFE = {'meadow': life_meadow, 'blossom': life_blossom, 'sunset': life_sunset, 'twilight': life_twilight,
@@ -1456,7 +1391,6 @@ def shelf_things(index, tick):
     key = THEMES[index]['key']
     rows, own = TRINKETS[key]
     out = [sprite('shelf-trinket', A(rows, **own), 34, 53, 21)]
-    out.append(sprite('shelf-small', A(SHELF_SMALL[key]), 59, 54, 21))
     return out
 
 
@@ -1473,13 +1407,13 @@ def earth_grid(th, cell, walls, under):
     open_left = (x - 1, y) not in walls
     open_right = (x + 1, y) not in walls
     # soil pebbles: two small stones placed by the tile's own position
-    for k in range(2):
+    for k in range(1):
         px = 1 + hashed(x, y, k + 1) % 5
         py = 3 + hashed(x, y, k + 7) % (height - 4 if height > 5 else 4)
         if 0 <= py < height and (not open_bottom or py < 5):
             grid[py][px] = th['speck']
             grid[py][px + 1] = th['speck']
-    if hashed(x, y, 7) % 5 < 3 and height == 8:          # something dug into the soil, away from the grass and the edges
+    if hashed(x, y, 7) % 5 < 1 and height == 8:          # something dug into the soil, away from the grass and the edges
         picture_rows, own = th['motifs'][hashed(x, y, 9) % len(th['motifs'])]
         small = art(picture_rows, own=own)
         paste(grid, 2 + hashed(x, y, 5) % max(1, 5 - len(small[0])), 3 + hashed(x, y, 6) % max(1, 4 - len(small)), small)
@@ -1489,7 +1423,8 @@ def earth_grid(th, cell, walls, under):
             grid[1][xx] = th['grass']
             if (xx + x * 3) % 3 == 0:
                 grid[2][xx] = th['grass']
-        grid[0][1 + hashed(x, y, 3) % 6] = th['bloom']
+        if hashed(x, y, 3) % 2:
+            grid[0][1 + hashed(x, y, 3) % 6] = th['bloom']
     if open_bottom:
         if under:
             for xx in range(8):
@@ -1522,16 +1457,7 @@ def shelf_grid(plank, seam):
     grid[0] = [BLK] * 64
     grid[7] = [BLK] * 64
     for x in range(64):
-        grid[3][x] = seam
-        grid[5][x] = seam
-    for x in range(8, 64, 16):
-        for y in range(1, 3):
-            grid[y][x] = seam
-    for x in range(16, 64, 16):
-        for y in range(4, 7):
-            grid[y][x] = seam
-    for x in range(2, 64, 8):
-        grid[1][x] = YEL
+        grid[4][x] = seam
     return grid
 
 
@@ -1626,8 +1552,8 @@ def picture(spec, state, remaining, ctx):
         sprites.append(sprite('crystal-switch', switch_grid(bool(polarity), beat), x, y, L_STAND, ['sys_click']))
         sprites.append(block('switch-state', x + 5, y + (1 if polarity else 4), 2, 2, YEL if polarity else RED, L_STAND + 1))
     x, y = cell_xy(at)
-    sprites.append(sprite('farmer', farmer_grid(ctx['mood'], ctx['face'], ctx['blink'], ctx['step'], gravity < 0),
-                          x - 1, y if gravity < 0 else y - 1, L_FARMER, ['sys_click']))
+    sprites.append(sprite('farmer', farmer_grid(ctx['mood'], ctx['face'], ctx['blink'], ctx['step'], gravity < 0, ctx.get('squash', False)),
+                          x - 1, y if gravity < 0 else y - (0 if ctx.get('squash') else 1), L_FARMER, ['sys_click']))
     for i, cell in enumerate(spec['fruits']):
         sx = 5 + i * 9
         layer = L_FRUIT
@@ -1754,6 +1680,7 @@ def motion(spec, before, after, path, remaining, fraction, ctx):
     if fraction >= 1:
         return sprites
     old = {s.name: s for s in picture(spec, before, remaining, ctx)}
+    eased = fraction * fraction * (3 - 2 * fraction)       # pans and fruit ease in and out instead of sliding evenly
     # Follow the actual horizontal-then-fall cells, never a diagonal through a shelf.
     walk = [before[0]] + path
     progress = fraction * max(0, len(walk) - 1)
@@ -1763,6 +1690,17 @@ def motion(spec, before, after, path, remaining, fraction, ctx):
     mx = start[0] + (finish[0] - start[0]) * (progress - index)
     my = start[1] + (finish[1] - start[1]) * (progress - index)
     ax, ay = cell_xy(after[0])
+    # A walking step is a little hop (up for a standing farmer, down for one hanging from the ceiling).
+    flat = start[1] == finish[1] and start[0] != finish[0]
+    hop = round(-2 * math.sin(math.pi * (progress - index)) * (-1 if after[1] < 0 else 1)) if flat else 0
+    if flat:
+        direction = 1 if finish[0] > start[0] else -1
+        foot = round(my) + (0 if after[1] < 0 else 7)
+        back = round(mx) + (1 if direction > 0 else 8)
+        size = 3 if ctx['tick'] % 2 else 2
+        up = -1 if after[1] < 0 else 1
+        sprites.append(block('dust-0', back - direction * (size + 1), foot - (size - 1 if up > 0 else 0), size, size, WHT, L_FX))
+        sprites.append(block('dust-1', back - direction * (size + 5), foot - (2 if up > 0 else 0) + (0 if up > 0 else 1), 2, 2, WHT, L_FX))
     for sprite_index, spr in enumerate(sprites):
         prior = old.get(spr.name)
         if prior is None:
@@ -1770,14 +1708,58 @@ def motion(spec, before, after, path, remaining, fraction, ctx):
         follows = spr.name == 'farmer' or (before[3] == after[3] and after[3] >= 0
                     and (spr.name == f'fruit-{after[3]}' or spr.name.startswith('carried-weight-')))
         if follows:
-            spr.set_position(round(spr.x + mx - ax), round(spr.y + my - ay))
+            spr.set_position(round(spr.x + mx - ax), round(spr.y + my - ay + hop))
         elif spr.name.startswith(('pan-', 'weight-', 'fruit-')):
-            spr.set_position(round(prior.x + (spr.x - prior.x) * fraction),
-                             round(prior.y + (spr.y - prior.y) * fraction))
+            spr.set_position(round(prior.x + (spr.x - prior.x) * eased),
+                             round(prior.y + (spr.y - prior.y) * eased))
         elif spr.name.startswith('rope-'):
-            height = round(prior.pixels.shape[0] + (spr.pixels.shape[0] - prior.pixels.shape[0]) * fraction)
+            height = round(prior.pixels.shape[0] + (spr.pixels.shape[0] - prior.pixels.shape[0]) * eased)
             sprites[sprite_index] = sprite(spr.name, [[ORG] for _ in range(max(1, height))], spr.x, spr.y, L_ROPE)
     return sprites
+
+
+def pops(cx, cy, fraction, colours):
+    """A small ring of four pops opening outward from a point."""
+    radius = 2 + round(fraction * 5)
+    return [block(f'pop-{i}', cx + dx * radius, cy + dy * radius, 1, 1, colours[i % len(colours)], L_FX)
+            for i, (dx, dy) in enumerate(((1, 0), (-1, 0), (0, 1), (0, -1)))]
+
+
+def effects(spec, before, after, fraction):
+    """Feedback while a press is still in progress: pops for a pick-up or drop, a ring on the switch, streaks for a gravity
+    flip, a drop of the basket's fruit. Never drawn on the resting frame, so the picture settles clean."""
+    out = []
+    x, y = cell_xy(after[0])
+    if before[3] != after[3]:
+        out.extend(pops(x + 4, y + 4, fraction, (YEL, WHT)))
+    if before[5] != after[5] and spec['lever'] is not None:
+        sx, sy = cell_xy(spec['lever'])
+        out.extend(pops(sx + 4, sy + 4, fraction, (YEL, LBL)))
+    if before[4] != after[4]:
+        bx, by = cell_xy(spec['basket'])
+        out.extend(pops(bx + 4, by + 4, fraction, (GRN, YEL)))
+    if before[1] != after[1]:
+        for i in range(2):                      # two streaks sliding the way gravity now pulls
+            drift = round(fraction * 6) * after[1]
+            out.append(block(f'streak-{i}', x + 1 + i * 7, y + 4 + drift, 1, 3, LBL, L_FX))
+    return out
+
+
+def iris(at, radius):
+    """A black round wipe closing on the farmer; radius 0 is solid black."""
+    key = (at, radius)
+    if key not in IRIS_CACHE:
+        fx, fy = cell_xy(at)[0] + 4, cell_xy(at)[1] + 4
+        grid = canvas(64, 64)
+        for yy in range(64):
+            for xx in range(64):
+                if (xx - fx) ** 2 + (yy - fy) ** 2 >= radius * radius:
+                    grid[yy][xx] = BLK
+        IRIS_CACHE[key] = grid
+    return sprite('iris', IRIS_CACHE[key], 0, 0, 26)
+
+
+IRIS_CACHE = {}
 
 
 class Bl02(ARCBaseGame):
@@ -1807,10 +1789,11 @@ class Bl02(ARCBaseGame):
         tick = self.tick + offset
         return {'tick': tick, 'mood': mood, 'face': self.face, 'step': step, 'blink': tick % 19 >= 17}
 
-    def show(self, sprites):
+    def show(self, sprites, level=None):
+        # `level` lets the opening-iris frames draw the NEXT stage's furniture before the engine swaps levels
         self.current_level.remove_all_sprites()
         lost = isinstance(sprites, Tinted)
-        for item in scene(self.spec['level']):
+        for item in scene(self.spec['level'] if level is None else level):
             self.current_level.add_sprite(tinted(item) if lost else item)
         for item in sprites:
             self.current_level.add_sprite(tinted(item) if lost else item)
@@ -1836,31 +1819,67 @@ class Bl02(ARCBaseGame):
             if after[0][0] != before[0][0]:
                 self.face = 1 if after[0][0] > before[0][0] else -1
             self.victory = won(self.spec, after)
-            count = 1 if aid == 7 and before != after else 3 if len(path) <= 1 else min(9, 2 * len(path))
+            count = 1 if aid == 7 and before != after else 3 if len(path) <= 1 else min(7 if self.victory else 8, 2 * len(path))
+            walked = aid != 7 and after[0][0] != before[0][0] and not self.victory and self.remaining > 0
+            if walked:                              # anticipation: the farmer crouches before the first hop
+                crouch = dict(self.context(0, step=False), squash=True)
+                self.frames.append(picture(self.spec, before, self.remaining, crouch))
             for frame in range(1, count + 1):
                 fraction = frame / count
                 ctx = self.context(frame, step=frame % 2 == 0)
                 sprites = motion(self.spec, before, after, path, self.remaining, fraction, ctx)
+                if frame < count:
+                    sprites.extend(effects(self.spec, before, after, fraction))
                 if before == after and frame < count:
                     x, y = cell_xy(after[0])
+                    for spr in sprites:             # a refused press: the farmer shakes his head
+                        if spr.name == 'farmer':
+                            spr.set_position(spr.x + (1 if frame % 2 else -1), spr.y)
                     sprites.append(block('refusal-left', max(0, x - 1), y, 1, 8, ORG, 25))
                     sprites.append(block('refusal-right', min(63, x + 8), y, 1, 8, ORG, 25))
                     sprites.append(block('refusal-top', max(0, x - 1), y, 3, 1, YEL, 25))
                 self.frames.append(sprites)
+            if walked:                              # landing squash: he settles with a little puff of dust
+                landing = dict(self.context(count, step=False), squash=True)
+                sprites = picture(self.spec, after, self.remaining, landing)
+                lx, ly = cell_xy(after[0])
+                foot = ly + (0 if after[1] < 0 else 6)
+                sprites.append(block('dust-0', lx - 2, foot, 2, 2, WHT, L_FX))
+                sprites.append(block('dust-1', lx + 8, foot, 2, 2, WHT, L_FX))
+                self.frames.append(sprites)
             # A won level bursts into sparkles; a lost run dims to red and the farmer weeps.
             if self.victory:
-                for phase in range(5):
+                last = self.spec['level'] == len(SPECS) - 1
+                for phase in range(3):
                     sprites = picture(self.spec, after, self.remaining, self.context(count + phase, mood='happy'))
                     sprites.extend(sparkles(after[0], phase))
                     self.frames.append(sprites)
+                for radius in (22, 9, 4 if last else 0):
+                    sprites = picture(self.spec, after, self.remaining, self.context(count + 3, mood='happy'))
+                    sprites.append(iris(after[0], radius))
+                    self.frames.append(sprites)
+                if not last:                        # the next stage opens from a black round iris around its farmer
+                    nxt = SPECS[self.spec['level'] + 1]
+                    start = initial(nxt)
+                    for radius in (7, 16, 30):
+                        sprites = picture(nxt, start, nxt['budget'], self.context(0))
+                        sprites.append(iris(start[0], radius))
+                        self.frames.append((sprites, nxt['level']))
             elif self.remaining <= 0:
                 for phase in range(1, 6):
                     sprites = Tinted(picture(self.spec, after, self.remaining, self.context(count + phase, mood='sad')))
+                    for spr in sprites:             # the farmer sags a little further each frame
+                        if spr.name == 'farmer':
+                            spr.set_position(spr.x, spr.y + (min(2, phase // 2) * (-1 if after[1] < 0 else 1)))
                     sprites.append(dimmer(min(4, phase), after[0]))
                     sprites.extend(storm(after[0], after[1], phase))
                     self.frames.append(sprites)
             self.tick += count + 5
-        self.show(self.frames.pop(0))
+        frame = self.frames.pop(0)
+        if isinstance(frame, tuple):
+            self.show(*frame)
+        else:
+            self.show(frame)
         if not self.frames:
             if self.victory:
                 self.next_level()

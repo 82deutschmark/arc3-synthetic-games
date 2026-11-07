@@ -1,6 +1,11 @@
 # ARC-AGI-3 candidate task es02 (Extreme Sneeze, redrawn).
 # Author: Claude Sonnet 5.5
 # Date: 07-November-2026
+# Updated: 07-November-2026, Claude Sonnet 5.5: round A, a calmer and clearer picture (quiet floors, plain lawn, fewer twinkles and props); rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round B (animation): hop-and-settle movement with a shadow, squash and dust wake, a bump when a step is blocked, a
+#   sneeze recoil, a pop of sparks on every infection, heal, build and host switch, an angry stamp and a flinch, a bobbing visitor and host, a calmer neon level; rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5: round C (final look): the win sweep now slides away to uncover the next level instead of cutting to it, calmer stall,
+#   cabinet and vending-machine art, a gentler station mosaic and loss wash, a glint that slides over the wall columns, everyone bobs on their own beat; rules untouched.
 # PURPOSE: es02 redraws es01 (Extreme Sneeze: spread an alien infection through a city, hopping between infected hosts).
 #   THE RULES ARE UNCHANGED: every level's layout and solution, the level order, the inputs offered, the click geometry,
 #   the win and loss outcomes, the spray / hop / hostile / doctor / barricade behaviour and the visible spore supply are
@@ -12,6 +17,10 @@
 #   everything above the class only draws (pixel art, floors, walls, level backdrops) and holds no game rule.
 #   Nothing is shared with es01 and es01 is untouched.
 # CHANGELOG
+# 07-Nov-2026 (Claude Sonnet 5.5): round B (animation, drawing only): three-step hops with a landing squash, a shadow and a dust wake behind the host
+#   and the visitor; a blocked step bumps (nudge, star, recoil) instead of showing nothing; the sprayer recoils and every new infection, cure,
+#   barricade and host switch pops; the hit visitor shakes, an angry guard stamps, a half-hit person flinches; idle bob for host and visitor in
+#   action frames; the neon level lost its scan line and half its pulses; fewer petals on the lawn. No rule, level, input or outcome changed.
 # 07-Nov-2026 (Claude Sonnet 5.5): first version of es02 -- es01's rules, a full redraw. Pass 1 of 4 (build).
 # 07-Nov-2026 (Claude Sonnet 5.5): pass 2 of 4 (critique and redraw): calmer brick and tunnel floors, cobbled night market,
 #   big-slab ward and station floors, a traffic barrel for the hazard pillar, new window and cabinet walls, a sharper doctor,
@@ -25,6 +34,9 @@
 #   a drooping ghost on a lost run. Rules, geometry, frame order of the rule code: unchanged.
 # 07-Nov-2026 (Claude Sonnet 5.5): pass 4 of 4 (polish): the lost-run wash is a solid red frame closing in (no dither); the win
 #   wipe uses pale flecks instead of pink. Rules unchanged.
+# 07-Nov-2026 (Claude Sonnet 5.5): round A (calm and readable): quieter floors a step apart in one hue family (big slabs, no
+#   seams-on-every-tile, rarer litter and flecks), a plain lawn and calmer trees and shopfronts in the plaza, sparser twinkles
+#   and ambient life so the people, the host ring and the hazards pop. Rules unchanged.
 
 from copy import deepcopy
 from collections import deque
@@ -75,7 +87,7 @@ THEMES = [
  dict(tile='checker',  life='ward',    c1=LBL, c2=BLU, seam=BLU, trim=(WHT,BLU), ink=BLK, glint=(WHT,RED,BLU), stripe=RED, shade=BLU, edge=(BLU,MAG), wall=dict(A=BLU,B=RED,W=WHT)),
  dict(tile='platform', life='station', c1=PUR, c2=MAR, seam=MAR, trim=(YEL,BLK), ink=WHT, glint=(WHT,LBL,YEL), shade=BLK, edge=(BLK,YEL), wall=dict(A=BLU,B=YEL,W=ORG)),
  dict(tile='tunnel',   life='tunnel',  c1=BLU, c2=LBL, seam=LBL, trim=(YEL,BLK), ink=WHT, glint=(WHT,YEL,LBL), shade=PUR, edge=(PUR,ORG), wall=dict(A=ORG,B=BLK,W=RED)),
- dict(tile='neon',     life='neon',    c1=BLK, c2=BLU, seam=BLU, trim=(MAG,LBL), ink=WHT, glint=(MAG,YEL,LBL), shade=PUR, edge=(BLU,MAG), wall=dict(A=MAG,B=LBL,W=PUR)),
+ dict(tile='neon',     life='neon',    c1=BLK, c2=PUR, seam=PUR, trim=(MAG,LBL), ink=WHT, glint=(MAG,YEL,LBL), shade=PUR, edge=(BLU,MAG), wall=dict(A=MAG,B=LBL,W=PUR)),
 ]
 
 
@@ -223,7 +235,6 @@ def civilian_art(heading, variant, infected, controlled, exposure, cough, ink, m
     if controlled:                                             # the passenger: magenta tendrils, a green crown
         px[0][0] = px[0][5] = px[5][0] = px[5][5] = MAG
         px[0][2] = px[0][3] = GRN
-        px[4][2] = px[4][3] = MAG
     if cough:                                                  # a sneeze is coming: eyes squeezed, mouth wide open
         for x in (EYE_X[heading] or ()): px[1][x] = BLK
         px[2][2] = px[2][3] = BLK
@@ -349,6 +360,36 @@ def refuse_marks():
     return px
 
 
+POP_KINDS = dict(infect=(GRN, YEL), heal=(LBL, WHT), build=(YEL, WHT), host=(MAG, WHT))
+
+
+def pop_burst(kind):
+    """A wide ring of sparks around one cell: the 'something just happened here' flash (an infection, a cure, a new
+    barricade or a host switch). Ten by ten, so it clears the host's yellow brackets."""
+    a, b = POP_KINDS[kind]
+    return art(['....AA....', '.B......B.', '..........', '..........', 'A........A', 'A........A', '..........', '..........', '.B......B.', '....AA....'], A=a, B=b)
+
+
+def dust_art(step, colour):
+    """The little cloud kicked up behind a mover: a puff, then two wisps drifting apart, then two specks. Returns
+    (pixels, dx, dy) relative to the cell the mover just left."""
+    c = colour
+    if step <= 1: return [[-1, c, c, -1], [c, c, c, c]], 1, 3
+    if step == 2: return [[-1, c, -1, -1, c, -1], [c, -1, -1, -1, -1, c]], 0, 3
+    return [[c, -1, -1, -1, -1, c]], 0, 2
+
+
+def bonk_art(step):
+    """The star where a blocked step hit something: a bright plus, then four sparks flying apart."""
+    if step == 0: return [[-1, YEL, -1], [YEL, WHT, YEL], [-1, YEL, -1]]
+    return [[WHT, -1, -1, -1, WHT], [-1, -1, -1, -1, -1], [-1, -1, -1, -1, -1], [-1, -1, -1, -1, -1], [WHT, -1, -1, -1, WHT]]
+
+
+def squashed(face):
+    """The landing squash: the sixth-high picture with its torso row squeezed out, so the head drops a pixel."""
+    return [[-1] * len(face[0])] + [list(r) for r in face[:3]] + [list(r) for r in face[4:]]
+
+
 def droplet(phase):
     """A sneeze cloud over one cell: a green puff with white shine and a magenta and a light-blue speck."""
     p = art(['..g...', '.gwg..', 'ggggg.', '.ggg..', '..g..l', '....l.'])
@@ -388,7 +429,7 @@ def lose_tint(level):
     """The run-over look: a solid red frame closes in from the screen edges (a wider ring each beat, a dark rim on its
     inner side and a wavy edge), so the board in the middle stays readable and no pixel dither is used."""
     face = blank(64, 64)
-    depth = (0, 7, 13, 19)[min(level, 3)]
+    depth = (0, 5, 9, 13)[min(level, 3)]
     if depth == 0:
         return face
     for y in range(64):
@@ -406,15 +447,15 @@ def lose_tint(level):
 
 # Market stalls (A, B are the awning's two colours, W is the wood). Four looks so a column of stalls is not a wall of copies.
 MARKET = (
-    ('AABBAA', 'AABBAA', 'BBAABB', 'ryoryo', 'WWWWWW', 'kkkkkk'),      # awning over a fruit counter
-    ('WWWWWW', 'WoyoyW', 'WyoyoW', 'WWddWW', 'WddddW', 'kkkkkk'),      # crates of oranges and bananas
-    ('pyloyp', 'ypolyo', 'WWWWWW', 'WddWdW', 'WWWWWW', 'kkkkkk'),      # a flower box
-    ('BBAABB', 'BBAABB', 'AABBAA', 'ylwylw', 'WWWWWW', 'kkkkkk'),      # awning over hanging jars
+    ('AABBAA', 'AABBAA', 'BBAABB', 'rrWrrW', 'WWWWWW', 'kkkkkk'),      # awning over a fruit counter
+    ('WWWWWW', 'WyyyyW', 'WyyyyW', 'WWddWW', 'WddddW', 'kkkkkk'),      # crates of oranges and bananas
+    ('pypypy', 'pppppp', 'WWWWWW', 'WddWdW', 'WWWWWW', 'kkkkkk'),      # a flower box
+    ('BBAABB', 'BBAABB', 'AABBAA', 'lylyly', 'WWWWWW', 'kkkkkk'),      # awning over hanging jars
 )
 # Clinic partitions (A, B accents; W is the wall white).
 CLINIC = (
     ('AAAAAA', 'wlllbw', 'wllbbw', 'wlbbbw', 'wwwwww', 'kkkkkk'),      # a window: gradient glass, a sill
-    ('kkkkkk', 'kbollk', 'kwwwwk', 'kvyrbk', 'kwwwwk', 'kkkkkk'),      # a medicine cabinet of bottles on two shelves
+    ('kkkkkk', 'kbbllk', 'kwwwwk', 'kbbllk', 'kwwwwk', 'kkkkkk'),      # a medicine cabinet of bottles on two shelves
     ('kkkkkk', 'kwwwwk', 'kBBBBk', 'kBAABk', 'kBBBBk', 'kkkkkk'),      # a bed: pillow and blanket
     ('kkkkkk', 'AAWWBB', 'AAWWBB', 'AAWWBB', 'AAWWBB', 'kkkkkk'),      # a striped privacy curtain
 )
@@ -423,7 +464,7 @@ TRANSIT = (
     None,                                                              # a hazard-striped pillar (drawn from a rule)
     ('AAAAAA', 'AyyAyy', 'AyyAyy', 'AAAAAA', 'kwkkwk', 'kkkkkk'),      # the side of a train car
     ('BBBBBB', 'BkkkkB', 'BklykB', 'BkkkkB', 'BBAABB', 'kkkkkk'),      # a ticket kiosk with a lit screen
-    ('kkkkkk', 'krylok', 'kpwmbk', 'krylok', 'kAAAAk', 'kkkkkk'),      # a vending machine
+    ('kkkkkk', 'kryryk', 'kwwwwk', 'kryryk', 'kAAAAk', 'kkkkkk'),      # a vending machine
 )
 
 
@@ -448,11 +489,8 @@ def vent_art(phase):
 
 
 def tile_plaza(tx, ty, t):
-    px = blank(6, 6, t['c1'] if (tx + ty) % 2 == 0 else t['c2'])
-    for i in range(6):
-        px[0][i] = px[i][0] = t['seam']
-    px[1][1] = WHT
-    if hsh(tx, ty) % 7 == 0:                                    # a small gold inlay
+    px = blank(6, 6, t['c1'] if (tx + ty) % 2 == 0 else t['c2'])   # a plain two-tone checker, no seams: a quiet stage
+    if hsh(tx, ty) % 19 == 0:                                   # a rare small gold inlay
         px[3][2] = px[3][3] = px[2][3] = YEL
     return px
 
@@ -475,30 +513,30 @@ TUNNEL_LITTER = (('.kk.', 'kmkk', '.kk.'), ('do', 'od'), ('ddd', 'dod', 'ddd'), 
 def litter(px, tx, ty, kinds, seed, every=13):
     """Drop one bit of litter on roughly one tile in `every`, picked and placed by the tile's own hash."""
     n = hsh(tx, ty, seed)
-    if n % every == 0:
+    if n % (every * 2) == 0:                                    # half as often as asked: litter is a treat, not a texture
         rows = kinds[(n >> 5) % len(kinds)]
         decal(px, 1 + (n >> 9) % max(1, 5 - len(rows[0])), 1 + (n >> 12) % max(1, 5 - len(rows)), rows)
 
 
 def tile_brick(tx, ty, t):
-    """Running-bond paving, calm: yellow bricks, orange mortar, a white shine on top of each brick, now and then something
-    dropped from a stall. Two courses a cell."""
+    """Running-bond paving, calm: big two-cell yellow bricks, one thin orange mortar line under each course and one joint
+    per brick, now and then something dropped from a stall."""
     px = blank(6, 6, t['c1'])
-    for y0, gap in ((0, 5), (3, 2)):
-        px[y0 + 2] = [t['seam']] * 6
-        for y in (y0, y0 + 1): px[y][gap] = t['seam']
-        px[y0][(gap + 1) % 6] = t['c2']                        # the shine
+    px[5] = [t['seam']] * 6
+    if tx % 2 == ty % 2:
+        for y in range(5): px[y][5] = t['seam']
     litter(px, tx, ty, BRICK_LITTER, 9)
     return px
 
 
 def tile_night(tx, ty, t):
-    """Wet cobbles: staggered stones outlined in maroon, a magenta lamp-glow on some, the odd puddle, paw prints and leaves."""
+    """Wet cobbles, calm: big two-cell stones outlined in maroon on violet, a rare magenta lamp-glow, the odd puddle, paw
+    prints and leaves."""
     px = blank(6, 6, t['c1'])
-    for y0, gap in ((0, 5), (3, 2)):
-        px[y0 + 2] = [t['seam']] * 6
-        for y in (y0, y0 + 1): px[y][gap] = t['seam']
-        if hsh(tx, ty, y0) % 3 == 0: px[y0][(gap + 2) % 6] = MAG
+    px[5] = [t['seam']] * 6
+    if tx % 2 == ty % 2:
+        for y in range(5): px[y][5] = t['seam']
+    if hsh(tx, ty) % 23 == 0: px[2][2] = px[2][3] = MAG
     litter(px, tx, ty, NIGHT_LITTER, 5, 10)
     return px
 
@@ -509,7 +547,6 @@ def tile_clinic(tx, ty, t):
     for i in range(6):
         if ty % 2: px[5][i] = WHT
         if tx % 2: px[i][5] = WHT
-    if tx % 2 == 0 and ty % 2 == 0: px[1][1] = px[1][2] = px[2][1] = WHT
     if ty % 5 == 2:                                             # a guide line along the corridor, dashed
         for r in (2, 3):
             px[r] = [t['stripe'] if (i + tx) % 4 < 3 else t['c1'] for i in range(6)]
@@ -519,15 +556,13 @@ def tile_clinic(tx, ty, t):
 
 
 def tile_checker(tx, ty, t):
-    """The sunny ward: twelve-pixel slabs of sky blue and warm yellow with deep-blue grout, a white shine on each slab,
+    """The sunny ward: twelve-pixel slabs, mostly sky blue with the odd warm yellow one, deep-blue grout,
     a red dashed line across every few rows, and children's toys dropped about. No big white areas."""
-    big = ((tx // 2) + (ty // 2)) % 2
-    sky = big == 0
+    sky = hsh(tx // 2, ty // 2, 4) % 4 != 0             # most slabs are sky blue; a warm yellow one now and then
     px = blank(6, 6, t['c1'] if sky else YEL)
     for i in range(6):
         if tx % 2 == 1: px[i][5] = t['c2']
         if ty % 2 == 1: px[5][i] = t['c2']
-    if tx % 2 == 0 and ty % 2 == 0: px[1][1] = px[1][2] = px[2][1] = WHT
     if ty % 7 == 3:
         px[2] = [t['stripe'] if i % 3 != 2 else (YEL if sky else LBL) for i in range(6)]
         px[3] = [MAR if i % 3 != 2 else px[3][i] for i in range(6)]
@@ -538,12 +573,12 @@ def tile_checker(tx, ty, t):
 
 # A twelve-pixel mosaic inlay for the station floor, cut into four tile-sized quarters.
 def _star():
-    """A diamond mosaic by distance from the centre: a white spark, an orange heart, a pink band, a yellow rim."""
+    """A small diamond mosaic by distance from the centre: a yellow spark in an orange diamond (two flat colours, no rim)."""
     g = blank(12, 12)
     for y in range(12):
         for x in range(12):
             d = abs(x - 5.5) + abs(y - 5.5)
-            g[y][x] = WHT if d <= 1.5 else ORG if d <= 3.5 else PNK if d <= 5.5 else YEL if d <= 6.5 else -1
+            g[y][x] = YEL if d <= 1.5 else ORG if d <= 4.5 else -1
     return g
 
 
@@ -552,20 +587,16 @@ SLAB_STAR = _star()
 
 def tile_platform(tx, ty, t):
     """Station concrete, bevelled: two-cell slabs of violet and maroon, each with a light top and left edge and a dark
-    bottom and right one, terrazzo flecks, an occasional diamond mosaic, a puddle or a coin, and the yellow edge strip."""
-    big = ((tx // 2) + (ty // 2)) % 2
-    base, hi, lo = (t['c1'], MAG, MAR) if big == 0 else (t['c2'], PUR, BLK)
+    bottom and right one, an occasional diamond mosaic, a rare drain grate, and the yellow edge strip."""
+    big = 1 if hsh(tx // 2, ty // 2, 6) % 3 == 0 else 0     # mostly violet slabs, a maroon one in three
+    base, lo = (t['c1'], MAR) if big == 0 else (t['c2'], BLK)
     px = blank(6, 6, base)
-    if ty % 2 == 0: px[0] = [hi] * 6
-    else: px[5] = [lo] * 6
-    for y in range(6):
-        if tx % 2 == 0: px[y][0] = hi
-        else: px[y][5] = lo
+    if ty % 2 == 1: px[5] = [lo] * 6                            # one dark edge under and beside each slab, nothing more
+    if tx % 2 == 1:
+        for y in range(6): px[y][5] = lo
     n = hsh(tx, ty, 3)
-    if n % 4 == 0: px[1 + (n >> 4) % 4][1 + (n >> 7) % 4] = (PNK, YEL, LBL, MAG)[(n >> 10) % 4]     # a terrazzo fleck
-    if n % 9 == 1: px[1 + (n >> 4) % 4][1 + (n >> 7) % 4] = WHT
     top = (ty // 2) * 2
-    if hsh(tx // 2, ty // 2, 7) % 5 == 0 and top % 5 != 0 and (top + 1) % 5 != 0:   # a diamond mosaic in this slab
+    if hsh(tx // 2, ty // 2, 7) % 11 == 0 and top % 5 != 0 and (top + 1) % 5 != 0:   # a diamond mosaic in this slab
         qx, qy = (tx % 2) * 6, (ty % 2) * 6
         for y in range(6):
             for x in range(6):
@@ -577,11 +608,9 @@ def tile_platform(tx, ty, t):
         px[3] = [BLK, YEL, YEL, BLK, YEL, YEL]                  # raised bumps
         px[4] = [BLK] * 6
         px[5] = [MAR] * 6
-    elif n % 19 == 5:                                           # a drain grate
+    elif n % 41 == 5:                                           # a drain grate
         for y in (1, 2, 3):
             px[y][1:5] = [BLK, LBL, BLK, LBL] if y % 2 else [LBL, BLK, LBL, BLK]
-    elif not (hsh(tx // 2, ty // 2, 7) % 5 == 0) and n % 17 == 6:
-        litter(px, tx, ty, STATION_LITTER, 8, 1)
     return px
 
 
@@ -589,13 +618,11 @@ def tile_tunnel(tx, ty, t):
     """Riveted steel plates: blue with a light top edge and a violet foot, rivets on each plate, a cable conduit now and
     then, oil, rust and cable coils on the floor."""
     px = blank(6, 6, t['c1'])
-    px[0] = [t['c2']] * 6
-    px[5] = [PUR] * 6
+    if ty % 2 == 1: px[5] = [PUR] * 6                           # big plates two cells tall, a violet foot under each
     if tx % 2 == 0:
-        px[1][0] = px[1][5] = WHT
-        for y in range(6): px[y][0] = PUR if y else t['c2']
-        px[1][0] = WHT
-    if ty % 6 == 3:                                             # a cable conduit running along the tunnel
+        for y in range(6): px[y][0] = PUR                       # and a violet seam on the left of each plate
+        if ty % 2 == 0: px[1][1] = WHT                          # one rivet a plate
+    if ty % 8 == 3:                                             # a cable conduit running along the tunnel
         px[2] = [ORG] * 6
         px[3] = [MAR] * 6
         px[2][(tx % 3) * 2] = YEL
@@ -621,34 +648,28 @@ CHIP = _chip()
 
 
 def tile_neon(tx, ty, t):
-    """A circuit board: a black board with blue grid lines, glowing magenta power traces every third row with round
+    """A circuit board: a black board with sparse blue grid lines, glowing magenta power traces every sixth row with round
     lit nodes, vertical vias between them, the odd microchip, and scattered LEDs."""
     px = blank(6, 6, t['c1'])
     for i in range(6):                                          # a twelve-pixel grid of blue lines, dotted in between
-        if ty % 2 == 0 or i == 0: px[0][i] = t['c2']
-        if tx % 2 == 0 or i == 0: px[i][0] = t['c2']
-    px[0][0] = LBL if tx % 2 == 0 and ty % 2 == 0 else t['c2']
-    n = hsh(tx, ty, 11)
+        if ty % 4 == 0: px[0][i] = t['c2']
+        if tx % 6 == 0: px[i][0] = t['c2']
     top = (ty // 2) * 2
     if top % 6 == 4 and ((tx // 2) * 7 + ty // 6) % 5 == 0:     # a chip sits on two rows that carry no trace
         qx, qy = (tx % 2) * 6, (ty % 2) * 6
         for y in range(6):
             for x in range(6): px[y][x] = CHIP[qy + y][qx + x]
         return px
-    if ty % 3 == 0:                                             # the trace: a lit core over a dark shadow
+    if ty % 6 == 0:                                             # the trace: a lit core over a dark shadow
         px[2] = [MAG] * 6
         px[3] = [PUR] * 6
-        if tx % 4 == 0:                                         # a round node on the trace
+        if tx % 12 == 0:                                        # a round node on the trace
             px[1][1:5] = [BLK, LBL, LBL, BLK]
             px[2][1:5] = [LBL, YEL, YEL, LBL]
             px[3][1:5] = [LBL, YEL, YEL, LBL]
             px[4][1:5] = [BLK, LBL, LBL, BLK]
-    elif ty % 3 == 1 and tx % 4 == 2:                           # a via dropping from the trace above
+    elif ty % 6 == 1 and tx % 12 == 2:                           # a via dropping from the trace above
         for y in range(1, 6): px[y][2] = px[y][3] = PUR if y % 2 else MAG
-    elif n % 6 == 0:                                            # a lone LED
-        px[3][3] = (YEL, LBL, MAG, WHT)[(n >> 4) % 4]
-    elif n % 9 == 1:                                            # a tiny resistor
-        px[3][1:5] = [LBL, ORG, ORG, LBL]
     return px
 
 
@@ -685,8 +706,8 @@ def build_floor_grid(theme, w, h, walls=()):
 # PART FOUR: the plaza of level one (a whole street around the board) and its drifting life.
 # =====================================================================================================
 
-TREE_A = ('..kkkkk..', '.kgyggggk', 'kggggyggk', 'kgyggggyk', 'kggyggggk', '.kgggygk.', '..kkkkk..', '...kdk...', '...kdk...', '..kdddk..')
-TREE_B = ('..kkkkk..', '.kggggygk', 'kgyggggyk', 'kggggyggk', 'kgyggggyk', '.kggygggk', '..kkkkk..', '...kdk...', '...kdk...', '..kdddk..')
+TREE_A = ('..kkkkk..', '.kgggggk.', 'kggggggyk', 'kgggggggk', 'kgyggggyk', '.kgggggk.', '..kkkkk..', '...kdk...', '...kdk...', '..kdddk..')
+TREE_B = ('..kkkkk..', '.kgggggk.', 'kgggggggk', 'kgggggyyk', 'kgggggggk', '.kgggggk.', '..kkkkk..', '...kdk...', '...kdk...', '..kdddk..')
 BIRD = (('k.k', '.k.'), ('.k.', 'k.k'))
 CAR = ('..yyyyy...', '.ylyylyy..', 'yyyyyyyyyy', 'yykkyykkyy', '.kwwkkwwk.')
 CLOUD = ('..www...', '.wwwwww.', 'wwwwwwww')
@@ -700,21 +721,19 @@ def plaza_backdrop(ox, oy, w, h):
     for y in range(64):
         for x in range(64):
             n = hsh(x, y)
-            if n % 23 == 0: g[y][x] = YEL
-            elif n % 31 == 1: g[y][x] = WHT
-            elif n % 17 == 2: g[y][x] = PNK
+            if n % 211 == 0: g[y][x] = YEL                      # a very few flowers on a plain lawn
+            elif n % 331 == 1: g[y][x] = WHT
     rect(g, 0, 0, 63, oy - 2, LBL)                              # the sky behind the shops
     shops = ((0, 11, ORG, 5), (11, 22, PUR, 3), (22, 31, YEL, 6), (31, 43, MAG, 4), (43, 53, ORG, 2), (53, 63, PUR, 5))
     for x0, x1, body, top in shops:
         rect(g, x0, top, x1 - 1, oy - 2, body)
         rect(g, x0, top, x1 - 1, top, MAR)                      # the roof edge
-        for wx in range(x0 + 2, x1 - 3, 4):                     # two rows of lit windows
-            for wy in range(top + 2, oy - 7, 4):
+        for wx in range(x0 + 2, x1 - 3, 5):                     # one row of lit windows
+            for wy in range(top + 2, oy - 7, 6):
                 rect(g, wx, wy, wx + 1, wy + 1, YEL if hsh(wx, wy) % 3 else LBL)
         for x in range(x0, x1):                                 # an awning over the door
-            rect(g, x, oy - 5, x, oy - 4, RED if (x // 2) % 2 else WHT)
+            rect(g, x, oy - 5, x, oy - 4, RED if (x // 4) % 2 else WHT)
         rect(g, x0 + 4, oy - 3, x0 + 5, oy - 2, BLK)            # the door
-        rect(g, x1 - 3, oy - 3, x1 - 2, oy - 2, LBL)            # the shop window
     bottom = oy + h * CELL + 1
     rect(g, 0, bottom, 63, bottom + 1, WHT)                     # the kerb
     rect(g, 0, bottom + 2, 63, 63, BLK)                         # the road
@@ -741,7 +760,7 @@ def plaza_ambient(clock, ox, oy, w, h):
         glow = blank(3, 1, YEL if (clock // 3 + i) % 2 else WHT)
         out.append((glow, x, oy + 12, f'lamp_glow_{i}', 3))
         out.append((art(BENCH), bx, oy + 20, f'bench_{i}', 3))
-    for i in range(4):                                          # petals that drift down the side lawns
+    for i in range(2):                                          # two petals drift down the side lawns
         t = clock * 2 + i * 23
         px = 2 + (i % 2) * 58 + int(3 * sin(t / 5.0))
         out.append(([[PNK if i % 2 else WHT]], px, oy + 2 + t % (h * CELL - 4), f'petal_{i}', 3))
@@ -765,6 +784,9 @@ DIZZY = art(['.y.', 'yyy', '.y.'])
 PULSE = ([MAG, MAG, PNK, LBL, WHT, WHT], [PUR, PUR, MAG, PNK, PNK, WHT])
 CONFETTI_COLOURS = (YEL, PNK, WHT, LBL, MAG, ORG, RED, BLU)
 LED_COLOURS = (MAG, YEL, LBL, WHT)
+# Tagged tuples in a frame's effects list that only steer the drawing (round B motion notes): hop (key, lift), land (key),
+# nudge (key, dx, dy), dust (cell, step), bump (cell, dir, step), pop (cell, kind), flinch (cell), idle (allow a bob).
+MOTION_TAGS = ('hop', 'land', 'nudge', 'dust', 'bump', 'pop', 'flinch', 'idle')
 
 
 def puff(t):
@@ -777,38 +799,38 @@ def puff(t):
 def life_market(n, wx, wy, clock, cx, cy, wall):
     out = []
     if wall: return out
-    if n % 19 == 0:                                             # a butterfly wanders over the stones
+    if n % 53 == 0:                                             # a butterfly wanders over the stones
         t = clock + (n >> 8) % 13
         col = (MAG, PUR, WHT, RED)[(n >> 4) % 4]
         wings = ['P.P', '.k.'] if (clock // 2) % 2 else ['PPP', '.k.']
         out.append((art(wings, P=col), wx + 3 + int(5 * sin(t / 3.0)), wy + 2 + int(3 * sin(t / 2.0 + 1)), 3))
-    elif n % 31 == 5:                                           # a sparrow hops and pecks at crumbs
+    elif n % 71 == 5:                                           # a sparrow hops and pecks at crumbs
         out.append((SPARROW[(clock // 3 + n) % 2], wx + ((clock // 6 + n) % 3) * 2, wy + 2, 3))
     return out
 
 
 def life_night(n, wx, wy, clock, cx, cy, wall):
     out = []
-    if not wall and n % 11 == 0:                                # a firefly blinks as it drifts
+    if not wall and n % 31 == 0:                                # a firefly blinks as it drifts
         t = clock + (n >> 6) % 17
         on = (clock // 2 + n) % 4 < 3
         out.append(([[YEL if on else PNK]], wx + 3 + int(4 * sin(t / 4.0)), wy + 3 + int(3 * sin(t / 3.0)), 3))
-    if wall and n % 2 == 0:                                     # steam curls off the stall
+    if wall and n % 4 == 0:                                     # steam curls off the stall
         t = (clock + n) % 8
         out.append((puff(t), wx + 2 + ((t // 2) % 2) * 2, wy + 1 - t, 5))
-    if wall and n % 3 == 0 and cy > 0:                          # a paper lantern sways on its string above the stall
+    if wall and n % 5 == 0 and cy > 0:                          # a paper lantern sways on its string above the stall
         out.append((LANTERN, wx + 1 + (n >> 5) % 3 + int(round(sin((clock + n) / 3.0))), wy - 5, 3))
     return out
 
 
 def life_clinic(n, wx, wy, clock, cx, cy, wall):
-    if wall or n % 13 != 0: return []
+    if wall or n % 37 != 0: return []
     t = (clock + (n >> 6)) % 12                                 # a soap bubble rises and wobbles
     return [(BUBBLE, wx + 2 + int(2 * sin(t / 2.0)), wy + 6 - t, 3)]
 
 
 def life_ward(n, wx, wy, clock, cx, cy, wall):
-    if wall or n % 17 != 2 or cy == 0: return []
+    if wall or n % 41 != 2 or cy == 0: return []
     col = (RED, MAG, BLU, PUR, ORG)[(n >> 5) % 5]               # a tied balloon bobs on its string over a little weight
     sx = int(round(1.5 * sin((clock + n % 9) / 4.0)))
     return [(art(['CCC', 'CwC', '.C.'], C=col), wx + 2 + sx, wy - 1, 3), ([[MAR], [MAR], [MAR]], wx + 3, wy + 2, 3),
@@ -816,7 +838,7 @@ def life_ward(n, wx, wy, clock, cx, cy, wall):
 
 
 def life_station(n, wx, wy, clock, cx, cy, wall):
-    if wall or n % 27 != 1: return []
+    if wall or n % 61 != 1: return []
     t = (clock + (n >> 6)) % 16                                 # a paper tumbles along the platform
     return [(PAPER[(t // 2) % 2], wx - 2 + t, wy + 3 + ((t // 2) % 2), 3)]
 
@@ -824,11 +846,11 @@ def life_station(n, wx, wy, clock, cx, cy, wall):
 def life_tunnel(n, wx, wy, clock, cx, cy, wall):
     out = []
     if wall: return out
-    if n % 15 == 4:                                              # a drip falls from the pipes and splashes
+    if n % 43 == 4:                                              # a drip falls from the pipes and splashes
         t = (clock + (n >> 6)) % 10
         x = wx + 1 + (n >> 3) % 3
         out.append(([[LBL], [WHT]], x, wy + t, 3) if t < 5 else ([[LBL, -1, LBL], [-1, WHT, -1]], x - 1, wy + 4, 3))
-    if cy % 6 == 3:
+    if cy % 8 == 3:
         if n % 4 == 0:                                          # steam leaks from the conduit
             t = (clock + n) % 8
             out.append((puff(t), wx + 1 + (n >> 5) % 4 + (t // 3) % 2, wy + 1 - t, 5))
@@ -838,7 +860,7 @@ def life_tunnel(n, wx, wy, clock, cx, cy, wall):
 
 
 def life_neon(n, wx, wy, clock, cx, cy, wall):
-    if wall or n % 7 != 0: return []
+    if wall or n % 19 != 0: return []
     return [([[LED_COLOURS[(clock // 2 + n) % 4]]], wx + 3, wy + 3, 3)]           # an LED cycling colours
 
 
@@ -847,13 +869,17 @@ LIFE = dict(market=life_market, night=life_night, clinic=life_clinic, ward=life_
 
 
 def wall_extra(scene, variant, n, wx, wy, clock):
-    """Blinking lights on the fittings of a station: a lamp on the barrel, a row of lights on the vending machine."""
-    if scene != 'transit': return []
-    if variant == 0:
-        return [([[YEL if (clock // 2 + n) % 2 else WHT] * 4], wx + 1, wy, 5)]
-    if variant == 3:
-        return [([[(RED, YEL, LBL, PNK)[(clock // 2 + i) % 4] for i in range(4)]], wx + 1, wy + 1, 5)]
-    return []
+    """Life on the fittings: a station's lamp on the barrel and the row of lights on the vending machine, and on every
+    third fitting of any place a single glint of light that slides across it and rests (so the columns are never dead)."""
+    out = []
+    if scene == 'transit' and variant == 0:
+        out.append(([[YEL if (clock // 2 + n) % 2 else WHT] * 4], wx + 1, wy, 5))
+    elif scene == 'transit' and variant == 3:
+        out.append(([[(RED, YEL, LBL, PNK)[(clock // 2 + i) % 4] for i in range(4)]], wx + 1, wy + 1, 5))
+    if n % 3 == 0 and not (scene == 'transit' and variant == 0):
+        p = (clock // 2 + n) % 9
+        if p < 4: out.append(([[LBL if scene == 'clinic' else WHT]], wx + 1 + p, wy + 4 - p, 5))
+    return out
 
 
 def clip_h(px, x, lo, hi):
@@ -886,6 +912,8 @@ class Es02(ARCBaseGame):
         self._dynamic = []
         self._phase = 0
         self._clock = 0
+        self._reveal = []
+        self._revealing = False
         super().__init__(game_id='es02',
             levels=[Level(sprites=[], grid_size=(64,64), data={'index': i})
                     for i in range(len(LEVELS_SPEC))],
@@ -924,7 +952,7 @@ class Es02(ARCBaseGame):
         self._result_won = False
         self._result_lost = False
         self._build_floor()
-        self._draw()
+        self._draw(effects=[('reveal',self._reveal.pop(0))] if self._revealing and self._reveal else ())
 
     # ---------------- sprites ----------------
     def _sprite(self, pixels, x, y, name, layer=1, tags=()):
@@ -1005,9 +1033,9 @@ class Es02(ARCBaseGame):
                         lamp = (RED, YEL)[(clock // 3 + n) % 2]
                         self._put_px([[lamp]], wx + 4, wy + 1, f'light_{cx}_{cy}', 5, ('ambient',))
                         continue
-                    if n % 5 != 0: continue                   # a sparse sparkle on a stall or a fitting
+                    if n % 11 != 0: continue                  # a rare sparkle on a stall or a fitting
                     layer = 5
-                elif n % 11 != 0: continue
+                elif n % 37 != 0: continue                    # a rare glint on the floor
                 else: layer = 2
                 phase = (clock // 2 + n) % 5
                 if phase > 2: continue
@@ -1020,15 +1048,13 @@ class Es02(ARCBaseGame):
         if th['life'] == 'neon':
             span = self.width * CELL
             for cy in range(cy0, min(self.height, cy0 + 12)):
-                if cy % 3: continue                               # data pulses race along the glowing traces, one each way
+                if cy % 6: continue                               # data pulses race along the glowing traces, one each way
                 for k, (start, direction) in enumerate(((clock * 3 + cy * 19, 1), (clock * 2 + cy * 31, -1))):
                     t = start % (span + 12) - 6
                     x = self.ox + (t if direction > 0 else span - 6 - t)
                     row = list(PULSE[0]) if direction > 0 else list(reversed(PULSE[1]))
                     px, x = clip_h([row, row], x, self.ox, self.ox + span)
                     if px: self._put_px(px, x, self.oy + cy * CELL + 2, f'pulse_{cy}_{k}', 3, ('ambient',))
-            line = [[LBL if x % 2 else -1 for x in range(64)]]    # a scan line sweeps down the screen, dotted
-            self._put_px(line, self.camera.x, self.camera.y + (clock * 2) % 72 - 4, 'scanline', 3, ('ambient',))
 
     # ---------------- drawing a frame ----------------
     def _draw(self, positions=None, effects=(), beam=None):
@@ -1039,6 +1065,20 @@ class Es02(ARCBaseGame):
         ink = th['ink']
         lose = next((e[1] for e in effects if isinstance(e[0], str) and e[0] == 'lose'), 0)
         hit = any(isinstance(e[0], str) and e[0] == 'impact' for e in effects)
+        # round B motion notes ride in the effects list as tagged tuples (see MOTION_TAGS); none of them is a game rule
+        def tagged(tag): return [e for e in effects if isinstance(e[0], str) and e[0] == tag]
+        hops = {e[1]: e[2] for e in tagged('hop')}                # key -> pixels the piece is lifted off the ground
+        nudges = {e[1]: (e[2], e[3]) for e in tagged('nudge')}    # key -> a pixel shove (a bump, a sneeze recoil)
+        lands = {e[1] for e in tagged('land')}                    # keys that squash as they touch down
+        flinches = {e[1] for e in tagged('flinch')}               # cells whose person winces at a spray that did not infect
+        idle = bool(tagged('idle'))
+
+        def shift(key, bob_on):
+            """Pixel offset of a piece: the hop, a shove, and (in idle frames) a small breathing bob."""
+            dx, dy = nudges.get(key, (0, 0))
+            dy -= hops.get(key, 0)
+            if idle and bob_on and key not in hops and key not in nudges: dy -= 1
+            return dx, dy
         self._ambient()
         for (x,y),strength in sorted(self.medical.items()):
             self._put(medical_wall(strength),(x,y),f'medical_{x}_{y}',5,('barricade',))
@@ -1050,19 +1090,23 @@ class Es02(ARCBaseGame):
         dead = self.alien['damage'] >= 26
         blink = (clock // 5) % 8 == 0
         face = alien_art(self.alien['dir'],self.alien['damage'],hit,blink)
+        if 'alien' in lands: face = squashed(face)
         # the visitor's glow: four sparkles that trade places
         aura = blank(8, 8)
         for i, (ax, ay) in enumerate(((0,0),(7,0),(0,7),(7,7))):
             if (clock // 2 + i) % 2: aura[ay][ax] = LBL if i % 2 else PNK
         self._put_px(aura, self.ox+round(apos[0]*CELL)-1, self.oy+round(apos[1]*CELL)-1, 'alien_aura', 5, ('alien',))
-        self._put(face, apos, 'alien', 6, ('alien',))
+        adx, ady = shift('alien', (clock // 2) % 2 == 1)           # the visitor bobs on the off beat to the host
+        if hit: adx += 1 if clock % 2 else -1                      # and shudders when a guard lands a hit
+        if hops.get('alien'): self._put_px(blank(4, 1, BLK), self.ox+round(apos[0]*CELL)+1, self.oy+round(apos[1]*CELL)+5, 'alien_shadow', 3, ('effect',))
+        self._put_px(face, self.ox+round(apos[0]*CELL)+adx, self.oy+round(apos[1]*CELL)+ady, 'alien', 6, ('alien',))
         sx=self.ox+round(apos[0]*CELL)-self.camera.x
         sy=self.oy+round(apos[1]*CELL)-self.camera.y
         gx, gy = self.ox+round(apos[0]*CELL), self.oy+round(apos[1]*CELL)
         if sx<0 or sy<0 or sx+CELL>64 or sy+CELL>64:
             ex=max(1,min(57,sx)); ey=max(1,min(57,sy))
             gx, gy = self.camera.x+ex, self.camera.y+ey
-            self._dynamic.append(self._sprite(face,gx,gy,'alien_edge',9,('alien',)))
+            self._dynamic.append(self._sprite(face,gx+adx,gy+ady,'alien_edge',9,('alien',)))
             if hit:
                 self._dynamic.append(self._sprite(impact_burst(clock),self.camera.x+ex-1,self.camera.y+ey-1,'alien_edge_hit',10,('effect',)))
         cheering = any(isinstance(e[0], str) and e[0] in ('wipe', 'cheer') for e in effects)
@@ -1071,14 +1115,19 @@ class Es02(ARCBaseGame):
             # expressions: everyone winces when the run is lost, the infected cheer when the level is won, and people
             # blink now and then, each on their own beat
             mood = 'wince' if lose else 'cheer' if (cheering and p['infected']) else 'blink' if (clock // 4 + i * 3) % 11 == 0 else None
+            if mood != 'cheer' and p['pos'] in flinches: mood = 'wince'   # a person a spray only half-caught flinches
             if p.get('hostile') and not p['infected']:
                 face=hostile_art(p['dir'],p['windup'],p['exposure'],ink,mood)
             elif p['doctor'] and not p['infected']:
                 face=doctor_art(p['dir'],p['exposure'],bool(p.get('build_target') or p.get('heal_target') is not None),ink,mood)
             else:
                 face=civilian_art(p['dir'],i,p['infected'],self.control==i,p['exposure'],bool(p.get('cough')),ink,mood)
+            if i in lands: face = squashed(face)
             lift = 1 if (mood == 'cheer' and clock % 2) else 0       # the cheering hop up and down
-            self._put_px(face,self.ox+round(pos[0]*CELL),self.oy+round(pos[1]*CELL)-lift,f'person_{i}',6,('person',))
+            if p.get('windup') and idle: lift = 1 if clock % 2 else 0   # an angry guard stamps its feet while winding up
+            pdx, pdy = shift(i, (clock // 2 + i) % 2 == 0)
+            if hops.get(i): self._put_px(blank(4, 1, BLK), self.ox+round(pos[0]*CELL)+1, self.oy+round(pos[1]*CELL)+5, f'shadow_{i}', 3, ('effect',))
+            self._put_px(face,self.ox+round(pos[0]*CELL)+pdx,self.oy+round(pos[1]*CELL)-lift+pdy,f'person_{i}',6,('person',))
             if mood == 'cheer':                                      # and throw a sparkle over their heads
                 self._put_px(STAR5 if clock % 2 else PLUS5,self.ox+round(pos[0]*CELL)+1,self.oy+round(pos[1]*CELL)-6,f'cheer_spark_{i}',8,('effect',))
             if self.control==i:
@@ -1096,10 +1145,27 @@ class Es02(ARCBaseGame):
             elif isinstance(pos[0],str) and pos[0]=='wipe':
                 self._dynamic.append(self._sprite(wipe_art(pos[1],clock),self.camera.x,self.camera.y,'level_wipe',30,('effect',)))
                 self._shower(pos[2])
+            elif isinstance(pos[0],str) and pos[0]=='reveal':
+                face=[row[::-1] for row in wipe_art(pos[1],clock)]   # the same sweep, mirrored, leaving to the right
+                self._dynamic.append(self._sprite(face,self.camera.x+64-pos[1],self.camera.y,'level_reveal',30,('effect',)))
             elif isinstance(pos[0],str) and pos[0]=='cheer':
                 self._shower(pos[1])
             elif isinstance(pos[0],str) and pos[0]=='lose':
                 pass                                        # handled below, once, after everything else is placed
+            elif isinstance(pos[0],str) and pos[0] in MOTION_TAGS:
+                if pos[0] == 'pop':                         # sparks around a cell: an infection, a cure, a barricade, a switch
+                    x,y=pos[1]
+                    self._put_px(pop_burst(pos[2]),self.ox+round(x*CELL)-2,self.oy+round(y*CELL)-2,f'pop_{i}',11,('effect',))
+                elif pos[0] == 'dust':                      # the cloud behind a mover
+                    x,y=pos[1]
+                    px,dx,dy=dust_art(pos[2],th.get('dust',WHT))
+                    self._put_px(px,self.ox+round(x*CELL)+dx,self.oy+round(y*CELL)+dy,f'dust_{i}',3,('effect',))
+                elif pos[0] == 'bump':                      # the star where a blocked step hit
+                    x,y=pos[1]; dx,dy=pos[2]
+                    star=bonk_art(pos[3])
+                    cx=self.ox+x*CELL+3+dx*4-len(star[0])//2
+                    cy=self.oy+y*CELL+3+dy*4-len(star)//2
+                    self._put_px(star,cx,cy,f'bonk_{i}',11,('effect',))
             else:
                 self._put(droplet(clock + i),pos,f'droplet_{i}',10,('effect',))
         if beam:
@@ -1157,6 +1223,7 @@ class Es02(ARCBaseGame):
         while queue:
             prior=self._snapshot()
             wave=[]
+            newly=[]; glanced=[]                  # drawing notes only: who just caught it, who was only splashed
             (x,y),(dx,dy),power,can_chain=queue.pop(0)
             side=(-dy,dx)
             touched_walls=set()
@@ -1182,7 +1249,9 @@ class Es02(ARCBaseGame):
                         p=self.people[hit]
                         if not p['infected']:
                             p['exposure']=min(3,p['exposure']+power)
+                            if p['exposure']<3: glanced.append(pos)
                             if p['exposure']>=3:
+                                newly.append(pos)
                                 p['infected']=True
                                 p['dir']=heading
                                 self.supply=min(3,self.supply+1)
@@ -1190,8 +1259,11 @@ class Es02(ARCBaseGame):
                                 elif can_chain: queue.append((pos,heading,3,True))
                         break
                     previous=pos
+            sneezer='alien' if self.alien['pos']==(x,y) else next((i for i,q in enumerate(self.people) if q['pos']==(x,y)),None)
+            wave.extend(('flinch',c) for c in glanced)
+            if sneezer is not None: wave.append(('nudge',sneezer,-dx,-dy))        # the sneezer's head snaps back
             self._events.append((prior,wave,None))
-            self._events.append((self._snapshot(),[],None))
+            if newly: self._events.append((self._snapshot(),[('pop',c,'infect') for c in newly],None))
         return effects
 
     def _alien_turn(self):
@@ -1353,7 +1425,7 @@ class Es02(ARCBaseGame):
                         if self.control==i:self.control=None
                         doctor['heal_target']=None
                         doctor['heal_primed']=None
-                        self._events.append((self._snapshot(),[],None))
+                        self._events.append((self._snapshot(),[('pop',patient['pos'],'heal')],None))
                     continue
                 doctor['heal_target']=i
                 doctor['heal_primed']=None
@@ -1375,7 +1447,7 @@ class Es02(ARCBaseGame):
             if dist==1:
                 self.medical[target]=2
                 doctor['build_target']=None
-                self._events.append((self._snapshot(),[],(doctor['pos'],target)))
+                self._events.append((self._snapshot(),[('pop',target,'build')],(doctor['pos'],target)))
             else:
                 direction=self._doctor_step_towards(doctor,{target})
                 if direction:
@@ -1386,7 +1458,7 @@ class Es02(ARCBaseGame):
         if self.cough_pending == selected:
             self.cough_pending = None
             self.people[selected]['cough'] = False
-        self._events.append((self._snapshot(), [], (origin, self.people[selected]['pos'], 14)))
+        self._events.append((self._snapshot(), [('pop', self.people[selected]['pos'], 'host')], (origin, self.people[selected]['pos'], 14)))
 
     def _host_beyond_grille(self, grille, direction):
         dx, dy = direction
@@ -1405,6 +1477,14 @@ class Es02(ARCBaseGame):
         if self.action.id==GameAction.RESET:
             self.complete_action()
             return
+        if self._revealing:                                  # the new level is uncovered as the green sweep slides away
+            if self._reveal:
+                self._draw(effects=[('reveal',self._reveal.pop(0))])
+                return
+            self._revealing=False
+            self._draw()
+            self.complete_action()
+            return
         if self._phase:
             if self._frames:
                 snapshot,effects,beam,positions=self._frames.pop(0)
@@ -1412,11 +1492,18 @@ class Es02(ARCBaseGame):
                 return
             self._phase=0
             # the resting picture; after a lost run it keeps the red wash and the ghost
-            self._draw(effects=[('lose',3)] if self._result_lost else ())
+            if self._result_won:
+                self._draw(effects=[('wipe',64,9)])
+                if not self.is_last_level():                  # the engine loads the next level after this frame; keep the
+                    self._reveal=[40,20,6]                    # action open so the sweep can slide off and uncover it
+                    self._revealing=True
+                    self.next_level()
+                    return
+                self.next_level()                             # the last level: the sweep simply stays
+            else:
+                self._draw(effects=[('lose',3)] if self._result_lost else ())
             if self._result_lost:
                 self.lose()
-            elif self._result_won:
-                self.next_level()
             self.complete_action()
             return
         action=self.action.id.value if hasattr(self.action.id,'value') else self.action.id
@@ -1427,6 +1514,7 @@ class Es02(ARCBaseGame):
         self._events=[]
         start_alien=self.alien['pos']
         start_people=[p['pos'] for p in self.people]
+        bump=None                                            # drawing note: a step that ran into something
         actor=self.alien if self.control is None else self.people[self.control]
         if action==6:
             available=[i for i,p in enumerate(self.people) if p['infected'] and
@@ -1454,6 +1542,7 @@ class Es02(ARCBaseGame):
                 else:
                     self._events.append((self._snapshot(), [('refuse', pos)], None))
             elif not self._blocked(pos, actor is self.alien): actor['pos']=pos
+            else: bump=('alien' if actor is self.alien else self.control, x, y, direction)
         else:
             if self.control is None or self.supply>0:
                 if self.control is not None and self.level_index>0:self.supply-=1
@@ -1471,19 +1560,28 @@ class Es02(ARCBaseGame):
         self._result_won=not self._result_lost and sum(p['infected'] for p in self.people)>=target
         motion=[]
         ends=[p['pos'] for p in self.people]
+        if bump:                                             # a blocked step: shove into the obstacle, a star, then recoil
+            key,bx,by,(ddx,ddy)=bump
+            motion.append((motion_snapshot,[('nudge',key,2*ddx,2*ddy),('bump',(bx,by),(ddx,ddy),0)],None,None))
+            motion.append((motion_snapshot,[('nudge',key,-ddx,-ddy),('bump',(bx,by),(ddx,ddy),1)],None,None))
+        moved=[]
         if start_alien!=self.alien['pos'] or start_people!=ends:
-            for frame in (1,2):
-                positions={}
-                for key,old,new in [('alien',start_alien,self.alien['pos'])]+[(i,start_people[i],ends[i]) for i in range(len(ends))]:
-                    if old!=new:
-                        positions[key]=(tween(old[0]*CELL,new[0]*CELL,frame,3)/CELL,
-                                        tween(old[1]*CELL,new[1]*CELL,frame,3)/CELL)
-                motion.append((motion_snapshot,[],None,positions))
-        self._frames=motion+[(snap,effects,beam,None) for snap,effects,beam in self._events]+[(self._snapshot(),[],None,None)]*2
+            starts={'alien':start_alien}; finals={'alien':self.alien['pos']}
+            for i in range(len(ends)): starts[i]=start_people[i]; finals[i]=ends[i]
+            moved=[k for k in starts if starts[k]!=finals[k]]
+            lead=[k for k in ('alien',self.control) if k in moved]       # the visitor and the host kick up dust
+            for frame in (1,2,3):
+                positions={k:(tween(starts[k][0]*CELL,finals[k][0]*CELL,frame,4)/CELL,
+                              tween(starts[k][1]*CELL,finals[k][1]*CELL,frame,4)/CELL) for k in moved}
+                notes=[('hop',k,(1,2,1)[frame-1] if k in lead else (0,1,0)[frame-1]) for k in moved]
+                notes+=[('dust',starts[k],frame) for k in lead]
+                motion.append((motion_snapshot,notes,None,positions))
+        self._frames=motion+[(snap,list(effects)+[('idle',)],beam,None) for snap,effects,beam in self._events]
+        self._frames+=[(self._snapshot(),[('land',k) for k in moved],None,None),(self._snapshot(),[],None,None)]
         if self._result_won:
-            self._frames.extend((self._snapshot(),[('cheer', f)],None,None) for f in (1,2,3))
+            self._frames.extend((self._snapshot(),[('cheer', f)],None,None) for f in (1,3))
             self._frames.extend((self._snapshot(),[('wipe', width, f)],None,None)
-                                for f, width in zip((4,6,8,9), (16,36,56,64)))
+                                for f, width in zip((4,7), (24,48)))
         if self._result_lost:                               # the run is over: the red wash creeps in, the ghost rises
             self._frames.extend((self._snapshot(),[('lose', k)],None,None) for k in (1,2,3))
         self._phase=1

@@ -11,6 +11,17 @@
 #   cleared level throws a shower of sparkles and confetti and the fish grins, and a lost run tints the edges red as the
 #   fish rolls over with crossed-out eyes.
 #   Level data below came from a level generator that is not part of this repository.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round A: calmer, more readable pictures (less speckle, dither and clutter); rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round B (animation): a move now plays three quick frames (the fish and every other
+#   fish glide to their new cell and a short wake trails the fish), a wall bump squints, nudges and puffs, a bite flashes the edges
+#   red, a growth flashes the fish, a cleared level shuts as an iris round the fish and opens on the next one, and the sea (kelp,
+#   jellyfish, bubbles, glints, fire) keeps moving through those frames. Level-clear confetti and fireworks are thinner. Rules untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round C (final look): calmer and livelier. The currents have far fewer chevrons, spread evenly,
+#   with the streaks kept clear of them; the bed has fewer, roomier props in fewer colours and the landmarks lose their pore, seam and
+#   groove speckle; the HUD loses its magenta dots; the fish stretches as it glides and settles on arrival, with a clearer wake of two
+#   streaks and a bubble, a bigger bump puff and a thick red frame and white flash on a bite; an eaten fish flashes white and leaves a
+#   little star instead of vanishing; the level-clear hop is quick then hovers, with thinner confetti; a lost run closes a solid
+#   frame and a round spotlight on the fish instead of a red checker. Rules untouched.
 # SRP/DRY check: Pass -- one self-contained game file (the site execs it alone). The rule code is ff01's, moved
 #   unchanged into _rules(); everything below it only reads game state and moves sprites. Level data is generated
 #   outside this repository and pasted between the GENERATED markers.
@@ -30,10 +41,17 @@
 #   seahorses; floating islands, crystal clusters, coral heads, orbs and wreckage replace the dark floating rocks;
 #   landmarks come alive (blinking tower tips and wreck portholes, giant kelp that leans); currents let the sea show through;
 #   welcome bubbles, fireworks and streamers on a level clear, a dimmed red run-over with sinking tears.
+# 07-Nov-2026 (Claude Sonnet 5.5): fifth pass (round A, calm and readable): the dither across the deep water is gone (flat sea, one
+#   thin seam above the floor), landmarks, hills, sand and sunlight columns lose their speckle, currents have half the streaks,
+#   and fewer, further-apart props, specks, bubbles, glints, jellyfish and floaters leave the fish and currents room.
 # 07-Nov-2026 (Claude Sonnet 5.5): fourth pass, polish. Level one's volcano vents are red and yellow with no black dots (they read
 #   as eyes on the purple hills); the short seas' far hills are lower and level one's are dark red; the deep-water dither starts
 #   later and is thinner (levels three and six were noisy); floating things keep out of the current lanes and away from the
 #   fish's starting spots; drifting specks stay out of the currents; the tall seas get a few more floaters.
+#
+# 07-Nov-2026 (Claude Sonnet 5.5): sixth pass (round B, animation). One action = three frames (FR): rules run once on the first
+#   frame and the rest only tween the picture (fish and camera glide, currents slide, wake, bump, bite flash), so the final frame is
+#   the same state as before. Iris close on a level clear and open on the next. Win shower/confetti/fireworks thinned.
 #
 # How the picture is built (so the next person can find things):
 #   * The engine camera is moved over a world-sized scene. Every sprite's y is the world y plus HUD_H, so the four HUD
@@ -73,7 +91,16 @@ SWIM = 2                   # player pixels per arrow press
 FISH_SPEED = 1
 BITE_GRACE = 8             # steps of blinking safety after a bite
 WIN_FRAMES = 12
+FR = 3                     # frames drawn for one ordinary action: the rules run on the first, the rest only glide the picture
+EASE = (0.5, 1.0, 1.0)     # how far through its move each of those frames shows things (art only)
+IRIS_CLOSE = (36, 24, 13, 5)   # radius of the iris round the fish over the last four level-clear frames
+IRIS_OPEN = (20,)             # radius of the iris on the first frame of the next level; it is fully open one frame later
 DEATH_FRAMES = 6
+
+
+def rise_of(w):
+    """How high the cheering fish has hopped by win frame w: a quick hop to the top, then a little hover (round C)."""
+    return min(2 * w, 8) + (1 if w > 6 and w % 4 < 2 else 0)
 
 # Layers, low to high. The far landmarks and jellyfish sit under the currents, so a current always reads on top.
 (L_SEA, L_FAR, L_SURFACE, L_MID, L_PROP, L_CURRENT, L_BED, L_FISH, L_PLAYER, L_MARK, L_FX, L_WASH,
@@ -300,6 +327,28 @@ def fish_img(pal, size, var, facing, tell, phase, eyes, mouth=0):
         img[ty, tx] = NEXT_MARK
     return img
 
+def bend(img, facing, axis, mode):
+    """Squash and stretch for the player's glide (round C). axis 0 = swimming sideways, 1 = up or down. mode +1 stretches the fish
+    one pixel along its move (the tail trails), -1 squashes it on arrival (one pixel shorter, a quick settle). The copied or dropped
+    line is a column of plain body behind the eye. Returns (picture, x shift, y shift) so the head stays where it was."""
+    h, w = img.shape
+    col = 2 if facing else w - 3                       # a body column behind the eye, whichever way the fish faces
+    row = h // 2
+    out, sx, sy = img, 0, 0
+    if axis == 0 and mode > 0:
+        out = np.insert(out, col, out[:, col], axis=1)
+        sx = -1 if facing else 0
+    elif axis == 0:
+        out = np.delete(out, col, axis=1)
+        sx = 1 if facing else 0
+    elif mode > 0:
+        out = np.insert(out, row, out[row, :], axis=0)
+    else:
+        out = np.delete(out, col, axis=1)
+        sx = 1 if facing else 0
+    return out, sx, sy
+
+
 # ---------------------------------------------------------------------------
 # Levels. Each: world w,h; player start and size; meals to grow at; meals to clear; lives;
 # tide period; time budget (0 = none); currents [x, y, w, h, strength, headings];
@@ -480,6 +529,7 @@ def glint_img(colour, phase):
     return img
 
 
+POP_STAR = np.array([[-1, YELLOW, -1], [YELLOW, WHITE, YELLOW], [-1, YELLOW, -1]], dtype=np.int8)   # what an eaten fish leaves for a moment
 BUBBLE = np.array([[-1, WHITE, -1], [WHITE, -1, WHITE], [-1, WHITE, -1]], dtype=np.int8)
 BUBBLE_S = np.array([[WHITE, SKY], [SKY, WHITE]], dtype=np.int8)
 
@@ -570,8 +620,6 @@ def lm_mask(kind, rnd, hh, sway=0.0):
             m[by:by + 3, a:b] = True
             tx = tip - (2 if side > 0 else 0)
             m[max(0, by - rnd.randrange(6, 13)):by + 3, max(0, tx):tx + 3] = True
-        for y in range(2, hh - 3, 5):          # pores
-            det.append((ww // 2 + (y % 3) - 1, y, None))
     elif kind == "strand":                     # giant kelp: a wavy stem with blades
         ww = 14
         m = np.zeros((hh, ww), dtype=bool)
@@ -599,8 +647,6 @@ def lm_mask(kind, rnd, hh, sway=0.0):
         for px in range(6, ww - 12, 6):
             det.append((px, y0 + 3, SKY))
             det.append((px + 1, y0 + 3, SKY))
-        for px in range(2, ww - 8, 3):         # plank seams
-            det.append((px, y0 + 6, None))
     elif kind == "ribs":                       # a giant ribcage lying on the bed
         ww, hh = rnd.randrange(30, 42), max(14, min(hh, 24))
         m = np.zeros((hh, ww), dtype=bool)
@@ -623,7 +669,7 @@ def lm_mask(kind, rnd, hh, sway=0.0):
         m[0:4, :] = True
         m[hh - 3:, 0:7] = True
         m[hh - 3:, ww - 7:ww] = True
-        for y in range(5, hh - 3, 2):
+        for y in range(6, hh - 3, 4):          # round C: a few flutes, not a stripe on every other row
             det.append((2, y, None))
             det.append((ww - 3, y, None))
         if rnd.random() < .5:
@@ -635,9 +681,8 @@ def lm_mask(kind, rnd, hh, sway=0.0):
         m[:, 1:8] = True
         m[0:3, :] = True
         m[hh - 3:, :] = True
-        for y in range(4, hh - 3, 2):
-            det.append((3, y, None))
-            det.append((5, y, None))
+        for y in range(5, hh - 3, 4):
+            det.append((4, y, None))
         if rnd.random() < .6:                  # a broken top
             cut = rnd.randrange(3, max(4, hh // 3))
             for dx in range(ww):
@@ -662,8 +707,6 @@ def lm_mask(kind, rnd, hh, sway=0.0):
             for y in range(hgt):
                 half = y * 3 // hgt
                 m[hh - hgt + y, max(0, cx - half):cx + half + 1] = True
-        for y in range(3, hh - 2, 4):          # facets
-            det.append((ww // 2, y, None))
     elif kind == "dome":                       # a rounded coral head with brain-like grooves
         ww = rnd.randrange(hh + 4, int(1.5 * hh) + 8)
         m = np.zeros((hh, ww), dtype=bool)
@@ -671,10 +714,6 @@ def lm_mask(kind, rnd, hh, sway=0.0):
             n = int(round(hh * math.sqrt(max(0.0, 1 - ((dx + .5 - ww / 2) / (ww / 2)) ** 2))))
             if n:
                 m[hh - n:, dx] = True
-        for y in range(3, hh - 1, 3):
-            for dx in range(ww):
-                if (dx + (y // 3) * 2) % 5 < 2 and m[y, dx]:
-                    det.append((dx, y, None))
     elif kind == "orb":                        # a glowing bubble-rock the size of a house
         ww = hh = rnd.randrange(9, 14)
         m = np.zeros((hh, ww), dtype=bool)
@@ -710,7 +749,7 @@ def shade(mask, det, fill, rim, dark, tex):
                 c = rim
             elif not pad[y + 1, x + 2] or not pad[y + 2, x + 1]:   # nothing right or below
                 c = dark
-            elif (x * 5 + y * 3) % 13 == 0:
+            elif (x * 5 + y * 3) % 61 == 0:
                 c = tex
             else:
                 c = fill
@@ -755,14 +794,13 @@ def landmark_img(theme_i, kind, hh, seed, hang, sway=0, floater=None):
 # of the one small thing that drifts about here; crit = seahorse colours; small = scatter tiny starfish and grass tufts.
 THEMES = [
     dict(tint=SKY, deep=.72, bed=(WHITE, ORANGE, RED, MAROON), kelp=(GREEN, WHITE), kstyle=1, tall=("fan",),
-         props=("fan", "brain", "seagrass", "star", "shell", "anemone", "starfish", "clam", "coral", "tubeworm"),
-         gap=(12, 28), pals=((MAGENTA, PINK, PURPLE), (GREEN, WHITE, BLACK), (RED, ORANGE, MAROON), (YELLOW, ORANGE, MAROON),
-                             (ORANGE, WHITE, MAROON)),
+         props=("fan", "brain", "seagrass", "star", "anemone", "clam", "coral"),
+         gap=(12, 28), pals=((MAGENTA, PINK, PURPLE), (GREEN, WHITE, BLACK), (YELLOW, ORANGE, MAROON)),
          far=("tower", "spire", "tower", "dome"), lmgap=(26, 60), hang=(), lm=(RED, ORANGE, MAROON, MAGENTA), fl=(),
          vent=(RED, YELLOW), glint=(WHITE, ORANGE), jelly=(0, 1, 2), ridge=MAROON, shafts=True,
          motes=("sparkle", (WHITE, PINK)), crit=((ORANGE, PINK), (PINK, WHITE)), small=False),
     dict(tint=GREEN, deep=.7, bed=(GREEN, MAROON, BLACK, BLACK), kelp=(GREEN, ORANGE), kstyle=0, tall=("tube",),
-         props=("seagrass", "rock", "shell", "star", "anemone", "snail", "urchin", "clam", "tubeworm", "sponge"),
+         props=("seagrass", "rock", "shell", "anemone", "snail", "clam", "tubeworm"),
          gap=(5, 14), pals=((MAROON, RED, BLACK), (PURPLE, MAGENTA, BLACK), (GREEN, WHITE, BLACK), (ORANGE, PINK, MAROON)),
          far=("strand", "strand", "strand"), lmgap=(8, 36), hang=(), lm=(BLACK, GREEN, PURPLE, GREEN), fl=(),
          vent=(MAROON, ORANGE), glint=(GREEN, ORANGE), jelly=(1, 2), ridge=GREEN, shafts=True,
@@ -775,15 +813,14 @@ THEMES = [
          vent=(BLACK, ORANGE), glint=(ORANGE, RED), jelly=(0,), ridge=MAROON, shafts=False,
          motes=("ember", (ORANGE, RED)), crit=(), small=True),
     dict(tint=MAGENTA, deep=.55, bed=(PINK, PURPLE, MAGENTA, PURPLE), kelp=None, kstyle=2, tall=("fan", "pen", "brain"),
-         props=("fan", "brain", "pen", "anemone", "star", "shell", "coral", "clam", "shroom", "bubbleco"),
-         gap=(14, 30), pals=((MAGENTA, PINK, PURPLE), (ORANGE, PINK, MAROON), (GREEN, WHITE, BLACK), (RED, PINK, MAROON),
-                             (PINK, WHITE, MAGENTA)),
+         props=("fan", "brain", "pen", "anemone", "coral", "clam", "shroom"),
+         gap=(14, 30), pals=((MAGENTA, PINK, PURPLE), (ORANGE, PINK, MAROON), (GREEN, WHITE, BLACK)),
          far=("tower", "tower", "spire"), lmgap=(26, 64), hang=("stal",), lm=(PURPLE, PINK, BLACK, MAGENTA),
          fl=(("cluster", (MAGENTA, WHITE, PURPLE, PINK)), ("isle", (PURPLE, PINK, BLACK, MAGENTA))),
          vent=(PURPLE, PINK), glint=(PINK, WHITE), jelly=(1, 0, 2), ridge=PURPLE, shafts=False,
          motes=("spore", (PINK, WHITE)), crit=((PINK, WHITE), (ORANGE, PINK)), small=False),
     dict(tint=PURPLE, deep=.7, bed=(ORANGE, MAROON, BLACK, BLACK), kelp=(MAROON, ORANGE), kstyle=2, tall=("anchor", "amph"),
-         props=("anchor", "amph", "barrel", "cannon", "crab", "wheel", "chest", "coins", "lantern", "skull", "jar"),
+         props=("anchor", "amph", "barrel", "cannon", "crab", "chest", "lantern"),
          gap=(6, 16), pals=((MAROON, ORANGE, BLACK), (PURPLE, MAGENTA, BLACK), (ORANGE, PINK, MAROON)),
          far=("hull", "spire", "hull", "mound"), lmgap=(8, 36), hang=(), lm=(BLACK, MAROON, PURPLE, MAROON), fl=(),
          vent=(MAROON, ORANGE), glint=(ORANGE, PINK), jelly=(0, 2), ridge=PURPLE, shafts=False,
@@ -803,7 +840,7 @@ THEMES = [
          vent=(BLACK, RED), glint=(WHITE, PINK), jelly=(1, 2), ridge=PURPLE, shafts=False,
          motes=("ash", (WHITE, PINK)), crit=(), small=True),
     dict(tint=PURPLE, deep=.55, bed=(GREEN, ORANGE, MAROON, MAROON), kelp=(GREEN, PINK), kstyle=1, tall=("column",),
-         props=("column", "statue", "amph", "jar", "stump", "anemone", "crab", "shell", "chest", "clam", "seagrass"),
+         props=("column", "statue", "amph", "anemone", "crab", "chest", "seagrass"),
          gap=(7, 18), pals=((ORANGE, PINK, MAROON), (PINK, WHITE, MAGENTA), (GREEN, WHITE, BLACK)),
          far=("arch", "column", "arch", "column", "mound"), lmgap=(10, 40), hang=("stal",), lm=(MAROON, ORANGE, BLACK, PURPLE),
          fl=(("isle", (ORANGE, WHITE, MAROON, PINK)), ("wreckage", (MAROON, ORANGE, BLACK, PURPLE))),
@@ -823,9 +860,9 @@ def sea_img(i, w, h):
     ys, xs = np.mgrid[0:full_h, 0:w]
     level = (ys / full_h - th["deep"]) / (1 - th["deep"])          # 0 where the fade starts, 1 at the floor
     bayer = np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]]) / 16.0       # ordered dither: a smooth fade, no stripes
-    img[(level > .25) & (bayer[ys % 4, xs % 4] < (np.clip(level, 0, 1) ** 2) * .38)] = th["tint"]
+    # Calm pass: no more dither across the deep water. One quiet seam of thin dots just above the floor strip, then flat colour.
+    img[(level > .8) & (bayer[ys % 4, xs % 4] < .25) & ((full_h - ys) <= 10)] = th["tint"]
     img[(full_h - ys) <= 6] = th["tint"]
-    img[(ys >= HUD_H + 2) & (ys < HUD_H + 4) & ((xs + ys) % 4 == 0)] = SKY        # sunlight just under the surface
     return img
 
 
@@ -839,8 +876,6 @@ def ridge_img(i, w, h):
         top = rh - int(rh * (.45 + .25 * math.sin(x / 17.0 + i) + .2 * math.sin(x / 7.0 + 2 * i) + .1 * math.sin(x / 41.0)))
         top = max(1, min(rh - 1, top))
         img[top:, x] = th["ridge"]
-        if x % 2 == 0 and top > 0:
-            img[top - 1, x] = th["ridge"]
     return img
 
 
@@ -852,8 +887,6 @@ def shaft_img(hh, phase):
     for y in range(hh):
         for x in range(ww):
             if x in (0, ww - 1) and (y + phase) % 4 < 2:
-                img[y, x] = SKY
-            elif (x + y * 2 + phase) % 7 == 0 and 0 < x < ww - 1:
                 img[y, x] = SKY
     return _shift_rows(img)
 
@@ -960,7 +993,7 @@ def bed_img(bed, i):
             elif d >= height - 2 and height > 3:
                 c = deep if (x + d) % 3 else body
             else:
-                c = spot if (x * 7 + d * 13) % 9 == 0 else body
+                c = spot if (x * 7 + d * 13) % 29 == 0 else body
             img[bh - height + d, x] = c
     return img
 
@@ -988,13 +1021,21 @@ def zone_img(zw, zh, now, nxt, ox, oy):
     ys_, xs_ = np.mgrid[0:zh, 0:zw]
     along, across = (xs_ * dx + ys_ * dy), (ys_ * abs(dx) + xs_ * abs(dy))
     drift = ox * dx + oy * dy
-    img[(across % 4 == 0) & (((along - drift) % 12) < 7)] = CURRENT_WATER
-    img[0, :] = img[-1, :] = img[:, 0] = img[:, -1] = CURRENT_WATER
     px, py = -dy, dx
     nx, ny = DV[nxt]
-    for ly in range(4, zh, 8):
-        for lx in range(4 if (ly // 8) % 2 else 0, zw, 8):
-            mx, my = (lx + ox) % zw, (ly + oy) % zh
+    L, W = (zw, zh) if dx else (zh, zw)                    # L runs along the flow, W across it
+    n_a, n_w = max(1, int(round(L / 16.0))), max(1, W // 14)
+    rows = [int((k + .5) * W / n_w) for k in range(n_w)]   # chevron rows, spread evenly across the lane
+    # Round C: calmer lane. The long streaks keep clear of the chevron rows, and the chevrons are spaced evenly (about every
+    # sixteen along, one row per fourteen across, none of the old every-eight lattice), so the flow reads at a glance.
+    near = np.min(np.abs(across[..., None] - np.array(rows)), axis=-1)
+    img[(across % 8 == 4) & (((along - drift) % 12) < 7) & (near > 3)] = CURRENT_WATER
+    img[0, :] = img[-1, :] = img[:, 0] = img[:, -1] = CURRENT_WATER
+    for r, row in enumerate(rows):
+        for k in range(n_a):
+            lo = int((k + (.5 if r % 2 else 0)) * L / n_a) + 4
+            a_pos = (lo + (ox if dx else oy)) % L          # the drift counts up in the flow direction
+            mx, my = (a_pos, row) if dx else (row, a_pos)
             pts = [(mx + 2 * dx, my + 2 * dy), (mx + dx + px, my + dy + py), (mx + dx - px, my + dy - py),
                    (mx + 2 * px, my + 2 * py), (mx - 2 * px, my - 2 * py)]
             tell = (mx + 2 * nx, my + 2 * ny)
@@ -1014,8 +1055,7 @@ def hud_img(lives, eat, eaten, left, bar):
     eaten), the tide's yellow pips, and the time bar (row 3, shrinking from the right; it warms to orange then red as
     it runs out; bar < 0 means this level has none)."""
     img = np.full((HUD_H, SCREEN), HUD_BG, dtype=np.int8)
-    img[0, :] = BLACK
-    img[0, ::4] = MAGENTA
+    img[0, :] = BLACK                                     # round C: plain rules, no magenta dots
     img[3, :] = BLACK
     for n in range(3):
         for ix, iy, c in LIFE_ICON:
@@ -1043,19 +1083,16 @@ def hud_img(lives, eat, eaten, left, bar):
 
 @lru_cache(maxsize=256)
 def wash_img(stage, ox, oy):
-    """The tint of a lost run: a red vignette that closes in from the edges, then a dimming checker over the whole window
-    with a clear oval round the fish (at ox, oy in the window), so the fish stays readable."""
+    """The tint of a lost run (round C, no checker): a solid maroon frame thickens in from the edges with a thin red rim, and from
+    stage three a round spotlight closes on the fish, so the fish stays the one clear thing on a calm dark field."""
     img = np.full((VIEW_H, VIEW_W), -1, dtype=np.int8)
     ys, xs = np.mgrid[0:VIEW_H, 0:VIEW_W]
     edge = np.minimum(np.minimum(xs, VIEW_W - 1 - xs), np.minimum(ys, VIEW_H - 1 - ys))
-    band = stage * 2
-    img[(edge < band) & ((xs + ys) % 2 == 0)] = MAROON
-    img[edge < band - 5] = MAROON
-    if stage >= 2:
-        far = ((xs - ox) / 18.0) ** 2 + ((ys - oy) / 13.0) ** 2 > 1
-        img[far & ((xs + ys) % 2 == 0) & (img < 0)] = MAROON
+    img[edge < stage * 2] = MAROON
+    img[edge < min(2, stage)] = RED
     if stage >= 3:
-        img[edge < 2] = RED
+        r = (30, 24, 17)[min(stage, 5) - 3]
+        img[((xs - ox) ** 2 + (ys - oy) ** 2 > r * r) & (img < 0)] = MAROON
     return img
 
 
@@ -1063,6 +1100,21 @@ def wash_img(stage, ox, oy):
 # Game
 # ---------------------------------------------------------------------------
 class Ff02(ARCBaseGame):
+    # art-only animation state (defaults; set per action in step())
+    pending_open = False
+    open_t = 1
+    tw_left = 0
+    tw_t = 0
+    tw_frac = 1.0
+    pre = None
+    clk = 0
+    shut = False
+    bump = None
+    bit = False
+    grew = False
+    vpos = (0, 0)
+    pops = {}
+
     def __init__(self):
         super().__init__(game_id='ff02', levels=levels, camera=Camera(0, 0, SCREEN, SCREEN, SEA, SEA, []),
                          win_score=len(levels), available_actions=[1, 2, 3, 4])
@@ -1093,6 +1145,10 @@ class Ff02(ARCBaseGame):
         self.grace = 0
         self.step_count = 0
         self.bursts = []
+        self.pops = {}                               # art only: fish just eaten -> the picture number they were eaten on
+        self.clk, self.tw_left, self.tw_t, self.tw_frac, self.pre = 0, 0, 0, 1.0, None
+        self.shut, self.bump, self.bit, self.grew = False, None, False, False
+        self.open_t = 0 if self.pending_open else len(IRIS_OPEN)       # an iris opens only after a level clear
         self.winning = 0
         self.dying = 0
         self.finale = False
@@ -1164,7 +1220,7 @@ class Ff02(ARCBaseGame):
             lm_n[0] += 1
 
         if tall and th["fl"]:                  # floating things so the middle of a deep sea is never bare: bright, and each level's own
-            for k in range(self.w * self.h // 1000):
+            for k in range(self.w * self.h // 1600):
                 kind, cols = th["fl"][k % len(th["fl"])]
                 for _try in range(8):          # keep floaters out of the current lanes so they never muddy a lane
                     fy = lrnd.randrange(int(self.h * .12), int(self.h * .72)) + HUD_H
@@ -1182,8 +1238,11 @@ class Ff02(ARCBaseGame):
         # jellyfish drifting in the open water: they pulse and smile and do nothing at all
         self.jellies = []
         jrnd = random.Random(6000 + i)
-        for k in range(max(3, self.w * self.h // 2600)):
-            jx, jy = jrnd.randrange(12, self.w - 24), jrnd.randrange(14, max(16, self.h - 40))
+        for k in range(max(2, self.w * self.h // 3800)):
+            for _try in range(10):             # keep a jellyfish off every fish's starting spot so the two never blur together
+                jx, jy = jrnd.randrange(12, self.w - 24), jrnd.randrange(14, max(16, self.h - 40))
+                if not any(fx - 16 < jx < fx + 20 and fy - 14 < jy < fy + 18 for fx, fy in [(self.px, self.py)] + [(f[0], f[1]) for f in self.fish]):
+                    break
             pal_i = th["jelly"][k % len(th["jelly"])]
             sp = add(f"jelly_{k}", jelly_img(pal_i, 0, 0), jx, jy + HUD_H, L_MID, ["jelly"])
             self.jellies.append([sp, jx, jy, pal_i, k, None])
@@ -1197,7 +1256,7 @@ class Ff02(ARCBaseGame):
         # the level's own small drifting things
         self.motes = []
         mkind, mcols = th["motes"]
-        for k in range(max(8, min(150, self.w * self.h // (1600 if mkind == "sparkle" else 320)))):
+        for k in range(max(4, min(50, self.w * self.h // (5000 if mkind == "sparkle" else 900)))):
             mx, my = jrnd.randrange(2, self.w - 4), jrnd.randrange(4, self.h - 6)
             if any(z[0] - 2 <= mx < z[0] + z[2] and z[1] - 2 <= my < z[1] + z[3] for z in self.zones):
                 continue                        # no drifting specks over a current: they would read as flow marks
@@ -1205,7 +1264,7 @@ class Ff02(ARCBaseGame):
             self.motes.append([sp, mkind, mcols, mx, my, k, None])
         # ambient bubbles rising here and there
         self.amb = []
-        for k in range(self.w // 9):
+        for k in range(self.w // 30):
             ax, ay0 = jrnd.randrange(2, self.w - 4), jrnd.randrange(0, self.h)
             big = k % 3 == 0
             sp = add(f"drift_bubble_{k}", BUBBLE if big else BUBBLE_S, ax, ay0 + HUD_H, L_MID, ["bubble"])
@@ -1228,9 +1287,9 @@ class Ff02(ARCBaseGame):
                 sp = add(f"prop_{x}", img, x, full_h - self.bed[x] + 2 - img.shape[0] * sc, L_PROP, ["prop", kind], sc)
                 if kind in ANIMATED or kind in WIGGLERS:
                     self.wigglers.append((sp, kind, pal, x, len(self.wigglers)))
-            x += img.shape[1] * sc + rnd.randrange(*th["gap"])
+            x += img.shape[1] * sc + rnd.randrange(th["gap"][0] * 2, th["gap"][1] * 2)     # round C: roomier bed
         if th["small"]:                        # tiny seabed detail between the big props: little stars and grass tufts
-            for k in range(self.w // 16):
+            for k in range(self.w // 72):
                 sx = rnd.randrange(2, self.w - 10)
                 kind = ("starfish", "seagrass", "starfish", "shell")[k % 4]
                 pal = rnd.choice(th["pals"])
@@ -1261,7 +1320,7 @@ class Ff02(ARCBaseGame):
 
         # glints: little twinkles low in the water that do nothing
         self.glints = []
-        for n in range(8):
+        for n in range(4):
             gx, gy = rnd.randrange(2, self.w - 4), rnd.randrange(self.h * 3 // 5, self.h - 8)
             colour = th["glint"][n % len(th["glint"])]
             self.glints.append((add(f"glint_{n}", glint_img(colour, 1), gx, gy + HUD_H, L_PROP, ["glint"]), colour, n))
@@ -1282,9 +1341,10 @@ class Ff02(ARCBaseGame):
         self.hud_sp = add("hud", hud_img(0, 0, 0, 0, -1), 0, 0, L_HUD, ["hud"])
 
     # -- queries the drawing and the rules share ------------------------------------------------------------
-    def camera_xy(self):
-        cx = self.px + FISH_W[self.size] // 2 - VIEW_W // 2
-        cy = self.py + FISH_H[self.size] // 2 - VIEW_H // 2
+    def camera_xy(self, px=None, py=None):
+        px, py = (self.px if px is None else px), (self.py if py is None else py)
+        cx = px + FISH_W[self.size] // 2 - VIEW_W // 2
+        cy = py + FISH_H[self.size] // 2 - VIEW_H // 2
         return max(0, min(self.w - VIEW_W, cx)), max(0, min(self.h - VIEW_H, cy))
 
     def tide(self, ahead=0):
@@ -1332,18 +1392,56 @@ class Ff02(ARCBaseGame):
             if f[3] and f[2] <= self.size and self._touch(self.px, self.py, self.size, f[0], f[1], f[2]):
                 f[3] = False
                 self.eaten += 1
-                self.bursts.append([f[0] + FISH_W[f[2]] // 2, f[1] + FISH_H[f[2]] // 2, 2])
+                self.bursts.append([f[0] + FISH_W[f[2]] // 2, f[1] + FISH_H[f[2]] // 2, 2, 0, 0])
                 if self.grow and self.eaten >= self.grow[0]:
                     self.grow.pop(0)
                     self.size += 1
                     self.px, self.py = self._clamp(self.px, self.py, self.size)
-                    self.bursts.append([self.px + FISH_W[self.size] // 2, self.py + FISH_H[self.size] // 2, 3])
+                    self.bursts.append([self.px + FISH_W[self.size] // 2, self.py + FISH_H[self.size] // 2, 3, 0, 1])
+                    self.grew = True
         return self.eaten >= self.eat
 
     # -- one action: the rules (ff01's, unchanged), then the picture follows the state ------------------------
     def step(self):
+        """One engine call = one picture. An ordinary action plays FR of them: the rules run on the first, the others only
+        glide the picture to the state the rules already reached (art only: the state never waits on the animation)."""
+        self.clk += 1
+        self.tw_frac, self.tw_t = 1.0, 0
+        if self.pending_open:                      # the iris opening on a new level, after a level clear
+            self.open_t += 1
+            if self.open_t >= len(IRIS_OPEN):
+                self.pending_open = False
+                self.complete_action()
+            self._sync()
+            return
+        if self.tw_left:
+            self.tw_left -= 1
+            self.tw_t = FR - self.tw_left
+            self.tw_frac = EASE[self.tw_t - 1]
+            if not self.tw_left:
+                self.complete_action()
+            self._sync()
+            return
+        self.pre = None
+        plain = self.action.id != GameAction.RESET and not (self.winning or self.dying)
+        if plain:
+            self.bump, self.bit, self.grew = None, False, False
+            snap = {"p": (self.px, self.py), "fish": [(f[0], f[1]) for f in self.fish],
+                    "drift": [tuple(d) for d in self.zone_drift]}
+        alive = [f[3] for f in self.fish]
         self._rules()
+        for idx, f in enumerate(self.fish):          # art only: an eaten fish pops instead of vanishing
+            if alive[idx] and not f[3]:
+                self.pops[idx] = self.clk
+        if plain and self.is_action_complete():    # the rules finished the action: hold it open for the glide frames
+            self._action_complete = False
+            self.pre, self.tw_left, self.tw_t, self.tw_frac = snap, FR - 1, 1, EASE[0]
         self._sync()
+
+    @staticmethod
+    def _age(bursts):
+        """Grow every ring two steps; each keeps its previous radius so the picture can grow it smoothly."""
+        return [[x, y, r + 2, k, r] for x, y, r, k, _ in bursts if r < 6]
 
     def _rules(self):
         if self.action.id == GameAction.RESET:
@@ -1351,12 +1449,15 @@ class Ff02(ARCBaseGame):
             return
         if self.winning:                     # the level-clear animation, one frame per call
             self.winning += 1
-            self.bursts = [[x, y, r + 2] for x, y, r in self.bursts if r < 6]
+            self.bursts = [[x, y, r + 2, k, r + 2] for x, y, r, k, _ in self.bursts if r < 6]
             if self.winning > WIN_FRAMES:
                 self.winning = 0
                 self.finale = self.is_last_level()      # art only: keep the sparkles on the final picture
                 self.next_level()
-                self.complete_action()
+                if self.finale:
+                    self.complete_action()
+                else:                                   # art only: the iris is shut; the next level opens it before the action ends
+                    self.shut, self.pending_open = True, True
             return
         if self.dying:                       # the last bite: the fish rolls over and sinks
             self.dying += 1
@@ -1364,7 +1465,7 @@ class Ff02(ARCBaseGame):
                 self.lose()
                 self.complete_action()
             return
-        self.bursts = [[x, y, r + 2] for x, y, r in self.bursts if r < 6]
+        self.bursts = self._age(self.bursts)
         aid = self.action.id.value
 
         # 1. you swim, then the current you are in carries you
@@ -1374,7 +1475,10 @@ class Ff02(ARCBaseGame):
                 self.facing = False
             elif d == RIGHT:
                 self.facing = True
-            self.px, self.py = self._clamp(self.px + DV[d][0] * SWIM, self.py + DV[d][1] * SWIM, self.size)
+            tx, ty = self.px + DV[d][0] * SWIM, self.py + DV[d][1] * SWIM
+            self.px, self.py = self._clamp(tx, ty, self.size)
+            if (self.px, self.py) != (tx, ty):          # art only: the fish met the edge of the sea
+                self.bump = d
         self.px, self.py = self._carry(self.px, self.py, self.size)
         if self._eat():
             return self._start_win()
@@ -1407,6 +1511,8 @@ class Ff02(ARCBaseGame):
                 if f[3] and f[2] > self.size and self._touch(self.px, self.py, self.size, f[0], f[1], f[2]):
                     self.lives -= 1
                     self.grace = BITE_GRACE
+                    self.bit = True
+                    self.bursts.append([self.px + FISH_W[self.size] // 2, self.py + FISH_H[self.size] // 2, 2, 1, 0])
                     break
         if self.budget:
             self.moves_left -= 1
@@ -1429,110 +1535,135 @@ class Ff02(ARCBaseGame):
     def _sync(self):
         """Move every sprite to match the state. Pictures change only through cached arrays, so a step stays cheap, and
         the third pass's extra life (motes, horses, beacons, strands, sunlight) is only touched when it is in view."""
-        cx, cy = self.camera_xy()
+        fr, pre = self.tw_frac, self.pre
+        if pre:                                                 # glide: the fish is drawn part-way through its move
+            vpx = pre["p"][0] + int((self.px - pre["p"][0]) * fr)
+            vpy = pre["p"][1] + int((self.py - pre["p"][1]) * fr)
+        else:
+            vpx, vpy = self.px, self.py
+        self.vpos = (vpx, vpy)
+        cx, cy = self.camera_xy(vpx, vpy)
         self.camera.x, self.camera.y = cx, cy
-        n = self.step_count
+        n, c = self.step_count, self.clk                        # n = the game's steps; c = pictures drawn (FR per step)
+        a = c / FR                                              # the same clock in steps, smooth between them
         th = THEMES[self.level_index]
         seen = self._seen
 
-        phase = (n // 2) % 7                                    # surface crests drift
+        phase = (c // 3) % 7                                    # surface crests drift
         if phase != self.surface_key:
             self.surface_key = phase
             self.surface_sp.pixels = surface_img(self.w, phase)
 
         for zi, (zx, zy, zw, zh, st, heads) in enumerate(self.zones):   # currents: only re-draw those in view
             if zx < cx + VIEW_W and zx + zw > cx and zy + HUD_H < cy + SCREEN and zy + HUD_H + zh > cy:
-                key = (self.zone_heading(zi), self.zone_heading(zi, 1), *self.zone_drift[zi])
+                dr = self.zone_drift[zi]
+                if pre:                                         # the streaks and chevrons slide the short way to their new place
+                    dr = [(pre["drift"][zi][k] + int((((dr[k] - pre["drift"][zi][k] + 32) % 64) - 32) * fr)) % 64 for k in (0, 1)]
+                key = (self.zone_heading(zi), self.zone_heading(zi, 1), *dr)
                 if key != self.zone_key[zi]:
                     self.zone_key[zi] = key
                     self.zone_sp[zi].pixels = zone_img(zw, zh, *key)
 
         for sp, kh, idx in self.kelp_sp:
-            sp.pixels = kelp_img(th["kstyle"], kh, (n // 2 + idx) % 4, *th["kelp"])
+            sp.pixels = kelp_img(th["kstyle"], kh, (c // 4 + idx) % 4, *th["kelp"])
         for sp, kind, pal, x0, idx in self.wigglers:
             if kind == "clam":                                  # the clam opens now and then to show its pearl
-                sp.pixels = prop_img(kind, 1 if (n // 4 + idx) % 5 == 0 else 0, pal)
+                sp.pixels = prop_img(kind, 1 if (c // 8 + idx) % 5 == 0 else 0, pal)
             elif kind == "crab":                                # the crab sidles back and forth and shuffles its legs
-                sp.pixels = prop_img(kind, (n // 2 + idx) % 2, pal)
-                sp.set_position(max(0, x0 + 2 * (abs((n // 3 + idx * 3) % 12 - 6) - 3)), sp.y)
+                sp.pixels = prop_img(kind, (c // 3 + idx) % 2, pal)
+                sp.set_position(max(0, x0 + int(round(2 * (abs((a / 3 + idx * 3) % 12 - 6) - 3)))), sp.y)
             elif kind == "hermit":                              # the hermit crab carries its shell the other way, slowly
-                sp.pixels = prop_img(kind, (n // 3 + idx) % 2, pal)
-                sp.set_position(max(0, x0 + abs((n // 5 + idx * 5) % 16 - 8) - 4), sp.y)
+                sp.pixels = prop_img(kind, (c // 5 + idx) % 2, pal)
+                sp.set_position(max(0, x0 + int(abs((a / 5 + idx * 5) % 16 - 8)) - 4), sp.y)
             elif kind == "lantern" or kind == "glowshroom" or kind == "lure":     # glow things pulse, out of step with one another
-                sp.pixels = prop_img(kind, 1 if (n // 4 + idx) % 3 == 0 else 0, pal)
+                sp.pixels = prop_img(kind, 1 if (c // 6 + idx) % 3 == 0 else 0, pal)
             else:                                               # grass, worms, anemones, snails, lava rocks: a slow shift
-                sp.pixels = prop_img(kind, (n // 3 + idx) % ANIMATED[kind], pal)
+                sp.pixels = prop_img(kind, (c // 4 + idx) % ANIMATED[kind], pal)
         for k, sp in enumerate(self.vent_sp):
-            sp.pixels = vent_img(*th["vent"], (n // 2 + k) % 2)
+            sp.pixels = vent_img(*th["vent"], (c // 2 + k) % 2)
         for sp, vx, base, j in self.bubbles:
-            by = base - 9 - (n * 2 + j) % max(1, base - 10)
+            by = base - 9 - (int(a * 2) + j) % max(1, base - 10)
             bx = vx + (1 if (by // 4) % 2 else 0)
             sp.set_position(bx - 1, by - 1 + HUD_H)
             sp.set_visible(self._zone_at_point(bx, by) < 0)
         for sp, colour, idx in self.glints:
-            pat = (0, 1, 2, 3, 0, 0)[((n + idx * 3) // 2) % 6]
+            pat = (0, 1, 2, 3, 0, 0)[((c + idx * 9) // 4) % 6]
             sp.pixels = glint_img(colour, pat)
             sp.set_visible(pat > 0)
         for jel in self.jellies:                                # jellyfish: a slow figure of eight, a pulse, a wave
             sp, jx, jy, pal_i, k, key = jel
-            nk = (pal_i, 1 if (n // 3 + k) % 4 in (1, 2) else 0, (n // 2 + k) % 2)
+            nk = (pal_i, 1 if (c // 5 + k) % 4 in (1, 2) else 0, (c // 3 + k) % 2)
             if nk != key:
                 jel[5] = nk
                 sp.pixels = jelly_img(*nk)
-            sp.set_position(jx + int(round(8 * math.sin(n / 29.0 + k * 1.7))),
-                            jy + HUD_H + int(round(6 * math.sin(n / 19.0 + k * 2.3))))
+            sp.set_position(jx + int(round(8 * math.sin(a / 29.0 + k * 1.7))),
+                            jy + HUD_H + int(round(6 * math.sin(a / 19.0 + k * 2.3))))
         for hs in self.horses:                                  # seahorses bob and flutter their fins
             sp, hx, hy, pal, k, key = hs
-            px_, py_ = hx + int(round(3 * math.sin(n / 21.0 + k))), hy + HUD_H + int(round(5 * math.sin(n / 13.0 + k * 1.9)))
+            px_, py_ = hx + int(round(3 * math.sin(a / 21.0 + k))), hy + HUD_H + int(round(5 * math.sin(a / 13.0 + k * 1.9)))
             if seen(px_, py_, SEAHORSE_W, SEAHORSE_H, cx, cy):
-                nk = (n // 3 + k) % 2
+                nk = (c // 4 + k) % 2
                 if nk != key:
                     hs[5] = nk
                     sp.pixels = seahorse_img(pal, nk)
                 sp.set_position(px_, py_)
         for mt in self.motes:                                   # the level's own drifting things
             sp, kind, cols, mx, my, k, key = mt
-            qx, qy = _mote_pos(kind, mx, my, k, n, self.w, self.h)
+            qx, qy = (int(v) for v in _mote_pos(kind, mx, my, k, a, self.w, self.h))
             if seen(qx, qy + HUD_H, 5, 5, cx, cy):
-                nk = (n // 3 + k) % 4
+                nk = (c // 4 + k) % 4
                 if nk != key:
                     mt[6] = nk
                     sp.pixels = mote_img(kind, cols, nk)
                 sp.set_position(qx, qy + HUD_H)
         for bsp, bx, by, bw, cols, k in self.beacons:           # lights on towers, spires and wreck portholes blink
             if seen(bx, by, 3, 3, cx, cy):
-                pat = ((n // 3 + k * 5) % 8)
+                pat = ((c // 4 + k * 5) % 8)
                 if bw == 3:
-                    bsp.pixels = glint_img(cols[(n // 24 + k) % len(cols)], (1, 2, 1, 0, 0, 0, 0, 0)[pat])
+                    bsp.pixels = glint_img(cols[(c // 72 + k) % len(cols)], (1, 2, 1, 0, 0, 0, 0, 0)[pat])
                 else:
                     bsp.pixels = port_img((ORANGE, WHITE, ORANGE, ORANGE, SKY, ORANGE, WHITE, SKY)[pat])
         for sp, kind, hh, seed, bx, k in self.strands:          # the giant kelp leans slowly
             if seen(bx, sp.y, 14, hh, cx, cy):
-                sp.pixels = landmark_img(self.level_index, kind, hh, seed, False, (0, 1, 2, 1)[(n // 6 + k) % 4])[0]
+                sp.pixels = landmark_img(self.level_index, kind, hh, seed, False, (0, 1, 2, 1)[(c // 10 + k) % 4])[0]
         for sp, sx, sh_h, k in self.shafts:                     # sunlight creeps
             if seen(sx, sp.y, 11 + sh_h // 3, sh_h, cx, cy):
-                sp.pixels = shaft_img(sh_h, (n // 5 + k) % 4)
+                sp.pixels = shaft_img(sh_h, (c // 8 + k) % 4)
         for sp, ax, ay0, k, big in self.amb:                    # ambient bubbles climb, wobbling sideways
-            ay = (ay0 - (n + k * 5) * (1 + k % 2)) % self.h
+            ay = (ay0 - int((a + k * 5) * (1 + k % 2))) % self.h
             sp.set_position(ax + (1 if (ay // 5 + k) % 2 else 0), ay + HUD_H)
 
         show_marks = not (self.winning or self.dying)
         for idx, f in enumerate(self.fish):
             sp, mark = self.fish_sp[idx], self.mark_sp[idx]
             if not f[3]:
-                sp.set_visible(False)
+                age = c - self.pops.get(idx, -9)
                 mark.set_visible(False)
+                if 0 <= age <= 1:                               # eaten: a white flash of the whole fish, then a little star
+                    if age == 0:
+                        sp.pixels = fish_img(PAL_FLASH, f[2], self.fish_var[idx], f[4], None, 0, EYE_CHEER, 1)
+                        sp.set_position(f[0], f[1] + HUD_H)
+                    else:
+                        sp.pixels = POP_STAR
+                        sp.set_position(f[0] + FISH_W[f[2]] // 2 - 1, f[1] + FISH_H[f[2]] // 2 - 1 + HUD_H)
+                    self.fish_key[idx] = ("pop", age)
+                    sp.set_visible(True)
+                else:
+                    sp.set_visible(False)
                 continue
-            big_mouth = 1 if f[2] >= 3 and (n // 2 + idx * 5) % 9 == 0 else 0    # the big ones snap their jaws now and then
-            key = (f[2], f[4], self.fish_heading(f, 1), (n // 2 + idx) & 3, 1 if (n + idx * 7) % 17 == 0 else 0, big_mouth)
+            big_mouth = 1 if f[2] >= 3 and (c // 3 + idx * 5) % 9 == 0 else 0    # the big ones snap their jaws now and then
+            key = (f[2], f[4], self.fish_heading(f, 1), (c // 2 + idx) & 3, 1 if (c + idx * 21) % 51 < 2 else 0, big_mouth)
             if key != self.fish_key[idx]:
                 self.fish_key[idx] = key
                 sp.pixels = fish_img(PAL_TIER[f[2]], f[2], self.fish_var[idx], key[1], key[2], key[3], key[4], key[5])
-            sp.set_position(f[0], f[1] + HUD_H)
+            gx, gy = f[0], f[1]
+            if pre:                                             # every fish glides to its new cell with the fish
+                gx, gy = pre["fish"][idx][0] + int((f[0] - pre["fish"][idx][0]) * fr), pre["fish"][idx][1] + int((f[1] - pre["fish"][idx][1]) * fr)
+            sp.set_position(gx, gy + HUD_H)
             sp.set_visible(True)
             # every fish off the window: a 2x2 mark in its colour on the window's edge, on the line towards it
-            fx = f[0] + FISH_W[f[2]] // 2 - cx
-            fy = f[1] + FISH_H[f[2]] // 2 - cy
+            fx = gx + FISH_W[f[2]] // 2 - cx
+            fy = gy + FISH_H[f[2]] // 2 - cy
             if show_marks and not (0 <= fx < VIEW_W and 0 <= fy < VIEW_H):
                 mark.set_position(cx + max(0, min(VIEW_W - 2, fx)), cy + HUD_H + max(0, min(VIEW_H - 2, fy)))
                 mark.set_visible(True)
@@ -1547,25 +1678,44 @@ class Ff02(ARCBaseGame):
         self.hud_sp.set_position(cx, cy)
 
     def _sync_player(self):
-        sp, n = self.player_sp, self.step_count
+        sp, c, t = self.player_sp, self.clk, self.tw_t
+        vpx, vpy = self.vpos
         if self.dying:                          # belly up, red and dark, crossed-out eyes, sinking
             key = ("dead", self.size, self.facing)
             pix, flip = fish_img(PAL_DEAD, self.size, 0, self.facing, None, 0, EYE_DEAD, 0), True
             pos, visible = (self.px, self.py + HUD_H + min(self.dying, 4)), True
         elif self.winning:                      # the level-clear dance: grin, spin, rise and flash
-            t = self.winning
-            spin = self.facing if (t // 2) % 2 == 0 else not self.facing
-            pal = PAL_FLASH if t % 4 >= 2 else PAL_PLAYER
+            w = self.winning
+            spin = self.facing if (w // 2) % 2 == 0 else not self.facing
+            pal = PAL_FLASH if w % 4 >= 2 else PAL_PLAYER
             key = ("win", self.size, spin, pal is PAL_FLASH)
-            pix, flip = fish_img(pal, self.size, 0, spin, None, t % 4, EYE_CHEER, 1), False
-            pos, visible = (self.px, self.py - t + HUD_H), True
+            pix, flip = fish_img(pal, self.size, 0, spin, None, w % 4, EYE_CHEER, 1), False
+            pos, visible = (self.px, self.py - rise_of(w) + HUD_H), True
         else:
             hurt = self.grace > 0
             chomp = 1 if (self.bursts or hurt) else 0       # mouth open after a meal, and in a wince after a bite
-            eyes = EYE_WINCE if hurt else (EYE_BLINK if n % 23 == 5 else EYE_OPEN)
-            key = ("swim", self.size, self.facing, (n // 2) & 3, eyes, chomp)
-            pix, flip = fish_img(PAL_PLAYER, self.size, 0, self.facing, None, key[3], eyes, chomp), False
-            pos, visible = (self.px, self.py + HUD_H), not (self.grace > 0 and n % 2 == 1)
+            squint = self.bump is not None and t in (1, 2)  # a bump on the edge of the sea: eyes shut for a moment
+            eyes = EYE_WINCE if hurt else (EYE_BLINK if (c % 69 in (15, 16) or squint) else EYE_OPEN)
+            flash = (self.grew and t in (1, 3)) or (self.bit and t == 1)    # just grew, or just bitten: a quick white flash
+            sq = 0                                          # squash and stretch: long while gliding, short when it lands
+            pre = self.pre
+            if pre and t in (1, 2) and (self.px != pre["p"][0] or self.py != pre["p"][1]):
+                horiz = abs(self.px - pre["p"][0]) >= abs(self.py - pre["p"][1])
+                sq = (1 if t == 1 else -1) * (1 if horiz else 2)
+            key = ("swim", self.size, self.facing, c & 3, eyes, chomp, flash, sq)
+            pix, flip = fish_img(PAL_FLASH if flash else PAL_PLAYER, self.size, 0, self.facing, None, c & 3, eyes, chomp), False
+            bx_ = by_ = 0
+            if sq:
+                horiz = abs(sq) == 1
+                pix, bx_, by_ = bend(pix, self.facing, 0 if horiz else 1, 1 if sq > 0 else -1)
+                if not horiz and sq > 0 and self.py > pre["p"][1]:
+                    by_ = -1                                # a stretch while sinking trails above, so the head leads
+            px_, py_ = vpx + bx_, vpy + by_
+            if self.bump is not None and t in (1, 2):       # nudge into the edge, then bounce back off it
+                px_ += DV[self.bump][0] * (1 if t == 1 else -1)
+                py_ += DV[self.bump][1] * (1 if t == 1 else -1)
+            pos = (px_, py_ + HUD_H)
+            visible = not (hurt and c % 2 == 1 and t not in (1, FR))  # blinks while safe after a bite; the last picture is always whole
         if self.winning:
             key = key + (self.winning % 2,)
         if key != self.player_key:
@@ -1576,10 +1726,19 @@ class Ff02(ARCBaseGame):
         sp.set_visible(visible)
 
     def _sync_effects(self, cx, cy):
-        """Bubbles where something was eaten, a welcome of bubbles at the start of a level, the level-clear shower and
-        the lost-run tint, on one see-through sheet laid over the window; hidden when nothing is happening."""
-        arriving = self.step_count < 6 and not (self.winning or self.dying)
-        active = bool(self.bursts or self.winning or self.dying or self.finale or arriving)
+        """Rings where something was eaten or bit, a wake behind the swimming fish, a puff on a bump, a welcome of bubbles at
+        the start of a level, the level-clear shower, the lost-run tint and the iris between levels, on one see-through
+        sheet laid over the window; hidden when nothing is happening."""
+        t, c, pre = self.tw_t, self.clk, self.pre
+        calm = not (self.winning or self.dying)
+        arriving = c < 6 * FR and calm and not self.pending_open
+        moved = bool(pre and t and calm and (self.px != pre["p"][0] or self.py != pre["p"][1]))
+        bumped = bool(self.bump is not None and t and calm)
+        bitten = bool(self.bit and t in (1, 2) and calm)
+        burp = bool(calm and not self.finale and self.step_count % 9 == 4 and c >= 3)
+        iris = self.shut or self.pending_open or (self.winning > WIN_FRAMES - 4 and not self.is_last_level())
+        active = bool(self.bursts or self.winning or self.dying or self.finale or arriving or moved or bumped or bitten or burp
+                      or iris)
         self.fx_sp.set_visible(active)
         self.wash_sp.set_visible(bool(self.dying))
         if self.dying:
@@ -1609,36 +1768,57 @@ class Ff02(ARCBaseGame):
             for ox, oy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
                 dot(wx + ox, wy + oy, WHITE)
 
-        for bx, by, r in self.bursts:
-            ring(bx, by, r, (WHITE, SKY))
+        for bx, by, r, kind, r0 in self.bursts:             # rings grow smoothly from their last size
+            ring(bx, by, int(round(r0 + (r - r0) * self.tw_frac)), (RED, YELLOW) if kind else (WHITE, SKY))
+        vpx, vpy = self.vpos
         centre_x = self.px + FISH_W[self.size] // 2
-        if arriving:                                             # a welcome: bubbles lift off the fish as the level opens
-            t = self.step_count
+        vcx, vcy = vpx + FISH_W[self.size] // 2, vpy + FISH_H[self.size] // 2
+        if moved:                                            # a wake: two clear streaks trail the fish and a big bubble rises
+            ddx, ddy = self.px - pre["p"][0], self.py - pre["p"][1]
+            mx, my = (int(math.copysign(1, ddx)) if abs(ddx) >= abs(ddy) else 0, int(math.copysign(1, ddy)) if abs(ddy) > abs(ddx) else 0)
+            ocx, ocy = pre["p"][0] + FISH_W[self.size] // 2, pre["p"][1] + FISH_H[self.size] // 2
+            half = (FISH_W[self.size] if mx else FISH_H[self.size]) // 2
+            side = (FISH_H[self.size] if mx else FISH_W[self.size]) // 2 - 1     # the streaks run along the fish's two long edges
+            if t < FR:
+                for k in (-1, 1):
+                    for j in range(5 - t):
+                        dot(ocx - mx * (half + 1 + j) - my * k * side, ocy - my * (half + 1 + j) + mx * k * side,
+                            WHITE if j < 3 and t == 1 else SKY)
+                dot(ocx - mx * (half + 3), ocy - my * (half + 3) - 2, WHITE, True)
+        if bumped and t < FR:                                # a puff on the edge the fish bumped: three round clouds fly apart
+            bdx, bdy = DV[self.bump]
+            hx = vcx + bdx * (FISH_W[self.size] // 2 + 1)
+            hy = vcy + bdy * (FISH_H[self.size] // 2 + 1)
+            for k in (-1, 0, 1):
+                dot(hx + abs(bdy) * k * (2 * t + 1) - bdx * (t - 1), hy + abs(bdx) * k * (2 * t + 1) - bdy * (t - 1),
+                    WHITE if t == 1 else SKY, True)
+        if bitten:                                           # a bite: a thick red frame flashes round the window, then thins
+            w_ = 3 if t == 1 else 1
+            sheet[:w_, :] = sheet[-w_:, :] = sheet[:, :w_] = sheet[:, -w_:] = RED
+        if burp and calm:                                    # now and then the fish lets out a bubble, which rises
+            dot(vpx + (FISH_W[self.size] if self.facing else -1), vpy + FISH_H[self.size] // 2 - (c % FR), WHITE)
+        if arriving:                                         # a welcome: bubbles lift off the fish as the level opens
+            ta = c / FR
             for k in range(5):
-                bubble(centre_x + (k - 2) * 4 + (t + k) % 2, self.py + FISH_H[self.size] // 2 - 2 - t * 3 - k * 2)
+                bubble(centre_x + (k - 2) * 4 + (c + k) % 2, int(self.py + FISH_H[self.size] // 2 - 2 - ta * 3 - k * 2))
         if self.winning or self.finale:
-            t = self.winning or WIN_FRAMES
-            centre_y = self.py - t + FISH_H[self.size] // 2
+            w = self.winning or WIN_FRAMES
+            centre_y = self.py - rise_of(w) + FISH_H[self.size] // 2
             if self.winning:
-                ring(centre_x, centre_y, 2 + t * 3, (WHITE, YELLOW))
-                if t >= 2:
-                    ring(centre_x, centre_y, t * 2, (YELLOW, PINK))
-                for k in range(3):                               # three fireworks pop around the window, one after another
-                    if t >= 2 + k * 2:
+                ring(centre_x, centre_y, 2 + w * 3, (WHITE, YELLOW))
+                for k in range(1):                               # two fireworks pop around the window, one after another
+                    if w >= 2 + k * 3:
                         fx0, fy0 = cx + 10 + (k * 23) % (VIEW_W - 20), cy + 8 + (k * 17) % (VIEW_H - 16)
-                        ring(fx0, fy0, (t - 2 - k * 2) + 1, ((ORANGE, GREEN, PINK)[k], WHITE))
-            for k in range(6):                                  # a turning crown of sparkles
-                a = k * math.pi / 3 + t * 0.35
-                rad = 5 + int(t * 1.6)
+                        ring(fx0, fy0, (w - 2 - k * 3) + 1, ((ORANGE, GREEN)[k], WHITE))
+            for k in range(4):                                  # a turning crown of sparkles
+                a = k * math.pi / 2 + w * 0.35
+                rad = 5 + int(w * 1.6)
                 star(centre_x + int(round(rad * math.cos(a))), centre_y + int(round(rad * math.sin(a))),
-                     (YELLOW, WHITE, PINK)[(k + t) % 3])
-            for j in range(0, VIEW_W, 8):                       # and a shower of bubbles rising
-                by = VIEW_H - 1 - (t * 6 + j * 7) % VIEW_H
-                bubble(cx + j + (by // 3) % 2 + 1, cy + by)
-            for k in range(22):                                 # confetti and streamers tumbling down the whole window
+                     (YELLOW, WHITE, PINK)[(k + w) % 3])
+            for k in range(6):                                  # confetti tumbling down the window
                 colour = (ORANGE, GREEN, PINK, MAGENTA, WHITE, SKY)[k % 6]
-                fx_ = cx + (k * 37 + 5) % (VIEW_W - 2) + (t % 2) + int(round(2 * math.sin(t / 2.0 + k)))
-                fy_ = cy + (k * 13 + t * 4 + (k % 3) * 9) % (VIEW_H - 2)
+                fx_ = cx + (k * 37 + 5) % (VIEW_W - 2) + (w % 2) + int(round(2 * math.sin(w / 2.0 + k)))
+                fy_ = cy + (k * 13 + w * 4 + (k % 3) * 9) % (VIEW_H - 2)
                 dot(fx_, fy_, colour, True)
                 if k % 4 == 0:                                  # every fourth one trails a streamer
                     dot(fx_, fy_ - 2, colour)
@@ -1647,10 +1827,17 @@ class Ff02(ARCBaseGame):
             d = self.dying
             centre_y = self.py + FISH_H[self.size] // 2
             ring(centre_x, centre_y, 2 + d, (PINK, WHITE))
-            for k in range(3):                                  # last bubbles float up from the fish
-                bubble(centre_x + (k - 1) * 3 + (d % 2), centre_y - d * 2 - k * 3)
-            for k in range(4):                                  # and big tears sink away
-                dot(centre_x + (k - 2) * 5, centre_y + 2 + d * 3 + k, SKY)
-                dot(centre_x + (k - 2) * 5, centre_y + 3 + d * 3 + k, WHITE)
+            for k in range(2):                                  # last bubbles float up from the fish
+                bubble(centre_x + (k * 2 - 1) * 3 + (d % 2), centre_y - d * 2 - k * 4)
+        if iris:                                                 # the iris: shuts round the fish on a clear, opens on the next sea
+            if self.shut:
+                sheet[:, :] = BLACK
+            else:
+                r = IRIS_CLOSE[self.winning - (WIN_FRAMES - 3)] if not self.pending_open else IRIS_OPEN[min(self.open_t, len(IRIS_OPEN) - 1)]
+                ox_, oy_ = self.px + FISH_W[self.size] // 2 - cx, self.py + FISH_H[self.size] // 2 - cy
+                if self.winning:
+                    oy_ -= rise_of(self.winning)
+                ys, xs = np.mgrid[0:VIEW_H, 0:VIEW_W]
+                sheet[(xs - ox_) ** 2 + (ys - oy_) ** 2 > r * r] = BLACK
         self.fx_sp.pixels = sheet
         self.fx_sp.set_position(cx, cy + HUD_H)

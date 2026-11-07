@@ -7,6 +7,23 @@
 #          per board square, a burning-fuse counter, dust, sparkles, a sad sun and a red haze on a loss), and each of
 #          the eight levels has its own world: meadow, snowfield, lava cave, toy workshop, desert, candy land, ocean
 #          floor, deep space. Nothing on the play surface speaks; height and depth are still shown by dice pips.
+# Updated: 07-November-2026, Claude Sonnet 5.5: calm-and-readable round (the Boss: "nothing too busy"). Quieter backdrop so the
+#          pieces pop: one solid ink band in the frame with two emblems a side, plain brick walls with no specks, calmer
+#          candy stripes and plank seams, mostly plain floors, a lighter refused-shadow hint, fewer and roomier props, fewer
+#          living sprites (each still moves) and four critters instead of seven. No rule changed.
+# Updated: 07-November-2026, Claude Sonnet 5.5: animation round (the Boss: "don't forget about animations"). Pieces now move
+#          instead of jumping: a toppling solid crouches, then the slab sweeps with a dust puff and a fading wake; a refused
+#          solid shudders while the sun shakes its head; a click on nothing sends out a growing ring; the sun breathes, sinks
+#          when the run is lost, and the burning fuse now burns down over the move's frames; a cleared level ends with a
+#          curtain that closes over the confetti and opens on the next world. The refused-shadow hint is now one or two dots
+#          a square instead of four or nine, hole glints are rarer and slower, critters sway more slowly. No rule changed.
+# Updated: 07-November-2026, Claude Sonnet 5.5: clarity-and-motion round three (the Boss: "nothing too busy, don't forget animations").
+#          Worlds five to eight retuned so pieces stand out: pale sand with darker orange brick (the pyramids now read), a deep-blue
+#          ocean hole in light water instead of black specks, dim stars in space so white is kept for the depth dots, plain block
+#          faces with fewer marks, a calm candy stripe. The red, pink and dark frames got new colours and calmer, fewer emblems
+#          (five instead of eight), and the late worlds keep three critters and fewer props. New motion: a slow wave of light
+#          sweeps over the blocks when idle, a click on empty ground puffs dust, a tall solid crouches twice as deep before it
+#          topples, and the loss is now a pulsing red rim and a light rain instead of a speckled haze. No rule changed.
 # SRP/DRY check: Pass -- part 1 is st01's rule code copied unchanged (cast, fell, regions), part 2 is pure art data and
 #          small painters, part 3 builds each level's sprites, part 4 is the game class, which only moves sprites.
 #          st01 stays as it is; nothing is shared with it.
@@ -30,6 +47,10 @@
 # 07-Nov-2026 (Claude Sonnet 5.5): pass 4 (final review). Every level opening, a mid-play strip, a win, a loss and the
 #   first frame after reset were rendered and read; the sameness check against st01 ran at 60 episodes of 200 steps with
 #   no differences. No picture or rule changed in this pass.
+# 07-Nov-2026 (Claude Sonnet 5.5): animation round. Crouch before a topple, six-frame sweep with dust and a wake; refused
+#   solid shudders and the sun shakes its head; growing click ring; breathing sun that sinks on a loss; the fuse burns down
+#   over the move; curtain closes on a cleared level and opens on the next; quieter refused-shadow dots, hole glints, haze,
+#   critters and twinkles. Frames per action now at most sixteen (topple 7, cheer 5, loss flash 8). No rule changed.
 #
 # How the picture is kept cheap: every board square is a 5x5 sprite named cell-X-Y whose pixels are swapped only when
 # the square's look changes (a cached tile, so a swap is a pointer change). The floor, the walls and their props are one
@@ -68,12 +89,14 @@ C_INK = 5
 
 SUNS = ((0, -1), (1, 0), (0, 1), (-1, 0))
 
-TOPPLE_FRAMES = 8
+TOPPLE_FRAMES = 7          # one crouch frame, then a six-frame sweep
 REFUSE_FRAMES = 5
 POKE_FRAMES = 3
 TURN_FRAMES = 3
-DIE_FRAMES = 12          # st01 held the red flash for 16 frames; the picture only needs 12
-CHEER_FRAMES = 6         # new: the level-clear sparkle, played before the engine moves on
+DIE_FRAMES = 8           # st01 held the red flash for 16 frames; the picture only needs 8
+CHEER_FRAMES = 5         # new: the level-clear sparkle (three frames) and the curtain closing (two), before the engine moves on
+VEIL_CLOSING = (0, 0, 0, 10, 21)   # curtain width per side on each cheer frame; the frame after is fully closed (32)
+VEIL_OPENING = 21                  # the first frame of the next world: curtain half open; the frame after is clean
 
 DEPTHS = {".": 0, "a": -1, "b": -2, "c": -3, "#": WALL}
 
@@ -463,10 +486,9 @@ THEMES = [
                tile(["ggggg", "grwrg", "gggwg", "ggggg", "ggggg"]),
                tile(["ggggg", "ggggg", "gwwgg", "gggwg", "ggggg"]),
                tile(["ggggg", "gggyg", "ggyoy", "gggyg", "ggggg"])],
-        wall=[tile(["nnnnn", "ooooo", "nnnnn", "ooooo", "nnnnn"]),
-              tile(["nnnnn", "oogoo", "nnnnn", "ogooo", "nnnnn"]),
-              tile(["nnnnn", "oyoyo", "nnnnn", "oyoyo", "nnnnn"]),
-              tile(["nnnnn", "ooooo", "nnrnn", "ooooo", "nnnnn"])],
+        wall=[tile(["ooooo", "ooooo", "ooooo", "nnnnn", "ooooo"]),
+              tile(["ooooo", "ooooo", "ooooo", "nnnnn", "ooooo"]),
+              tile(["ooooo", "ooooo", "ooooo", "nnonn", "ooooo"])],
         block=dict(base=ORG, light=YEL, dark=MAR, pip=WHT, tex="plank"),
         pit=dict(base=BLU, glint=LBL),
         frame=(GRN, YEL, WHT, RED), twinkle=(YEL, WHT, RED, MAG),
@@ -478,10 +500,10 @@ THEMES = [
                tile(["lllll", "lllll", "lwwll", "wwwwl", "lllll"]),
                tile(["lllll", "lllll", "lllwl", "lllll", "wllll"]),
                tile(["lllll", "llgll", "lgggl", "llwll", "lllll"])],
-        wall=wall_set("w", "l", "b", [(1, 0, "b"), (3, 3, "b")], [(2, 1, "l"), (0, 4, "b")]),
+        wall=bricks("w", "l", "w"),
         block=dict(base=MAG, light=WHT, dark=MAR, pip=WHT, tex="ice"),
         pit=dict(base=BLU, glint=LBL),
-        frame=(BLU, WHT, LBL, WHT), twinkle=(WHT, LBL, YEL, WHT),
+        frame=(LBL, WHT, BLU, BLU), twinkle=(WHT, BLU, YEL, WHT),
         motif=(["w.w", ".w.", "w.w"], [".w.", "www", ".w."])),
     dict(  # 2 lava cave: cracked stone floor with crystals; ember-flecked walls
         plain="n",
@@ -490,91 +512,88 @@ THEMES = [
                tile(["nnnnn", "nnnnn", "nnonn", "nnnnn", "nrnnn"]),
                tile(["nnnnn", "nnnnn", "nyynn", "nnynn", "nnnnn"]),
                tile(["nnnnn", "nnlnn", "nlbbn", "nnbnn", "nnnnn"])],
-        wall=wall_set("k", "n", "r", [(2, 1, "r"), (1, 3, "o")], [(3, 0, "n"), (2, 4, "r")]),
+        wall=bricks("k", "n", "k"),
         block=dict(base=LBL, light=WHT, dark=BLU, pip=BLK, tex="ice"),
         pit=dict(base=ORG, glint=YEL),
-        frame=(BLK, ORG, RED, YEL), twinkle=(ORG, YEL, RED, ORG),
-        motif=([".y.", "yoy", ".r."], ["y..", "oyo", ".r."])),
+        frame=(MAR, ORG, RED, ORG), twinkle=(ORG, YEL, RED, ORG),
+        motif=([".o.", "oyo", ".o."], ["o..", ".o.", "..o"])),
     dict(  # 3 toy workshop: plank floor with toys dropped on it; red toy-box walls (unchanged)
         plain=None,
-        floor=[tile(["oyyyy", "oyyyy", "oyyyy", "oyyyy", "ooooo"]),
+        floor=[tile(["yyyyy", "yyyyy", "yyyyy", "yyyyy", "ooooo"]),
                tile(["yyyoy", "yyyoy", "yyyoy", "yyyoy", "ooooo"]),
-               tile(["yyyyy", "yoyyy", "yyyyy", "yyyoy", "ooooo"]),
-               tile(["oyyyy", "oybyy", "oyyyy", "oyyyy", "ooooo"]),
-               tile(["yyyoy", "yyyoy", "yygoy", "yyyoy", "ooooo"])],
-        wall=[tile(["rrrrr", "rwrwr", "rrrrr", "rwrwr", "rnnnn"]),
-              tile(["rrrrr", "rwrwr", "rrrrr", "rwrwr", "nnnnr"]),
-              tile(["rrrrr", "rwrwr", "rrrrr", "rwrrr", "rnnnn"])],
+               tile(["yyyyy", "yyyyy", "yyyyy", "yyyyy", "ooooo"]),
+               tile(["yyyyy", "yyyyy", "yyyyy", "yyyyy", "ooooo"]),
+               tile(["oyyyy", "oyyyy", "oyyyy", "oyyyy", "ooooo"])],
+        wall=[tile(["rrrrr", "rrrrr", "rrrrr", "rrrrr", "rnnnn"]),
+              tile(["rrrrr", "rrrrr", "rrrrr", "rrrrr", "nnnnr"]),
+              tile(["rrrrr", "rrwrr", "rrrrr", "rrrrr", "rnnnn"])],
         block=dict(base=GRN, light=WHT, dark=MAR, pip=WHT, tex="plank"),
         pit=dict(base=BLU, glint=LBL),
-        frame=(RED, WHT, YEL, BLU), twinkle=(YEL, GRN, LBL, MAG),
+        frame=(ORG, WHT, YEL, BLU), twinkle=(YEL, WHT, LBL, MAG),
         motif=(["bbb", "bwb", "bbb"], ["ggg", "gyg", "ggg"])),
-    dict(  # 4 desert: sand with a sprout, a bone and footprints; sandstone walls
-        plain="o",
-        floor=[tile(["ooooo", "oyooo", "ooooo", "oooyo", "ooooo"]),
-               tile(["ooooo", "oyyoo", "ooooo", "ooooo", "ooonn"]),
-               tile(["ooooo", "ooooo", "nooyo", "ooooo", "oyooo"]),
-               tile(["ooooo", "oogoo", "ooggg", "oogoo", "ooooo"]),
-               tile(["ooooo", "owwwo", "ooooo", "ooooo", "oonoo"])],
-        wall=wall_set("y", "n", "o", [(2, 1, "o"), (3, 3, "o")], [(1, 0, "n"), (4, 4, "o")]),
+    dict(  # 4 desert: pale sand with a few specks, a sprout and footprints; darker orange sandstone walls
+        plain="y",
+        floor=[tile(["yyyyy", "yoyyy", "yyyyy", "yyyoy", "yyyyy"]),
+               tile(["yyyyy", "yyyyy", "yonoy", "yyyyy", "yyyyy"]),
+               tile(["yyyyy", "yyyyy", "yygyy", "yyggy", "yyyyy"]),
+               tile(["yyyyy", "yyyyy", "yyyyy", "yoyyy", "yyyyy"]),
+               tile(["yyyyy", "ywwyy", "yyyyy", "yyyyy", "yyyoy"])],
+        wall=bricks("o", "n", "y"),
         block=dict(base=BLU, light=LBL, dark=BLK, pip=WHT, tex="rock"),
         pit=dict(base=MAR, glint=RED),
-        frame=(MAR, ORG, YEL, RED), twinkle=(YEL, ORG, WHT, RED),
-        motif=([".y.", "yoy", ".y."], ["o.o", ".y.", "o.o"])),
+        frame=(YEL, ORG, MAR, RED), twinkle=(ORG, RED, WHT, MAR),
+        motif=([".r.", "rnr", ".r."], ["n..", ".r.", "..n"])),
     dict(  # 5 candy land: sprinkled icing floor, striped candy walls (unchanged)
         plain="w",
-        floor=[tile(["wwwww", "wpwww", "wwwwy", "wwwww", "wgwww"]),
-               tile(["wwwww", "wwbww", "wwwww", "pwwww", "wwwyw"]),
-               tile(["wwwww", "wywww", "wwwpw", "wwwww", "wwgww"]),
+        floor=[tile(["wwwww", "wpwww", "wwwww", "wwwww", "wwwww"]),
+               tile(["wwwww", "wwwww", "wwwww", "wwwwy", "wwwww"]),
+               tile(["wwwww", "wwwww", "wwgww", "wwwww", "wwwww"]),
                tile(["wwwww", "wrrww", "wwwww", "wwwbw", "wwwww"]),
                tile(["wwwww", "wwwww", "wgwww", "wwwwp", "wywww"])],
-        wall=[tile(["rrwwr", "rwwrr", "wwrrw", "wrrww", "rrwwr"]),
-              tile(["wrrww", "rrwwr", "rwwrr", "wwrrw", "wrrww"]),
-              tile(["rwwrr", "wwrrw", "wrrww", "rrwwr", "rwwrr"])],
+        wall=[tile(["ppmmm", "mppmm", "mmppm", "mmmpp", "pmmmp"])] * 3,       # one clean diagonal stripe that joins across squares
         block=dict(base=GRN, light=YEL, dark=MAR, pip=WHT, tex="stud"),
         pit=dict(base=MAR, glint=ORG),
-        frame=(MAG, WHT, YEL, GRN), twinkle=(WHT, YEL, GRN, LBL),
+        frame=(BLU, WHT, YEL, MAG), twinkle=(WHT, YEL, GRN, LBL),
         motif=(["rwr", "wrw", "rwr"], ["gwg", "wgw", "gwg"])),
-    dict(  # 6 ocean floor: blue water with shells, weed and bubbles; reef walls
-        plain="b",
-        floor=[tile(["bbbbb", "blbbb", "bbbbb", "bbblb", "bbbbb"]),
-               tile(["bbbbb", "bbbbb", "bllbb", "bbbbb", "bbbbl"]),
-               tile(["bbbbb", "bwbbb", "bbbbb", "bbbwb", "bbbbb"]),
-               tile(["bbbbb", "bbgbb", "bggbb", "bbgbg", "bbbgb"]),
-               tile(["bbbbb", "bbbbb", "bbpbb", "bpwpb", "bbbbb"])],
-        wall=wall_set("n", "k", "m", [(1, 1, "m"), (3, 3, "p")], [(2, 0, "g"), (0, 4, "m")]),
+    dict(  # 6 ocean floor: pale water with bubbles, shells and a little weed; reef walls; the holes are deep blue
+        plain="l",
+        floor=[tile(["lllll", "lwlll", "lllll", "lllwl", "lllll"]),
+               tile(["lllll", "lllll", "lbbll", "lllll", "lllbl"]),
+               tile(["lllll", "lbwll", "lllll", "lllll", "lllll"]),
+               tile(["lllll", "llgll", "lggll", "lllgl", "lllgl"]),
+               tile(["lllll", "lllll", "llpll", "lpwpl", "lllll"])],
+        wall=bricks("n", "k", "n"),
         block=dict(base=ORG, light=YEL, dark=MAR, pip=WHT, tex="stud"),
-        pit=dict(base=BLK, glint=BLU),
-        frame=(BLK, LBL, BLU, WHT), twinkle=(LBL, WHT, BLU, YEL),
+        pit=dict(base=BLU, glint=LBL),
+        frame=(GRN, LBL, BLU, YEL), twinkle=(LBL, WHT, YEL, WHT),
         motif=([".l.", "l.l", ".l."], ["w.w", ".o.", ".o."])),
-    dict(  # 7 deep space: stars and a tiny planet; star-flecked hull walls
+    dict(  # 7 deep space: a few dim stars and a tiny planet; hull walls
         plain="k",
-        floor=[tile(["kkkkk", "kkkkk", "kkwkk", "kkkkk", "kbkkk"]),
-               tile(["kkkkk", "kykkk", "kkkkk", "kkkkl", "kkkkk"]),
-               tile(["kkkkk", "kkkkk", "lkkkk", "kkkwk", "kkkkk"]),
-               tile(["kkkkk", "kkwkk", "kwwwk", "kkwkk", "kkkkk"]),
+        share=6,
+        floor=[tile(["kkkkk", "kkkkk", "kklkk", "kkkkk", "kbkkk"]),
+               tile(["kkkkk", "kbkkk", "kkkkk", "kkkkl", "kkkkk"]),
+               tile(["kkkkk", "kkkkk", "lkkkk", "kkkbk", "kkkkk"]),
+               tile(["kkkkk", "kklkk", "klllk", "kklkk", "kkkkk"]),
                tile(["kkkkk", "kmmkk", "kmmmk", "kkkkk", "kkkkk"])],
-        wall=wall_set("n", "k", "y", [(1, 1, "y"), (3, 3, "w")], [(2, 0, "l"), (4, 4, "y")]),
+        wall=bricks("n", "k", "n"),
         block=dict(base=YEL, light=WHT, dark=ORG, pip=BLK, tex="stud"),
         pit=dict(base=BLU, glint=LBL),
-        frame=(BLU, WHT, YEL, LBL), twinkle=(WHT, YEL, LBL, WHT),
-        motif=([".y.", "yyy", ".y."], ["...", ".w.", "..."])),
+        frame=(BLK, LBL, BLU, BLU), twinkle=(LBL, YEL, LBL, WHT),
+        motif=([".l.", "lbl", ".l."], [".b.", "bbb", ".b."])),
 ]
 
 # A solid's surface: pixels (x, y, which colour) added to the plain slab when it carries no pips.
 TEX = {
-    "plank": (((1, 2, "dark"), (2, 2, "dark"), (3, 1, "light")),
-              ((2, 1, "dark"), (3, 1, "dark"), (1, 3, "light")),
-              ((1, 1, "dark"), (2, 1, "dark"), (2, 3, "light"))),
-    "ice": (((1, 1, "light"), (2, 2, "light"), (3, 3, "dark")),
-            ((2, 1, "light"), (1, 2, "light"), (3, 2, "dark")),
-            ((1, 3, "light"), (2, 2, "light"), (3, 1, "dark"))),
-    "rock": (((2, 1, "dark"), (2, 2, "dark"), (3, 3, "dark")),
-             ((1, 1, "dark"), (2, 2, "dark"), (2, 3, "dark")),
-             ((3, 1, "dark"), (2, 2, "dark"), (1, 3, "dark"))),
-    "stud": (((1, 1, "light"), (3, 3, "dark")),
-             ((3, 1, "light"), (1, 3, "dark")),
-             ((2, 2, "light"), (2, 2, "light"))),
+    "plank": (((1, 2, "dark"), (2, 2, "dark")),
+              ((2, 1, "dark"), (3, 1, "dark")),
+              ((1, 3, "light"),)),
+    "ice": (((1, 1, "light"), (2, 2, "light")),
+            ((2, 1, "light"), (1, 2, "light")),
+            ((1, 3, "light"),)),
+    "rock": (((2, 2, "dark"),),
+             ((1, 1, "dark"),),
+             ((3, 3, "dark"),)),
+    "stud": ((), (), ()),               # candy, ocean and space blocks are plain slabs: only the pips mark them
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -634,8 +653,8 @@ STACK = art(["...rwr...", "..bwbwb..", ".yyyyyyy.", "gwggggwgg", "kkkkkkkkk"])
 CRAYON = art(["..r..", ".rrr.", ".bbb.", ".bwb.", ".bbb.", ".bwb.", ".bbb.", ".kkk.", ".kkk."])
 TEDDY = art(["oo.oo", "ooooo", "okoko", "oonoo", ".ooo."])
 BALL = art([".bbb.", "bwbbb", "bbbbb", "bbbbn", ".bbb."])
-TOTEM_ROWS = [".yyy.", "ykyky", "yyoyy", "ykkky", "ooooo", ".rrr.", "rkrkr", "rrorr", "rkkkr"]
-PYRAMID = art(["....o....", "...ooo...", "..ooooo..", ".oookooo.", "ooookoooo"])
+TOTEM_ROWS = [".yyy.", "ykyky", "yyoyy", "ykkky", "nnnnn", ".rrr.", "rkrkr", "rrorr", "rkkkr"]
+PYRAMID = art(["....n....", "...nyn...", "..nyyyn..", ".nyyykyn.", "nnnnnnnnn"])      # maroon outline, yellow face: reads on orange brick
 CACTUS_ROWS = ["..r..", "g.g.g", "ggggg", "..g..", "..g.."]
 DESERT_SKULL = art(["w...w", "wwwww", "wkwkw", ".www.", ".w.w."])
 PALM = art([".g.g.", "ggggg", ".ggg.", "..n..", "..n..", "..n..", "..n..", "..n.."])
@@ -656,21 +675,15 @@ ASTRO = art([".www.", "wkwkw", "wwrww", ".www.", "wlwlw", ".w.w."])
 
 # Each entry is (picture, x, y) in board pixels (0..54). Only drawn where every pixel lands on a wall square.
 PROPS = {
-    0: [(COTTAGE, 22, 42), (PINE, 5, 44), (PINE, 44, 44), (HAY, 13, 46), (SUNFLOWER, 37, 46), (SUNFLOWER, 3, 18),
-        (HAY, 45, 32)],
-    1: [(PINE, 3, 43), (PINE, 10, 47), (PINE, 36, 44), (IGLOO, 44, 46), (PRESENT, 18, 48)],
-    2: [(ORE, 6, 0), (ORE, 27, 0), (ORE, 44, 0), (ORE, 12, 50), (ORE, 34, 50),
-        (CRYSTAL, 17, 0), (CRYSTAL, 37, 0), (CRYSTAL, 2, 50), (CRYSTAL, 24, 50), (CRYSTAL, 46, 50),
-        (SKULL, 0, 24), (SKULL, 50, 24)],
-    3: [(STACK, 6, 0), (STACK, 27, 0), (STACK, 43, 0), (STACK, 12, 50), (STACK, 35, 50),
-        (CRAYON, 0, 12), (CRAYON, 0, 33), (CRAYON, 50, 12), (CRAYON, 50, 33),
-        (TEDDY, 0, 3), (TEDDY, 50, 3), (BALL, 0, 23), (BALL, 50, 23)],
-    4: [(PYRAMID, 8, 0), (PYRAMID, 40, 0), (PYRAMID, 22, 50), (DESERT_SKULL, 33, 0),
-        (PALM, 25, 16), (PALM, 25, 30)],
-    5: [(CUPCAKE, 3, 25), (CUPCAKE, 17, 25), (CUPCAKE, 31, 25), (CUPCAKE, 45, 25),
-        (GUMDROP, 11, 25), (GUMDROP, 25, 25), (GUMDROP, 39, 25)],
-    6: [(WRECK, 4, 25), (CHEST, 24, 25), (WRECK, 40, 25), (CORAL, 17, 25), (STARFISH, 33, 25)],
-    7: [(ROCKET, 25, 5), (ROCKET, 25, 38), (PLANET, 17, 25), (PLANET, 35, 25)],
+    0: [(COTTAGE, 22, 42), (PINE, 5, 44), (PINE, 44, 44), (HAY, 13, 46)],
+    1: [(PINE, 3, 43), (PINE, 36, 44), (IGLOO, 44, 46)],
+    2: [(ORE, 6, 0), (ORE, 44, 0), (ORE, 12, 50), (ORE, 34, 50), (SKULL, 0, 24), (SKULL, 50, 24)],
+    3: [(STACK, 6, 0), (STACK, 43, 0), (STACK, 35, 50),
+        (CRAYON, 0, 12), (CRAYON, 50, 33), (TEDDY, 50, 3), (BALL, 0, 23)],
+    4: [(PYRAMID, 8, 0), (PYRAMID, 40, 0), (PYRAMID, 22, 50)],
+    5: [(CUPCAKE, 3, 25), (CUPCAKE, 45, 25)],
+    6: [(WRECK, 4, 25), (WRECK, 40, 25)],
+    7: [(ROCKET, 25, 5), (PLANET, 2, 25), (PLANET, 48, 25)],
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -727,58 +740,28 @@ ANIMS = {
     0: [at([ROUND_TREE, where_colour(ROUND_TREE, RED, YEL)], 1, 9, every=9),
         at([ROUND_TREE, where_colour(ROUND_TREE, RED, YEL)], 46, 22, every=9, off=1),
         at([ROUND_TREE, where_colour(ROUND_TREE, RED, YEL)], 1, 26, every=9, off=2),
-        at([ROUND_TREE, where_colour(ROUND_TREE, RED, YEL)], 45, 8, every=9, off=3),
         lane([tinted(p, YEL) for p in BFLY], "x", 0, 49, 1, 1.5, every=2),
-        lane([tinted(p, MAG) for p in BFLY], "y", 6, 34, 3, 1.0, off=5, bob=1),
-        lane([tinted(p, ORG) for p in BFLY], "y", 6, 34, 48, -0.8, off=9, bob=1)],
+        lane([tinted(p, MAG) for p in BFLY], "y", 6, 34, 3, 1.0, off=5, bob=1)],
     1: [at([halo(art(SNOWMAN_ROWS), BLU)] * 6 + [SNOWMAN_BLINK], 24, 40, every=3),
         lane([tinted(p, BLU) for p in FLAKE], "y", 1, 36, 1, 1.0, off=0, bob=1, every=4),
-        lane([tinted(p, BLU) for p in FLAKE], "y", 1, 36, 1, 1.0, off=18, bob=1, every=4),
-        lane([tinted(p, BLU) for p in FLAKE], "y", 1, 36, 51, 0.8, off=7, bob=1, every=4),
-        lane([tinted(p, BLU) for p in FLAKE], "y", 1, 36, 51, 0.8, off=25, bob=1, every=4)],
-    2: [at(torch_poses(), 0, 12, every=2), at(torch_poses(), 0, 33, every=2, off=1),
-        at(torch_poses(), 50, 12, every=2, off=2), at(torch_poses(), 50, 33, every=2, off=3),
-        at(GLEAMS, 9, 1, every=3), at(GLEAMS, 30, 1, every=3, off=1),
-        at(GLEAMS, 47, 1, every=3, off=2), at(GLEAMS, 15, 51, every=3, off=3),
-        at(GLEAMS, 37, 51, every=3, off=1),
-        lane(BAT, "x", 0, 49, 1, 1.2, every=2), lane(rev(BAT), "x", 0, 49, 51, -1.0, off=20, every=2),
-        lane(EMBER, "y", 3, 48, 2, -0.7, off=0, bob=2, every=2),
-        lane(EMBER, "y", 3, 48, 52, -0.9, off=13, bob=2, every=2)],
-    3: [at([tinted(p, YEL) for p in COG], 19, 1, every=2), at([tinted(p, LBL) for p in COG], 38, 1, every=2, off=1),
-        at([tinted(p, YEL) for p in COG], 26, 51, every=2), at([tinted(p, LBL) for p in COG], 4, 51, every=2),
-        at([tinted(p, YEL) for p in COG], 47, 51, every=2, off=1),
-        at([tinted(BALLOON, c) for c in (MAG, RED, BLU)], 1, 29, every=7, bob=2),
-        at([tinted(BALLOON, c) for c in (YEL, GRN, LBL)], 51, 29, every=7, off=1, bob=2)],
+        lane([tinted(p, BLU) for p in FLAKE], "y", 1, 36, 51, 0.8, off=7, bob=1, every=4)],
+    2: [at(torch_poses(), 0, 12, every=2), at(torch_poses(), 50, 33, every=2, off=2),
+        at(GLEAMS, 30, 1, every=3, off=1), at(GLEAMS, 24, 51, every=3, off=3),
+        lane(BAT, "x", 0, 49, 1, 1.2, every=2),
+        lane(EMBER, "y", 3, 48, 2, -0.7, off=0, bob=2, every=2)],
+    3: [at([tinted(p, YEL) for p in COG], 19, 1, every=2), at([tinted(p, LBL) for p in COG], 26, 51, every=2, off=1),
+        at([tinted(BALLOON, c) for c in (MAG, RED, BLU)], 1, 33, every=7, bob=2),
+        at([tinted(BALLOON, c) for c in (YEL, GRN, LBL)], 51, 18, every=7, off=1, bob=2)],
     4: [at([art(TOTEM_ROWS)] * 5 + [swap_rows(TOTEM_ROWS, [".yyy.", "yyyyy"])], 25, 5, every=4),
-        at([art(TOTEM_ROWS)] * 5 + [swap_rows(TOTEM_ROWS, [".yyy.", "yyyyy"])], 25, 40, every=4, off=3),
-        at([art(CACTUS_ROWS), swap_rows(CACTUS_ROWS, ["..y.."])], 19, 0, every=6),
-        at([art(CACTUS_ROWS), swap_rows(CACTUS_ROWS, ["..y.."])], 26, 0, every=6, off=1),
         at([art(CACTUS_ROWS), swap_rows(CACTUS_ROWS, ["..y.."])], 4, 50, every=6, off=2),
-        at([art(CACTUS_ROWS), swap_rows(CACTUS_ROWS, ["..y.."])], 12, 50, every=6, off=3),
-        at([art(CACTUS_ROWS), swap_rows(CACTUS_ROWS, ["..y.."])], 36, 50, every=6, off=4),
-        at([art(CACTUS_ROWS), swap_rows(CACTUS_ROWS, ["..y.."])], 46, 50, every=6, off=5),
-        lane(SCARAB, "x", 0, 49, 51, 0.8, every=2)],
-    5: [at([LOLLIPOP, np.fliplr(LOLLIPOP).copy()], 25, 8, every=4), at([LOLLIPOP, np.fliplr(LOLLIPOP).copy()], 0, 31, every=4, off=1),
-        at([LOLLIPOP, np.fliplr(LOLLIPOP).copy()], 50, 31, every=4, off=1),
-        at([LOLLIPOP, np.fliplr(LOLLIPOP).copy()], 0, 42, every=4), at([LOLLIPOP, np.fliplr(LOLLIPOP).copy()], 50, 42, every=4),
-        lane([tinted(BONBON, c) for c in (BLU, YEL, GRN, LBL, MAG, ORG)], "x", 0, 50, 25, 2.0, every=1, bob=0),
-        lane([tinted(SPRINKLE, c) for c in (YEL, GRN, BLU, MAG)], "y", 31, 52, 2, 1.3, every=3, bob=1),
-        lane([tinted(SPRINKLE, c) for c in (MAG, BLU, YEL, GRN)], "y", 31, 52, 52, 1.1, off=9, every=3, bob=1),
-        lane([tinted(SPRINKLE, c) for c in (GRN, YEL, MAG, BLU)], "y", 2, 22, 27, 1.2, off=4, every=3, bob=1)],
-    6: [lane([tinted(p, ORG) for p in FISH], "x", 0, 48, 26, 1.0, every=3, bob=1),
-        lane(rev([tinted(p, YEL) for p in FISH]), "x", 0, 48, 26, -1.3, off=22, every=3, bob=1),
+        lane([tinted(p, BLU) for p in SCARAB], "x", 0, 49, 51, 0.8, every=2)],
+    5: [at([LOLLIPOP, np.fliplr(LOLLIPOP).copy()], 25, 8, every=4), at([LOLLIPOP, np.fliplr(LOLLIPOP).copy()], 0, 42, every=4),
+        lane([tinted(BONBON, c) for c in (BLU, YEL, GRN, LBL, MAG, ORG)], "x", 12, 36, 25, 2.0, every=1, bob=0)],
+    6: [lane([tinted(p, ORG) for p in FISH], "x", 16, 30, 26, 1.0, every=3, bob=1),
         at(lamp_poses(), 25, 4, every=5),
-        at([SEAWEED_A, np.fliplr(SEAWEED_A).copy()], 25, 14, every=5),
         at([SEAWEED_A, np.fliplr(SEAWEED_A).copy()], 0, 31, every=5, off=1),
-        at([SEAWEED_A, np.fliplr(SEAWEED_A).copy()], 50, 31, every=5),
-        lane([tinted(p, LBL) for p in BUBBLE], "y", 1, 26, 26, -0.7, off=0, bob=1, every=3),
-        lane([tinted(p, WHT) for p in BUBBLE], "y", 1, 26, 26, -0.5, off=30, bob=1, every=3),
-        lane([tinted(p, LBL) for p in BUBBLE], "y", 31, 50, 1, -0.6, off=4, bob=1, every=3),
-        lane([tinted(p, WHT) for p in BUBBLE], "y", 31, 50, 51, -0.5, off=11, bob=1, every=3)],
-    7: [at([SATELLITE, where_colour(SATELLITE, YEL, RED)], 4, 25, every=6), at([SATELLITE, where_colour(SATELLITE, YEL, RED)], 40, 25, every=6, off=1),
-        at([UFO, where_colour(UFO, YEL, RED)], 23, 25, every=4),
-        at([ASTRO], 25, 17, every=5, bob=1), at([ASTRO], 25, 30, every=5, off=2, bob=1),
-        lane(COMET, "x", 0, 50, 26, 2.5, every=2, bob=0)],
+        lane([tinted(p, WHT) for p in BUBBLE], "y", 31, 50, 1, -0.6, off=4, bob=1, every=3)],
+    7: [lane([UFO, where_colour(UFO, YEL, RED)], "x", 10, 36, 25, 0.7, every=4, bob=1)],
 }
 
 
@@ -880,7 +863,7 @@ def fill5(colour):
 
 
 @lru_cache(maxsize=None)
-def block_tile(ti, top, bot, left, right, pips, var):
+def block_tile(ti, top, bot, left, right, pips, var, glow=False):
     """A solid's square. Lit on its exposed top and left, shaded on its exposed bottom and right, so a
     block reads as raised; joined squares of one solid blend into one slab. Only the anchor square
     carries the pips (the height); the others carry the world's surface (planks, ice facets, rock, studs)."""
@@ -901,6 +884,8 @@ def block_tile(ti, top, bot, left, right, pips, var):
         t[:, 4] = C_INK
     if top and not left:
         t[0, 0] = b["light"]
+    if glow:                               # the idle shimmer: a bright flick on the face as a wave of light passes
+        t[1, 1] = t[1, 2] = t[2, 1] = WHT
     for dx, dy in DICE.get(pips, ()):
         t[dy, dx] = b["pip"]
     return t
@@ -927,11 +912,11 @@ def sagged(ti, pic, k):
 @lru_cache(maxsize=None)
 def pit_tile(ti, top, left, depth, mode, glint):
     """A hole's square. mode 0 plain, 1 shadow will fill it (all purple), 2 a refused shadow falls on it
-    (chequered). glint is a position index for the little sparkle on the water/lava, or -1."""
+    (two corner dots). glint is a position index for the little sparkle on the water/lava, or -1."""
     p = THEMES[ti]["pit"]
     t = fill5(SHADOW if mode == 1 else p["base"])
     if mode == 2:
-        t[0::2, 0::2] = SHADOW
+        t[0, 4] = t[4, 0] = SHADOW          # two corner dots: a quiet hint (it used to be nine)
     if top:
         t[0, :] = C_INK
     if left:
@@ -946,9 +931,9 @@ def pit_tile(ti, top, left, depth, mode, glint):
 
 @lru_cache(maxsize=None)
 def refused_floor_tile():
-    """Plain floor under a refused shadow: only the chequer dots, so the floor shows between them."""
+    """Plain floor under a refused shadow: a single dot, so the floor shows round it."""
     t = np.full((CELL, CELL), -1, dtype=np.int8)
-    t[0::2, 0::2] = SHADOW
+    t[2, 2] = SHADOW                        # one dot: a hint under the pieces, not a pattern over them
     return t
 
 
@@ -976,9 +961,8 @@ def frame_pixels(ti):
     base, c1, c2, c3 = THEMES[ti]["frame"]
     f = np.full((64, 64), base, dtype=np.int8)
     for i in range(64):
-        colour = c1 if i % 6 < 2 else c2 if 3 <= i % 6 < 5 else base
         for (x, y) in ((i, 1), (i, 62), (1, i), (62, i)):
-            f[y, x] = colour
+            f[y, x] = C_INK                        # one solid ink band; the gem runs along it
     for cx, cy in ((0, 0), (61, 0), (0, 61), (61, 61)):
         f[cy:cy + 3, cx:cx + 3] = c3
         f[cy + 1, cx + 1] = C_INK
@@ -986,15 +970,12 @@ def frame_pixels(ti):
     f[59, 3:60] = C_INK
     f[3:60, 3] = C_INK
     f[3:60, 59] = C_INK
-    # the world's own little emblem every twelve pixels along each side, two kinds taking turns (flowers, flakes,
-    # flames, toy blocks, ...). They sit in the three-pixel margin; the gem and the twinkles pass over them.
+    # the world's emblem: just two on each side, with room round them (the sun covers the top middle)
     motifs = [art(m) for m in THEMES[ti]["motif"]]
-    for n, k in enumerate(range(6, 55, 12)):
-        m = motifs[n % 2]
-        for (x, y) in ((k, 0), (k, 61)):
-            blit(f, x, y, m)
-        for (x, y) in ((0, k), (61, k)):
-            blit(f, x, y, m)
+    blit(f, 12, 0, motifs[0])                      # two flank the sun on the top...
+    blit(f, 46, 0, motifs[1])
+    for (x, y) in ((30, 61), (0, 30), (61, 30)):   # ...and one sits in the middle of every other side
+        blit(f, x, y, motifs[0])
     return f
 
 
@@ -1021,8 +1002,8 @@ def ground_for(ti):
                 if open_(x + 1, y):
                     t[:, 4] = C_INK
             else:
-                pick = v % 8          # three squares in eight are plain so the detailed ones read as detail, not noise
-                t = plain if (plain is not None and pick < 3) else th["floor"][pick % len(th["floor"])]
+                pick = v % 8          # five (six in space) squares in eight are plain so the detailed ones read as detail, not noise
+                t = plain if (plain is not None and pick < th.get("share", 5)) else th["floor"][pick % len(th["floor"])]
             g[y * CELL:y * CELL + CELL, x * CELL:x * CELL + CELL] = t
     for picture, px, py in PROPS.get(ti, ()):
         # a prop is only drawn where every pixel of it lands on a wall square
@@ -1043,7 +1024,7 @@ def wall_cells(ti):
 def life_cells(ti):
     """Which wall squares carry a critter: a spread-out handful, the same every run."""
     cells = wall_cells(ti)
-    want = 7
+    want = 4 if ti < 4 else 3          # the busy late worlds keep three
     picked = []
     for (x, y) in sorted(cells, key=lambda c: hashed(c[0], c[1], 7 + ti)):
         if all(abs(x - px) + abs(y - py) >= 3 for px, py in picked) and not prop_covers(ti, x, y):
@@ -1064,7 +1045,7 @@ def prop_covers(ti, x, y):
     return False
 
 
-TWINKLES = ((10, 1), (18, 1), (42, 1), (50, 1), (1, 19), (62, 51), (1, 51), (62, 19))
+TWINKLES = ((10, 1), (50, 1), (1, 51), (62, 19))
 RING = 4 * 61          # the gem's lap round the frame
 
 
@@ -1118,18 +1099,58 @@ CUE_RING = np.array([[BAD if max(abs(i - 2), abs(j - 2)) == 2 else -1 for i in r
                     dtype=np.int8)
 
 
+def ring_of(r):
+    """A square ring r pixels out from its centre (a click on nothing sends out 1, 2, then 3)."""
+    n = 2 * r + 1
+    return np.array([[BAD if max(abs(i - r), abs(j - r)) == r else -1 for i in range(n)] for j in range(n)], dtype=np.int8)
+
+
+CUE_RINGS = (ring_of(1), ring_of(2), ring_of(3))
+
+
+@lru_cache(maxsize=None)
+def veil_picture(width):
+    """One panel of the level-change curtain: solid ink, the screen tall."""
+    return np.full((64, width), BLK, dtype=np.int8)
+
+
+def crouched(board_pixels, solid):
+    """The squash before a toppling or refused solid moves: in every pixel column the solid's run loses its
+    row three from the bottom and slides down, so the top row empties (the ground shows) and the bottom edge stays put.
+    board_pixels is a dict square -> 5x5 picture; returns the same for those squares."""
+    comp = np.full((N * CELL, N * CELL), -1, dtype=np.int16)
+    for (x, y), pic in board_pixels.items():
+        comp[y * CELL:(y + 1) * CELL, x * CELL:(x + 1) * CELL] = pic
+    out = comp.copy()
+    for x in range(N * CELL):
+        col = [y for y in range(N * CELL) if comp[y, x] >= 0]
+        if not col:
+            continue
+        runs, start = [], col[0]
+        for a, b in zip(col, col[1:] + [None]):
+            if b != a + 1:
+                runs.append((start, a))
+                start = b
+        for y0, y1 in runs:
+            k = 2 if y1 - y0 + 1 >= 10 else 1          # a two-high solid squashes two rows, so the crouch can be seen
+            out[y0:y0 + k, x] = -1
+            out[y0 + k:y1 - 1, x] = comp[y0:y1 - 1 - k, x]
+    return {(x, y): out[y * CELL:(y + 1) * CELL, x * CELL:(x + 1) * CELL].astype(np.int8) for (x, y) in board_pixels}
+
+
 @lru_cache(maxsize=None)
 def haze(shift):
-    """The red haze over a lost board: a thin chequer that swaps every few frames, and a red rim."""
+    """The red glow over a lost board: only a two-pixel rim round it, which pulses between red and orange."""
     s = N * CELL
-    a = np.array([[BAD if (i + 2 * j + shift) % 7 == 0 else -1 for i in range(s)] for j in range(s)], dtype=np.int8)
-    a[0:2, :] = a[-2:, :] = a[:, 0:2] = a[:, -2:] = BAD
+    a = np.full((s, s), -1, dtype=np.int8)
+    colour = (BAD, ORG, BAD)[shift % 3]
+    a[0:2, :] = a[-2:, :] = a[:, 0:2] = a[:, -2:] = colour
     return a
 
 
 CONFETTI = 22
 CONF = [np.full((3, 2), c, dtype=np.int8) for c in (YEL, WHT, MAG, LBL, GRN, ORG, RED, BLU)]
-RAIN = 9
+RAIN = 5
 DROP = np.array([[LBL], [BLU], [BLU]], dtype=np.int8)
 
 
@@ -1220,6 +1241,8 @@ def build_level(ti):
         make_sprite(outline_array((), BAD), "cue", INSET, INSET, 5, ["cue"], visible=False),
         make_sprite(CUE_RING, "cue-ring", 0, 0, 5, ["cue"], visible=False),
         make_sprite(dust_frames(ti)[0], "dust", 0, 0, 4, ["effect"], visible=False),
+        make_sprite(dust_frames(ti)[3], "wake", 0, 0, 4, ["effect"], visible=False),
+        make_sprite(dust_frames(ti)[0], "poof", 0, 0, 4, ["effect"], visible=False),
         make_sprite(haze(0), "haze", INSET, INSET, 7, ["effect"], visible=False),
     ]
     for k in range(7):
@@ -1229,6 +1252,8 @@ def build_level(ti):
     sprites.append(make_sprite(STORM, "storm", STORM_X, INSET + 1, 9, ["effect"], visible=False))
     for k in range(RAIN):
         sprites.append(make_sprite(DROP, f"rain-{k}", 0, 0, 9, ["effect"], visible=False))
+    sprites.append(make_sprite(veil_picture(8), "veil-l", 0, 0, 10, ["effect"], visible=False))
+    sprites.append(make_sprite(veil_picture(8), "veil-r", 56, 0, 10, ["effect"], visible=False))
     return Level(sprites=sprites, grid_size=(64, 64), name=f"world-{ti + 1}")
 
 
@@ -1268,6 +1293,9 @@ class St02(ARCBaseGame):
         self.shade = (set(), set(), set())
         self.amb = []
         self.amb_t = 0
+        self.fuse_shown = SPAN
+        self.veil = 0
+        self.entering = False
         camera = Camera(width=64, height=64, background=C_INK, letter_box=C_INK)
         super().__init__(game_id="st02", levels=build_levels(), camera=camera, available_actions=[3, 4, 5, 6])
 
@@ -1301,6 +1329,12 @@ class St02(ARCBaseGame):
         self.amb = ambient_for(self.ti)
         self.amb_t = 0
         self.shade_key = None
+        self.fuse_shown = SPAN
+        self.veil = 0
+        if self.entering:               # arriving from a cleared level: the curtain opens on the new world
+            self.entering = False
+            self.veil = VEIL_OPENING
+            self._begin("open", 1)
         self.paint()
 
     # ---- rules (st01's step, unchanged in what it decides) ---------------------------------
@@ -1351,7 +1385,17 @@ class St02(ARCBaseGame):
                 self.complete_action()
             elif phase == "cheer":
                 self.phase = None
+                self.veil = 32                      # the old board is hidden behind the closed curtain
+                last = self.is_last_level()
+                self.entering = not last
                 self.next_level()
+                if last:
+                    self.veil = 0
+                    self.complete_action()
+                # otherwise the engine builds the next world, whose "open" frames complete the action
+            elif phase == "open":
+                self.phase = None
+                self.veil = 0
                 self.complete_action()
             else:
                 self.phase = None
@@ -1429,8 +1473,14 @@ class St02(ARCBaseGame):
         if self.lost:
             return 3
         if self.phase == "die":
-            return min(3, self.tick_index() // 3)
+            return min(3, self.tick_index() // 2)
         return 0
+
+    def shimmer(self, x, y):
+        """True while the idle wave of light is crossing this square (a slow diagonal that sweeps the board)."""
+        if self.lost or self.phase == "die":
+            return False
+        return x + y == (self.beat % 32) - 4
 
     def cell_picture(self, x, y, good, bad, anchors):
         """The picture a square should show now, or None when plain floor is all there is."""
@@ -1439,19 +1489,22 @@ class St02(ARCBaseGame):
         if h >= 1:
             same = lambda a, b: 0 <= a < N and 0 <= b < N and f[b][a] == h
             pic = block_tile(self.ti, not same(x, y - 1), not same(x, y + 1), not same(x - 1, y),
-                             not same(x + 1, y), h if (x, y) in anchors else 0, hashed(x, y, 3) % 3)
+                             not same(x + 1, y), h if (x, y) in anchors else 0, hashed(x, y, 3) % 3,
+                             self.shimmer(x, y))
             sag = self.sag_depth()
             return sagged(self.ti, pic, sag) if sag else pic
         if h < 0:
             pit = lambda a, b: 0 <= a < N and 0 <= b < N and -3 <= f[b][a] < 0
             mode = 1 if (x, y) in good else 2 if (x, y) in bad else 0
-            glint = (self.beat // 3 + hashed(x, y, 5)) % 4 if (hashed(x, y, 9) % 3) else -1
+            glint = (self.beat // 4 + hashed(x, y, 5)) % 4 if hashed(x, y, 9) % 4 == 0 else -1
             return pit_tile(self.ti, not pit(x, y - 1), not pit(x - 1, y), -h, mode, glint)
         return refused_floor_tile() if (x, y) in bad else None
 
     def paint(self) -> None:
         good, bad, anchors = self.shading()
         sweep = self.topple_pictures() if self.phase == "topple" else {}
+        if self.phase == "refuse" and self.tick_index() % 2 == 1:
+            sweep = self.crouch_pictures(self.cue_cells, good, bad, anchors)      # the refused solid shudders
         for (x, y) in self.cells:
             name = f"cell-{x}-{y}"
             pic = sweep.get((x, y))
@@ -1468,6 +1521,7 @@ class St02(ARCBaseGame):
         self.paint_confetti()
         self.paint_haze()
         self.paint_storm()
+        self.paint_veil()
 
     # -- the sun --
     def paint_sun(self):
@@ -1480,24 +1534,38 @@ class St02(ARCBaseGame):
         else:
             face = "blink" if self.beat % 9 == 8 else "happy"
         ray = (self.beat // 2) % 2
-        hidden = {self.sun: 0}
+        idx = self.tick_index()
+        # the sun breathes (sinks a pixel now and then), sinks further when the run is lost
+        rest = 2 if self.lost else min(2, idx // 3) if self.phase == "die" else 1 if self.beat % 12 >= 10 else 0
+        hidden = {self.sun: rest}
         if self.phase == "turn":
-            idx = self.tick_index()
             hidden = {self.prev_sun: (1, 3, 3)[min(idx, 2)], self.sun: (3, 1, 0)[min(idx, 2)]}
+        # a refused click makes it shake its head
+        shake = (-1, 1, -1, 1, 0)[min(idx, 4)] if self.phase == "refuse" else 0
         for d in range(4):
             if d in hidden:
-                self.put(f"sun-{d}", sun_picture(d, face, ray), *sun_xy(d, hidden[d]))
+                x, y = sun_xy(d, hidden[d])
+                if shake:
+                    x, y = (x + shake, y) if d in (0, 2) else (x, y + shake)
+                self.put(f"sun-{d}", sun_picture(d, face, ray), x, y)
             else:
                 self.put(f"sun-{d}", None, visible=False)
 
     # -- the counter: a burning fuse under the board, one pixel shorter per move --
     def paint_fuse(self):
-        left = -(-SPAN * max(0, self.moves_left) // self.budget) if self.budget else 0
+        target = -(-SPAN * max(0, self.moves_left) // self.budget) if self.budget else 0
+        if self.fuse_shown > target:            # the flame eats the fuse over the move's frames, fast then slow
+            self.fuse_shown = max(target, self.fuse_shown - max(1, (2 * (self.fuse_shown - target) + 2) // 3))
+        else:
+            self.fuse_shown = target
+        left = self.fuse_shown
         row = np.full((1, SPAN), -1, dtype=np.int8)
         row[0, :left] = WHT
         if left > 0 and not self.lost:
             row[0, left - 1] = (YEL, ORG, RED, ORG)[self.beat % 4]      # the burning tip
-        key = (left, None if self.lost else self.beat % 4)
+            if left > 1 and left > target:
+                row[0, left - 2] = ORG                                  # a hotter, longer tip while it burns
+        key = (left, None if self.lost else self.beat % 4, left > target)
         s = self.sp["fuse"]
         if self.shown.get("fuse") != key:
             s.pixels = row
@@ -1512,15 +1580,30 @@ class St02(ARCBaseGame):
             self.put("cue", outline_array(self.cue_cells, BAD))
         else:
             self.put("cue", None, visible=False)
+        if self.phase == "poke":                  # a little puff of the world's dust where the click landed
+            if self.cue_point is not None:
+                px, py = self.cue_point
+            else:
+                (cx, cy), = self.cue_cells or {(0, 0)}
+                px, py = INSET + cx * CELL + 2, INSET + cy * CELL + 2
+            self.put("poof", dust_frames(self.ti)[min(idx, 2)], px - 3, py - 3)
+        else:
+            self.put("poof", None, visible=False)
         if self.phase == "poke" and self.cue_point is not None:
-            self.put("cue-ring", CUE_RING, self.cue_point[0] - 2, self.cue_point[1] - 2)
+            r = min(idx, 2) + 1                  # the ring grows: one, two, three pixels out
+            self.put("cue-ring", CUE_RINGS[r - 1], self.cue_point[0] - r, self.cue_point[1] - r)
         else:
             self.put("cue-ring", None, visible=False)
         # dust at the front of a toppling solid
         if self.phase == "topple" and self.dust_at is not None:
-            self.put("dust", dust_frames(self.ti)[min(3, self.tick_index() * 4 // TOPPLE_FRAMES)], *self.dust_at)
+            self.put("dust", dust_frames(self.ti)[min(3, idx * 4 // TOPPLE_FRAMES)], *self.dust_at)
+            if self.wake_at is not None:         # the last puff hangs behind, fading
+                self.put("wake", dust_frames(self.ti)[3], *self.wake_at)
+            else:
+                self.put("wake", None, visible=False)
         else:
             self.put("dust", None, visible=False)
+            self.put("wake", None, visible=False)
 
     # -- ambient life: wall critters (calm, cheer on a cleared level, sad on a lost run), border lights --
     def paint_life(self):
@@ -1534,12 +1617,12 @@ class St02(ARCBaseGame):
                 pic = crit["cheer"][(idx + k) % 2]
                 lift = -((idx + k) % 2)          # a little hop
             else:
-                pic = crit["calm"][(self.beat // 2 + k) % 8]
+                pic = crit["calm"][(self.beat // 3 + k) % 8]
             self.put(f"critter-{k}", pic, INSET + cx * CELL, INSET + cy * CELL + lift)
         tw = THEMES[self.ti]["twinkle"]
         for k in range(len(TWINKLES)):
             s = self.sp[f"twinkle-{k}"]
-            colour = tw[(self.beat // 2 + k) % len(tw)]
+            colour = tw[(self.beat // 3 + k) % len(tw)]
             key = ("tw", colour)
             if self.shown.get(f"twinkle-{k}") != key:
                 s.pixels = np.full((1, 1), colour, dtype=np.int8)
@@ -1611,6 +1694,19 @@ class St02(ARCBaseGame):
             else:
                 self.put(f"star-{k}", None, visible=False)
 
+    # -- the level change: a curtain closes over the cleared board and opens on the next world --
+    def paint_veil(self):
+        if self.phase == "cheer" and not self.is_last_level():
+            width = VEIL_CLOSING[min(self.tick_index(), len(VEIL_CLOSING) - 1)]
+        else:
+            width = self.veil
+        if width <= 0:
+            self.put("veil-l", None, visible=False)
+            self.put("veil-r", None, visible=False)
+        else:
+            self.put("veil-l", veil_picture(width), 0, 0)
+            self.put("veil-r", veil_picture(width), 64 - width, 0)
+
     # -- the loss: a red haze over the board and a sad sun --
     def paint_haze(self):
         if self.phase == "die":
@@ -1622,13 +1718,23 @@ class St02(ARCBaseGame):
 
     # -- the topple: the solid's squares turn to floor and the shadow's squares to slab, sweeping with the shadow --
     dust_at = None
+    wake_at = None
+
+    def crouch_pictures(self, solid, good, bad, anchors):
+        """The solid's squares squashed down a pixel (see crouched), for the wind-up and the refusal shudder."""
+        return crouched({c: self.cell_picture(c[0], c[1], good, bad, anchors) for c in solid}, solid)
 
     def topple_pictures(self):
         fx, fy = -SUNS[self.sun][0], -SUNS[self.sun][1]
         solid, landing = self.topple_from, self.topple_to
+        self.wake_at = None
         if not landing:
             self.dust_at = None
             return {}
+        if self.tick_index() == 0:                       # wind-up: the solid crouches before it goes
+            self.dust_at = None
+            good, bad, anchors = self.shading()
+            return self.crouch_pictures(solid, good, bad, anchors)
 
         def along(x, y, i, j):
             return (x * CELL + i) * fx + (y * CELL + j) * fy
@@ -1636,7 +1742,7 @@ class St02(ARCBaseGame):
         pix = [(x, y, i, j) for (x, y) in solid for j in range(CELL) for i in range(CELL)]
         origin = min(along(*p) for p in pix)
         far = max(along(x, y, i, j) for (x, y) in landing for j in range(CELL) for i in range(CELL))
-        progress = (self.tick_index() + 1) / (TOPPLE_FRAMES + 1)
+        progress = self.tick_index() / (TOPPLE_FRAMES - 1)      # the front reaches the far end on the last frame
         front = origin + progress * (far - origin + 1)
         ground = ground_for(self.ti)
         slab = slab_tile(self.ti, 0)
@@ -1664,6 +1770,8 @@ class St02(ARCBaseGame):
         mid = sum(lat) // len(lat)
         if fx:
             self.dust_at = (INSET + int(fx * front) - 3, INSET + mid - 3)
+            self.wake_at = (INSET + int(fx * front) - 3 - 6 * fx, INSET + mid - 3) if self.tick_index() >= 3 else None
         else:
             self.dust_at = (INSET + mid - 3, INSET + int(fy * front) - 3)
+            self.wake_at = (INSET + mid - 3, INSET + int(fy * front) - 3 - 6 * fy) if self.tick_index() >= 3 else None
         return out

@@ -12,8 +12,26 @@
 #          palette and the small drawing helpers. Part three is the ship, heart, effect and creature pictures (text rows).
 #          Part four builds each level's backdrop, shoreline and land. Part five is the game class: it owns the state and the
 #          sprites and only ever reads the rules.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round C (below), round A, calm and readable (the Boss: nothing too busy). Pictures only: the
+#          water is a plain deep field with a solid shallow band and one surf line, the dithered patches, coloured pools and
+#          sliding cloud shadows are gone, every ground is one flat field with at most one slow detail, small props sit on about a
+#          third of the land (the landmark stays), each sea keeps two things lying in the water and one weather, one bird, one or
+#          two swimmers, wakes are a solid bow wave, and the lighthouse beam and moon's path are thin and solid. Rules untouched.
+#
+#          Round B, animation, 07-November-2026, Claude Sonnet 5.5 -- motion only, same rules. Your ship slides with an ease and
+#          leaves a ripple; a blocked move thuds and rebounds; ships and you bob out of step with each other; a firing gun kicks
+#          back with a spark at the muzzle; a ship that is hit shudders; a turning ship squashes through its turn; a lost heart
+#          flashes white; a won level closes in a round iris round your ship; air specks are fewer so the sea stays calm.
+#
+#          Round C, final look, 07-November-2026, Claude Sonnet 5.5 -- a lost run now shakes the screen and the red frame creeps
+#          in over several pictures instead of popping in; a turn pinches in on the old heading and opens out on the new one (every
+#          ship shows its turn); the move ripple and the block and splash puffs are white so they show on blue water; the night
+#          sea loses its fireflies, lantern and purple wave marks so it reads at a glance. Rules untouched.
 #
 # CHANGELOG
+# 07-Nov-2026 (Claude Sonnet 5.5): round C, final look, see the Updated line above. Rules untouched.
+# 07-Nov-2026 (Claude Sonnet 5.5): round B, animation, see the Updated line above. Rules untouched.
+# 07-Nov-2026 (Claude Sonnet 5.5): round A, calm and readable, see the Updated line above. Rules untouched.
 # 07-Nov-2026 (Claude Sonnet 5.5): pass four, polish. The loud purple pools in the water are gone (second water colours are now
 #          soft green, sky or blue, mostly in a dotted edge) and the volcano and night seas no longer wash purple, so the ships
 #          stand out at a glance. Unused import removed. Rules untouched.
@@ -534,8 +552,8 @@ def wake_pixels(heading, frame, bright=WHITE, soft=SKY):
             for x in range(CELL + 2):
                 r = math.hypot(x - c, y - c)
                 ahead = (x - c) * DX[heading] + (y - c) * DY[heading]
-                if 3.9 <= r <= 4.6 and ahead >= -1 and (x + y + frame) % 2 == 0:
-                    a[y, x] = bright if ahead > 1 else soft           # a bow wave and foam along the flanks
+                if 3.9 <= r <= 4.6 and (ahead > 1 or (ahead >= -1 and frame % 2 == 1)):
+                    a[y, x] = bright if ahead > 1 else soft           # a solid bow wave; the flank foam washes in and out
         for k in (4,):                                                # two stern trails
             for side in (-1, 1):
                 x = c - DX[heading] * k + side * abs(DY[heading]) * (1 + frame % 2)
@@ -561,7 +579,10 @@ FOE_ART = {                                   # a tiny sailing ship (seen from t
 FOE_SAIL = {"m": WHITE, "c": YELLOW, "f": SKY, "g": WHITE}
 
 
-def heart_pixels(full):
+def heart_pixels(full, flash=False):
+    """A heart: red when full, dark when spent; a heart that was just lost flashes white for one picture."""
+    if flash:
+        return paint(HEART_ART, {"r": WHITE, "w": WHITE})
     return paint(HEART_ART, {"r": RED if full else MAROON, "w": WHITE if full else MAROON})
 
 
@@ -578,7 +599,7 @@ def ball(colour):
 BURST_ART = {          # what a hit looks like for one frame
     "burst": disc(5, ORANGE, YELLOW),
     "ping": paint(("..w..", "..w..", "wwyww", "..w..", "..w.."), {"w": WHITE, "y": YELLOW}),
-    "puff": paint((".w.w.", "w.s.w", ".sss.", "w.s.w", ".w.w."), {"w": WHITE, "s": SKY}),
+    "puff": paint((".w.w.", "wwwww", ".w.w.", "wwwww", ".w.w."), {"w": WHITE}),
     "plank0": paint(("ooo", ".mm"), {"o": ORANGE, "m": MAROON}),            # bits of wreck float away when you go down
     "plank1": paint(("mo", "oo", "m."), {"o": ORANGE, "m": MAROON}),
     "plank2": paint(("omoo",), {"o": ORANGE, "m": MAROON}),
@@ -601,13 +622,43 @@ BUBBLE_ART = paint((".w.", "w.w", ".w."), {"w": WHITE})
 
 
 def fx_pixels(kind):
+    if kind.startswith("ringw"):                 # the ripple behind a moving ship: white, so it shows on blue water
+        return ring_pixels(int(kind[5:]), WHITE)
     if kind.startswith("ring"):
         return ring_pixels(int(kind[4:]))
     if kind.startswith("star"):                  # "star" + size digit + confetti colour digit
         return star_pixels(int(kind[4]), CONFETTI[int(kind[5])])
     if kind == "bubble":
         return BUBBLE_ART
+    if kind == "thud":                           # a blocked move: a small bright puff against whatever stopped you
+        return paint(("..w..", ".www.", "wwyww", ".www.", "..w.."), {"w": WHITE, "y": YELLOW})
     return BURST_ART[kind]
+
+
+def squash_pixels(a):
+    """A ship half way through a turn: its picture pinched to five pixels square and centred (one frame of the turn)."""
+    out = np.full_like(a, CLEAR)
+    h, w = a.shape
+    for y in range(5):
+        for x in range(5):
+            out[y + 1, x + 1] = a[min(h - 1, (y * (h - 1) + 2) // 4), min(w - 1, (x * (w - 1) + 2) // 4)]
+    return out
+
+
+_IRIS_CACHE = {}
+
+
+def iris_pixels(cx, cy, r):
+    """The level-clear wipe: the whole screen black outside a circle of radius r round (cx, cy)."""
+    key = (cx, cy, r)
+    if key not in _IRIS_CACHE:
+        a = np.full((64, 64), BLACK, dtype=np.int16)
+        for y in range(64):
+            for x in range(64):
+                if math.hypot(x - cx, y - cy) <= r:
+                    a[y, x] = CLEAR
+        _IRIS_CACHE[key] = a
+    return _IRIS_CACHE[key].copy()
 
 
 # ── living things that do nothing: birds, fish, whales, jellies ──────────────────────────────────────────
@@ -663,51 +714,51 @@ SEAL_FRAMES = ((".kkk..", "kkwkk.", "kkkkkkk", ".kkkkkk", "..w..k."), (".kkk..",
 
 SEA_H, SEA_W = GH * CELL, GW * CELL        # 56 by 63; column 63 is the frame post, rows 56 and below the strip
 
-# One theme per level. deep/shallow/foam are the three bands of water and tide is a second water colour that pools in the
-# deep (shade is the colour of the cloud shadows that slide over it); land describes the shore and the ground; big is the
+# One theme per level. deep/shallow/foam are the three bands of water (round A: plain deep field, solid shallows, one surf
+# line); land describes the shore and the ground; big is the
 # landmark drawn over two land cells (kind, top-left cell) and scatter the small props; bird, critter and critter2 are the
 # living things; air and air2 are the two kinds of weather; trim is the rope along the top of the strip.
 THEMES = [
-    dict(name="cove", deep=BLUE, shallow=SKY, foam=WHITE, crest=SKY, glint=WHITE, weed=None, swell="scallop", tide=GREEN, shade=PURPLE,
+    dict(name="cove", deep=BLUE, shallow=SKY, foam=WHITE, crest=SKY, glint=WHITE, weed=None, swell="scallop",
          ground="sand", landmarks=(), big=("bungalow", (4, 1)),
-         scatter=("palm", "palm", "crab", "driftwood", "palm", "shell", "sandcastle", "rowboat"), scatter_pct=70,
-         bird="gull", critter="dolphin", critter2="school", trim=(YELLOW, ORANGE), air=None, air2="twinkle",
-         features=(("reef", 2), ("starfish", 2), ("buoy", 2), ("gullraft", 1))),
-    dict(name="meadow", deep=BLUE, shallow=SKY, foam=WHITE, crest=SKY, glint=WHITE, weed=GREEN, swell="dash", tide=SKY, shade=PURPLE,
+         scatter=("palm", "palm", "crab", "driftwood", "palm", "shell", "sandcastle", "rowboat"), scatter_pct=34,
+         bird="gull", critter="dolphin", critter2=None, trim=(YELLOW, ORANGE), air=None, air2="twinkle",
+         features=(("reef", 1), ("buoy", 1))),
+    dict(name="meadow", deep=BLUE, shallow=SKY, foam=WHITE, crest=SKY, glint=WHITE, weed=GREEN, swell="dash",
          ground="grass", landmarks=(), big=("windmill_big", (8, 5)),
-         scatter=("tree", "flower", "sheep", "fence", "haystack", "mushroom", "pond", "flower"), scatter_pct=80,
-         bird="gull", critter="fish", critter2="duck", trim=(GREEN, YELLOW), air="butterfly", air2="pollen",
-         features=(("reeds", 3), ("lilies", 2), ("kelp", 2))),
-    dict(name="snow", deep=BLUE, shallow=WHITE, patch=SKY, foam=SKY, crest=BLUE, glint=WHITE, weed=None, swell="dash", tide=SKY, shade=BLUE,
+         scatter=("tree", "flower", "sheep", "fence", "haystack", "mushroom", "pond", "flower"), scatter_pct=36,
+         bird="gull", critter="fish", critter2="duck", trim=(GREEN, YELLOW), air="butterfly", air2=None,
+         features=(("reeds", 1), ("lilies", 1))),
+    dict(name="snow", deep=BLUE, shallow=WHITE, foam=SKY, crest=BLUE, glint=WHITE, weed=None, swell="dash",
          ground="snow", landmarks=(), big=("igloo_big", (2, 1)),
-         scatter=("pine", "penguin", "snowman", "tent", "pine", "flake"), scatter_pct=80,
-         bird="gull", critter="seal", critter2=None, trim=(WHITE, SKY), air="snow", air2="gust",
-         features=(("bearfloe", 1), ("floe", 2), ("floe_small", 2), ("gullraft", 1))),
-    dict(name="canyon", deep=BLUE, shallow=SKY, foam=WHITE, crest=SKY, glint=WHITE, weed=None, swell="long", tide=SKY, shade=PURPLE,
+         scatter=("pine", "penguin", "snowman", "tent", "pine", "flake"), scatter_pct=36,
+         bird="gull", critter="seal", critter2=None, trim=(WHITE, SKY), air="snow", air2=None,
+         features=(("bearfloe", 1), ("floe", 1))),
+    dict(name="canyon", deep=BLUE, shallow=SKY, foam=WHITE, crest=SKY, glint=WHITE, weed=None, swell="long",
          ground="cliff", landmarks=(), big=("pillar_big", (4, 2)),
-         scatter=("cactus", "boulder", "tumbleweed", "skull", "cactus", "boulder"), scatter_pct=65,
-         bird="hawk", critter="whale", critter2="manta", trim=(ORANGE, MAROON), air="dust", air2="gust",
-         features=(("whirl", 1), ("shoal_rock", 2), ("buoy", 2))),
-    dict(name="volcano", deep=BLUE, shallow=PURPLE, patch=SKY, foam=ORANGE, crest=SKY, glint=YELLOW, weed=None, swell="scallop", tide=SKY, shade=PURPLE,
+         scatter=("cactus", "boulder", "tumbleweed", "skull", "cactus", "boulder"), scatter_pct=34,
+         bird="hawk", critter="whale", critter2=None, trim=(ORANGE, MAROON), air="dust", air2=None,
+         features=(("whirl", 1), ("buoy", 1))),
+    dict(name="volcano", deep=BLUE, shallow=PURPLE, foam=ORANGE, crest=SKY, glint=YELLOW, weed=None, swell="scallop",
          ground="lava", landmarks=(), big=("volcano_big", (5, 2)),
-         scatter=("embers", "deadtree", "obsidian", "lavapool", "embers"), scatter_pct=65,
-         bird="swallow", critter="turtle", critter2="ray", trim=(ORANGE, YELLOW), air="embers", air2="ash",
-         features=(("vent", 2), ("pumice", 3))),
-    dict(name="jungle", deep=BLUE, shallow=SKY, foam=WHITE, crest=SKY, glint=WHITE, weed=GREEN, swell="dash", tide=SKY, shade=PURPLE,
+         scatter=("embers", "deadtree", "obsidian", "lavapool", "embers"), scatter_pct=34,
+         bird="swallow", critter="turtle", critter2=None, trim=(ORANGE, YELLOW), air="embers", air2=None,
+         features=(("vent", 1), ("pumice", 1))),
+    dict(name="jungle", deep=BLUE, shallow=SKY, foam=WHITE, crest=SKY, glint=WHITE, weed=GREEN, swell="dash",
          ground="jungle", landmarks=(), big=("totem_big", (3, 0)),
-         scatter=("bigtree", "parrot", "fern", "frog", "bigtree", "mushroom"), scatter_pct=85,
-         bird="parrot", critter="fish", critter2="croc", trim=(GREEN, PURPLE), air="leaf", air2="mist",
-         features=(("lilies", 3), ("reeds", 2), ("kelp", 2))),
-    dict(name="night", deep=BLUE, shallow=PURPLE, patch=SKY, foam=SKY, crest=PURPLE, glint=YELLOW, weed=None, swell="long", tide=SKY, shade=PURPLE,
+         scatter=("bigtree", "parrot", "fern", "frog", "bigtree", "mushroom"), scatter_pct=36,
+         bird="parrot", critter="fish", critter2="croc", trim=(GREEN, PURPLE), air="leaf", air2=None,
+         features=(("lilies", 1), ("reeds", 1))),
+    dict(name="night", deep=BLUE, shallow=PURPLE, foam=SKY, crest=SKY, glint=YELLOW, weed=None, swell="long",
          ground="night", landmarks=(), big=("lighthouse_big", (5, 1)),
-         scatter=("lamp", "cottage", "cat", "barrel", "lamp"), scatter_pct=70,
-         bird="bat", critter="jelly", critter2="swan", trim=(PURPLE, YELLOW), air="fireflies", air2="twinkle",
-         features=(("moonpath", 1), ("lantern", 3))),
-    dict(name="ruins", deep=SKY, shallow=GREEN, patch=BLUE, foam=WHITE, crest=BLUE, glint=WHITE, weed=YELLOW, swell="scallop", tide=BLUE, shade=BLUE,
+         scatter=("lamp", "cottage", "cat", "barrel", "lamp"), scatter_pct=34,
+         bird="bat", critter="jelly", critter2=None, trim=(PURPLE, YELLOW), air=None, air2=None,
+         features=(("moonpath", 1),)),
+    dict(name="ruins", deep=SKY, shallow=GREEN, foam=WHITE, crest=BLUE, glint=WHITE, weed=YELLOW, swell="scallop",
          ground="ruin", landmarks=(), big=("colossus_big", (5, 1)),
-         scatter=("column", "brazier", "urn", "fountain", "column", "arch", "brokencol"), scatter_pct=70,
-         bird="swallow", critter="dolphin", critter2="school", trim=(YELLOW, GREEN), air="petal", air2="motes",
-         features=(("sunken", 2), ("starfish", 2), ("kelp", 2), ("buoy", 1))),
+         scatter=("column", "brazier", "urn", "fountain", "column", "arch", "brokencol"), scatter_pct=34,
+         bird="swallow", critter="dolphin", critter2="school", trim=(YELLOW, GREEN), air="petal", air2=None,
+         features=(("sunken", 1), ("buoy", 1))),
 ]
 
 
@@ -747,60 +798,42 @@ def depth_map(keep):
 
 # What each ground is made of: the shade of the lit and shaded beach rim, the fill and what is sprinkled over it.
 def ground_pixel(ground, x, y, depth, lit, salt):
-    """The colour of one land pixel. Depth 0 is the black outline, 1 the beach rim, deeper is the ground itself."""
+    """The colour of one land pixel. Depth 0 is the black outline, 1 the beach rim, deeper is the ground itself. Round A
+    (calm): each ground is one flat saturated field with a lit rim and, at most, one slow structured detail (no speckle)."""
     if depth == 0:
         return BLACK
-    r = hash2(x, y, salt) % 100
     if ground == "sand":
         if depth == 1:
             return YELLOW if lit else ORANGE
-        if (y + x // 5) % 6 == 2 and r < 70:
-            return ORANGE                                     # wind ripples running across the dunes
-        return MAROON if r == 98 else (WHITE if r == 99 else (ORANGE if r < 4 else YELLOW))
+        return ORANGE if (y + x // 6) % 9 == 4 and x % 6 < 4 else YELLOW      # a few long wind ripples in the dunes
     if ground == "grass":
         if depth == 1:
             return YELLOW if lit else ORANGE
-        if depth == 2:
-            return GREEN
-        if (x // 3 + y // 3) % 2 and r < 22:
-            return YELLOW                                     # mown stripes, dithered
-        return PINK if r == 97 else (WHITE if r > 97 else (YELLOW if r < 3 else GREEN))
+        return GREEN
     if ground == "snow":
         if depth == 1:
             return WHITE if lit else SKY
-        if (x + 2 * y) % 11 < 2 and r < 55:
-            return SKY                                        # wind-blown drifts
-        return SKY if r < 7 else (YELLOW if r == 99 else WHITE)
+        return WHITE
     if ground == "cliff":
         if depth == 1:
             return ORANGE if lit else MAROON
-        band = (y // 3 + x // 19) % 3
-        base = (ORANGE, MAROON, YELLOW)[band]                 # strata of the rock
-        if r < 5:
-            return BLACK                                      # cracks
-        return YELLOW if r > 96 else base
+        return MAROON if y % 9 == 4 and (x // 11 + y // 9) % 2 == 0 else ORANGE   # a few strata lines in the rock
     if ground == "lava":
         if depth == 1:
             return MAROON if lit else BLACK
-        return MAROON if r < 38 else (PURPLE if r > 96 else BLACK)
+        return BLACK
     if ground == "jungle":
         if depth == 1:
             return GREEN if lit else PURPLE                   # lit moss on the near rim, purple shade on the far one
-        if depth == 2:
-            return GREEN
-        return BLACK if r < 6 else (PURPLE if r < 11 else (YELLOW if r > 97 else GREEN))
+        return GREEN
     if ground == "night":
         if depth == 1:
-            return PURPLE if lit else BLACK
-        if x % 3 == 1 and y % 3 == 1 and r < 70:
-            return PURPLE                                     # wet cobbles catching the moon
-        return BLUE if r == 99 else BLACK
-    # ruin: sandstone blocks with mortar and moss
+            return PURPLE if lit else MAROON
+        return MAROON
+    # ruin: sandstone, one course of blocks every seven rows
     if depth == 1:
         return YELLOW if lit else ORANGE
-    if y % 4 == 3 or (x + (y // 4) * 2) % 5 == 4:
-        return ORANGE                                         # mortar between the blocks
-    return GREEN if r < 5 else (WHITE if r == 99 else YELLOW)
+    return ORANGE if y % 7 == 6 else YELLOW
 
 
 _LAND_CACHE = {}
@@ -835,25 +868,6 @@ def distance_to_land(keep, reach=6):
     return dist
 
 
-def _smooth_noise(h, w, grain, salt):
-    """Soft blobs of 0..1 over an h by w picture: random heights on a coarse grid, blended smoothly between."""
-    gh, gw = h // grain + 2, w // grain + 2
-    g = np.array([[hash2(i, j, salt) % 1000 / 1000.0 for i in range(gw)] for j in range(gh)])
-    out = np.zeros((h, w))
-    for y in range(h):
-        fy, ty = divmod(y, grain)
-        ty = ty / grain
-        ty = ty * ty * (3 - 2 * ty)
-        for x in range(w):
-            fx, tx = divmod(x, grain)
-            tx = tx / grain
-            tx = tx * tx * (3 - 2 * tx)
-            top = g[fy, fx] * (1 - tx) + g[fy, fx + 1] * tx
-            bot = g[fy + 1, fx] * (1 - tx) + g[fy + 1, fx + 1] * tx
-            out[y, x] = top * (1 - ty) + bot * ty
-    return out
-
-
 _SEA_CACHE = {}
 
 
@@ -867,33 +881,13 @@ def sea_picture(spec, theme, idx):
     dist = distance_to_land(keep)
     out = np.full((SEA_H, 64), theme["deep"], dtype=np.int16)
     out[:, 63] = BLACK
-    cloud = _smooth_noise(SEA_H, SEA_W, 11, idx * 5 + 2)
-    tide = _smooth_noise(SEA_H, SEA_W, 17, idx * 9 + 5)          # big slow pools of a second water colour
-    for y in range(SEA_H):
-        for x in range(SEA_W):
+    for y in range(SEA_H):                                      # round A: no patches, no pools, no checker; the water is
+        for x in range(SEA_W):                                  # a calm deep field, a solid shallow band and one surf line
             d = dist[y, x]
-            r = hash2(x, y, idx + 40) % 100
-            if d == 0:
+            if d <= 3:
                 out[y, x] = theme["shallow"]
-            elif d <= 3:
-                out[y, x] = theme["shallow"]
-                if d == 1 and (x + y) % 2 == 0:
-                    out[y, x] = theme["foam"]               # the dotted line of surf at the beach
-                elif d == 2 and r < 14:
-                    out[y, x] = theme["foam"]
-                elif d == 3 and theme["weed"] is not None and r < 12:
-                    out[y, x] = theme["weed"]
-            elif d == 4 and (x + y) % 2 == 0:
-                out[y, x] = theme["shallow"]                # the shallows fade out in a checker
-            else:
-                n = cloud[y, x]
-                tn = tide[y, x]
-                if tn > 0.86 or (tn > 0.74 and (x + y) % 2 == 0):
-                    out[y, x] = theme["tide"]                                   # a pool of the level's second water colour
-                elif n > 0.78:
-                    out[y, x] = theme.get("patch", theme["shallow"])            # a lighter (or darker) patch of water
-                elif n > 0.69 and (x + y) % 2 == 0:
-                    out[y, x] = theme.get("patch", theme["shallow"])            # its soft edge
+                if d == 1:
+                    out[y, x] = theme["foam"]                   # one solid line of surf along the beach
     _SEA_CACHE[key] = out
     return out.copy()
 
@@ -920,7 +914,7 @@ def shoal(w, h, seed, fill, rim, dots=True):
     for y in range(h):
         for x in range(w):
             if m[y, x]:
-                a[y, x] = rim if (edge[y, x] and (x + y) % 2 == 0 and dots) else fill
+                a[y, x] = rim if (edge[y, x] and dots) else fill
     return a
 
 
@@ -1034,10 +1028,10 @@ def _feature_frames(kind, seed, theme):
         for f in range(4):
             a = blank(22, 11)
             for y in range(22):
-                half = 1 + int(3.4 * abs(math.sin(y * 0.55 + f * 0.8)))
+                half = 1 + int(2.0 * abs(math.sin(y * 0.55 + f * 0.8)))
                 for x in range(5 - half, 6 + half):
-                    if 0 <= x < 11 and (y + f) % 2 == 0:
-                        a[y, x] = YELLOW if abs(x - 5) < half - 1 else WHITE
+                    if 0 <= x < 11 and (y + f) % 3 == 0:
+                        a[y, x] = YELLOW
             out.append(a)
         return out, "still"
     if kind == "lantern":
@@ -1126,21 +1120,20 @@ def wave_frames(spec, theme, idx, count=4):
         for ry in range(0, SEA_H - 3, 8):
             for rx in range(-4, SEA_W, 12):
                 h = hash2(rx, ry, idx * 7 + 3)
-                if h % 100 > 58:
+                if h % 100 > 30:
                     continue
                 x = rx + (ry // 8 % 2) * 6 + h % 5
                 y = ry + (h >> 6) % 4
                 g = glyphs[(f + (h >> 9)) % len(glyphs)]
-                col = theme["crest"] if (h >> 14) % 5 else WHITE
+                col = theme["crest"]
                 for j, row in enumerate(g):
                     for i, ch in enumerate(row):
                         xx, yy = x + i, y + j
                         if ch == "s" and 0 <= xx < SEA_W and 0 <= yy < SEA_H and dist[yy, xx] > 4:
                             a[yy, xx] = col
-        surf = (dist == 1) & ((np.add.outer(np.arange(SEA_H), np.arange(SEA_W)) + f) % 2 == 1)
-        surf |= (dist == 2) & (f % 2 == 0) & (np.add.outer(np.arange(SEA_H), np.arange(SEA_W) * 3) % 5 == 0)
-        a[:, :SEA_W][surf] = theme["foam"]                       # the surf breathes in and out along every beach
-        for k in range(12):                                      # glints: a few single pixels that twinkle
+        surf = (dist == 2) & (f % 4 in (1, 2))
+        a[:, :SEA_W][surf] = theme["foam"]                       # the surf breathes: a second solid line washes in and out
+        for k in range(5):                                       # glints: a few single pixels that twinkle
             h = hash2(k, idx, 91)
             x, y = h % SEA_W, (h >> 8) % SEA_H
             if dist[y, x] > 4 and (f + k) % 4 == 0:
@@ -1362,19 +1355,19 @@ LAVA_GLOW = {"y": YELLOW, "o": ORANGE}
 
 # Specks of weather and wildlife that fall, rise or wander over a whole sea: (picture frames, colours, how they move, count)
 AIR = {
-    "butterfly": dict(frames=(("p.p", ".y."), (".p.", "pyp")), table={"p": PINK, "y": YELLOW}, move="wander", n=3),
-    "snow": dict(frames=(("w",), ("w",)), table={"w": WHITE}, move="fall", n=10),
-    "dust": dict(frames=(("o.",), (".o",)), table={"o": ORANGE}, move="drift", n=6),
-    "embers": dict(frames=(("y",), ("o",)), table={"y": YELLOW, "o": ORANGE}, move="rise", n=7),
-    "leaf": dict(frames=(("gg", ".g"), ("g.", "gg")), table={"g": GREEN}, move="fall", n=4),
-    "fireflies": dict(frames=(("y",), ("w",), ("y.",)), table={"y": YELLOW, "w": WHITE}, move="wander", n=7),
-    "petal": dict(frames=(("p.", ".p"), (".p", "p.")), table={"p": PINK}, move="fall", n=5),
-    "twinkle": dict(frames=(("w",), (".",), (".",), ("y",), (".",), (".",)), table={"w": WHITE, "y": YELLOW}, move="still", n=10),
-    "pollen": dict(frames=(("y.", ".y"), (".y", "y.")), table={"y": YELLOW}, move="drift", n=5),
-    "gust": dict(frames=(("ww",), ("w.",), (".w",)), table={"w": WHITE}, move="streak", n=4),
+    "butterfly": dict(frames=(("p.p", ".y."), (".p.", "pyp")), table={"p": PINK, "y": YELLOW}, move="wander", n=2),
+    "snow": dict(frames=(("w",), ("w",)), table={"w": WHITE}, move="fall", n=4),
+    "dust": dict(frames=(("o.",), (".o",)), table={"o": ORANGE}, move="drift", n=3),
+    "embers": dict(frames=(("y",), ("o",)), table={"y": YELLOW, "o": ORANGE}, move="rise", n=3),
+    "leaf": dict(frames=(("gg", ".g"), ("g.", "gg")), table={"g": GREEN}, move="fall", n=3),
+    "fireflies": dict(frames=(("y",), ("w",), ("y.",)), table={"y": YELLOW, "w": WHITE}, move="wander", n=3),
+    "petal": dict(frames=(("p.", ".p"), (".p", "p.")), table={"p": PINK}, move="fall", n=3),
+    "twinkle": dict(frames=(("w",), (".",), (".",), ("y",), (".",), (".",)), table={"w": WHITE, "y": YELLOW}, move="still", n=4),
+    "pollen": dict(frames=(("y.", ".y"), (".y", "y.")), table={"y": YELLOW}, move="drift", n=3),
+    "gust": dict(frames=(("ww",), ("w.",), (".w",)), table={"w": WHITE}, move="streak", n=3),
     "ash": dict(frames=(("p",), ("k",)), table={"p": PURPLE, "k": MAROON}, move="fall", n=8),
     "mist": dict(frames=(("w.w", ".w."), (".w.", "w.w")), table={"w": WHITE}, move="drift", n=3),
-    "motes": dict(frames=(("y",), ("o",), ("y.",)), table={"y": YELLOW, "o": ORANGE}, move="wander", n=6),
+    "motes": dict(frames=(("y",), ("o",), ("y.",)), table={"y": YELLOW, "o": ORANGE}, move="wander", n=4),
 }
 
 
@@ -1401,7 +1394,7 @@ _BEAM_CACHE = []
 
 
 def beam_frames():
-    """A lighthouse beam turning through eight pictures: a dithered yellow wedge with a white core, 27 pixels square."""
+    """A lighthouse beam turning through eight pictures: a thin solid yellow wedge, 27 pixels square."""
     if not _BEAM_CACHE:
         for k in range(8):
             a = blank(27, 27)
@@ -1409,11 +1402,11 @@ def beam_frames():
             for y in range(27):
                 for x in range(27):
                     r = math.hypot(x - 13, y - 13)
-                    if 3 < r < 13.5 and (x + y) % 2 == 0:
+                    if 4 < r < 12.5:
                         off = abs((math.atan2(y - 13, x - 13) - aim + math.pi) % (2 * math.pi) - math.pi)
-                        if off < 0.3:
+                        if off < 0.16:
                             a[y, x] = YELLOW
-                        elif off < 0.45 and r > 6:
+                        elif off < 0.26 and r > 6:
                             a[y, x] = WHITE
             _BEAM_CACHE.append(a)
     return _BEAM_CACHE
@@ -1478,21 +1471,28 @@ def strip_picture(theme):
     return a
 
 
-def tint_picture():
+_TINT_CACHE = {}
+
+
+def tint_picture(stage=3):
     """The look of a lost run: a dark red frame that closes in round the sea, solid at the edge and fading by checker and
     then by sparse dither; the water in the middle stays clean so the wreck reads."""
+    if stage in _TINT_CACHE:
+        return _TINT_CACHE[stage].copy()
     a = blank(SEA_H, 64)
+    solid, checker, dither = ((1, 2, 0), (2, 4, 0), (2, 4, 6))[stage - 1]    # stage 1 to 3: the frame creeps in, never pops in
     for y in range(SEA_H):
         for x in range(SEA_W):
             edge = min(x, y, SEA_W - 1 - x, SEA_H - 1 - y)
-            if edge < 2:
+            if edge < solid:
                 a[y, x] = MAROON
-            elif edge < 4 and (x + y) % 2 == 0:
+            elif edge < checker and (x + y) % 2 == 0:
                 a[y, x] = MAROON
-            elif edge < 6 and x % 2 == 0 and y % 2 == 0:
+            elif edge < dither and x % 2 == 0 and y % 2 == 0:
                 a[y, x] = MAROON
     a[:, 63] = BLACK
-    return a
+    _TINT_CACHE[stage] = a
+    return a.copy()
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -1505,13 +1505,14 @@ DEATH_FRAMES = 9   # your own sinking: the ship goes down with a sad face under 
 CHEER_FRAMES = 6   # a won level: a ring of sparks round your ship before the next sea opens
 # sparks over the sinking ship and round the winner, small to large and back
 CHEER_SIZE = (0, 1, 2, 3, 2, 1)
-LAYER = dict(sea=0, waves=1, life=2, lanes=3, aim=4, land=5, prop=6, smoke=7, wake=8, ship=9, player=10, ball=11, spark=12, tint=14, hud=20, heart=21)
+IRIS_RADII = (44, 28, 12)   # the wipe that closes the level: wide, narrow, a small round window
+LAYER = dict(sea=0, waves=1, life=2, lanes=3, aim=4, land=5, prop=6, smoke=7, wake=8, ship=9, player=10, ball=11, spark=12, tint=14, hud=20, heart=21, iris=22)
 
 
 def _clone(sc):
     return {"p": list(sc["p"]), "s": [list(x) for x in sc["s"]], "b": list(sc["b"]), "x": list(sc["x"]),
             "aim": sc["aim"], "lanes": sc["lanes"], "hearts": sc["hearts"], "foes": sc["foes"], "mz": sc["mz"],
-            "mood": sc["mood"], "tint": sc["tint"]}
+            "mood": sc["mood"], "tint": sc["tint"], "hf": sc.get("hf"), "iris": sc.get("iris"), "shake": sc.get("shake", (0, 0))}
 
 
 class Pt02(ARCBaseGame):
@@ -1569,7 +1570,6 @@ class Pt02(ARCBaseGame):
         self._build_life(level, spec, theme, idx)
         self._build_features(level, spec, theme, idx)
         self._build_air(level, theme, idx)
-        self._build_shadows(level, theme, idx)
         # the ships and you: each rides on its own foam wake (a named sprite under the hull)
         self.s_wakes = [self._put(level, wake_pixels(spec.head0[i], 0), f"wake{i}", spec.cell[i][0] * CELL - 1,
                                   spec.cell[i][1] * CELL - 1, "wake", ["wake", "ambient"]) for i in range(spec.n)]
@@ -1587,8 +1587,11 @@ class Pt02(ARCBaseGame):
         self.s_hearts = [self._put(level, heart_pixels(True), f"heart{i}", 2 + i * 7, HUD_Y + 2, "heart", ["hud", "heart"])
                          for i in range(HEARTS)]
         self.s_foes = [self._put(level, foe_pixels("m"), f"foe{i}", 0, HUD_Y + 2, "heart", ["hud", "foe"]) for i in range(spec.n)]
+        self.tint_stage = 3
         self.s_tint = self._put(level, tint_picture(), "tint", 0, 0, "tint", ["feedback"])
         self.s_tint.set_interaction(InteractionMode.REMOVED)
+        self.s_iris = self._put(level, iris_pixels(32, 32, 40), "iris", 0, 0, "iris", ["feedback"])
+        self.s_iris.set_interaction(InteractionMode.REMOVED)
         self._show(self._settled(self.st))
 
     def _build_props(self, level, spec, theme, idx, land_art):
@@ -1616,7 +1619,7 @@ class Pt02(ARCBaseGame):
         # the ground glitters here and there: a few inland pixels flash a highlight in turn (sand glints, snow sparkles, ...)
         spark = GROUND_SPARK[theme["ground"]]
         spots = [(x, y) for y in range(SEA_H) for x in range(SEA_W)
-                 if land_art[y, x] >= 0 and land_art[y, x] != BLACK and hash2(x, y, 33) % 100 < 5]
+                 if land_art[y, x] >= 0 and land_art[y, x] != BLACK and hash2(x, y, 33) % 100 < 2]
         flashes = [blank(SEA_H, SEA_W) for _ in range(3)]
         for q, (x, y) in enumerate(spots):
             flashes[q % 3][y, x] = spark
@@ -1626,7 +1629,7 @@ class Pt02(ARCBaseGame):
             veins = [blank(SEA_H, SEA_W), blank(SEA_H, SEA_W)]
             for y in range(SEA_H):
                 for x in range(SEA_W):
-                    if land_art[y, x] == MAROON and hash2(x, y, 5) % 100 < 14:
+                    if hash2(x, y, 5) % 100 < 4 and (land_art[max(0, y - 3):y + 4, max(0, x - 3):x + 4] == BLACK).all():
                         veins[0][y, x] = ORANGE
                         veins[1][y, x] = YELLOW
             sp = self._put(level, veins[0], "cracks", 0, 0, "prop", ["ambient", "lava"])
@@ -1660,27 +1663,12 @@ class Pt02(ARCBaseGame):
                 fn = (lambda t, k=kk, a=a, f=frames: (lambda p: (p[0], p[1], (t // 3 + k) % len(f)) if 0 <= p[0] < SEA_W and 0 <= p[1] < SEA_H else (None, None, None))(air_position(a, k, t, idx)))
                 self.anim.append(dict(sp=sp, frames=frames, cur=0, fn=fn))
 
-    def _build_shadows(self, level, theme, idx):
-        """Two cloud shadows slide slowly over the water (a checker of the level's shade colour, under every ship)."""
-        for k in range(2):
-            w, h = (24, 12) if k == 0 else (16, 9)
-            m = blob_mask(w, h, idx * 3 + k)
-            a = blank(h, w)
-            for y in range(h):
-                for x in range(w):
-                    if m[y, x] and (x + y) % 2 == 0:
-                        a[y, x] = theme["shade"]
-            x0, y0 = hash2(k, idx, 71) % 60, 4 + (hash2(k, idx, 72) % 40)
-            sp = self._put(level, a, f"shadow{k}", x0, y0, "waves", ["ambient", "shadow"])
-            sp_speed = 5 + 3 * k
-            self.anim.append(dict(sp=sp, frames=[a], cur=0, fn=(lambda t, x0=x0, y0=y0, v=sp_speed, w=w: ((x0 + t // v) % (SEA_W + w) - w, y0 + (t // 40) % 3, 0))))
-
     def _build_life(self, level, spec, theme, idx):
         """Birds across the sky and one creature in the sea: they do nothing, and they never touch the rules."""
         art = BIRD_ART[theme["bird"]]
         table = BIRD_TABLES[theme["bird"]]
         frames = [paint(rows, table) for rows in art]
-        for k in range(2):
+        for k in range(1):
             y0 = 4 + 24 * k + hash2(k, idx, 8) % 9
             x0 = hash2(k, idx, 9) % 76
             sgn = 1 if k == 0 else -1
@@ -1727,7 +1715,7 @@ class Pt02(ARCBaseGame):
             charge = 2 if spec.armed[i][phi] else (1 if spec.armed[i][nxt] else 0)
             sc_ = spec.script[i]
             turning = sc_[phi % len(sc_)] in "RL"
-            ships.append([spec.head[i][phi], hps[i], charge, 0, 0, hps[i] > 0, turning])
+            ships.append([spec.head[i][phi], hps[i], charge, 0, 0, hps[i] > 0, turning, 0, 0, 0])   # ... squash, kick x, kick y
         aim, lanes, mz = None, [], WHITE
         if marks:
             cells, result, tgt = trace_shot(spec, px, py, pf, hps, phi)
@@ -1743,7 +1731,7 @@ class Pt02(ARCBaseGame):
                         lanes.append((i, seg_pixels(spec.cell[i][0], spec.cell[i][1], d, len(cl) - (1 if hit else 0))))
         return {"p": [px * CELL, py * CELL, pf, 0, 0], "s": ships, "b": [], "x": [], "aim": aim, "lanes": lanes,
                 "hearts": hearts if spec.hud_hearts else None,
-                "foes": [spec.kind[i] for i in range(spec.n) if hps[i] > 0], "mz": mz, "mood": "calm", "tint": False}
+                "foes": [spec.kind[i] for i in range(spec.n) if hps[i] > 0], "mz": mz, "mood": "calm", "tint": 0, "hf": None, "iris": None}
 
     def _show(self, sc):
         spec = self.spec
@@ -1751,17 +1739,25 @@ class Pt02(ARCBaseGame):
         t = self.tick
         bob = (t // 3) % 2
         p = sc["p"]
-        self.s_player.set_position(p[0], p[1])
+        # your ship breathes: it rides one pixel up for a few pictures, then settles (not while it is going down)
+        lift = -bob if (p[4] == 0 and sc["mood"] == "calm" and p[1] > 0) else 0
+        self.s_player.set_position(p[0], p[1] + lift)
         self.s_player.pixels = player_pixels(p[2], flash=bool(p[3]), sink=p[4], muzzle=sc["mz"], mood=sc["mood"], bob=bob,
                                              blink=(t % 17 == 0))
         self.s_pwake.set_position(p[0] - 1, p[1] - 1)
         self.s_pwake.pixels = wake_pixels(p[2], (t // 2) % 2, WHITE, WHITE)
         for i, sp in enumerate(self.s_ships):
-            h, hp, charge, flash, sink, visible, turning = sc["s"][i]
+            h, hp, charge, flash, sink, visible, turning, squash, kx, ky = sc["s"][i]
             if visible and sink < 4:
                 sp.set_interaction(InteractionMode.TANGIBLE)
-                sp.pixels = ship_pixels(spec.kind[i], h, hp, spec.hp0[i], charge, bool(flash), sink, turning, (bob + i) % 2,
-                                        SAILS[i % len(SAILS)], blink=((t + 5 * i) % 19 == 0))
+                pix = ship_pixels(spec.kind[i], h, hp, spec.hp0[i], charge, bool(flash), sink, turning, 0,
+                                  SAILS[i % len(SAILS)], blink=((t + 5 * i) % 19 == 0))
+                sp.pixels = squash_pixels(pix) if squash else pix
+                # each ship bobs on its own beat (a different period and phase from its neighbours); a gun's kick or a hit's
+                # shudder shifts it a pixel for one picture
+                cx_, cy_ = spec.cell[i]
+                rise = ((t + 2 * i) // (3 + i % 2)) % 2 if sink == 0 else 0
+                sp.set_position(cx_ * CELL + kx, cy_ * CELL + ky + (rise if cy_ == 0 else -rise))
                 wk = self.s_wakes[i]
                 wk.set_interaction(InteractionMode.TANGIBLE)
                 wk.pixels = wake_pixels(h, (t // 2 + i) % 2)
@@ -1782,14 +1778,27 @@ class Pt02(ARCBaseGame):
         lanes, aim = marks_picture(sc)
         self.s_lanes.pixels = lanes
         self.s_aim.pixels = aim
-        self.s_tint.set_interaction(InteractionMode.TANGIBLE if sc["tint"] else InteractionMode.REMOVED)
+        stage = int(sc["tint"])
+        if stage and stage != self.tint_stage:
+            self.tint_stage = stage
+            self.s_tint.pixels = tint_picture(stage)
+        self.s_tint.set_interaction(InteractionMode.TANGIBLE if stage else InteractionMode.REMOVED)
+        # a lost run shakes the whole screen for a few pictures: the view jumps a pixel one way, then the other, then settles
+        shake = sc.get("shake", (0, 0))
+        self.camera.x, self.camera.y = shake
+        self.camera.background = BLACK if shake != (0, 0) else BLUE
+        iris = sc.get("iris")
+        if iris:
+            self.s_iris.pixels = iris_pixels(*iris)
+        self.s_iris.set_interaction(InteractionMode.TANGIBLE if iris else InteractionMode.REMOVED)
         # the strip: hearts, then the enemies still afloat packed from the right
         for i, sp in enumerate(self.s_hearts):
             if sc["hearts"] is None:
                 sp.set_interaction(InteractionMode.REMOVED)
             else:
                 sp.set_interaction(InteractionMode.TANGIBLE)
-                sp.pixels = heart_pixels(i < sc["hearts"])
+                hf = sc.get("hf")
+                sp.pixels = heart_pixels(i < sc["hearts"], flash=bool(hf and hf[0] <= i < hf[1]))
         for k, sp in enumerate(self.s_foes):
             if k < len(sc["foes"]):
                 sp.set_interaction(InteractionMode.TANGIBLE)
@@ -1875,12 +1884,21 @@ class Pt02(ARCBaseGame):
         def centre(cell):
             return cell[0] * CELL + CELL // 2, cell[1] * CELL + CELL // 2
 
-        def fly(a, b, colour, n):
+        def fly(a, b, colour, n, recoil=None):
+            """recoil: (muzzle point, d) for your own gun. The first picture shows a spark at the muzzle and the ship kicking back."""
             for k in range(1, n + 1):
                 x = a[0] + (b[0] - a[0]) * k // n
                 y = a[1] + (b[1] - a[1]) * k // n
                 cur["b"] = [(x - 1, y - 1, colour)]
+                if k == 1 and recoil:
+                    cur["x"] = [(recoil[0][0], recoil[0][1], "star10")]
+                    cur["p"][0] -= DX[recoil[1]]
+                    cur["p"][1] -= DY[recoil[1]]
                 push()
+                if k == 1 and recoil:
+                    cur["x"] = []
+                    cur["p"][0] += DX[recoil[1]]
+                    cur["p"][1] += DY[recoil[1]]
             cur["b"] = []
 
         for e in ev:
@@ -1888,15 +1906,23 @@ class Pt02(ARCBaseGame):
             if kind == "move":
                 _, ox, oy, nx, ny, d = e
                 cur["p"][2] = d
-                for k in (1, 2):
-                    cur["p"][0] = ox * CELL + (nx - ox) * (CELL * k // 3)
-                    cur["p"][1] = oy * CELL + (ny - oy) * (CELL * k // 3)
+                for k, reach in ((1, 3), (2, 6)):                          # eased: a quick start, then it settles into the cell
+                    cur["p"][0] = ox * CELL + (nx - ox) * reach
+                    cur["p"][1] = oy * CELL + (ny - oy) * reach
+                    cur["x"] = [(ox * CELL + CELL // 2, oy * CELL + CELL // 2, f"ringw{k + 1}")]    # a ripple stays where you were
                     push()
+                cur["x"] = []
                 cur["p"][0], cur["p"][1] = nx * CELL, ny * CELL       # the move is finished before anything fires
             elif kind == "bump":
                 _, ox, oy, d = e
                 cur["p"][2] = d
-                cur["p"][0], cur["p"][1] = ox * CELL + DX[d], oy * CELL + DY[d]
+                cur["p"][0], cur["p"][1] = ox * CELL + 2 * DX[d], oy * CELL + 2 * DY[d]      # lean into it, a puff where it stops you
+                tx = min(max(ox * CELL + CELL // 2 + 4 * DX[d], 2), SEA_W - 3)
+                ty = min(max(oy * CELL + CELL // 2 + 4 * DY[d], 2), SEA_H - 3)
+                cur["x"] = [(tx, ty, "thud")]
+                push()
+                cur["x"] = []
+                cur["p"][0], cur["p"][1] = ox * CELL - DX[d], oy * CELL - DY[d]              # rebound, then settle
                 push()
                 cur["p"][0], cur["p"][1] = ox * CELL, oy * CELL
             elif kind == "shot":
@@ -1911,14 +1937,16 @@ class Pt02(ARCBaseGame):
                     lc = centre(last)
                     b = (lc[0] + DX[d] * 3, lc[1] + DY[d] * 3)
                 n = 1 if (len(cells) <= 2 or status == 2) else FLY
-                fly(a, b, WHITE, n)
+                fly(a, b, WHITE, n, recoil=(a, d))
                 if result == "hit":
                     cur["x"] = [(b[0], b[1], "burst")]
                     cur["s"][tgt][3] = 1
                     cur["s"][tgt][1] = st1[5][tgt]
+                    cur["s"][tgt][8], cur["s"][tgt][9] = DX[d], DY[d]      # the ball's weight shoves the ship a pixel
                     push()
                     cur["x"] = []
                     cur["s"][tgt][3] = 0
+                    cur["s"][tgt][8] = cur["s"][tgt][9] = 0
                     if st1[5][tgt] == 0:
                         sinks[tgt] = len(frames)
                         cur["lanes"] = [ln for ln in cur["lanes"] if ln[0] != tgt]
@@ -1934,11 +1962,19 @@ class Pt02(ARCBaseGame):
             elif kind == "ricochet":
                 cur["x"] = [(cur["p"][0] + CELL // 2, cur["p"][1] + CELL // 2, "burst")]
                 cur["p"][3] = 1
+                rd = cur["p"][2]
+                cur["p"][0] -= DX[rd]                                # the ball slams back: you recoil
+                cur["p"][1] -= DY[rd]
                 if cur["hearts"] is not None:
+                    before = cur["hearts"]
                     cur["hearts"] = max(0, cur["hearts"] - 1)
+                    cur["hf"] = (cur["hearts"], before)              # the lost heart flashes white
                 push()
                 cur["x"] = []
+                cur["hf"] = None
                 cur["p"][3] = 0
+                cur["p"][0] += DX[rd]
+                cur["p"][1] += DY[rd]
         volleys = [e for e in ev if e[0] == "volley"]
         if volleys and not (status == 1):
             cur["lanes"] = []
@@ -1960,7 +1996,16 @@ class Pt02(ARCBaseGame):
             for k in range(1, nf + 1):
                 cur["b"] = [(a[0] + (b[0] - a[0]) * k // nf - 1, a[1] + (b[1] - a[1]) * k // nf - 1, RED)
                             for a, b in zip(starts, ends)]
+                if k == 1:                                            # every gun kicks back and spits a spark as it fires
+                    cur["x"] = [(a[0], a[1], "star10") for a in starts]
+                    for (_, i, d, cells, hit) in volleys:
+                        cur["s"][i][8] = max(-1, min(1, cur["s"][i][8] - DX[d]))
+                        cur["s"][i][9] = max(-1, min(1, cur["s"][i][9] - DY[d]))
                 push()
+                if k == 1:
+                    cur["x"] = []
+                    for (_, i, d, cells, hit) in volleys:
+                        cur["s"][i][8] = cur["s"][i][9] = 0
             cur["b"] = []
             marks = []
             damaged = 0
@@ -1968,24 +2013,39 @@ class Pt02(ARCBaseGame):
                 marks.append((b[0], b[1], "burst" if hit else "puff"))
                 damaged += 1 if hit else 0
             cur["x"] = marks
+            shove = None
             if damaged:
                 cur["p"][3] = 1
+                last = [d for (_, i, d, cells, hit) in volleys if hit][-1]
+                shove = (DX[last], DY[last])
+                cur["p"][0] += shove[0]                              # the hit pushes you a pixel along the shot
+                cur["p"][1] += shove[1]
                 if cur["hearts"] is not None:
+                    before = cur["hearts"]
                     cur["hearts"] = max(0, cur["hearts"] - damaged)
+                    cur["hf"] = (cur["hearts"], before)
             push()
             cur["x"] = []
+            cur["hf"] = None
             cur["p"][3] = 0
+            if shove:
+                cur["p"][0] -= shove[0]
+                cur["p"][1] -= shove[1]
         if status == 2:
             d = DEATH_FRAMES
             cur["b"] = []
             cur["x"] = []
             cur["mood"] = "sad"
-            cur["tint"] = True
+            cur["tint"] = 1
             for ship in cur["s"]:
                 ship[2] = 2                                       # the enemy ships that are left gloat: red eyes, red mouths
+            bx_, by_ = cur["p"][0], cur["p"][1]
             for k in range(d):
                 cur["p"][4] = 1 + (k * 4) // d
-                px_, py_ = cur["p"][0] + CELL // 2, cur["p"][1] + CELL // 2
+                px_, py_ = bx_ + CELL // 2, by_ + CELL // 2
+                cur["p"][0] = bx_ + ((1 if k % 2 else -1) if k < 4 else 0)     # the hull shudders before it goes under
+                cur["tint"] = 1 + min(2, k // 2)                  # the red frame creeps in over the first pictures
+                cur["shake"] = ((1, 0), (-1, 1), (1, -1), (0, 1), (-1, 0), (0, 0))[k] if k < 6 else (0, 0)
                 cur["x"] = [(px_, py_, f"ring{2 + (k * 5) // d}")]
                 for q in range(3):                                # planks drift outward from the wreck
                     ang = q * 2.1 + 0.6
@@ -2007,9 +2067,29 @@ class Pt02(ARCBaseGame):
                 if sc is None:
                     continue
                 sc["s"][tgt][4] = min(SINK, t - start + 1)
+                if t > start:
+                    sc["s"][tgt][8] = sc["s"][tgt][9] = 0
                 if t < len(frames) - 1 and t - start + 1 < SINK + 1:
                     cx_, cy_ = centre(spec.cell[tgt])
                     sc["x"] = list(sc["x"]) + [(cx_, cy_, f"ring{1 + min(SINK, t - start + 1)}")]
+        if status == 0:                                           # a ship that is turning pinches in on its old heading,
+            turning = {i: (spec.head[i][st0[4]], spec.head[i][st1[4]]) for i in range(spec.n)      # (read from the script, so every ship shows its turn)
+                       if st1[5][i] > 0 and spec.head[i][st0[4]] != spec.head[i][st1[4]]}        # then opens out again on its new one
+            if turning:
+                base = _clone(frames[-2] if len(frames) > 1 else cur)     # the last picture before the settled one
+                base["aim"] = None
+                base["b"], base["x"], base["hf"] = [], [], None
+                base["p"][3] = 0
+                for ship in base["s"]:
+                    ship[3] = ship[8] = ship[9] = 0
+                pair = []
+                for old in (True, False):
+                    tw = _clone(base)
+                    for i in turning:
+                        tw["s"][i][7] = 1
+                        tw["s"][i][0] = turning[i][0 if old else 1]
+                    pair.append(tw)
+                frames[len(frames) - 1:len(frames) - 1] = pair
         if status == 1:
             self._cheer(frames, centre, [centre(spec.cell[i]) for i in range(spec.n)])
         return frames
@@ -2035,6 +2115,8 @@ class Pt02(ARCBaseGame):
             sc["x"] = [(min(max(x, 3), SEA_W - 4), min(max(y, 4), SEA_H - 5), f"star{size}{(q + k) % len(CONFETTI)}")
                        for q, (x, y) in enumerate(pts)]
             sc["x"].append((pcx, pcy, f"ring{3 + k}"))
+            if k >= CHEER_FRAMES - 3:                          # the last three pictures close a round iris on your ship
+                sc["iris"] = (pcx, pcy, IRIS_RADII[k - (CHEER_FRAMES - 3)])
             for q in range(9):                                # a shower of confetti falls over the whole sea
                 fx_ = (q * 7 + 5 + 3 * (q % 3) * k) % (SEA_W - 6) + 3
                 fy_ = (k * 11 + q * 13) % (SEA_H - 8) + 4

@@ -10,6 +10,18 @@
 #   a thread rack, a head with several faces, sparkles round the finish when a pull holds, and a red, dimmed, wilted
 #   "run over" look with a sad head when a pull fails. Everything on screen is a named engine sprite on a layer; nothing is
 #   painted onto the finished frame, and no letters or digits are drawn anywhere.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round A, calm and readable: backdrops quieter (one big prop ring of breathing room,
+#   fewer props and drifters, calmer cloth patterns and glints, trims cut to plain hems with one dashed or dotted line, a faint
+#   starfield on level ten). Rules, motion and sprite structure untouched.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round B, animation: the head now winds up, glides, overshoots and settles
+#   (with a small hop on sideways moves and a puff of dust left behind) instead of a flat four-frame slide, and long jumps
+#   over crossings glide too; a blocked move or a pull away from the finish gives a drawn bonk (lean, spark, sad face,
+#   recoil); a good pull adds a hop of joy and an iris that opens on the next level; a lost pull adds a shudder and a
+#   slump of the head. Walkers, props, spools and flowers now run on the frame clock so they keep moving through every
+#   action's frames. Rules untouched; every new sprite is named, layered and moved whole.
+#   The level-clear ribbon shower is thinned to eight scraps so the celebration stays calm.
+# Updated: 07-November-2026, Claude Sonnet 5.5 -- round C, final look: the win is calmer (half the ribbon scraps, four sparkles), and the
+#   opening circle after a level clear starts already showing the head instead of a solid black frame. Rules untouched.
 # SRP/DRY check: Pass -- rules (try_step, failed_marks, build_board, the slide helpers) are kt01's, copied verbatim; the art
 #   is pixel data and small builders that only read the game state; the game class only wires state to sprites. kt01 is not
 #   edited and nothing is imported from it.
@@ -54,79 +66,16 @@ START = RIM
 PETAL_TURN = WHT   # the one corner-flower petal that turns
 
 
-# ── the parent's slide helpers, unchanged ──────────────────────────────────────
+# ── motion timing: how the head glides, bumps and how the iris opens (all picture; no rule reads these) ──
 
-def begin_translation(game, names=(), position=None, repaint=None, limit=8):
-    game._translation_path = None
-    sprites = {s.name: (s.x, s.y) for s in game.current_level.get_sprites()
-               if any(s.name == n or (n.endswith('*') and s.name.startswith(n[:-1]))
-                      for n in names)}
-    game._translation_capture = (game.current_level, sprites,
-        (game.camera.x, game.camera.y), position, position() if position else None,
-        repaint, limit)
-
-def translation_position(game, position):
-    return getattr(game, '_translation_point', None) or position
-
-def advance_translation(game):
-    motion = getattr(game, '_translation_motion', None)
-    if motion is None:
-        return False
-    motion['frame'] += 1
-    t = motion['frame'] / motion['count']
-    def lerp(a, b):
-        return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
-    for sprite, start, end in motion['sprites']:
-        sprite.set_position(*(motion['path'][motion['frame']-1] if motion['path'] else lerp(start, end)))
-    game.camera.x, game.camera.y = lerp(motion['camera'][0], motion['camera'][1])
-    if motion['point'] is not None:
-        game._translation_point = lerp(*motion['point'])
-    if motion['repaint'] is not None:
-        motion['repaint']()
-    if motion['frame'] == motion['count']:
-        game._translation_motion = None
-        game._translation_point = None
-        if motion['complete']:
-            game.complete_action()
-    return True
-
-def finish_translation(game, complete=True):
-    capture = getattr(game, '_translation_capture', None)
-    game._translation_capture = None
-    if capture is None or capture[0] is not game.current_level or game._next_level:
-        if complete:
-            game.complete_action()
-        return
-    level, previous, camera, position, point, repaint, limit = capture
-    sprites = []
-    distances = []
-    path = getattr(game, "_translation_path", None)
-    for sprite in level.get_sprites():
-        if sprite.name not in previous:
-            continue
-        start, end = previous[sprite.name], (sprite.x, sprite.y)
-        distance = max(abs(start[0] - end[0]), abs(start[1] - end[1]))
-        if distance or path:
-            sprites.append((sprite, start, end))
-            distances.append(distance)
-    points = (point, position()) if position else None
-    if points:
-        distances.append(max(abs(a-b) for a,b in zip(*points)))
-    count = len(path) if path else max(distances, default=0)
-    if count < 2 or (not path and count > limit):
-        if complete:
-            game.complete_action()
-        return
-    game._translation_motion = dict(frame=0, count=count, sprites=sprites,
-        camera=(camera, (game.camera.x, game.camera.y)), point=points, repaint=repaint,
-        complete=complete, path=path)
-    advance_translation(game)
-
-def clear_translation(game):
-    game._translation_path = None
-    game._translation_capture = None
-    game._translation_motion = None
-    game._translation_point = None
+GLIDE_FRAMES = 6                           # wind-up, three travelling frames, overshoot, settle
+GLIDE_FRACTION = (0.0, 0.25, 0.55, 0.85, 1.0, 1.0)
+GLIDE_OVERSHOOT = (0, 0, 0, 0, 1, 0)       # pixels past the target along the move on each frame
+GLIDE_HOP = (0, 0, 1, 1, 0, 0)             # a little lift on sideways moves
+BUMP_FRAMES = 3                            # a blocked move: four frames in all, lean, bonk, recoil, rest
+IRIS_FRAMES = 5                            # the opening circle that follows a level clear
+IRIS_FIRST = 7                             # the circle never starts as solid black: it opens on the head already
+IRIS_REACH = 46                            # radius at which the circle has left the frame's corners
 
 
 # ── refined level data; the parent's cord and crossing rules below are unchanged ──
@@ -1283,7 +1232,7 @@ def _tag() -> list[list[int]]:
     return px
 
 
-SHOWER = 14
+SHOWER = 8
 SHOWER_COLOURS = (YEL, PNK, ORG, GRN, WHT, MAG, LBL, RED)
 
 
@@ -1728,27 +1677,14 @@ def _hem_band(style: str, hem: int, hem2: int) -> np.ndarray:
     Each level has its own trim so no two tables share an edge."""
     xs = np.arange(64)
     band = np.full((3, 64), hem, dtype=np.int8)
+    # Calm trims only (round A of 07-Nov): a plain hem with, at most, one quiet line of long dashes or widely spaced dots.
     if style == 'stitch':                       # a hem line and a dashed running stitch
         band[1, :] = -1
         band[2, xs % 2 == 1] = -1
-    elif style == 'scallop':                    # little half-round bumps
-        band[1, xs % 6 >= 4] = hem2
-        band[2, :] = hem2
-        band[2, (xs % 6 == 1) | (xs % 6 == 2)] = hem
-    elif style == 'zigzag':                     # a two-colour ric-rac ribbon
-        for y in range(3):
-            band[y, ((xs + y) % 4) >= 2] = hem2
-    elif style == 'beads':                      # a row of beads between two threads
-        band[1, xs % 3 == 1] = hem2
-        band[1, xs % 3 == 0] = -1
-    elif style == 'checker':                    # a racing-flag border
-        for y in range(2):
-            band[y, ((xs // 2) + y) % 2 == 1] = hem2
-    elif style == 'dots':                       # a calm row of round dots on a plain hem (quieter than a flag)
-        band[1, xs % 4 == 1] = hem2
-        band[1, xs % 4 == 2] = hem2
-    elif style == 'dash':                       # a plain hem with one stitched line of long dashes
-        band[1, xs % 6 < 3] = hem2
+    elif style in ('scallop', 'zigzag', 'dash'):  # a plain hem with one stitched line of long dashes
+        band[1, xs % 8 < 4] = hem2
+    elif style in ('beads', 'dots', 'checker'):   # a plain hem with one row of well-spaced dots
+        band[1, xs % 6 == 2] = hem2
     return band
 
 
@@ -1759,33 +1695,29 @@ def make_cloth(theme: dict, track=(), phase: int = 0) -> np.ndarray:
     cloth = np.full((64, 64), base, dtype=np.int8)
     kind = theme['pat']
     if kind == 'tufts':          # little tufts of yellow and white blossom
-        cloth[(ys % 16 == 3) & ((xs % 16 == 3) | (xs % 16 == 4))] = ink[0]
-        cloth[(ys % 16 == 11) & ((xs % 16 == 11) | (xs % 16 == 12))] = ink[1]
-        cloth[(ys % 16 == 2) & (xs % 16 == 3)] = ink[0]
+        cloth[(ys % 16 == 5) & ((xs % 16 == 5) | (xs % 16 == 6))] = ink[0]
+        cloth[(ys % 16 == 4) & (xs % 16 == 5)] = ink[0]
     elif kind == 'quilt':        # a stitched diamond quilt
         cloth[(((xs + ys) % 8 == 0) | ((xs - ys) % 8 == 0)) & ((xs // 2 + ys // 2) % 2 == 0)] = ink[0]
     elif kind == 'polka':
         shift = ((ys // 8) % 2) * 4
         cloth[(((xs + shift) % 8) // 2 == 1) & ((ys % 8) // 2 == 1)] = ink[0]
-    elif kind == 'gingham':      # big calm eight-pixel checks, a stitch in the middle of each light one
-        light = ((xs // 8) + (ys // 8)) % 2 == 1
+    elif kind == 'gingham':      # big calm sixteen-pixel checks, plain
+        light = ((xs // 16) + (ys // 16)) % 2 == 1   # four by four big checks: calm
         cloth[light] = ink[0]
-        cloth[light & ((xs % 8 == 3) | (xs % 8 == 4)) & ((ys % 8 == 3) | (ys % 8 == 4))] = theme.get('stitch', base)
     elif kind == 'dashes':       # a few puffs of white, like wind on a clear sky
         cloth[(ys % 8 == 5) & ((xs + (ys // 8) * 4) % 8 < 2)] = ink[0]
     elif kind == 'plaid':        # two wide tartan bands each way and a few bright thread dots, nothing finer
         cloth[((xs % 32) >= 13) & ((xs % 32) < 17)] = ink[0]
         cloth[((ys % 32) >= 13) & ((ys % 32) < 17)] = ink[0]
-        cloth[(xs % 32 == 23) & (ys % 8 == 0)] = ink[1]
-        cloth[(ys % 32 == 23) & (xs % 8 == 0)] = ink[1]
     elif kind == 'argyle':
         d = np.abs(xs % 16 - 8) + np.abs(ys % 16 - 8)
-        cloth[(d == 6) & ((xs + ys) % 2 == 0)] = ink[0]
+        cloth[d == 6] = ink[0]   # one solid thin diamond line, no dither
     elif kind == 'stripes':
         cloth[(ys % 8) < 2] = ink[0]
     elif kind == 'confetti':     # a night cloth sprinkled with bright thread ends
         seed = 7
-        for _ in range(60):
+        for _ in range(22):
             seed = (seed * 1103515245 + 12345) & 0x7fffffff
             x, y = (seed >> 4) % 64, (seed >> 12) % 64
             cloth[y, x] = ink[(seed >> 20) % len(ink)]
@@ -1879,75 +1811,74 @@ def ambient_pose(mode: str, k: int, clock: int, level: int):
 # amb entries are (style, colours, how many); `hero` props are the big twelve-pixel creatures.
 THEMES = [
     # 1  garden table: green cloth, blossom tufts, scalloped hem, a bear, petals and fireflies
-    dict(cloth=GRN, pat='tufts', ink=(YEL, WHT), glint=WHT, trim='scallop', hem=YEL, hem2=WHT, wood=(ORG, YEL, MAR), petal=YEL,
+    dict(cloth=GRN, pat='tufts', ink=(YEL, WHT), glint=WHT, trim='stitch', hem=YEL, hem2=WHT, wood=(ORG, YEL, MAR), petal=YEL,
          hero=[('bear', ORG, YEL), ('bunny3', WHT, PNK)],
-         big=[('mushroom', RED, WHT), ('flower', RED, YEL), ('frog', LBL, YEL), ('butterfly', PNK, YEL), ('butterfly', LBL, WHT), ('mushroom', ORG, WHT), ('flower', PNK, YEL)],
-         small=[('flower4', YEL, ORG), ('flower4', WHT, YEL), ('flower4', PNK, YEL), ('bead', MAG, 0)] * 2,
-         amb=[('petal', (PNK, WHT), 4), ('firefly', (YEL, ORG), 2)],
+         big=[('mushroom', RED, WHT), ('flower', RED, YEL), ('frog', LBL, YEL), ('butterfly', PNK, YEL)],
+         small=[('flower4', YEL, ORG), ('flower4', WHT, YEL), ('flower4', PNK, YEL)],
+         amb=[('petal', (PNK, WHT), 3), ('firefly', (YEL, ORG), 2)],
          mover=('snail', ORG, PNK), mover2=('mouse', LBL, PNK), thread=(RED, YEL, PNK, LBL)),
     # 2  night quilt: blue cloth with stitched diamonds, bead trim, an owl, fireflies and a shooting star
-    dict(cloth=BLU, pat='quilt', ink=(LBL,), glint=YEL, trim='beads', hem=YEL, hem2=PNK, wood=(ORG, YEL, MAR), petal=PNK,
+    dict(cloth=BLU, pat='quilt', ink=(PUR,), glint=LBL, trim='beads', hem=YEL, hem2=PNK, wood=(ORG, YEL, MAR), petal=PNK,
          hero=[('owl3', ORG, YEL)],
-         big=[('moon', YEL, 0), ('cat', WHT, PNK), ('yarn', PUR, PNK), ('butterfly', MAG, PNK), ('button', YEL, ORG)],
-         small=[('star', YEL, 0), ('star', WHT, 0), ('star', PNK, 0), ('star', YEL, 0), ('star', LBL, 0)] * 2,
-         amb=[('firefly', (YEL, ORG), 4), ('comet', (ORG, YEL), 1)],
+         big=[('moon', YEL, 0), ('cat', WHT, PNK), ('yarn', PUR, PNK)],
+         small=[('star', YEL, 0), ('star', WHT, 0), ('star', YEL, 0), ('star', WHT, 0)],
+         amb=[('firefly', (YEL, ORG), 3), ('comet', (ORG, YEL), 1)],
          mover=('bee', YEL, BLK), mover2=('crab', ORG, YEL), thread=(YEL, PNK, WHT, ORG)),
     # 3  grape velvet: purple cloth with magenta polka dots, zigzag ribbon, a frog and rising hearts
-    dict(cloth=PUR, pat='polka', ink=(MAG,), glint=PNK, trim='zigzag', hem=PNK, hem2=YEL, wood=(RED, ORG, MAR), petal=PNK,
+    dict(cloth=PUR, pat='polka', ink=(MAG,), glint=PNK, trim='dash', hem=PNK, hem2=YEL, wood=(RED, ORG, MAR), petal=PNK,
          hero=[('frog3', GRN, YEL)],
-         big=[('cupcake', PNK, YEL), ('pincushion', RED, YEL), ('button', LBL, BLU), ('yarn', GRN, YEL), ('spoolbig', LBL, ORG)],
-         small=[('heart', PNK, 0), ('heart', YEL, 0), ('bead', LBL, 0), ('bead', YEL, 0)] * 2,
-         amb=[('heart', (PNK, YEL), 5)],
+         big=[('cupcake', PNK, YEL), ('pincushion', RED, YEL), ('yarn', GRN, YEL)],
+         small=[('heart', PNK, 0), ('heart', YEL, 0), ('bead', LBL, 0), ('bead', YEL, 0)],
+         amb=[('heart', (PNK, YEL), 3)],
          mover=('caterpillar', GRN, YEL), mover2=('duck', YEL, ORG), thread=(PNK, YEL, LBL, GRN)),
     # 4  gingham cloth: big calm orange and yellow checks, racing-flag trim, a cat, leaves and birds
     dict(cloth=ORG, pat='gingham', ink=(YEL,), trim='dots', hem=RED, hem2=YEL, wood=(MAR, ORG, RED), petal=PNK,
          hero=[('cat3', PUR, PNK)],
-         big=[('apple', RED, WHT), ('penguin', BLU, LBL), ('pincushion', PUR, YEL), ('yarn', BLU, LBL), ('acorn', YEL, RED), ('button', PUR, PNK)],
-         small=[('bead', BLU, 0), ('heart', RED, 0), ('flower4', PUR, YEL), ('bead', GRN, 0)] * 2,
-         amb=[('leaf', (RED, GRN), 4), ('bird', (PUR,), 2)],
+         big=[('apple', RED, WHT), ('penguin', BLU, LBL), ('acorn', YEL, RED)],
+         small=[('bead', BLU, 0), ('heart', RED, 0), ('flower4', PUR, YEL), ('bead', GRN, 0)],
+         amb=[('leaf', (RED, GRN), 2), ('bird', (PUR,), 1)],
          mover=('ladybug', RED, BLK), mover2=('mouse', PUR, PNK), thread=(GRN, BLU, PUR, WHT)),
     # 5  sky picnic: light blue cloth, fat clouds with faces, a bunny, birds and bubbles
     dict(cloth=LBL, pat='dashes', ink=(WHT,), glint=YEL, trim='scallop', hem=WHT, hem2=YEL, wood=(ORG, YEL, MAR), petal=YEL,
          hero=[('bunny3', WHT, PNK)],
-         big=[('cloud', WHT, 0), ('balloon', RED, 0), ('cloud', WHT, 0), ('sun', YEL, 0), ('cloud', WHT, 0), ('butterfly', MAG, PNK)],
-         small=[('star', WHT, 0), ('star', YEL, 0), ('bead', PNK, 0), ('flower4', PNK, YEL)] * 2,
-         amb=[('bird', (BLK,), 3), ('bubble', (WHT, YEL), 3)],
+         big=[('cloud', WHT, 0), ('balloon', RED, 0), ('cloud', WHT, 0), ('sun', YEL, 0)],
+         small=[('star', WHT, 0), ('star', YEL, 0), ('bead', PNK, 0), ('flower4', PNK, YEL)],
+         amb=[('bird', (BLK,), 2), ('bubble', (WHT, YEL), 2)],
          mover=('bee', YEL, BLK), mover2=('duck', WHT, ORG), thread=(BLU, RED, YEL, PNK)),
     # 6  tartan: red plaid cloth with wide bands, green bamboo slats, zigzag trim, an owl, leaves
-    dict(cloth=RED, pat='plaid', ink=(MAR, YEL), glint=ORG, trim='dash', hem=YEL, hem2=GRN, wood=(GRN, YEL, MAR), petal=YEL,
+    dict(cloth=RED, pat='plaid', ink=(MAR,), glint=RED, trim='dash', hem=MAR, hem2=ORG, wood=(GRN, YEL, MAR), petal=YEL,
          hero=[('owl3', PUR, PNK)],
-         big=[('bell', YEL, ORG), ('acorn', ORG, MAR), ('bunny', WHT, PNK), ('thimble', YEL, ORG), ('pincushion', LBL, BLU)],
-         small=[('heart', YEL, 0), ('bead', LBL, 0), ('star', YEL, 0), ('flower4', WHT, YEL)] * 2,
-         amb=[('leaf', (YEL, ORG), 4), ('twinkle', (YEL, WHT), 3)],
+         big=[('bell', YEL, ORG), ('bunny', WHT, PNK), ('thimble', YEL, ORG)],
+         small=[('heart', YEL, 0), ('star', YEL, 0), ('flower4', WHT, YEL)],
+         amb=[('leaf', (YEL, ORG), 2), ('twinkle', (YEL, WHT), 2)],
          mover=('caterpillar', YEL, BLK), mover2=('crab', ORG, YEL), thread=(LBL, YEL, GRN, WHT)),
     # 7  argyle: maroon cloth with red diamonds, bead trim, a cat, embers rising
-    dict(cloth=MAR, pat='argyle', ink=(RED,), glint=ORG, trim='beads', hem=ORG, hem2=YEL, wood=(ORG, YEL, MAR), petal=ORG,
+    dict(cloth=MAR, pat='argyle', ink=(RED,), glint=MAG, trim='beads', hem=ORG, hem2=YEL, wood=(ORG, YEL, MAR), petal=ORG,
          hero=[('cat3', YEL, ORG)],
-         big=[('ghost', WHT, 0), ('fish', ORG, YEL), ('spoolbig', PNK, YEL), ('button', LBL, BLU), ('mushroom', YEL, WHT)],
-         small=[('star', YEL, 0), ('heart', PNK, 0), ('bead', LBL, 0), ('flower4', YEL, ORG)] * 2,
-         amb=[('ember', (YEL, ORG), 6)],
+         big=[('ghost', WHT, 0), ('fish', ORG, YEL), ('mushroom', YEL, WHT)],
+         small=[('star', YEL, 0), ('heart', PNK, 0), ('bead', LBL, 0), ('flower4', YEL, ORG)],
+         amb=[('ember', (YEL, ORG), 3)],
          mover=('snail', LBL, YEL), mover2=('beetle', GRN, YEL), thread=(YEL, LBL, PNK, GRN)),
     # 8  candy cloth: magenta with pink polka dots, racing-flag trim, a frog, sprinkles and hearts
-    dict(cloth=MAG, pat='polka', ink=(PNK,), glint=YEL, trim='dots', hem=YEL, hem2=WHT, wood=(ORG, YEL, MAR), petal=YEL,
+    dict(cloth=MAG, pat='polka', ink=(PNK,), glint=PUR, trim='dots', hem=PNK, hem2=WHT, wood=(ORG, YEL, MAR), petal=YEL,
          hero=[('frog3', GRN, YEL)],
-         big=[('icecream', LBL, ORG), ('cupcake', WHT, YEL), ('butterfly', YEL, ORG), ('button', YEL, ORG), ('thimble', LBL, BLU)],
-         small=[('heart', WHT, 0), ('heart', YEL, 0), ('bead', LBL, 0), ('star', YEL, 0)] * 2,
-         amb=[('sprinkle', (YEL, GRN, ORG, WHT), 6), ('heart', (WHT, YEL), 2)],
+         big=[('icecream', LBL, ORG), ('cupcake', WHT, YEL), ('butterfly', YEL, ORG)],
+         small=[('heart', WHT, 0), ('heart', YEL, 0), ('bead', LBL, 0), ('star', YEL, 0)],
+         amb=[('sprinkle', (YEL, WHT), 3), ('heart', (WHT, YEL), 1)],
          mover=('ladybug', LBL, BLK), mover2=('mouse', WHT, PNK), thread=(LBL, YEL, GRN, ORG)),
     # 9  cheesecloth: yellow stripes, scalloped hem, a bear, green bubbles
-    dict(cloth=YEL, pat='stripes', ink=(ORG,), glint=RED, trim='scallop', hem=RED, hem2=ORG, wood=(MAR, ORG, RED), petal=RED,
+    dict(cloth=YEL, pat='stripes', ink=(ORG,), glint=MAR, trim='scallop', hem=ORG, hem2=RED, wood=(MAR, ORG, RED), petal=RED,
          hero=[('bear', MAR, ORG)],
-         big=[('pumpkin', ORG, RED), ('penguin', PUR, LBL), ('fish', BLU, LBL), ('mushroom', RED, WHT), ('apple', GRN, RED), ('spoolbig', RED, ORG)],
-         small=[('heart', RED, 0), ('bead', BLU, 0), ('flower4', PUR, ORG), ('bead', GRN, 0)] * 2,
-         amb=[('bubble', (GRN, WHT), 4)],
+         big=[('pumpkin', ORG, RED), ('penguin', PUR, LBL), ('fish', BLU, LBL)],
+         small=[('heart', RED, 0), ('bead', BLU, 0), ('flower4', PUR, ORG), ('bead', GRN, 0)],
+         amb=[('bubble', (GRN, WHT), 3)],
          mover=('caterpillar', PUR, PNK), mover2=('crab', RED, ORG), thread=(PUR, BLU, RED, GRN)),
     # 10  night cloth: black with bright thread confetti, bead trim, an owl, twinkles and a comet
-    dict(cloth=BLK, line=LBL, pat='confetti', ink=(YEL, PNK, LBL, WHT, ORG, GRN), glint=WHT, trim='beads', hem=MAG, hem2=YEL, wood=(ORG, YEL, MAR), petal=PNK,
+    dict(cloth=BLK, line=LBL, pat='confetti', ink=(PUR, BLU, MAG), glint=LBL, trim='beads', hem=MAG, hem2=PNK, wood=(ORG, YEL, MAR), petal=PNK,
          hero=[('owl3', PUR, PNK)],
-         big=[('moon', YEL, 0), ('bat', PUR, 0), ('rocket', RED, YEL), ('ufo', GRN, 0), ('butterfly', PNK, YEL)],
-         small=[('star', YEL, 0), ('star', PNK, 0), ('star', LBL, 0), ('heart', RED, 0), ('star', WHT, 0),
-                ('bead', GRN, 0), ('star', ORG, 0), ('flower4', PNK, YEL)] * 2,
-         amb=[('twinkle', (YEL, PNK, LBL, WHT, ORG, GRN), 8), ('comet', (PNK, YEL), 1)],
+         big=[('moon', YEL, 0), ('rocket', RED, YEL), ('ufo', GRN, 0)],
+         small=[('star', YEL, 0), ('star', PNK, 0), ('star', LBL, 0), ('star', WHT, 0)],
+         amb=[('twinkle', (YEL, PNK, LBL, WHT), 4), ('comet', (PNK, YEL), 1)],
          mover=('bee', YEL, BLK), mover2=('beetle', PNK, YEL), thread=(YEL, PNK, LBL, GRN)),
 ]
 
@@ -1982,8 +1913,9 @@ def plan_props(index: int, track: dict, spec: dict) -> list:
             return
         seed = (seed * 1103515245 + 12345) & 0x7fffffff
         cx, cy = spots[(seed >> 8) % len(spots)]
-        for i in range(wide):
-            for j in range(high):
+        ring = 1 if wide > 1 else 0        # breathing room: a big prop keeps a one-cell ring of cloth to itself
+        for i in range(-ring, wide + ring):
+            for j in range(-ring, high + ring):
                 blocked.add((cx + i, cy + j))
         _, _, builder, period, bob = PROPS[kind]
         px, py = cx * CELL, cy * CELL
@@ -2062,6 +1994,7 @@ def build_levels() -> list[Level]:
         for k in range(SHOWER):
             add(_scrap(SHOWER_COLOURS[k % len(SHOWER_COLOURS)], False), f"shower_{k:02d}", 0, -9, 10, ("shower",), visible=False)
         add(make_veil(), "veil", 0, 0, 7, ("veil",), visible=False)
+        add(make_iris(0, 0, 0), "iris", 0, 0, 11, ("iris",), visible=False)   # the opening circle after a level clear
         add(HEAD_FRAMES["front"], "head", start[0] * CELL, start[1] * CELL, 8, ("head",))
         levels.append(Level(sprites=sprites, grid_size=(N * CELL, N * CELL)))
     return levels
@@ -2075,6 +2008,12 @@ def make_veil() -> np.ndarray:
     veil = np.full((64, 64), -1, dtype=np.int8)
     veil[(edge < 1) | (corner < 9)] = BLK
     return veil
+
+
+def make_iris(cx: int, cy: int, radius: float) -> np.ndarray:
+    """A black cover with a round window of the given radius open at (cx, cy); radius 0 is all black."""
+    ys, xs = np.mgrid[0:64, 0:64]
+    return np.where((xs - cx) ** 2 + (ys - cy) ** 2 > radius ** 2, BLK, -1).astype(np.int8)
 
 
 def lost_cloth(cloth: np.ndarray, theme: dict) -> np.ndarray:
@@ -2105,6 +2044,11 @@ class Kt02(ARCBaseGame):
         self.tick = 0
         self.clock = 0
         self.facing = "front"
+        self.glide = None              # the head's current glide: (start pixel, end pixel, frame index)
+        self.bump = 0                  # frames left of a blocked-move reaction
+        self.bump_dir = (0, 0)
+        self.iris = 0                  # frames left of the opening circle on a fresh level
+        self.arriving = False
         self._cache_level = None
         camera = Camera(
             width=N * CELL, height=N * CELL,
@@ -2114,7 +2058,9 @@ class Kt02(ARCBaseGame):
                          available_actions=[1, 2, 3, 4, 5, 7])
 
     def on_set_level(self, level: Level) -> None:
-        clear_translation(self)
+        self.glide, self.bump, self.bump_dir = None, 0, (0, 0)
+        self.iris = IRIS_FRAMES if self.arriving else 0       # only a level clear opens with the circle
+        self.arriving = False
         spec = LEVELS_SPEC[self.level_index]
         self.track, self.junctions = build_board(spec)
         self.state = initial_state(spec)
@@ -2131,11 +2077,9 @@ class Kt02(ARCBaseGame):
         self._redraw()
 
     def level_reset(self) -> None:
-        clear_translation(self)
         super().level_reset()
 
     def full_reset(self) -> None:
-        clear_translation(self)
         super().full_reset()
 
     # ── drawing: sprites take their pixels from the state; nothing here changes a rule ──
@@ -2174,6 +2118,7 @@ class Kt02(ARCBaseGame):
             self._spools = [(self._sprite(f"spool_{i}"), theme['thread'][i % len(theme['thread'])])
                             for i in range(LEVELS_SPEC[self.level_index]["undos"])]
             self._veil = self._sprite("veil")
+            self._iris = self._sprite("iris")
             self._cloth = self._sprite("cloth")
             if self._cloth is not None:
                 self._cloth_ok = [make_cloth(theme, self.track, p) for p in range(3 if theme.get('glint') is not None else 1)]
@@ -2181,19 +2126,47 @@ class Kt02(ARCBaseGame):
             self._cache_level = self.current_level
         return self._props
 
+    def _head_offset(self) -> tuple[int, int]:
+        """Where the head is drawn, in pixels, and everything that nudges it: the glide's wind-up, travel, overshoot and
+        hop; a blocked move's lean and recoil; a good pull's tug and hop of joy; a lost pull's shudder and slump."""
+        pos = self.state["pos"]
+        px, py = pos[0] * CELL - 1, pos[1] * CELL - 1      # the six-pixel head overhangs its four-pixel cell by one on each side
+        if self.glide:
+            (sx, sy), (ex, ey), i = self.glide
+            ux, uy = (ex > sx) - (ex < sx), (ey > sy) - (ey < sy)
+            along = -1 if i == 0 else None                  # frame 0 is the wind-up: one pixel back against the move
+            dist = max(abs(ex - sx), abs(ey - sy))
+            if along is None:
+                along = round(dist * GLIDE_FRACTION[i]) + GLIDE_OVERSHOOT[i]
+            px, py = sx - 1 + ux * along, sy - 1 + uy * along
+            if uy == 0:
+                py -= GLIDE_HOP[i]
+        elif self.bump:
+            k = BUMP_FRAMES - self.bump
+            lean = (1, 1, -1, 0)[k]
+            dx, dy = self.bump_dir
+            if dx or dy:
+                px, py = px + dx * lean, py + dy * lean
+            else:
+                py += (0, 1, -1, 0)[k]                      # nowhere to lean: a little shake up and down instead
+        elif self.cinch and self.pull_good:
+            if self.cinch in (6, 5):
+                # The whole tip draws one pixel back along its actual incoming strand, then settles
+                # in the eyelet. This tug never changes the cord state or the decided outcome.
+                previous = self.history[-1]["pos"] if self.history else self.state["pos"]
+                px += (previous[0] > pos[0]) - (previous[0] < pos[0])
+                py += (previous[1] > pos[1]) - (previous[1] < pos[1])
+            py -= {4: 1, 3: 2, 2: 1}.get(self.cinch, 0)     # then a hop of joy
+        elif self.pull_good is False:
+            if self.cinch > 3:
+                px += 1 if self.cinch % 2 else -1           # a shudder
+            py += 1                                         # and the slump stays
+        return px, py
+
     def _place_head(self) -> None:
         head = self._sprite("head")
-        if head is None:
-            return
-        px, py = translation_position(self, (self.state["pos"][0] * CELL, self.state["pos"][1] * CELL))
-        px, py = px - 1, py - 1            # the six-pixel head overhangs its four-pixel cell by one on each side
-        if self.cinch and self.pull_good and self.cinch in (6, 5):
-            # The whole tip draws one pixel back along its actual incoming strand, then settles
-            # in the eyelet. This tug never changes the cord state or the decided outcome.
-            previous = self.history[-1]["pos"] if self.history else self.state["pos"]
-            px += (previous[0] > self.state["pos"][0]) - (previous[0] < self.state["pos"][0])
-            py += (previous[1] > self.state["pos"][1]) - (previous[1] < self.state["pos"][1])
-        head.set_position(px, py)
+        if head is not None:
+            head.set_position(*self._head_offset())
 
     def _animate_scenery(self, failed: bool) -> None:
         """Gentle life that does nothing. Props change frame and drift with the move count, the two walkers cross the
@@ -2201,22 +2174,22 @@ class Kt02(ARCBaseGame):
         shine, the cloth shimmers. A good pull makes the props hop for joy; a failed one turns them sad and dim."""
         good = self.pull_good is True
         for sprite, frames, period, bob, bx, by, sad in self._scenery():
-            index = (self.tick // period + bx // CELL) % len(frames)
+            index = (self.clock // (3 * period) + bx // CELL) % len(frames)
             sprite.pixels = (sad if failed else frames)[index]
             if failed:
                 sprite.set_position(bx, by + 1)                   # a slump
             elif good:
                 sprite.set_position(bx, by - (self.cinch % 2))    # a hop
             elif bob:
-                dx, dy = bob[(self.tick + bx // CELL) % len(bob)]
+                dx, dy = bob[(self.clock // 2 + bx // CELL) % len(bob)]
                 sprite.set_position(bx + dx, by + dy)
         span = MOVER_SPAN
         for n, (walker, frames, sad, lane) in enumerate(self._walkers):
             if walker is None:
                 continue
-            along = (self.tick * (2 + n) + 17 * n) % (2 * span)
+            along = (self.clock * (2 + n) // 4 + 17 * n) % (2 * span)   # smooth: a pixel every other frame or so
             forward = along <= span                               # the top one starts rightwards, the bottom one leftwards
-            frame = (sad if failed else frames)[self.tick % 2]
+            frame = (sad if failed else frames)[(self.clock // 3) % 2]
             if forward == (n == 0):
                 walker.pixels = frame
             else:
@@ -2233,17 +2206,17 @@ class Kt02(ARCBaseGame):
                 sprite.set_position(x, y)
         for i, (spool, thread) in enumerate(self._spools):
             if spool is not None:
-                spool.pixels = np.array(_spool(thread, (self.tick // 2 + i) % 2), dtype=np.int8)
+                spool.pixels = np.array(_spool(thread, (self.clock // 3 + i) % 2), dtype=np.int8)
         petal = THEMES[self.level_index]['petal']
         for k, daisy in enumerate(self._daisies):
             if daisy is not None:
-                daisy.pixels = np.array(_daisy(self.tick + k, petal, failed), dtype=np.int8)
+                daisy.pixels = np.array(_daisy(self.clock // 3 + k, petal, failed), dtype=np.int8)
         # the level-clear shower: scraps rain down the whole frame while a good pull tightens
         for k, scrap in enumerate(self._shower):
             if scrap is None:
                 continue
             y = (8 - self.cinch) * 9 + (k * 23) % 14 - 12
-            showing = good and self.cinch > 0 and -3 < y < 64
+            showing = good and k % 2 == 0 and self.cinch > 0 and -3 < y < 64
             scrap.set_visible(showing)
             if showing:
                 scrap.pixels = np.array(_scrap(SHOWER_COLOURS[k % len(SHOWER_COLOURS)], (self.cinch + k) % 2 == 0), dtype=np.int8)
@@ -2295,7 +2268,11 @@ class Kt02(ARCBaseGame):
                 face = "happy"
             else:
                 face = self.facing
-                if face in ('front', 'down', 'left', 'right') and self.tick % 6 == 5 and not decided:
+                if self.glide and self.glide[2] == 0:
+                    face = 'blink'                       # eyes squeezed shut for the wind-up
+                elif self.bump and BUMP_FRAMES - self.bump in (1, 2):
+                    face = 'sad'                         # a bonk
+                elif face in ('front', 'down', 'left', 'right') and self.tick % 6 == 5 and not decided:
                     face = 'blink'
             head.pixels = HEAD_FRAMES[face]
         self._place_head()
@@ -2305,7 +2282,7 @@ class Kt02(ARCBaseGame):
         for k, spark in enumerate(self._sparks):
             if spark is None:
                 continue
-            showing = good_pull and self.cinch <= 6 and (k + self.cinch) % 3 != 0
+            showing = good_pull and k < 4 and self.cinch <= 6 and (k + self.cinch) % 3 != 0
             spark.set_visible(showing)
             if showing:
                 dx, dy = self.SPARK_RING[(k + self.cinch) % len(self.SPARK_RING)]
@@ -2314,8 +2291,36 @@ class Kt02(ARCBaseGame):
                 size = 5 if big else 3
                 spark.set_position(min(N * CELL - size, max(0, cx + dx - size // 2)),
                                    min(N * CELL - size, max(0, cy + dy - size // 2)))
+        self._draw_dust()
         if self._veil is not None:
             self._veil.set_visible(failed and self.cinch <= 3)
+        if self._iris is not None:
+            if self.iris:
+                theirs = LEVELS_SPEC[self.level_index]["start"]
+                self._iris.pixels = make_iris(theirs[0] * CELL + CELL // 2, theirs[1] * CELL + CELL // 2,
+                                              IRIS_FIRST + (IRIS_REACH - IRIS_FIRST) * (IRIS_FRAMES - self.iris) / IRIS_FRAMES)
+            self._iris.set_visible(bool(self.iris))
+
+    def _draw_dust(self) -> None:
+        """Dust left behind by a glide, and the spark of a bonk, borrowing the win sparkles' sprites while those are idle."""
+        if self.pull_good is not None or not self._sparks or self._sparks[0] is None:
+            return
+        colour = THEMES[self.level_index]['hem2']
+        puff = self._sparks[0]
+        if self.glide and 1 <= self.glide[2] <= 3:
+            (sx, sy), (ex, ey), i = self.glide
+            ux, uy = (ex > sx) - (ex < sx), (ey > sy) - (ey < sy)
+            puff.pixels = np.array(_spark(colour, False), dtype=np.int8)
+            # it hangs where the head left, drifting a pixel back and a pixel up each frame
+            puff.set_position(min(61, max(0, sx + 1 - ux * (i - 1))), min(61, max(0, sy + 1 - uy * (i - 1) - i)))
+            puff.set_visible(True)
+        elif self.bump and BUMP_FRAMES - self.bump in (1, 2) and any(self.bump_dir):
+            px, py = self.state["pos"][0] * CELL + 1, self.state["pos"][1] * CELL + 1
+            puff.pixels = np.array(_spark(colour, False), dtype=np.int8)
+            puff.set_position(min(61, max(0, px + self.bump_dir[0] * 4)), min(61, max(0, py + self.bump_dir[1] * 4)))
+            puff.set_visible(True)
+        else:
+            puff.set_visible(False)
 
 
     # ── kt01's controls, unchanged apart from the facing and the redraw calls ──
@@ -2374,41 +2379,79 @@ class Kt02(ARCBaseGame):
             # A wrong pull ends the run, as a loss does in the public games; RESET restarts the level.
             self.lose()
 
+    def _start_glide(self, before: tuple[int, int]) -> None:
+        """The head travels from the cell it left to the cell it now rests in (a jump over crossings is one long glide)."""
+        now = self.state["pos"]
+        self.glide = ((before[0] * CELL, before[1] * CELL), (now[0] * CELL, now[1] * CELL), 0)
+
     def step(self) -> None:
         if self.action.id == GameAction.RESET:
             self.complete_action()
             return
-        self.clock += 1                # the ambient clock runs on every frame, slide frames included
-        if advance_translation(self):
-            self._life(self.pull_good is False)
+        self.clock += 1                # the frame clock runs on every frame, glide and celebration frames included
+        if self.iris:                  # the circle opening on a fresh level
+            self.iris -= 1
+            self._redraw()
+            if not self.iris:
+                self.complete_action()
             return
-        begin_translation(self, position=lambda: (self.state['pos'][0]*CELL, self.state['pos'][1]*CELL),
-                          repaint=self._place_head, limit=CELL)
+        if self.glide:
+            start, end, i = self.glide
+            self.glide = (start, end, i + 1)
+            if i + 1 == GLIDE_FRAMES - 1:
+                self._redraw()
+                self.glide = None
+                self.complete_action()
+            else:
+                self._redraw()
+            return
+        if self.bump:
+            self.bump -= 1
+            self._redraw()
+            if not self.bump:
+                self.complete_action()
+            return
         if self.cinch:
             self.cinch -= 1
             if self.cinch == 0:
+                advancing = bool(self.pull_good) and not self.is_last_level()
+                self.arriving = advancing
                 self._settle()
                 self._redraw()
-                finish_translation(self)
+                if not advancing:      # a clear that moves on lets the engine swap levels, then the circle opens
+                    self.complete_action()
             else:
                 self._redraw()
             return
 
         self.tick += 1
         action = self.action.id
+        before = self.state["pos"]
+        moved = False
+        direction = (0, 0)
         if action == GameAction.ACTION1:
-            self.lay(UP)
+            direction = UP
+            moved = self.lay(UP)
         elif action == GameAction.ACTION2:
-            self.lay(DOWN)
+            direction = DOWN
+            moved = self.lay(DOWN)
         elif action == GameAction.ACTION3:
-            self.lay(LEFT)
+            direction = LEFT
+            moved = self.lay(LEFT)
         elif action == GameAction.ACTION4:
-            self.lay(RIGHT)
+            direction = RIGHT
+            moved = self.lay(RIGHT)
         elif action == GameAction.ACTION5:
             if self.pull():
                 self._redraw()
                 return
         elif action == GameAction.ACTION7:
-            self.retract()
+            moved = self.retract()
+        if moved:
+            self._start_glide(before)
+        elif action in (GameAction.ACTION1, GameAction.ACTION2, GameAction.ACTION3, GameAction.ACTION4,
+                        GameAction.ACTION5, GameAction.ACTION7):
+            self.bump, self.bump_dir = BUMP_FRAMES, direction
         self._redraw()
-        finish_translation(self)
+        if not (self.glide or self.bump):
+            self.complete_action()
