@@ -1,5 +1,5 @@
 {
-  "version": "0.8.8",
+  "version": "0.8.9",
   "snapshot_date": "2026-11-02",
   "featured": [
     "pt01",
@@ -10,12 +10,12 @@
     "eh01",
     "ff01",
     "se01",
-    "wb02",
+    "wb03",
     "bs01",
     "wf02",
     "st01",
     "bl01",
-    "ss01",
+    "ss02",
     "kt01"
   ],
   "highlight": {
@@ -1456,6 +1456,87 @@
         "look": "An early home-console look: flat green fields with oaks, pines and glinting ponds, yellow tracks with stepped corners, brick shrines with tiled roofs, and barred gates in red, blue, purple and light grey that crumble away when opened. A hooded black pilgrim with white eyes and a maroon scarf, magenta horned patrols whose eyes look where they are heading, and magenta thorn bushes, with every step sliding smoothly across the screen.",
         "vsPublic": "DC22 is the closest: on its first levels each coloured button changes every floor piece of its colour, but you click it on a side panel with its pieces on the same screen, and G50T’s floor plates are each joined to their gate by a line of the same colour. In SE01 a shrine never shows its colour, and after the first level its gates are always somewhere else, so you only learn what it did by travelling back to look. G50T and TU93 have patrols that kill you and hold still when you bump a wall; here patrols kill you too, but a bump lets them step, so you can spend moves to wait them out.",
         "markSaid": ""
+      }
+    },
+    {
+      "id": "wb03",
+      "class_name": "Wb03",
+      "path": "games/wb03.py",
+      "sha256": "fe9fab912bfb4fbf4d9a81f2ec42666833035797ea3a32bb4bfe7a5bc17b3af6",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/wb03.png",
+      "media": {
+        "play": "previews/wb03.png",
+        "levels": "previews/wb03-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "play": "https://arc3.sonpham.net/games/wb03",
+      "spoiler": {
+        "teaser": "Steer one sailboat across a huge open sea of islands, reefs, krakens, serpents and pirate ships. Every time you sail, the wind shoves all your other boats along too, and you can't see them. Get every boat into its own coloured berth before the move bar runs dry.",
+        "hard": "The boat you are not steering keeps sliding downwind every time you move, usually off the screen, so the plan is really about where your other boats will end up. A boat only stays put when it is anchored in its own berth, sits on a shoal, or hides behind an island or another sail. Dangers (tentacles, serpents, cannon fire) move one step per move you make, so standing still is not free, and the only clock for waiting is moving another boat. Worlds are several screens across, so the whole plan has to be held in your head. In the serpent strait the only wait you can make is by moving a different boat, which also shoves the rest.",
+        "rules": [
+          "Arrow keys sail the boat with the white corner marks one square. Every other boat with its sail up is blown one square downwind each time you sail.",
+          "A boat's sail hangs slack, and it stays put, when it sits on a shoal or has an island or another raised sail just upwind of it. Glassy dotted water behind islands shows the calm.",
+          "Space, or a click on a boat or on its coloured arrow at the window edge, hands control to another boat. If the boat you leave is in its own coloured berth, it drops anchor and stays there.",
+          "Bring every boat into its own berth before the move bar empties. Anchored boats are not pushed, and a boat that sails away from its berth raises its sail again.",
+          "Red stripes on the water mark squares that are deadly after your next move (a tentacle, a serpent, or a pirate broadside), and whirlpools always are. Touching one ends the run, for any of your boats.",
+          "Currents carry any boat sailing on them one square along their arrows. Barrels can be shoved along to block a drifting boat.",
+          "On the night sea and the great sea the wind turns on a visible count: the arrow under the sea shows the wind now, a yellow arrow shows the next one, and pips count the moves until it turns.",
+          "Undo takes a move back but does not give the spent move back."
+        ],
+        "special": "A large scrolling sea seen through a window that follows the boat you steer, with the other boats shown by coloured arrows on the window edge (click one to steer it). Eight clearly different seas: open water, a green lee-shore lagoon with a lighthouse, a kraken guarding a reef wall, pirate ships whose gun ports light up before they fire, rivers of current and whirlpools, a night sea where the wind turns, a serpent strait where you must hide in side bays, and a final great sea that mixes everything. Every danger and every rule is drawn, with no text anywhere.",
+        "look": "Early-console pictures with no grey: flat saturated water in a different colour for each sea (blue, green lagoon, black abyss, purple sunset, pale river, starry night, jungle-green strait, orange-flecked dusk). Palm islands with huts, smoke, campfires, tents, totems, treasure chests and crabs, a striped lighthouse, outlined palms that sway, reefs, shoals dotted with sand, buoys, floating barrels and lily pads. White surf rings every coast. Boats are small sloops with a billowing, slack or furled sail and a pennant that streams with the wind; each berth is a ring and four pilings in the boat's colour with a flag. A kraken with slit yellow eyes and writhing tentacles, a horned sea serpent with humps, black pirate galleons with red sails and skull flags, spinning whirlpools, and chevron-marked currents. A slim strip under the sea shows the boats, the wind now and next, the seas completed and the move bar.",
+        "vsPublic": "I did not do a side-by-side with any specific public game, so I only claim what I know of this one. It uses the full 64x64 screen as a scrolling window over worlds several screens across (as the brief says some public games do), packs several interacting parts into one view (wind, shelter, shoals, currents, wandering sea monsters, pirate guns, barrels), and changes its whole cast and look every level. One move here also moves pieces you cannot see, which is the part I would point to as unusual.",
+        "markSaid": null
+      }
+    },
+    {
+      "id": "ss02",
+      "class_name": "Ss02",
+      "path": "games/ss02.py",
+      "sha256": "65fa6f05268e469dbb2a0b1a91d505ad2276e824f0d20cccd03ef2f73b6ed352",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/ss02.png",
+      "media": {
+        "play": "previews/ss02.png",
+        "levels": "previews/ss02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        5,
+        6,
+        7
+      ],
+      "play": "https://arc3.sonpham.net/games/ss02",
+      "spoiler": {
+        "teaser": "A cheerful fruit market where every level is a new stall. Thread each fruit onto the right skewer, in the right order, before the burning fuse at the top runs out.",
+        "hard": "A shared supply of fruit arrives in a fixed order and the next fruit goes onto whichever skewer is selected, right or wrong. Each skewer wants its own order, shown on a card beside it, and the only sign of progress is a skewer's plate turning green once its stack is exactly right. Several skewers start the same way, so an agent has to plan where each fruit is going to end up many steps ahead instead of placing it greedily. The fuse shrinks on every action, miss-clicks included, so wandering around loses. Each level also changes the machinery: a belt that keeps turning, two trays, a blender, orders by colour or by outline, and a rack that rotates. The agent has to work out each new rule from what it sees.",
+        "rules": [
+          "The next fruit in the supply goes onto the selected skewer, whether it is right or wrong.",
+          "Click a skewer to select it. Press the thread action to put the next fruit on it. Undo takes back the last change to the board, but never gives back any fuse.",
+          "Every action costs a place on the fuse, even a click on nothing. The run is lost when the fuse is gone.",
+          "A skewer's plate turns green only when its whole stack matches its card. Win a level by turning every plate green.",
+          "Conveyor levels: the belt turns one place after every action, and the fruit at the framed pick-up spot is the next one. Waiting costs fuse.",
+          "Two-tray level: click a tray to choose which tray the next fruit comes from. Skewers are different heights, and a skewer will not take more fruit than it has room for.",
+          "Blender level: a fruit that does not fit is blended away. That costs three places on the fuse, and a fresh fruit of the same kind goes on the back of the tray.",
+          "Colour and shape cards: a coloured square takes any fruit of that colour, a black outline takes any fruit with that shape, and a picture takes only that fruit.",
+          "Revolving rack: only the skewer in the lit window takes fruit, and the rack turns one place after every fruit. Click a skewer to bring it round to the window.",
+          "The festival level mixes two trays, the rack, the blender and the colour and shape cards."
+        ],
+        "special": "Eight different markets, each with its own look and one new rule: a morning stall, a factory conveyor, an orchard with two trays, a smoothie bar with a blender, a carnival with colour and shape orders, a dusk market with a revolving rack, a night pier with a conveyor, and a festival that mixes them all. Each has its own vendor cat who blinks, follows what you pick, points, cheers and gets worried when the fuse runs low. Finished skewers sparkle, blended fruit splashes juice into a jug that fills up, and the level-clear shower of confetti plays before the next market opens.",
+        "look": "Bright, saturated early-console colours with no greys: striped awnings, lanterns, bunting, crates, a lighthouse, fireworks and little houses, each level with its own backdrop, skewer style (straws, candy canes, masts) and vendor coat. The fruit are 8-pixel pictures with outlines, highlights and shading (apple, orange, plum, cherry, strawberry, pineapple, watermelon slice, banana, grapes). A burning fuse bar runs along the top, and the order cards show the fruit as small pictures. Everything on the screen is drawn; there is no text anywhere.",
+        "vsPublic": "I did not compare it to a particular public game, so I make no claim about which is closest. It follows the public games' conventions: the run ends only when a visible counter runs out, reset refills the level, undo never refunds the counter, and the board fills the whole 64 by 64 screen with several parts at once. Beyond that, each of its levels has a different layout and adds one new rule to the same fruit-ordering idea."
       }
     }
   ],
