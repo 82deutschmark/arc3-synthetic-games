@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.0 — 7 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call, plan in `docs/07-Nov-2026-featured-art-glowup-plan.md`: the art of the other thirteen highlighted games is rebuilt, four passes each, as new games under new numbers: PT02, TE02, DZ02, LT04, ES02, EH02, FF02, SE02, BS02, WF03, ST02, BL02 and KT02. They take over the highlighted list; the old files stay in `games/`. Every scene is now named sprites with faces and layers, each level has its own backdrop, props and ambient life, and wins and losses are drawn. The files are roughly two to three times longer, almost all of it picture and animation data. The rules are unchanged: random play from every level on old and new gives identical state, level count and offered actions. Not human-tested; the busiest, LT04, may need a readability look.
+
 ## 0.8.9 — 7 November 2026
 
 Claude Sonnet 5.5, at Mark Barney's call: Windy Boats and Shared Supply glowed up as new games, WB03 and SS02, replacing WB02 and SS01 in the highlighted list (the old games stay in `games/`). WB03 is a large open sea seen through a 64 by 64 window that follows the boat you steer, with arrows at the edge for boats out of view, and eight different seas dressed with palm islands, lighthouses, reefs, shoals, a kraken, a sea serpent, pirate ships, currents, whirlpools and a turning wind. SS02 is a fruit market with eight different stalls (conveyor, two trays, blender, colour and shape orders, a revolving rack, a festival), detailed fruit and a vendor cat who reacts. Both follow the public 25's loss, reset and undo rules. Counters are twice the shortest winning line found by search; no person has played either yet.

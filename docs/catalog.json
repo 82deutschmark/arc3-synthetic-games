@@ -1,22 +1,22 @@
 {
-  "version": "0.8.9",
+  "version": "0.9.0",
   "snapshot_date": "2026-11-02",
   "featured": [
-    "pt01",
-    "te01",
-    "dz01",
-    "lt03",
-    "es01",
-    "eh01",
-    "ff01",
-    "se01",
+    "pt02",
+    "te02",
+    "dz02",
+    "lt04",
+    "es02",
+    "eh02",
+    "ff02",
+    "se02",
     "wb03",
-    "bs01",
-    "wf02",
-    "st01",
-    "bl01",
+    "bs02",
+    "wf03",
+    "st02",
+    "bl02",
     "ss02",
-    "kt01"
+    "kt02"
   ],
   "highlight": {
     "games": [
@@ -1537,6 +1537,494 @@
         "special": "Eight different markets, each with its own look and one new rule: a morning stall, a factory conveyor, an orchard with two trays, a smoothie bar with a blender, a carnival with colour and shape orders, a dusk market with a revolving rack, a night pier with a conveyor, and a festival that mixes them all. Each has its own vendor cat who blinks, follows what you pick, points, cheers and gets worried when the fuse runs low. Finished skewers sparkle, blended fruit splashes juice into a jug that fills up, and the level-clear shower of confetti plays before the next market opens.",
         "look": "Bright, saturated early-console colours with no greys: striped awnings, lanterns, bunting, crates, a lighthouse, fireworks and little houses, each level with its own backdrop, skewer style (straws, candy canes, masts) and vendor coat. The fruit are 8-pixel pictures with outlines, highlights and shading (apple, orange, plum, cherry, strawberry, pineapple, watermelon slice, banana, grapes). A burning fuse bar runs along the top, and the order cards show the fruit as small pictures. Everything on the screen is drawn; there is no text anywhere.",
         "vsPublic": "I did not compare it to a particular public game, so I make no claim about which is closest. It follows the public games' conventions: the run ends only when a visible counter runs out, reset refills the level, undo never refunds the counter, and the board fills the whole 64 by 64 screen with several parts at once. Beyond that, each of its levels has a different layout and adds one new rule to the same fruit-ordering idea."
+      }
+    },
+    {
+      "id": "pt02",
+      "class_name": "Pt02",
+      "path": "games/pt02.py",
+      "sha256": "171615a585eef4f1a137e78252329d6baecf946927eef43682aab5e628d86f6b",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/pt02.png",
+      "media": {
+        "play": "previews/pt02.png",
+        "levels": "previews/pt02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "play": "https://arc3.sonpham.net/games/pt02",
+      "spoiler": {
+        "teaser": "Perfect Target. You are a ship shooting at other ships.",
+        "hard": "You can only hurt a ship from behind. Hit a bow or side and the shot bounces back and costs you a heart. Enemy guns fire on a beat down lanes you have to read one press ahead. A bot that shoots whatever is in front of it dies fast, because it has to work out that facing matters. Same family as SC25's fireball and TU93's head-on killer.",
+        "rules": [
+          "You sail the black ship one square at a time with the arrow keys and fire with space; the ball flies straight ahead along the dotted line from your bow, and pressing toward land or a ship turns you to face it without moving.",
+          "Sink every enemy ship to clear the level, but only a ship’s stern, the end with the yellow lamps, can be hurt: you must get behind it, facing the way it faces, and each hit puts out one lamp.",
+          "A ball that strikes a bow or a side bounces straight back and costs you one of three hearts; the aim line turns pink before you fire to warn you.",
+          "Enemy ships never sail, but every press, even a bump or a shot, is one beat of a fixed clock, and gunships fire on a set rhythm: the gun turns orange two presses before a shot, then red with a red dashed lane one press before, and since your move lands before the shot, stepping out of the lane on that press keeps you safe.",
+          "Your ball stops at the first ship in its path, so one ship can shield another from you, and islands and ships stop enemy fire too, so they can shield you; lose all three hearts and your ship sinks and the run ends; a reset starts the level again exactly as it began, same rhythm.",
+          "Level 1 cannot be lost; later levels add bouncing shots, gunships, two gunships on different beats, ships that turn a quarter on a timer (the tip of the bow turns white one press before), a frigate firing from both sides, and finally a galleon that fires from its bow and both sides."
+        ],
+        "special": "In the pictures, every ship, prop and creature is its own drawn piece with eyes, shading and animation, the second water colour is now soft so ships stand out at a glance, and each of the eight seas looks clearly different from the others. The rules are exactly the same as the old game.",
+        "look": "Every level is its own little world with its own big landmark, shore, props and sea life. A sunny cove with a beach house and palms, a meadow archipelago with a windmill, a snowfield with an igloo and floating ice, a canyon strait with a tall stone pillar, a lava island with a smoking volcano, a jungle with a totem and lily pads, a night harbour with a sweeping lighthouse beam and glowing lanterns, and a ruined temple with a giant stone figure. Ships have faces, sails and foam wakes, and the water has drifting waves, cloud shadows, gulls, dolphins, whales and other sea creatures that do nothing. Hearts and one small ship per enemy sit in the strip along the bottom. Winning a level throws confetti. Losing turns the frame dark red, the ships gloat and wreckage drifts.",
+        "vsPublic": "The nearest public pieces are TU93’s red enemy, which kills you head-on and dies if you reach it from the side or behind; SC25’s fireball, which flies the way you last moved and just fizzles on anything but its target; and KA59’s bombs, which go off every few presses. In PT01 a shot that strikes a ship’s bow or side bounces back and costs you a heart, so only the stern can be hit, and enemy guns fire at you on fixed beats down lanes drawn one press ahead that islands and other ships block."
+      }
+    },
+    {
+      "id": "te02",
+      "class_name": "Te02",
+      "path": "games/te02.py",
+      "sha256": "c172ab3322097a9ac2a4c7f33440e83603c99acc8bb0eb9eb3f841ce3b6df761",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/te02.png",
+      "media": {
+        "play": "previews/te02.png",
+        "levels": "previews/te02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "play": "https://arc3.sonpham.net/games/te02",
+      "spoiler": {
+        "teaser": "Tethered Extraction. A cable and a pulley.",
+        "hard": "Your cable is a fixed length and wraps round posts, so the same route costs more or less depending on which side of each post you pass. Blades cut the cable, not just you. A bot has to plan the whole path before it moves, not feel its way. In the family of SK48, where you carry a length of something and spend it.",
+        "rules": [
+          "You drive a small green rover with the arrow keys; an orange cable runs from the blue dock to the rover and always pulls tight, bending only at the corners of the posts it wraps around.",
+          "Stop beside the blue crystal (not diagonally) or right on top of it, click it to pick it up, then drive back onto the dock to clear the level.",
+          "The cable has a fixed length, shown as orange dots on the spool by the dock; a move that needs more is refused and a red mark flashes at the bend holding it back, so the side you passed each post on decides how far you can reach.",
+          "Space reels you in one step back along the cable toward its last bend, and undo takes back your last move.",
+          "Red blades end the attempt two ways: drive the rover into one, or let the cable touch one as it sweeps behind you, even when the rover itself stays well clear; undo cannot save you then, only reset, which starts the level again.",
+          "Levels 1 and 2 have no blades and level 3 brings the first; from level 5 you push a silver cover along an orange rail onto a blade, its stripe turns green as it locks, and then rover and cable can both cross that blade; level 6 bends the rail, and the last two levels add long walls that come alternately from the top and the bottom, with a much longer cable that has to wind back and forth between them."
+        ],
+        "special": "In the pictures, every object is a named sprite with its own face or texture, every room has its own look, and a win bursts into confetti while a loss turns the room red with rain and flying shards.",
+        "look": "Eight rooms, each with its own floor and cast. A blue workshop with a crate conveyor, drums and an orange welding cart. A white kitchen with a cat, a running mouse and a patterned rug. A dark power plant with grating, dials and steam. A space stage with haze, ringed planets, a comet and a rocket. A pink candy world with a lollipop swirl and a gingerbread man. An aquarium with a whale, jellyfish, a crab and a treasure chest. A sunny meadow with a pond, a frog, a bunny and sunflowers. A purple crystal cave with bats, glowing stones and eyes in the dark. The little robot blinks, winces when blocked, cheers on a win and cries when the run is over.",
+        "vsPublic": "The closest public games are SK48, whose skewer runs straight out of its handle on an energy budget, and TU93 and G50T, where the path you walked comes back as an enemy or a twin. In TE01 you have a fixed length of cable that bends round posts, so how much of it a route uses depends on which side of each post it went, and blades cut that cable as it sweeps, not just the rover."
+      }
+    },
+    {
+      "id": "dz02",
+      "class_name": "Dz02",
+      "path": "games/dz02.py",
+      "sha256": "0bffca6547742f5c3778a83f15b7270b8f20fbba8e91e838fba49387bfd08579",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/dz02.png",
+      "media": {
+        "play": "previews/dz02.png",
+        "levels": "previews/dz02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "play": "https://arc3.sonpham.net/games/dz02",
+      "spoiler": {
+        "teaser": "Dig Zone. Inspired by the desert levels of Super Mario Bros. 2 on the original NES.",
+        "hard": "Every dig comes out of a bar, and the colour of the ground tells you if it takes one, two or three clicks, or never breaks. Sand falls into the hole you just made. So it's planning, not poking: a bot that clicks around to see what happens runs the bar dry. A cousin of BP35's shaft.",
+        "rules": [
+          "You see a green hero at the top of a sand shaft whose checkered finish lies out of sight far below, and a strip at the side with your hearts, a star slot and a bar: its yellow is your digging budget, a green dot on it shows how deep you are, and it ends in the same checkers.",
+          "Arrow keys walk, and up climbs one step when sand or earth is right beside the hero; click the square straight above, below, left or right of him to dig it: sand takes one click, packed earth two, rock three, and black bedrock never breaks.",
+          "Loose things fall: dig under the hero and he drops into the hole, and sand, hearts, stars and batteries pour into any hole opened under them, so a hole dug beneath a sand column fills right back up.",
+          "Walk into a creature to fight it, which costs no clicks: you punch out one of its white stripes, it punches out one of your hearts, and so on until its last stripe goes, so a one-stripe crab costs nothing, a two-stripe mole one heart and a three-stripe worm two.",
+          "Lose your last heart, or empty the bar while the finish is still out of reach, and the run ends, and a reset starts the level over; walking onto a heart gives one back, up to three, and a blue battery in the sand puts clicks back.",
+          "Later levels add packed earth with moles, rock bands with worms, bedrock to tunnel round, red-eyed creatures that come down with the sand and start the fight themselves if they land on your head, and a star you can carry: space lights it, and while its ring of sparks lasts, creatures go flat at a touch and sand digs for free without pouring back in."
+        ],
+        "special": "In the pictures, every level has its own backdrop, sand colours, buried set piece and wall pattern, none of it grey, and the whole screen is built from named, moving sprites with faces and shading instead of painted specks. The file is about two and a half times as long as the original, almost all of it picture and animation data.",
+        "look": "Level one is a sunny desert with cactus, dunes and a castle on the horizon, sand in yellow and orange bands. Level two is a tropical beach with palms, green turf and blue water pockets. Level three is a fiery brick cellar of orange and red with gold crates and a purple seam. Level four is a pink and sky-blue night with a moon, white sparkles and deep blue pools. Level five is a red sunset canyon with pyramids and a setting sun, magenta strata and glowing ember blocks. Level six is a meadow in green and yellow with buried purple stones and drifting fireflies. Level seven is a purple and magenta crystal night with a moon and blooming petals. Level eight is a dark star-sky cave of pink gems and a blue web, with a tall striped ladder creature. The miner has a lamp helmet, overalls and boots, and his eyes cross out when he loses. Creatures have faces whose eyes follow him, little critters crawl, swim and flit in the hollows, and clouds, palms and stars gently move. A win throws a themed shower and fireworks; a loss turns the world dark red with a ghost rising and a sad rain cloud.",
+        "vsPublic": "BP35 is the closest: a tall shaft that runs past the screen, where clicking breaks some blocks and every action, undo included, counts on the bar. In DZ01 walking and fighting are free and only digging uses up the bar, the ground’s colour tells you whether it takes one, two or three clicks or never breaks, and sand and loose items fall into whatever you open. In TU93, an enemy kills you or dies depending on which side you meet it from; here a fight trades stripes for hearts, and the price is drawn on the creature before you start."
+      }
+    },
+    {
+      "id": "lt04",
+      "class_name": "Lt04",
+      "path": "games/lt04.py",
+      "sha256": "a7a4981092da5c5f7f1d7406c36073b437e7b2ae46ff495897d832bf05216e02",
+      "levels": 9,
+      "human": null,
+      "preview": "previews/lt04.png",
+      "media": {
+        "play": "previews/lt04.png",
+        "levels": "previews/lt04-levels.png"
+      },
+      "tiles": 9,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "play": "https://arc3.sonpham.net/games/lt04",
+      "spoiler": {
+        "teaser": "Lock Target. Select munitions, hunt the hostiles. Try not to kill too many friendlies.",
+        "hard": "You never move anyone. You aim, and every shot lands late, so you have to lead a walking target. From the fourth mission the city answers back: big shots pull crowds and ambulances in. A bot has to predict where people will be, and a single screenshot doesn't show motion. In the family of SC25's aimed fireball.",
+        "rules": [
+          "You look down on a dark city from the air, where people and cars are small squares coloured in the middle: red for targets, yellow for street traffic, green for people inside schools and hospitals, and ambulances carry pink crosses.",
+          "Click anywhere on the map to fire the selected round, press space or click a round in the tray to switch rounds, and use the arrow keys to pan across a city of four districts, with arrows at the screen edge pointing to targets out of view; every action, even panning, moves the city on one step, and undo just waits a step.",
+          "Every round lands late, so you aim where a walking target will be, and now and then a target takes a double step: precision lands on the next step with a tiny blast, fire a step later and leaves flames that spread for a few steps, and heavy is the slowest with the biggest blast; each round has a small stock that slowly refills.",
+          "A mission is won when every target is gone, nothing is still falling and no fire is burning; hurting bystanders, ambulances or buildings (schools and hospitals cost most), hitting a target that is not yet confirmed, and above all letting a target blow up drain the shield at the top, and from the fourth mission on an empty shield fails the mission and you start it over.",
+          "From the fourth mission, heavy and fire rounds call in ambulances and crowds of onlookers, more each time, and send nearby targets running, and a target left alone too long pulls people round itself and then blows up among them.",
+          "Later missions add a flare that confirms who is who and freezes nearby targets, an aid drop that slows the whole city and puts out fires, targets riding in cars with passengers (hit the car and everyone in it goes) and targets that show only part red, or look exactly like street traffic, until confirmed, then a hospital fire that blocks the win until aid puts it out or it bursts, and a sensor that only updates every third step; the damage you do stays in the city for every mission after."
+        ],
+        "special": "In the pictures, this redraw is the same game with a far richer world: nine different looks instead of one, every building and creature drawn as its own small character, and gentle life everywhere (blinking, drifting, flickering). Roughly three times the drawing weight of the old version, with no words or numbers on screen and no grey.",
+        "look": "Every mission is its own season with its own ground, streets, roofs and trees. Mission one is a green summer town with windmill and pond, two is yellow desert with pyramid and tents, three is a white snowy town with igloos and penguins, four is a purple mushroom night, five is a seaside with lighthouse and boats and striped awnings, six is orange autumn with leaves and haystacks, seven is a pink and blue candy town with cupcakes and lollipops, eight is a dark moonlit city with an observatory, owls and bats, and nine is a bright carnival with a big top, balloons and confetti. Everything is a named picture: people with faces who cheer or wince, cars, ambulances with flashing lights, roofs with their own dressing (snow, frosting, bunting, solar panels), tall landmarks, little animals in the corners, flames and blasts. A won mission bursts into fireworks; a lost run goes red with a storm cloud and a sad face.",
+        "vsPublic": "BP35 and LF52 are the only public games whose view scrolls, and in both you move pieces through the world; in LT03 you never move anyone, you pan across a busy city and aim. SC25’s fireball and CD82’s dye are aimed at boards that hold still, and KA59’s bombs wait on a fuse, but here your own shot arrives late and the target keeps walking. WA30 has other movers that act after each of your moves; from the fourth mission this city also answers you, sending crowds and ambulances to every heavy or fire blast."
+      }
+    },
+    {
+      "id": "es02",
+      "class_name": "Es02",
+      "path": "games/es02.py",
+      "sha256": "ddb3a14ffb47484936ca33358f1316beb6012d4ec1617fe063dae4513248ce3e",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/es02.png",
+      "media": {
+        "play": "previews/es02.png",
+        "levels": "previews/es02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "play": "https://arc3.sonpham.net/games/es02",
+      "spoiler": {
+        "teaser": "Extreme Sneeze. Spread the alien outbreak to win.",
+        "hard": "Every person you infect is a new body you can jump into, so who you are keeps changing. Doctors cure your work and guards shoot the alien. A bot loses track of which piece is it. Like SK48, where you click between two rods, but here there can be a whole crowd.",
+        "rules": [
+          "On level one you are a small green alien. Arrow keys walk, and space sneezes a short fan of green droplets straight ahead and out to both forward diagonals. Walls and the first person in each line stop it; vent grilles do not.",
+          "The alien’s sneeze is weak: a person needs three hits, and a green spot appears on their face with each one. The first person the alien fully infects becomes the body you play. From level two you start each level already inside an infected person, and the alien follows you on its own, sneezing at any healthy person lined up close to it.",
+          "Your host’s sneeze infects anyone it reaches in one hit, and each new victim sneezes onward the same way straight away, so a lined-up crowd falls like dominoes. From level two each host sneeze spends one of the magenta spore dots beside you, and every new infection gives one back until the stack is full. With none left, space does nothing.",
+          "Click any infected person on screen to jump into them. Walking into a vent grille also jumps you if an infected person stands just past it; grilles stop feet but let sneezes through. From level two most people pace slowly back and forth, and the ones you leave behind now and then give a weak cough toward their nearest healthy neighbour.",
+          "Level one needs two infections. From level two you must infect everyone, guards and doctors included. Guards in maroon and red arrive on level three: they walk toward the alien, and once lined up with it in a clear straight line they flash yellow, then shoot a piece off it. If the whole alien is shot away you lose, and infecting a guard stops it.",
+          "Doctors in white arrive on level four. They cure sick people close by, and if they cure your host you are back in the alien. When no one sick is near, they wall up doorways with white walls that stop both feet and sneezes. Only your host’s full sneeze chips those walls, and it takes two. Every board after the first is bigger than the screen and scrolls with you."
+        ],
+        "special": "In the pictures, this is the biggest redraw in the set: eight different backdrops, every character and fitting a named sprite with a face, and gentle background life (swaying trees, sparrows, butterflies, a taxi, blinking lights, drifting bubbles, steam, drips) that does nothing to the game. The rules are exactly the original's.",
+        "look": "Every level is its own little world drawn from named, faced pieces. The plaza has green trees, a shop row with striped awnings, a street and a passing taxi. The market is warm yellow brick with fruit stalls and lanterns, and the night market is the same street in deep violet with glowing cobbles. The first clinic is bright sky-blue and white with soap bubbles; the second ward is sky-blue and sunny-yellow slabs with toys and tied balloons. The station is bevelled violet and maroon with mosaic inlays and a train car, the tunnel is cool blue with dripping pipes and a spinning vent fan, and the final terminal is a black circuit board with glowing traces and chips, with pulses running along them. Characters have faces that blink, wince when hit, cheer with raised hands on a win and cry with a drooping ghost on a loss. A won level sweeps a green wave with confetti across the screen; a lost run closes a solid red frame in from the edges, leaving the board readable in the middle.",
+        "vsPublic": "SK48 lets you click between two rods from level six, and WA30’s thief pulls finished crates back out of their bays. In ES01 every person you infect is another body to click into, while doctors cure them and guards shoot the alien. The nearest public spread is BP35’s purple, which grows into the empty squares around a clicked block, but that spreads scenery: we found no public game where a state passes from one character to the next, and like BP35, ES01’s boards are bigger than the screen with a view that follows you."
+      }
+    },
+    {
+      "id": "eh02",
+      "class_name": "Eh02",
+      "path": "games/eh02.py",
+      "sha256": "a7eec300001c701860ae36625528ad1b4387314dcaae2b54c19877d7f2b480c3",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/eh02.png",
+      "media": {
+        "play": "previews/eh02.png",
+        "levels": "previews/eh02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "play": "https://arc3.sonpham.net/games/eh02",
+      "spoiler": {
+        "teaser": "Eroding Horizons. Every peek with your lantern wears away the floor you need to get back.",
+        "hard": "You can't see what a square holds until you step off it, and every look wears out the floor you need to get home. The budget is the map. A bot that explores freely, the way it can in other games, burns its own way back. The hidden information is the point.",
+        "rules": [
+          "You walk a small blue creature through corridors cut into rock with the arrow keys. You can see the shape of the corridors but not what any square holds, and stepping onto a square never shows you what is there.",
+          "Space is your lantern. Right after you step onto a dark square, space lights the square you are standing on and steps you back onto the one you came from, showing whether it held a key, the exit ring, a pit or nothing. On ground that is already lit, space does nothing.",
+          "Every look burns one of the two orange marks on the square you step back onto. When its last mark goes it becomes a crossed orange scar: you can step off it but never back on, so the order you explore in decides the level. The entrance never wears out.",
+          "Lighting a key sends it flying into a slot along the top. When every slot is full the ring turns from pink to pale blue. You have to light the ring itself too, then walk in.",
+          "Pits look like any other dark square. Step onto one and then walk off it in any direction, even back the way you came, and you fall back to the entrance. Press space on it instead and you step back safely; either way the pit is lit and can never be entered again.",
+          "Level one has no marks. Later levels add pits, a loop and thin ground that holds only one mark. Every step and every look uses up a bit of the white bar under the key slots; when the bar runs out, the creature turns red, the corridor fills in with rock and the run ends. A reset starts the level again with a full bar."
+        ],
+        "special": "In the pictures, everything is a separate named sprite, with big two-frame set pieces filling the rock in every level, a different cave per level, gentle drifting life (bats, fish, sparks, snow, bubbles) and a confetti burst on a win. No text anywhere on the play surface.",
+        "look": "Cellar: red brick with a wooden door, cauldron, arched windows and torches. Crystal cave: bright blue with big cut gems and spires. Night: a black cave with a green fruit tree, owls, lamps, mushrooms and bats. Lava: orange rock with a fanged demon face, lava falls and a smoking volcano, kept away from where you start. Ice: white snow with snowmen, frosty firs and igloos. Temple: dark red stone with a sun face, altars and totems. Sea: pale blue water with round coral domes, an anemone, kelp, a treasure chest and swimming fish. Vault: blue tile with armour, shields, gold pillars and a treasure heap. The walker has eyes, blinks, grins on a win and frowns on a loss; the cave turns red when a run is lost.",
+        "vsPublic": "LS20 also has a key and a door, but you reshape one key on tiles in plain sight, and its fog only arrives on the final level, where you can still see everything near you; in EH01 nothing a square holds shows until you step back off it. G50T’s fifth action walks you back to the start and leaves a ghost that replays your moves, and SK48’s undo is free; in EH01 stepping back is the only way to see, and each step back costs a mark on the floor. That floor is the whole budget, where LS20 and TU93 count your steps on a bar."
+      }
+    },
+    {
+      "id": "ff02",
+      "class_name": "Ff02",
+      "path": "games/ff02.py",
+      "sha256": "e26137a2e6204d847277a919787a85c33e11727681f7af81bb26b7e7e7ecabd4",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/ff02.png",
+      "media": {
+        "play": "previews/ff02.png",
+        "levels": "previews/ff02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "play": "https://arc3.sonpham.net/games/ff02",
+      "spoiler": {
+        "teaser": "Feeding Frenzy. Eat the small fry, ride the tide, grow big.",
+        "hard": "One tide moves every fish and current at once, on a beat, and a yellow dot shows each next move. Size decides who eats who, and you grow. A bot has to plan several beats ahead instead of dodging. It borrows AS66's always-changing direction and BP35's pull across a world bigger than the screen.",
+        "rules": [
+          "You are the green fish. You swim with the arrow keys through a sea bigger than the screen, and the view follows you.",
+          "Touch a fish your size or smaller to eat it. Colour shows size: orange is smallest, then pink, magenta, red and maroon. Eat enough to fill the meal pips and the level clears; from level two, a few meals also make you grow a size.",
+          "Bigger fish bite and cost one of your three lives, then you blink safe for a moment. They never chase you; each one just swims its own pattern.",
+          "The lighter water is current. It carries you and every other fish, and you can never swim against it: at best you hold still.",
+          "Every few moves the tide turns (the yellow pips at top right count down to it), and every current and every other fish changes heading. A yellow dot on each current’s arrows and on each other fish shows which way it goes next, and every other fish that is off the screen shows as a small mark in its colour on the screen’s edge, food and danger alike.",
+          "From level two a time bar runs down, and running out or losing your last life ends the run. Later levels bring more currents, more fish and bigger ones, and on the last two levels you can grow big enough to eat even the largest fish."
+        ],
+        "special": "In the pictures, every level has its own seabed, landmarks, props and water colour, so no two seas look alike, and the water and floating shapes are kept clear of the current lanes and the fish so you can read the board at a glance. Rules and levels are unchanged.",
+        "look": "Same fish game, redrawn from named pictures. Level one is a bright reef with white-capped sand, red volcano vents, kelp and pink jellyfish. Level two is a green meadow of tall grass. Level three is a red-hot rock sea with hanging black spikes and big red domes. Level four is a purple coral country. Level five is a wrecked ship with glowing portholes. Level six is a purple crystal and bubble sea. Level seven is a bone-yard and giant kelp. Level eight is ruined arches and floating orange islands. Fish have eyes, mouths and fins and react when they eat, get bitten, win (a firework shower and a grin) or lose (a red dimmed rim and crossed-out eyes). Kelp sways, jellyfish pulse, bubbles rise and tower tips blink.",
+        "vsPublic": "BP35 is the closest: it also scrolls and carries you with a pull you cannot refuse, but its pull runs one way across the whole level, slides you until something solid stops you, and you flip it yourself by clicking. FF01’s sea has many currents that push a set distance each move, carry every fish, and all turn together on one tide clock, with each next heading shown ahead of time. In TU93, whether you or its red enemy dies depends on which way that enemy faces; here it depends on size, and your size grows as you eat."
+      }
+    },
+    {
+      "id": "se02",
+      "was": [
+        "xb02"
+      ],
+      "class_name": "Se02",
+      "path": "games/se02.py",
+      "sha256": "b128e3524bf06118b8776a831c5b3f954965d81bbaa29919d21f357cebadd6a2",
+      "levels": 6,
+      "human": null,
+      "preview": "previews/se02.png",
+      "media": {
+        "play": "previews/se02.png",
+        "levels": "previews/se02-levels.png"
+      },
+      "tiles": 6,
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "play": "https://arc3.sonpham.net/games/se02",
+      "spoiler": {
+        "teaser": "Shrine Exploration. Light a shrine and a gate crumbles somewhere you can't see.",
+        "hard": "Light a shrine and a gate crumbles somewhere you can't see, and nothing tells you which. You only find out by going back to look. It's DC22's trick, where one click rewrites the floor anywhere on the board, but hidden and far away.",
+        "rules": [
+          "You walk a hooded pilgrim along yellow tracks with the arrow keys, through a countryside several screens wide and tall. You start beside the sanctum; open its barred door and walk in to clear the level.",
+          "Four shrines stand in the four corners. Step onto a shrine’s brazier and every gate of one colour, anywhere in the world, crumbles for the rest of the level.",
+          "No shrine shows which colour it opens, but that never changes: top-left opens red, top-right blue, bottom-left purple, bottom-right light grey. The sanctum door is a gate too, and its colour changes from level to level.",
+          "The gates decide which shrines you can reach, so each level hides an order. The land is the same in every level; only the gates and the patrols change. Until the last two levels some shrines open nothing, and the last two need all four.",
+          "Walk into a magenta thorn bush, or let a magenta horned patrol step onto you, and the run is over; reset to start the level again. Patrols pace short stretches of track from level two on, one step for each move you make; the flowers are harmless, even the magenta ones.",
+          "A bar under the world shows the moves you have left for the level. It shrinks with every move, bumps included, and when it runs out the run is over. Lit shrines stay lit. Bumping into a wall or a shut gate still lets the patrols take their step, which is how you wait for one to pass, but it costs a move."
+        ],
+        "special": "In the pictures, this is a much bigger world than the old one: six full seasonal worlds with their own ground, trees, ponds and wildlife, all as separate moving pieces, with the same long scrolling trek, and nothing written anywhere on screen.",
+        "look": "Every level is its own season and place: a green spring meadow with a bunny, a red-and-gold autumn wood with a fox, a white snow land with a penguin, a dark blue night forest with bats, a hot orange dune with palms and a lizard, and a purple twilight swamp with glowing mushrooms. The pilgrim, the horned patrols and the thorns are drawn as little creatures with faces and a walk. Shrines are small houses with lit windows and chimney smoke, seals are bright coloured gates that crumble into sparkles when opened. Trees sway, critters wander and ponds have pets. Reaching the sanctum bursts into stars and confetti; a lost run turns the world red and dark, with a rain cloud and the pilgrim collapsed.",
+        "vsPublic": "DC22 is the closest: on its first levels each coloured button changes every floor piece of its colour, but you click it on a side panel with its pieces on the same screen, and G50T’s floor plates are each joined to their gate by a line of the same colour. In SE01 a shrine never shows its colour, and after the first level its gates are always somewhere else, so you only learn what it did by travelling back to look. G50T and TU93 have patrols that kill you and hold still when you bump a wall; here patrols kill you too, but a bump lets them step, so you can spend moves to wait them out."
+      }
+    },
+    {
+      "id": "bs02",
+      "class_name": "Bs02",
+      "path": "games/bs02.py",
+      "sha256": "14bfe0a9382680cde58c0f01b429841865f770f60a0bf4291b98fc0991cc21a6",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/bs02.png",
+      "media": {
+        "play": "previews/bs02.png",
+        "levels": "previews/bs02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "play": "https://arc3.sonpham.net/games/bs02",
+      "spoiler": {
+        "teaser": "Bell Stealth. Ring the bells to drive the guards onto the pads, and don't get caught.",
+        "hard": "You never touch the guards. You herd them by choosing which bell to ring, and they also hold the plates down and kill you if you stand beside them. Pips flow between neighbours by height, and you only get so many moves on each level, shown as the yellow bar along the bottom. In the family of G50T, where something other than you holds the plate and can catch you.",
+        "rules": [
+          "You are the black figure. The arrow keys move you one square; there is no other control and no undo, and every press is a turn, even walking into a wall or the edge, which is how you wait. Every press also uses up one step of the yellow bar along the bottom; when it runs out you fall and the run ends, and a reset gives you a full bar.",
+          "Step on a bell to ring it. From then on every red guard walks one square per turn toward the bell you rang last by a shortest route, waiting in line if another guard is in the way; in the first two levels the pad is itself a bell.",
+          "A guard that ends a turn on your square or right beside you, though not diagonally, catches you and the run ends; a reset restarts the level. Pink checks mark every square where that would happen next turn.",
+          "Each guard carries pips, shown in white on its belly like a die face, and each plain round pad shows in black pips how many it needs; the bell pads of the first two levels need one. A guard carrying at least that many lights the pad it stands on, and while every pad is lit the door opens and you walk in to win.",
+          "The hidden rule: pips spill between guards standing side by side, though not diagonally. When one guard’s pips plus its ground height are two or more above its neighbour’s, one pip hops across, so ground matters: blue is low, green is middle, and the yellow blocks under the bells are high.",
+          "Later levels add more guards and pads, sunken blue ground you can still walk on, a rock wall with one gap and a dead-end corridor with the bell at its far end."
+        ],
+        "special": "Every thing on screen is a named, whole sprite; each level has its own backdrop, props that sway, blink and drift, a wandering critter and a flyer, and the castle level got a fresh palette in the last pass. The rules, levels and move counts are exactly the old game's.",
+        "look": "One world per level, all in bright flat console colours: a sunny flower meadow with a fence frame, orange dusk dunes with cacti and bones, a blue-white snowfield with igloos and a penguin, a green jungle with vines and sunflowers, a blue crystal cave with glowing facets, a volcano with basalt columns and flames, a harbour of planks and crates over blue water, and now a violet-stone castle with a blue brick frame and gold banners (no longer all pink). Guards, you, the bells and the door are drawn as little characters with faces; a win shows cheers and a star burst, a loss turns the world dark with rain and laughing guards.",
+        "vsPublic": "Closest are WA30, where helpers take a step every time you act and haul crates into bays on their own routine, and G50T, where a ghost copy of you holds a plate down while patrols kill you if they land on your square. Here the plate-holders are the same creatures that kill you, standing beside one is as deadly as standing on it, and you steer them only by which bell you rang last. VC33 moves liquid between tanks, but only when you click a pump; here the pips pass between neighbouring guards on their own, by count and ground height together."
+      }
+    },
+    {
+      "id": "wf03",
+      "class_name": "Wf03",
+      "path": "games/wf03.py",
+      "sha256": "69b572ca25fe48f655cbc318bca02ea3001fca8d3f82f3c01c477114f877efb0",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/wf03.png",
+      "media": {
+        "play": "previews/wf03.png",
+        "levels": "previews/wf03-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        5,
+        6
+      ],
+      "play": "https://arc3.sonpham.net/games/wf03",
+      "spoiler": {
+        "teaser": "Water Flip. One lever flips every pipe. Fill each tank to the line.",
+        "hard": "One lever flips every pipe of a colour at once, so each click is a decision about a whole circuit. After each match the marks move but the water stays, so how you finish one delivery sets up the next. Same idea as DC22's switch: one control changes many pieces.",
+        "rules": [
+          "A row of black tanks holds blue water in stacked blocks, and white dashes in each tank mark how full it should be.",
+          "Pipes arch over the tanks with a wheel on top of each. Click a wheel to pour one block along that pipe, or two if the pipe has a stripe down its middle. The wheel shows one or two blocks of water on the side it will leave from.",
+          "Press space or click the lever at the bottom to reverse every pipe of that colour at once. From level 5 the pale pipes with white wheels get a second lever, and only a click moves it.",
+          "A pour is refused when the tank it drains holds less than the pipe carries, or the tank it fills has no room. The wheel turns red and shakes, and the tank in the way gets a red rim.",
+          "When every tank sits exactly on its marks, a dot at the top turns green and new marks appear, with the water left where it is. Finish every dot to clear the level. A yellow column at the left edge loses one block for every press or click, misses included; if it runs out first, the run is lost, and a reset starts the level again with it full.",
+          "Later levels add short tanks that hold only two blocks, two-block pipes, a high pipe that joins the end tanks into a ring, nearly full tanks and up to four deliveries."
+        ],
+        "special": "In the pictures, it is the same game as before with every part drawn as its own named sprite, and a different world, palette and slow background life on each of the eight levels, with no grey and no writing anywhere. It is far longer and richer than the plain tank-and-pipe original.",
+        "look": "Every level is its own place with its own sky, ground and tiny creature with a face. 1 sunny meadow with a windmill and a farm animal; 2 purple crystal cave with bats; 3 harbour with a lighthouse and a far sailboat; 4 desert with a vulture and a lizard; 5 night city with a moon and a shooting star; 6 jungle with vines, parrots and butterflies; 7 snowfield with mountains and aurora; 8 volcano with lava bubbles. Tanks are glass with rivets and shaded water, pipes are shaded copper with a light pulse running along them, the wheels are chunky yellow buttons and the flow lever has a little face. The creature cheers when a delivery lands and droops under a rain cloud when the run is lost. A win shower of rays and confetti plays when a level clears.",
+        "vsPublic": "VC33 is the closest: it also moves liquid between tanks by clicking, but every wall there has a pump on each side, so each click picks its own direction, the goal is a single finished board, and a click budget can lose the level. WF02 hands direction to a lever shared by a whole circuit, moves loads of one or two blocks, can carry water round a ring, chains up to four sets of marks with the water carried over, and like VC33, has a click budget that ends the run when it runs out. SP80 also pours, but there you place bars to steer falling liquid into cups instead of sharing out a fixed amount of water between tanks."
+      }
+    },
+    {
+      "id": "st02",
+      "was": [
+        "hc01"
+      ],
+      "class_name": "St02",
+      "path": "games/st02.py",
+      "sha256": "5635233f0cfe296c8fb94915b9a68ef1f42d54fd306d311f7486e534a233f2e2",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/st02.png",
+      "media": {
+        "play": "previews/st02.png",
+        "levels": "previews/st02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "play": "https://arc3.sonpham.net/games/st02",
+      "spoiler": {
+        "teaser": "Shadow Topple. Turn the light and the blocks topple along their shadows into the holes.",
+        "hard": "You never push a block. You turn the light and click one, and its shadow decides where it lands. A bot looks for a piece to push and finds none. Like TN36, you never touch the thing that moves.",
+        "rules": [
+          "A light sits on one edge of the board, and every green block casts a shadow away from it. Touching squares of the same height count as one block.",
+          "Turn the light with the left and right arrows (space turns it the same way as right), then click a block. It falls over along its shadow and is gone, and every hole under the shadow gets one step shallower.",
+          "A shadow reaches as far as the block is tall, and further across holes, so filling a hole also shortens the shadows that cross it. A wall or the edge of the board just cuts a shadow short, but a block whose shadow has nowhere to land cannot fall.",
+          "A block may only fall if its whole shadow lands in holes. The board shows this before you click: those holes turn purple, and a shadow that would be refused is drawn dotted.",
+          "Leave the board flat, with no holes and no blocks, to clear the level. Every turn of the light and every click uses up a bit of the white bar under the board; when it runs out the board flashes red and the run ends, and a reset starts the level again with a full bar.",
+          "Later levels add holes two deep that need a fall from each side, short blocks that can fall two ways where only one leaves the right run of holes for a tall block, and walled rooms that all share one light."
+        ],
+        "special": "In the pictures, every board square, the sun, the burning-fuse counter, the dust and every little creature is its own drawn piece, blocks and holes show height with dice dots, and every world has its own frame border and wall material, none of it using words or grey.",
+        "look": "Eight storybook worlds, each with its own floor, walls, frame and small living things that do nothing. Level one is a sunny meadow farm with trees, a cottage and flowers. Level two is a snowfield with penguins, a snowman and an igloo. Level three is a lava cave with torches, glowing ore and skulls. Level four is a toy workshop with cogs, balloons and toy stacks. Level five is a desert with totems, a scarab and cactus. Level six is candy land with cupcakes, lollipops and rolling gumdrops. Level seven is an ocean floor with fish, bubbles, swaying weed and a shipwreck. Level eight is deep space with rockets, planets, a comet and a saucer. The sun has a face that smiles, turns sad and weeps under a rain cloud on a loss. Beating a level showers confetti.",
+        "vsPublic": "None of the public write-ups describes a light or shadows. The nearest are KA59, where you knock pieces into frames they fit, and BP35, where a red block flips which way the world pulls you. ST01 never moves a piece by hand: its one direction control re-aims every block on the board at once and decides where each one will land."
+      }
+    },
+    {
+      "id": "bl02",
+      "class_name": "Bl02",
+      "path": "games/bl02.py",
+      "sha256": "df16c0d3b2cd5a96ca1db8972bf18ed91422fada2a9673e39d12f9bbd4f8669e",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/bl02.png",
+      "media": {
+        "play": "previews/bl02.png",
+        "levels": "previews/bl02-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "play": "https://arc3.sonpham.net/games/bl02",
+      "spoiler": {
+        "teaser": "Basket Lift. Get the fruit to the basket on lifts that weigh you.",
+        "hard": "Down doesn't mean down. It tips the scale: you stand on a pan, the lighter side goes up and the heavier side goes down, and you count as one block while every fruit you carry adds two or three. On the first level you rise when your hands are empty and sink once you're holding an apple. Later the Up key flips gravity and a lever turns blue crystal blocks solid. A bot that mashes the arrow keys never works out that the weights are doing the moving.",
+        "rules": [
+          "Left and right walk the farmer one square at a time. He stays on the ground, ledges and pans, and can't step off an edge into the air.",
+          "Space picks up a fruit next to him, or drops what he's carrying into the basket when he's next to it. With empty hands beside the basket, Space takes a banked fruit back out, heaviest first. Clicking a fruit, the basket or the lever does the same job.",
+          "Down is the lift. The lifts are pairs of pans hung over pulleys, with grey weight blocks hanging under one side. Press Down while standing on a pan and the scale tips one step: the heavier side sinks, the lighter side rises, and if they match nothing moves. The farmer weighs one block, a carried fruit adds two or three, and the grey blocks count too.",
+          "A bar along the bottom is your allowance, 320 presses a level. Every press spends one, refused moves included. Empty the bar and you've lost the level. Undo puts the scene back but not the press.",
+          "On levels four, five, seven and eight, Up flips gravity, so the farmer falls toward the ceiling and walks it. A small leaf on the right edge shows which way is down.",
+          "From level six there is a lever and blue crystal blocks. Flip the lever and the crystals go solid: pans, the farmer and fruit can't pass through them, and a fruit inside one can't be picked up. Flip it again and they're gone. The lever won't flip if a crystal would land on you or on a pan.",
+          "Clear a level by getting every fruit into the basket with your hands empty."
+        ],
+        "special": "In the pictures, every level is a different, richly furnished place with small living things that do nothing but add life, and the run-over look now recolours the whole scene instead of just darkening the edges. The rules are identical to the original; only the art changed.",
+        "look": "Every level has its own scenery: a sunny meadow with barn, sunflowers and a cow; a pink cherry-blossom orchard with a picnic; a sunset with purple hills and flying geese; a twilight pine camp with a campfire and tent; a rainbow sky with hot-air balloons; a spooky cellar with cobwebs, torches and a spider; a glowing cave with a waterfall and a frog; and a lit-up fairground with a ferris wheel and bunting. The farmer blinks, looks where he walks and cheers or weeps. Fruit has leaves, the pans and pulleys turn, a pet on the shelf watches him, and a burning fuse shows the moves left. A won level bursts into confetti; a lost run turns the whole scene dim red and purple, with a rain cloud over the weeping farmer."
+      }
+    },
+    {
+      "id": "kt02",
+      "class_name": "Kt02",
+      "path": "games/kt02.py",
+      "sha256": "e3e1bcd2f7b86b07e0d994027a2aa0c895d6eaa1d1622fc3ed1ec3b9b1e93379",
+      "levels": 10,
+      "human": null,
+      "preview": "previews/kt02.png",
+      "media": {
+        "play": "previews/kt02.png",
+        "levels": "previews/kt02-levels.png"
+      },
+      "tiles": 10,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "play": "https://arc3.sonpham.net/games/kt02",
+      "spoiler": {
+        "teaser": "Knot Tying. Lay a cord over and under, then pull the knot tight.",
+        "hard": "You only find out a knot is wrong when you pull it. Lay the cord, press Space at the finish, and if any crossing has the wrong strand on top the cord snaps back and the run ends; a reset starts the level over. The cord can't touch the same spot twice, it runs straight through crossings, and over or under is decided by which pass came second. So the whole route has to be planned before the first inch goes down. A bot that wanders the slats until it reaches the end will tie the wrong knot.",
+        "rules": [
+          "The arrow keys lay the cord along the slats from the black start eyelet. It can't leave the slats and can't go back over a spot it already covers.",
+          "Space at the purple finish eyelet pulls the cord tight. If every crossing is right the knot holds and you move on. If not, the cord snaps back and the run ends; a reset starts the level again. Space anywhere else does nothing.",
+          "Undo takes the cord back one step at a time, as far as the start eyelet, as often as you like, so a dead end never traps you.",
+          "At a crossing the cord goes straight through, never turning. Each crossing takes one pass across and one pass up and down, and the second pass is the one that ends up on top.",
+          "A blue bar on a crossing says the across strand must end on top. A white bar says the up and down strand must. Every crossing has to be crossed twice, and only the second pass counts.",
+          "There are ten levels, from a single winding run with no crossings to a lattice with five."
+        ],
+        "special": "In the pictures, every object is a separate drawn character with eyes and a mouth rather than specks painted on the screen, each level has its own look and gentle moving life, and this is the much heavier, much longer game next to the original, with the same rules and the same ten levels.",
+        "look": "Every level is its own tablecloth with its own weave, edge trim and slat colours. Level one is green meadow cloth with a bear and a bunny and a snail on the edge. Level two is a night quilt with an owl, a moon and fireflies. Level three is purple velvet with a frog and rising hearts. Level four is orange gingham with a cat and a penguin. Level five is a sky picnic with smiling clouds and a bunny. Level six is red tartan with green bamboo slats and an owl. Level seven is a maroon diamond cloth with a cat and a ghost. Level eight is candy magenta with a frog and ice cream. Level nine is a yellow cheesecloth with a bear. Level ten is a black night cloth with bright thread confetti, a bat, a rocket and an owl. Little creatures walk the edges, petals, birds, embers and hearts drift by, and the cord's head has its own faces. A good pull showers the screen with ribbon streamers and sparkles at the finish; a lost run turns everything dim and red, with tears on the faces."
       }
     }
   ],
