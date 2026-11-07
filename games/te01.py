@@ -5,6 +5,7 @@
 # SRP/DRY check: Pass — cable, cover and blade rules are pure functions; sprite art and engine glue come last.
 # Updated: 05-November-2026, Claude Fable 5.1 -- cable tightening no longer raises inside the engine when a shortening
 #   step would lengthen the path (the step is skipped instead); keyword arguments to the engine.
+# Updated: 07-November-2026, Claude Opus 5.5 -- no custom reset: RESET follows the engine's rule, as in the public games.
 """te01: an eight-stage revision."""
 from functools import lru_cache
 from collections import namedtuple
@@ -676,12 +677,6 @@ class Te01(ARCBaseGame):
             cue[4 - radius, 4 - radius:5 + radius] = colour
             cue[4 + radius, 4 - radius:5 + radius] = colour
         self.centered('contact-feedback', cue, state.focus, 10, ('feedback',))
-
-    def handle_reset(self):
-        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
-            self.full_reset()
-        else:
-            self.level_reset()
 
     def finish_action(self):
         self.animation = None

@@ -6,6 +6,7 @@
 #   the level; RESET restarts the level; keyword arguments to the engine.
 # Updated: 06-November-2026, Claude Fable 5.1 -- comments only: no internal names, no solver that is not in
 #   this repo, and the level-entry note no longer claims a sinking rebuilds the level.
+# Updated: 07-November-2026, Claude Opus 5.5 -- no custom reset: RESET follows the engine's rule, as in the public games.
 """pt01 (game source).
 
 Author: Claude Sonnet 5.5, for Mark Barney, 13-October-2026.
@@ -593,15 +594,6 @@ class Pt01(ARCBaseGame):
     @property
     def spec(self):
         return SPECS[self.level_index]
-
-    def handle_reset(self) -> None:
-        """A full restart only from a fresh or finished game; otherwise the level starts over.
-        The engine's default also restarts the whole game when no action has been taken yet on a
-        level, which would wipe progress on a RESET sent right after a level is cleared."""
-        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
-            self.full_reset()
-        else:
-            self.level_reset()
 
     # ── entering a level: the one place that builds it, used for start, next level and RESET ──
 

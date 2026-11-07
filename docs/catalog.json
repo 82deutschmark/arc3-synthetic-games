@@ -1,5 +1,5 @@
 {
-  "version": "0.8.7",
+  "version": "0.8.8",
   "snapshot_date": "2026-11-02",
   "featured": [
     "pt01",
@@ -70,7 +70,7 @@
       "id": "wb02",
       "class_name": "Wb02",
       "path": "games/wb02.py",
-      "sha256": "5d91ef11a1fc65ac010e11f17569e0280e6e0ac0866dd81eab7a24131e4a7951",
+      "sha256": "082f0f5c3e6a2d122b2a70fb9f1e14191583b68db05fa90bf41d77189d2a5448",
       "levels": 8,
       "human": null,
       "preview": "previews/wb02.png",
@@ -97,7 +97,7 @@
           "The wind blows one fixed way per level, shown by the flags at the top. Every time your boat actually moves, every other boat with its sail up drifts one square downwind, unless a rock, the edge or another boat blocks it, or it sits in calm water.",
           "A raised sail, including the one on the boat you are steering, blocks the wind for the whole line downwind of it in the same row or column, even past rocks. That calm water is drawn paler, and a boat sitting in it does not drift, so you can park one boat upwind to hold another still.",
           "The hidden rule: a boat anchors only when you hand control away from it while it sits in its own berth. Then it lowers its sail, drops anchor, stays put and stops shading anyone. A boat the wind pushes into its berth does not anchor, and moving an anchored boat raises its sail again.",
-          "The level clears the moment every boat is in its berth. Every command, even a switch or a blocked move, uses one dot from the green bars at the bottom; undo gives the dot back, and running out ends the run, and a reset restarts the level with a full set of dots.",
+          "The level clears the moment every boat is in its berth. Every command, even a switch or a blocked move, uses one dot from the green bars at the bottom; undo puts the boats back but not the dot, and running out ends the run, and a reset restarts the level with a full set of dots.",
           "Rocks arrive on level two and a third boat on level three, and from level five the wind blows down, left or up instead of right."
         ],
         "special": "Each move of the boat you steer is a gust for every other boat with its sail up, so the boats you are not touching are the real puzzle. What keeps a finished boat home is letting go of it in its berth, which drops its anchor; take that rule away and several levels cannot be won, because the wind carries each docked boat back out while you sail the next one.",
@@ -203,7 +203,7 @@
       "id": "dz01",
       "class_name": "Dz01",
       "path": "games/dz01.py",
-      "sha256": "9f1e1b6f8532ccf59953cc4f4c3a6c0a6c7670a718c747019201a3d7f40d76c4",
+      "sha256": "fe46d2337d8ac9294f9652661d0f4ba72defa5004c649d2b3e4a4deab5a772be",
       "levels": 8,
       "human": {
         "actions": 380,
@@ -400,7 +400,7 @@
       ],
       "class_name": "St01",
       "path": "games/st01.py",
-      "sha256": "432ee9a1beaf03fbeff3d99d1ab2b9d5a8c2838cb5901ab214eadae6bef7f54c",
+      "sha256": "9080cc2261ad7823c5daa4f1f29a39117d0b7253a7eb5abcc77ab0cc8d5a9a4f",
       "levels": 8,
       "human": {
         "actions": 130,
@@ -427,10 +427,10 @@
           "Turn the light with the left and right arrows (space turns it the same way as right), then click a block. It falls over along its shadow and is gone, and every hole under the shadow gets one step shallower.",
           "A shadow reaches as far as the block is tall, and further across holes, so filling a hole also shortens the shadows that cross it. A wall or the edge of the board just cuts a shadow short, but a block whose shadow has nowhere to land cannot fall.",
           "A block may only fall if its whole shadow lands in holes. The board shows this before you click: those holes turn purple, and a shadow that would be refused is drawn dotted.",
-          "Leave the board flat, with no holes and no blocks, to clear the level. A fall that makes that impossible flashes the board red and ends the run; a reset starts the level again.",
+          "Leave the board flat, with no holes and no blocks, to clear the level. Every turn of the light and every click uses up a bit of the white bar under the board; when it runs out the board flashes red and the run ends, and a reset starts the level again with a full bar.",
           "Later levels add holes two deep that need a fall from each side, short blocks that can fall two ways where only one leaves the right run of holes for a tall block, and walled rooms that all share one light."
         ],
-        "special": "You never push a block: you aim the light, and the shadows decide where everything lands, so one turn of the light re-aims every block in every room at once. The shadow doubles as a preview that keeps changing as holes fill. After every fall the game checks every move still left and ends the run only when the level truly cannot be won, so you never play on a dead board.",
+        "special": "You never push a block: you aim the light, and the shadows decide where everything lands, so one turn of the light re-aims every block in every room at once. The shadow doubles as a preview that keeps changing as holes fill. Every turn of the light and every click costs one step of a white bar under the board, so wasted turns add up; a board you have ruined plays on until the bar runs dry.",
         "look": "Yellow lit rooms on black, green blocks marked with one white die face for their height, blue holes with a white die face on every square for their depth, and a yellow wedge on the edge of the screen for the light. A fall sweeps green down the shadow into the holes, and a refused block blinks a red outline.",
         "vsPublic": "None of the public write-ups describes a light or shadows. The nearest are KA59, where you knock pieces into frames they fit, and BP35, where a red block flips which way the world pulls you. ST01 never moves a piece by hand: its one direction control re-aims every block on the board at once and decides where each one will land.",
         "markSaid": ""
@@ -490,7 +490,7 @@
       "id": "eh01",
       "class_name": "Eh01",
       "path": "games/eh01.py",
-      "sha256": "f9ac636ffdc2a69e64d558203eee148fec817594189eedd26e803e984648ba9d",
+      "sha256": "7836bb714bcd27c8db693e0fa222c0145315d8ecbebdeaa43f695fdc087fab15",
       "levels": 8,
       "human": {
         "actions": 836,
@@ -519,9 +519,9 @@
           "Every look burns one of the two orange marks on the square you step back onto. When its last mark goes it becomes a crossed orange scar: you can step off it but never back on, so the order you explore in decides the level. The entrance never wears out.",
           "Lighting a key sends it flying into a slot along the top. When every slot is full the ring turns from pink to pale blue. You have to light the ring itself too, then walk in.",
           "Pits look like any other dark square. Step onto one and then walk off it in any direction, even back the way you came, and you fall back to the entrance. Press space on it instead and you step back safely; either way the pit is lit and can never be entered again.",
-          "Level one has no marks and can’t be lost. Later levels add pits, a loop and thin ground that holds only one mark. If you cut off the last way to win, the creature turns red, the corridor fills in with rock and the run ends; a reset starts the level again."
+          "Level one has no marks. Later levels add pits, a loop and thin ground that holds only one mark. Every step and every look uses up a bit of the white bar under the key slots; when the bar runs out, the creature turns red, the corridor fills in with rock and the run ends. A reset starts the level again with a full bar."
         ],
-        "special": "Seeing and spending are the same move: the only way to learn what a square holds is to back off it, and backing off wears down the floor you land on. The budget is written into the corridor itself, so every square you peek into costs ground you may need to cross later. A pit only sends you home, but a mark spent in the wrong place can end the level.",
+        "special": "Seeing and spending are the same move: the only way to learn what a square holds is to back off it, and backing off wears down the floor you land on. The budget is written into the corridor itself, so every square you peek into costs ground you may need to cross later. A pit only sends you home, but a mark spent in the wrong place can leave you stuck until the step bar runs out.",
         "look": "Corridors are cut through deep maroon rock. Unknown ground is purple under a black stipple and lit ground is flat green, both with orange marks in the top corners, a spent square is a crossed orange scar, and ground you can no longer reach fills in with rock. Keys fly up yellow into dark slots along the top beside a ring that is pink when shut and pale blue when open, a lit pit is a pink rim around a black hole, and every look is animated: the creature slides back, the square flares white and the mark burns red.",
         "vsPublic": "LS20 also has a key and a door, but you reshape one key on tiles in plain sight, and its fog only arrives on the final level, where you can still see everything near you; in EH01 nothing a square holds shows until you step back off it. G50T’s fifth action walks you back to the start and leaves a ghost that replays your moves, and SK48’s undo is free; in EH01 stepping back is the only way to see, and each step back costs a mark on the floor. That floor is the whole budget, where LS20 and TU93 count your steps on a bar.",
         "markSaid": "You have to discover where the keys are. It’s kind of a little bit like Minesweeper. … I think this is probably a perfect training game."
@@ -531,7 +531,7 @@
       "id": "wf02",
       "class_name": "Wf02",
       "path": "games/wf02.py",
-      "sha256": "3278bd411a591e96f7e09367e9ff17854c620e4a99428bb7b60a9532d30c9723",
+      "sha256": "42e9ae413979df8ddc49856552b0996a668d05028b22891a5d3bd61d13127735",
       "levels": 8,
       "human": null,
       "preview": "previews/wf02.png",
@@ -553,12 +553,12 @@
           "Pipes arch over the tanks with a wheel on top of each. Click a wheel to pour one block along that pipe, or two if the pipe has a stripe down its middle. The wheel shows one or two blocks of water on the side it will leave from.",
           "Press space or click the lever at the bottom to reverse every pipe of that colour at once. From level 5 the pale pipes with white wheels get a second lever, and only a click moves it.",
           "A pour is refused when the tank it drains holds less than the pipe carries, or the tank it fills has no room. The wheel turns red and shakes, and the tank in the way gets a red rim.",
-          "When every tank sits exactly on its marks, a dot at the top turns green and new marks appear, with the water left where it is. Finish every dot to clear the level. Nothing can be lost, because any pour can be undone by flipping, pouring back and flipping again.",
+          "When every tank sits exactly on its marks, a dot at the top turns green and new marks appear, with the water left where it is. Finish every dot to clear the level. A yellow column at the left edge loses one block for every press or click, misses included; if it runs out first, the run is lost, and a reset starts the level again with it full.",
           "Later levels add short tanks that hold only two blocks, two-block pipes, a high pipe that joins the end tanks into a ring, nearly full tanks and up to four deliveries."
         ],
         "special": "A pipe does not set its own direction: one lever turns every pipe of its colour around at once, so each pour is really a choice of which way a whole circuit runs, and from level 5 two circuits turn separately. The marks change after every match but the water stays put, so the way you finish one delivery sets up the next. Pipe and tank sizes do the rest: a tank fed only by two-block pipes can only ever change by two, and a small tank fills fast and refuses more until you pass water on.",
         "look": "A flat purple field with black tanks of stacked blue water, orange pipes arching overhead, and fat yellow wheel buttons that show water waiting behind a black gate on the side it will leave. A pour lights up the whole pipe, runs a white pulse along it and lands the block with a white flash, and a tank that matches turns its marks and the lamp underneath it green.",
-        "vsPublic": "VC33 is the closest: it also moves liquid between tanks by clicking, but every wall there has a pump on each side, so each click picks its own direction, the goal is a single finished board, and a click budget can lose the level. WF02 hands direction to a lever shared by a whole circuit, moves loads of one or two blocks, can carry water round a ring, chains up to four sets of marks with the water carried over, and has no budget and no way to lose. SP80 also pours, but there you place bars to steer falling liquid into cups instead of sharing out a fixed amount of water between tanks.",
+        "vsPublic": "VC33 is the closest: it also moves liquid between tanks by clicking, but every wall there has a pump on each side, so each click picks its own direction, the goal is a single finished board, and a click budget can lose the level. WF02 hands direction to a lever shared by a whole circuit, moves loads of one or two blocks, can carry water round a ring, chains up to four sets of marks with the water carried over, and like VC33, has a click budget that ends the run when it runs out. SP80 also pours, but there you place bars to steer falling liquid into cups instead of sharing out a fixed amount of water between tanks.",
         "markSaid": ""
       }
     },
@@ -835,7 +835,7 @@
       "id": "bl01",
       "class_name": "Bl01",
       "path": "games/bl01.py",
-      "sha256": "7addad540070a45e403cdf3bfbeaf2c1efb19dbcc5833885483e024e646aa16a",
+      "sha256": "f215d920aadec13ec801b4a31ef9f025f69cee8817862a38dad82d988ff97d2b",
       "levels": 8,
       "human": {
         "actions": 38,
@@ -864,7 +864,7 @@
           "Left and right walk the farmer one square at a time. He stays on the ground, ledges and pans, and can't step off an edge into the air.",
           "Space picks up a fruit next to him, or drops what he's carrying into the basket when he's next to it. With empty hands beside the basket, Space takes a banked fruit back out, heaviest first. Clicking a fruit, the basket or the lever does the same job.",
           "Down is the lift. The lifts are pairs of pans hung over pulleys, with grey weight blocks hanging under one side. Press Down while standing on a pan and the scale tips one step: the heavier side sinks, the lighter side rises, and if they match nothing moves. The farmer weighs one block, a carried fruit adds two or three, and the grey blocks count too.",
-          "A bar along the bottom is your allowance, 320 presses a level. Every press spends one, refused moves included. Empty the bar and you've lost the level. Undo gives the press back.",
+          "A bar along the bottom is your allowance, 320 presses a level. Every press spends one, refused moves included. Empty the bar and you've lost the level. Undo puts the scene back but not the press.",
           "On levels four, five, seven and eight, Up flips gravity, so the farmer falls toward the ceiling and walks it. A small leaf on the right edge shows which way is down.",
           "From level six there is a lever and blue crystal blocks. Flip the lever and the crystals go solid: pans, the farmer and fruit can't pass through them, and a fruit inside one can't be picked up. Flip it again and they're gone. The lever won't flip if a crystal would land on you or on a pan.",
           "Clear a level by getting every fruit into the basket with your hands empty."
@@ -1072,7 +1072,7 @@
       "id": "bs01",
       "class_name": "Bs01",
       "path": "games/bs01.py",
-      "sha256": "68547b0dba83ca5832fc56203517b460f81e61d0314832dda1f059c1ed832319",
+      "sha256": "350877d357d24408af7f773b672a7b389c644d3e3e3842f3798f82ea589c4953",
       "levels": 8,
       "human": null,
       "preview": "previews/bs01.png",
@@ -1090,17 +1090,17 @@
       "play": "https://arc3.sonpham.net/games/g019",
       "spoiler": {
         "teaser": "Bell Stealth. Ring the bells to drive the guards onto the pads, and don't get caught.",
-        "hard": "You never touch the guards. You herd them by choosing which bell to ring, and they also hold the plates down and kill you if you stand beside them. Pips flow between neighbours by height, and a move that makes the level unwinnable kills you on the spot. In the family of G50T, where something other than you holds the plate and can catch you.",
+        "hard": "You never touch the guards. You herd them by choosing which bell to ring, and they also hold the plates down and kill you if you stand beside them. Pips flow between neighbours by height, and you only get so many moves on each level, shown as the yellow bar along the bottom. In the family of G50T, where something other than you holds the plate and can catch you.",
         "rules": [
-          "You are the black figure. The arrow keys move you one square; there is no other control and no undo, and every press is a turn, even walking into a wall or the edge, which is how you wait.",
+          "You are the black figure. The arrow keys move you one square; there is no other control and no undo, and every press is a turn, even walking into a wall or the edge, which is how you wait. Every press also uses up one step of the yellow bar along the bottom; when it runs out you fall and the run ends, and a reset gives you a full bar.",
           "Step on a bell to ring it. From then on every red guard walks one square per turn toward the bell you rang last by a shortest route, waiting in line if another guard is in the way; in the first two levels the pad is itself a bell.",
           "A guard that ends a turn on your square or right beside you, though not diagonally, catches you and the run ends; a reset restarts the level. Pink checks mark every square where that would happen next turn.",
           "Each guard carries pips, shown in white on its belly like a die face, and each plain round pad shows in black pips how many it needs; the bell pads of the first two levels need one. A guard carrying at least that many lights the pad it stands on, and while every pad is lit the door opens and you walk in to win.",
           "The hidden rule: pips spill between guards standing side by side, though not diagonally. When one guard’s pips plus its ground height are two or more above its neighbour’s, one pip hops across, so ground matters: blue is low, green is middle, and the yellow blocks under the bells are high.",
-          "Also hidden: the moment you make a move from which the level can no longer be won, you fall on the spot and the run ends; a reset restarts the level. Later levels add more guards and pads, sunken blue ground you can still walk on, a rock wall with one gap and a dead-end corridor with the bell at its far end."
+          "Later levels add more guards and pads, sunken blue ground you can still walk on, a rock wall with one gap and a dead-end corridor with the bell at its far end."
         ],
-        "special": "The guards are both the danger and the only way through: you never touch them, you herd the whole group at once by choosing which bell to ring and when, and they open the door for you by standing on the pads. Their pips behave like water finding its level, running from the guard that stands taller, counting pips and ground together, to the one beside it; without that flow, or with the ground made flat, most levels cannot be won. A lost position is never left to drag on: the move that makes the level unwinnable is the move that kills you.",
-        "look": "An early home-console cartridge look: flat saturated colors with hard black edges, ground in three heights (blue low, green middle, yellow high), purple brick for walls and the border, red horned guards that face the way they will step, orange bells on yellow blocks, round light-blue pads, a maroon door and a small black figure for you. The bell you rang last turns white, a held pad glows white, the border turns white when the door opens and red when you are caught or fall, you turn pink and crumple, and a pip is drawn flying from one guard to the next when it spills.",
+        "special": "The guards are both the danger and the only way through: you never touch them, you herd the whole group at once by choosing which bell to ring and when, and they open the door for you by standing on the pads. Their pips behave like water finding its level, running from the guard that stands taller, counting pips and ground together, to the one beside it; without that flow, or with the ground made flat, most levels cannot be won. Each level gives you about twice the moves the shortest route needs, shown as a yellow bar along the bottom; run it dry and you fall.",
+        "look": "An early home-console cartridge look: flat saturated colors with hard black edges, ground in three heights (blue low, green middle, yellow high), purple brick for walls and the border, red horned guards that face the way they will step, orange bells on yellow blocks, round light-blue pads, a maroon door and a small black figure for you. The bell you rang last turns white, a held pad glows white, the border turns white when the door opens and red when you are caught or fall, a yellow bar in the bottom border shrinks by one dot with every move, you turn pink and crumple, and a pip is drawn flying from one guard to the next when it spills.",
         "vsPublic": "Closest are WA30, where helpers take a step every time you act and haul crates into bays on their own routine, and G50T, where a ghost copy of you holds a plate down while patrols kill you if they land on your square. Here the plate-holders are the same creatures that kill you, standing beside one is as deadly as standing on it, and you steer them only by which bell you rang last. VC33 moves liquid between tanks, but only when you click a pump; here the pips pass between neighbouring guards on their own, by count and ground height together.",
         "markSaid": ""
       }
@@ -1177,7 +1177,7 @@
       "id": "kt01",
       "class_name": "G036",
       "path": "games/kt01.py",
-      "sha256": "1f90cb01ac31a7de8a91a1e0e8c8c5be934fd03234b42d42b4370f233d7c6948",
+      "sha256": "a7b99200a65832a11436fb38527d805811f3964b5130d594b7e3cf439db6f515",
       "levels": 10,
       "human": null,
       "preview": "previews/kt01.png",
@@ -1197,10 +1197,10 @@
       "play": "https://arc3.sonpham.net/games/g036",
       "spoiler": {
         "teaser": "Knot Tying. Lay a cord over and under, then pull the knot tight.",
-        "hard": "You only find out a knot is wrong when you pull it. Lay the cord, press Space at the finish, and if any crossing has the wrong strand on top the cord snaps back and the level starts over. The cord can't touch the same spot twice, it runs straight through crossings, and over or under is decided by which pass came second. So the whole route has to be planned before the first inch goes down. A bot that wanders the slats until it reaches the end will tie the wrong knot.",
+        "hard": "You only find out a knot is wrong when you pull it. Lay the cord, press Space at the finish, and if any crossing has the wrong strand on top the cord snaps back and the run ends; a reset starts the level over. The cord can't touch the same spot twice, it runs straight through crossings, and over or under is decided by which pass came second. So the whole route has to be planned before the first inch goes down. A bot that wanders the slats until it reaches the end will tie the wrong knot.",
         "rules": [
           "The arrow keys lay the cord along the slats from the black start eyelet. It can't leave the slats and can't go back over a spot it already covers.",
-          "Space at the purple finish eyelet pulls the cord tight. If every crossing is right the knot holds and you move on. If not, the cord snaps back and the level starts again. Space anywhere else does nothing.",
+          "Space at the purple finish eyelet pulls the cord tight. If every crossing is right the knot holds and you move on. If not, the cord snaps back and the run ends; a reset starts the level again. Space anywhere else does nothing.",
           "Undo takes the cord back one step at a time, as far as the start eyelet, as often as you like, so a dead end never traps you.",
           "At a crossing the cord goes straight through, never turning. Each crossing takes one pass across and one pass up and down, and the second pass is the one that ends up on top.",
           "A blue bar on a crossing says the across strand must end on top. A white bar says the up and down strand must. Every crossing has to be crossed twice, and only the second pass counts.",
@@ -1257,7 +1257,7 @@
       "id": "pt01",
       "class_name": "Pt01",
       "path": "games/pt01.py",
-      "sha256": "e310725221a63a63999f16515c0dd82adb141397b2acf89332f520c916e59703",
+      "sha256": "73c4ea67623441729fff6fb039c7b47bed55a473cfde1e9aeaa86a234c9a1873",
       "levels": 8,
       "human": {
         "actions": 373,
@@ -1342,7 +1342,7 @@
       "id": "ss01",
       "class_name": "Ss01",
       "path": "games/ss01.py",
-      "sha256": "4bc8cb8759a852e341e075c09dafb182848643d5d451104d87fdbd3863f41991",
+      "sha256": "873333058bd54b0209c581aa0ce60c93d6997465c61d31ee17c59804a08a9dca",
       "levels": 8,
       "human": {
         "actions": 484,
@@ -1379,7 +1379,7 @@
       "id": "te01",
       "class_name": "Te01",
       "path": "games/te01.py",
-      "sha256": "103983c390833d48963969adb11cc8514b165b871135cf4f756ed62dc1ec9fc7",
+      "sha256": "3b7641014402159aea53e1df4ce9f2536c9d7b84de74ed2667d74b37c2ea317f",
       "levels": 8,
       "human": {
         "actions": 487,
@@ -1425,7 +1425,7 @@
       ],
       "class_name": "Se01",
       "path": "games/se01.py",
-      "sha256": "eed84b6024874d03465133918e86a9187049c96da36bae3d1ecfc805c7fbbb6c",
+      "sha256": "bdfad29e8b956028bc34533fc0de7f54ae9d1c09524ba3677b3766962d8b4104",
       "levels": 6,
       "human": null,
       "preview": "previews/se01.png",
@@ -1449,12 +1449,12 @@
           "Four shrines stand in the four corners. Step onto a shrine’s brazier and every gate of one colour, anywhere in the world, crumbles for the rest of the level.",
           "No shrine shows which colour it opens, but that never changes: top-left opens red, top-right blue, bottom-left purple, bottom-right light grey. The sanctum door is a gate too, and its colour changes from level to level.",
           "The gates decide which shrines you can reach, so each level hides an order. The land is the same in every level; only the gates and the patrols change. Until the last two levels some shrines open nothing, and the last two need all four.",
-          "Walk into a magenta thorn bush, or let a magenta horned patrol step onto you, and you go back to the last shrine you stood on, or to the start if you have not reached one. Patrols pace short stretches of track from level two on, one step for each move you make; the flowers are harmless, even the magenta ones.",
-          "There are no lives and no timer, and lit shrines stay lit. Bumping into a wall or a shut gate still lets the patrols take their step, which is how you wait for one to pass."
+          "Walk into a magenta thorn bush, or let a magenta horned patrol step onto you, and the run is over; reset to start the level again. Patrols pace short stretches of track from level two on, one step for each move you make; the flowers are harmless, even the magenta ones.",
+          "A bar under the world shows the moves you have left for the level. It shrinks with every move, bumps included, and when it runs out the run is over. Lit shrines stay lit. Bumping into a wall or a shut gate still lets the patrols take their step, which is how you wait for one to pass, but it costs a move."
         ],
         "special": "Lighting a shrine changes the world somewhere you cannot see, and nothing tells you what changed: you find out only when you come back to a gate that stopped you and find it gone. The land never changes between levels, only the gates and patrols do, so what you learn about the map and the shrine colours carries over while the order has to be found again. On the first level one shrine has a gate of its colour on the same screen, so you watch one crumble before the game starts working at a distance.",
         "look": "An early home-console look: flat green fields with oaks, pines and glinting ponds, yellow tracks with stepped corners, brick shrines with tiled roofs, and barred gates in red, blue, purple and light grey that crumble away when opened. A hooded black pilgrim with white eyes and a maroon scarf, magenta horned patrols whose eyes look where they are heading, and magenta thorn bushes, with every step sliding smoothly across the screen.",
-        "vsPublic": "DC22 is the closest: on its first levels each coloured button changes every floor piece of its colour, but you click it on a side panel with its pieces on the same screen, and G50T’s floor plates are each joined to their gate by a line of the same colour. In SE01 a shrine never shows its colour, and after the first level its gates are always somewhere else, so you only learn what it did by travelling back to look. G50T and TU93 have patrols that kill you and hold still when you bump a wall; here a catch only sends you back to your last shrine, making each shrine a key and a checkpoint at once, and a bump lets the patrols step so you can wait them out.",
+        "vsPublic": "DC22 is the closest: on its first levels each coloured button changes every floor piece of its colour, but you click it on a side panel with its pieces on the same screen, and G50T’s floor plates are each joined to their gate by a line of the same colour. In SE01 a shrine never shows its colour, and after the first level its gates are always somewhere else, so you only learn what it did by travelling back to look. G50T and TU93 have patrols that kill you and hold still when you bump a wall; here patrols kill you too, but a bump lets them step, so you can spend moves to wait them out.",
         "markSaid": ""
       }
     }

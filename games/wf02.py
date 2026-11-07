@@ -2,13 +2,19 @@
 # Author: Claude Sonnet 5.5 Medium; water buttons and lever stops by Claude Opus 5.5 High (01-November-2026)
 # Date: 30-October-2026 (edited 01-November-2026)
 # Updated: 06-November-2026, Claude Fable 5.1 -- header and import tidy only (an unused import removed); no behaviour change
+# Updated: 07-November-2026, Claude Opus 5.5 -- a move counter: a yellow column at the left edge loses one cell per
+#   accepted press or click; when it runs dry the run is lost, and RESET restarts the level with it full
 # PURPOSE: A bank of linked water tanks; click a wheel to pour one or two blocks along its pipe, flip the
 #   flow lever to reverse a circuit, and match every tank to its white target marks.  A wheel shows water
-#   waiting on the side it will leave.
+#   waiting on the side it will leave.  Every press or click spends one cell of the yellow column at the left
+#   edge; run it dry before the last delivery and the run is lost.
 # SRP/DRY check: Pass -- rules are pure module functions, art is pure pixel functions, the class only wires
 #   them; the glyph set (GATE / DROP_ONE / DROP_TWO / RING) is drawn once.
 #
 # CHANGELOG
+# 07-Nov-2026 Claude Opus 5.5: nothing could be lost before.  Each level now has a move counter drawn as a yellow
+#   column at the left edge (one cell per accepted press or click, misses and refused presses included); at zero
+#   the run ends, as in the public games.  Rules, levels and art otherwise unchanged.
 # 01-Nov-2026 Claude Opus 5.5 High: playtesters still read the comets as arrows. Wheels now show water behind a black
 #   gate, on the side it leaves (one block for one unit, two for two); the lever ends are plain stops. Art only.
 # 30-Oct-2026 Claude Sonnet 5.5 Medium: the chevron arrows on the wheels and lever are replaced by a comet
@@ -102,6 +108,11 @@ LEVELS = [
          orders=[(2, 1, 4, 3, 6), (6, 4, 2, 2, 2), (0, 3, 4, 3, 6), (6, 5, 3, 2, 0)]),
 ]
 
+
+# Moves allowed per level: twice the shortest winning line, found by a full breadth-first search over
+# (levels, lever bits, delivery) with this file's own refusal / pour / lanes, counting a lever flip and a
+# press as one move each.  Shortest lines: 5, 12, 18, 25, 30, 39, 53, 70.
+BUDGETS = (10, 24, 36, 50, 60, 78, 106, 140)
 
 # ---------------------------------------------------------------- layout
 # One row of tanks standing on a shelf.  Pipes arch over the top: neighbours on the first tier,
@@ -295,6 +306,17 @@ def pipe_pixels(valve, look, window, lit=False):
     return px
 
 
+GAUGE_ROWS = 61   # rows 2..62 at columns 0..2: empty on every level (the machine starts at column 4)
+
+
+def gauge_pixels(left):
+    """The move counter: cells stacked three across from the bottom of a 3x61 column; the top cell goes first."""
+    px = np.full((GAUGE_ROWS, 3), -1, dtype=np.int8)
+    for k in range(left):
+        px[GAUGE_ROWS - 1 - k // 3, k % 3] = WHEEL
+    return px
+
+
 def pip_pixels(state):
     px = np.full((5, 5), -1, dtype=np.int8)
     px[:, :] = {"done": DONE, "now": WHEEL, "later": IDLE}[state]
@@ -325,6 +347,7 @@ class Wf02(ARCBaseGame):
         self.order = 0
         self.queue = []
         self.finish = False
+        self.left = BUDGETS[self.level_index]   # set on level entry, so RESET refills it
         self.sprites = {}
         geo = self.geo
 
@@ -347,6 +370,7 @@ class Wf02(ARCBaseGame):
         total = len(self.spec["orders"])
         for k in range(total):
             add(f"pip_{k}", blank, 32 - (total * 8 - 3) // 2 + 8 * k, 2, 5)
+        add("gauge", blank, 0, 2, 6)
         self.paint({})
 
     # ---- drawing
@@ -400,6 +424,7 @@ class Wf02(ARCBaseGame):
             if pips is not None:
                 state = pips[k]
             sp[f"pip_{k}"].pixels = pip_pixels(state)
+        sp["gauge"].pixels = gauge_pixels(self.left)
 
     # ---- turns
     def step(self):
@@ -407,13 +432,16 @@ class Wf02(ARCBaseGame):
             self.complete_action()
             return
         if not self.queue:
+            self.left -= 1          # every accepted press or click counts, misses included
             self.take(self.action)
         if self.queue:
             self.paint(self.queue.pop(0))
         if not self.queue:
-            if self.finish:
+            if self.finish:         # a delivery on the last move still wins
                 self.finish = False
                 self.next_level()
+            elif self.left <= 0:
+                self.lose()
             self.complete_action()
 
     def take(self, action):

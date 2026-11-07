@@ -17,6 +17,7 @@
 #   restarting the level (RESET restarts it); a perched hero shows a hand on the wall; keyword arguments to the engine.
 # Updated: 06-November-2026, Claude Opus 5.5 -- the perched hand is drawn on the wall the hero actually climbed
 #   against (the row he left), not on whatever is beside his new cell; header no longer cites files not in this repo.
+# Updated: 07-November-2026, Claude Opus 5.5 -- no custom reset: RESET follows the engine's rule, as in the public games.
 # PURPOSE: dz01 -- dig down a shaft of sand, packed earth and rock to the checkered finish at the bottom.
 #   The rules live in pure functions on a small DigState (act, settle, can_go_on), shared by the game (which
 #   animates the frames act() records) and by the dead-end test can_go_on. Reads nothing; the levels are the
@@ -843,15 +844,6 @@ class Dz01(ARCBaseGame):
         self._script = []
         self._end = None
         self._busy = False
-
-    def handle_reset(self) -> None:
-        """A full restart only from a fresh or finished game; otherwise the level starts over.
-        The engine's default also restarts the whole game when no action has been taken yet on a
-        level, which would wipe progress on a RESET sent right after a level is cleared."""
-        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
-            self.full_reset()
-        else:
-            self.level_reset()
 
     def view_state(self):
         return self.v[0] if self.v is not None else self.st

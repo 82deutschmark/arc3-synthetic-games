@@ -2,10 +2,13 @@
 # Author: Team Turducken agents, under Mark Barney's direction
 # Date: October 2026
 # PURPOSE: st01: turn the light and click a solid; it topples along its shadow into the holes. Win by levelling the board.
-# SRP/DRY check: Pass -- pure rules (cast, fell, winnable) first, drawing next, the engine game class last.
+# SRP/DRY check: Pass -- pure rules (cast, fell) first, drawing next, the engine game class last.
 # Updated: 05-November-2026, Claude Fable 5.1 -- the game is st01 (it reported itself as g014); a lost position now ends
 #   the run as GAME_OVER instead of silently restarting the level; the winnability memo lives on the game, not the
 #   module; RESET restarts the level, or the whole game only when nothing has been played or it is won.
+# Updated: 07-November-2026, Claude Opus 5.5 -- each level now has a move counter (every light turn and every click
+#   spends one) drawn as a white bar under the board; the run ends when it runs out. The game no longer searches
+#   ahead to end a stuck run, so the winnability search and its memo are gone.
 #
 # Designer notes
 # --------------
@@ -19,9 +22,10 @@
 # shadow drawn as a chequer is a solid that is refused: it would hang over floor, run into
 # something, or run off the board. A hole deepens the reach of a shadow that crosses it.
 #
-# If a topple leaves a level that can no longer be won, the board flashes and the run ends
-# (GAME_OVER); RESET starts the level again. That is checked by the game itself (search over
-# every remaining topple), so a lost run always means the position really was lost.
+# Every action spends one step of the white bar under the board: each turn of the light and
+# each click, even a refused one. When the bar is empty and the board is not level, the board
+# flashes and the run ends (GAME_OVER); RESET starts the level again with a full bar. A stuck
+# player is not stopped early: the game never looks ahead to judge whether a level is lost.
 
 import numpy as np
 
@@ -60,6 +64,13 @@ TURN_FRAMES = 3
 DIE_FRAMES = 16
 
 DEPTHS = {".": 0, "a": -1, "b": -2, "c": -3, "#": WALL}
+
+# Moves per level (light turns plus clicks). Each is twice the shortest winning line, found by an
+# exact search over the game's own rules (fell / regions, A-star with a per-room lower bound,
+# matching plain breadth-first search on levels 1-6): 1, 12, 11, 15, 15, 19, 23, 27 moves.
+BUDGETS = (2, 24, 22, 30, 30, 38, 46, 54)
+C_BAR = C_PIP
+BAR_ROW = INSET + N * CELL      # the one free row between the board and a light at the bottom
 
 # LEVELS_BEGIN
 LEVELS_SPEC = [
@@ -263,59 +274,6 @@ def is_flat(field) -> bool:
     return all(v == 0 or v >= WALL for row in field for v in row)
 
 
-def components(field):
-    """Separate rooms: shadows never cross a wall, so rooms can be judged one by one."""
-    seen, comps = set(), []
-    for y in range(N):
-        for x in range(N):
-            if field[y][x] < WALL and (x, y) not in seen:
-                comp, stack = {(x, y)}, [(x, y)]
-                seen.add((x, y))
-                while stack:
-                    cx, cy = stack.pop()
-                    for dx, dy in SUNS:
-                        nx, ny = cx + dx, cy + dy
-                        if (0 <= nx < N and 0 <= ny < N and (nx, ny) not in seen
-                                and field[ny][nx] < WALL):
-                            seen.add((nx, ny))
-                            comp.add((nx, ny))
-                            stack.append((nx, ny))
-                comps.append(frozenset(comp))
-    return comps
-
-
-def alive(field, comps, memo) -> bool:
-    """False when some room can no longer be levelled, whichever way the light turns. memo is the
-    game's own cache of boards already judged."""
-    for comp in comps:
-        part = tuple(tuple(field[y][x] if (x, y) in comp else WALL for x in range(N))
-                     for y in range(N))
-        if not winnable(part, memo):
-            return False
-    return True
-
-
-def winnable(field, memo) -> bool:
-    """Can this board still be levelled, whichever way the light is turned?"""
-    got = memo.get(field)
-    if got is not None:
-        return got
-    if is_flat(field):
-        res = True
-    else:
-        res = False
-        for cell in regions(field):
-            for si in range(4):
-                nxt = fell(field, cell, si)
-                if nxt is not None and winnable(nxt, memo):
-                    res = True
-                    break
-            if res:
-                break
-    memo[field] = res
-    return res
-
-
 def build_levels() -> list[Level]:
     pad = lambda: Sprite(
         pixels=[[C_INK] * (N * CELL) for _ in range(N * CELL)], name="board",
@@ -456,6 +414,11 @@ class ShadowDisplay(RenderableUserDisplay):
                         frame[y, x] = C_BAD
         else:
             paint_sun(frame, SUNS[g.sun])
+        # the move counter: a bar under the board that loses at least one pixel per move
+        span = N * CELL
+        if g.budget:
+            left = -(-span * max(0, g.moves_left) // g.budget)
+            frame[BAR_ROW, INSET:INSET + left] = C_BAR
         return frame
 
     def _paint_block(self, frame, field, x, y, px, py, h, anchor):
@@ -527,8 +490,8 @@ class St01(ARCBaseGame):
         self.pending = self.field
         self.cue_cells = set()
         self.cue_point = None
-        self.comps = components(self.field)
-        self.memo = {}
+        self.budget = BUDGETS[0]
+        self.moves_left = self.budget
         camera = Camera(
             width=64, height=64,
             background=C_INK, letter_box=C_INK,
@@ -553,18 +516,8 @@ class St01(ARCBaseGame):
         self.pending = self.field
         self.cue_cells = set()
         self.cue_point = None
-        self.comps = components(self.field)
-        self.memo = {}
-
-    def handle_reset(self) -> None:
-        """A full restart only from a fresh or finished game; otherwise the level starts over.
-        The engine's default also restarts the whole game when no action has been taken yet on a
-        level, which would wipe progress on a RESET sent right after a level is cleared."""
-        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
-            self.full_reset()
-        else:
-            self.level_reset()
-
+        self.budget = BUDGETS[self.level_index]
+        self.moves_left = self.budget
 
     def _begin(self, phase: str, frames: int) -> None:
         self.phase = phase
@@ -575,14 +528,18 @@ class St01(ARCBaseGame):
         self.field = self.pending
         self.topple_from = frozenset()
         self.topple_to = set()
+        self.phase = None
         if is_flat(self.field):
-            self.phase = None
             self.next_level()
             self.complete_action()
-        elif not alive(self.field, self.comps, self.memo):
+        else:
+            self._settle()
+
+    def _settle(self) -> None:
+        """End of a move that did not win: an empty counter flashes the board, then the run is lost."""
+        if self.moves_left <= 0:
             self._begin("die", DIE_FRAMES)
         else:
-            self.phase = None
             self.complete_action()
 
     def step(self) -> None:
@@ -603,10 +560,12 @@ class St01(ARCBaseGame):
                 self.complete_action()
             else:
                 self.phase = None
-                self.complete_action()
+                self._settle()
             return
 
         aid = self.action.id
+        if aid in (GameAction.ACTION3, GameAction.ACTION4, GameAction.ACTION5, GameAction.ACTION6):
+            self.moves_left -= 1
         if aid in (GameAction.ACTION3, GameAction.ACTION4, GameAction.ACTION5):
             self.prev_sun = self.sun
             self.sun = (self.sun + (-1 if aid == GameAction.ACTION3 else 1)) % 4

@@ -9,6 +9,7 @@
 # Updated: 05-November-2026, Claude Fable 5.1 -- the dead tie-breaking loop is gone (one fixed wind can never send two
 #   boats to one cell).
 # Updated: 06-November-2026, Claude Fable 5.1 -- header chat leftover and an unused 'shelter' switch removed.
+# Updated: 07-November-2026, Claude Opus 5.5 -- no custom reset (RESET follows the engine's rule); undo no longer gives back the dot, as in the public games.
 from arcengine import ARCBaseGame, Camera, GameAction, Level, Sprite, BlockingMode
 
 DIRECTIONS = ((0, -1), (0, 1), (-1, 0), (1, 0))
@@ -222,14 +223,6 @@ class Wb02(ARCBaseGame):
         self.frames = []
         self.show(picture(self.spec,self.logical))
 
-    def handle_reset(self):
-        # Retry the current board even before its first move. A completed game
-        # follows the engine's normal full restart so completed-level score is sane.
-        if self._score >= len(SPECS):
-            self.full_reset()
-        else:
-            self.level_reset()
-
     def show(self, sprites):
         self.current_level.remove_all_sprites()
         for item in sprites:
@@ -286,12 +279,13 @@ class Wb02(ARCBaseGame):
             before = self.logical
             if command == 7:
                 if self.history:
-                    self.logical,self.used = self.history.pop()
+                    # undo puts the boats back but, as in the public games, never gives back spent dots
+                    self.logical = self.history.pop()
                     self.frames = [picture(self.spec,self.logical)]
                 else:
                     self.frames = [picture(self.spec,before,refusal=True),picture(self.spec,before)]
             else:
-                self.history.append((before,self.used))
+                self.history.append(before)
                 self.used += 1
                 if command == 6:
                     command = self.click_action(int(self.action.data.get('x',-1)),int(self.action.data.get('y',-1)))

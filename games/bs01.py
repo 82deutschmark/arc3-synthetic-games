@@ -3,12 +3,14 @@
 #   won ends the run as GAME_OVER instead of silently restarting the level; every level is searched once at import,
 #   so a level too large or unwinnable fails at load and never mid-play; RESET restarts the level.
 # Updated: 06-November-2026, Claude Fable 5.1 -- header and comments no longer cite the old id or a level tool not in this repo.
+# Updated: 07-November-2026, Claude Opus 5.5 -- the hidden dead-end death and the import-time level search are gone; each
+#   level now has a move counter drawn as a yellow bar in the bottom border, and the run ends when it runs out.
 # Author: Claude Sonnet 5.5
 # Date: 13-October-2026
-# PURPOSE: Second version of this game: eight levels that climb, a redrawn board, and a short visible
-#   death whenever a position can no longer be won. One file, one game class.
-# SRP/DRY check: Pass. Rules and the dead-end search are pure functions near the top; the art and
-#   the engine glue follow; nothing below the rules decides an outcome.
+# PURPOSE: Second version of this game: eight levels that climb, a redrawn board, a short visible
+#   death when a guard catches you or the move counter runs out. One file, one game class.
+# SRP/DRY check: Pass. Rules are pure functions near the top; the art and the engine glue follow;
+#   nothing below the rules decides an outcome except spending the move counter.
 
 from collections import deque
 
@@ -185,6 +187,12 @@ LEVELS = [
 ]
 # LEVELS>>>
 
+# Moves allowed per level, drawn as the bar in the bottom border; every arrow press spends one, RESET
+# refills it. Sized at twice the shortest winning line, found by a full breadth-first search over
+# (you, guards, loads, bell) with resolve() below on 07-Nov-2026: shortest lines 8, 21, 23, 27, 33,
+# 38, 45, 50.
+MOVE_BUDGET = (16, 42, 46, 54, 66, 76, 90, 100)
+
 HEIGHT_OF = {"#": None, ".": 0, "-": 1, "=": 2}
 PLATE_GLYPHS = "1234"
 BELL_PLATE_GLYPHS = "wxyz"
@@ -330,61 +338,8 @@ def resolve(m: dict, player: tuple, guards: tuple, loads: tuple, target, move: t
     return nxt, guards, loads, target, caught, won
 
 
-# ---------------------------------------------------------------------------------------------
-# Dead ends. Every position the player can reach is searched once per level (kept at module
-# level, never on the game object, so copies of the game stay small). A position that cannot
-# reach a win is a dead end: the game shows a death the moment the player arrives in one.
-# ---------------------------------------------------------------------------------------------
-_LIVE: dict = {}
-STATE_CAP = 60000
-
-
 def start_state(m: dict) -> tuple:
     return (m["start"], m["posts"], m["loads"], None)
-
-
-def analyse(index: int) -> frozenset:
-    if index in _LIVE:
-        return _LIVE[index]
-    m = model(index)
-    start = start_state(m)
-    seen = {start}
-    queue = deque([start])
-    back: dict = {}
-    winners = []
-    while queue:
-        s = queue.popleft()
-        p, g, b, t = s
-        for mv in MOVES.values():
-            np_, ng, nb, nt, caught, won = resolve(m, p, g, b, t, mv)
-            if caught:
-                continue
-            if won:
-                winners.append(s)
-                continue
-            ns = (np_, ng, nb, nt)
-            back.setdefault(ns, []).append(s)
-            if ns not in seen:
-                if len(seen) >= STATE_CAP:
-                    raise ValueError(f"level {index + 1} has too many positions to search")
-                seen.add(ns)
-                queue.append(ns)
-    live = set(winners)
-    queue = deque(winners)
-    while queue:
-        s = queue.popleft()
-        for prev in back.get(s, ()):
-            if prev not in live:
-                live.add(prev)
-                queue.append(prev)
-    if start not in live:
-        raise ValueError(f"level {index + 1} cannot be won from its start")
-    _LIVE[index] = frozenset(live)
-    return _LIVE[index]
-
-
-for _index in range(len(LEVELS)):
-    analyse(_index)          # fail at import, not at level entry
 
 
 # ---------------------------------------------------------------------------------------------
@@ -625,7 +580,7 @@ def _danger(m, guards, target):
 
 
 class Overlay(RenderableUserDisplay):
-    """The brick border, the glow round a pad that is holding, and a load in flight."""
+    """The brick border, the move counter, the glow round a pad that is holding, and a load in flight."""
 
     def __init__(self, game: "Bs01") -> None:
         super().__init__()
@@ -638,6 +593,14 @@ class Overlay(RenderableUserDisplay):
         frame[_BAND] = {"normal": PURPLE, "live": WHITE, "death": RED}[view["ring"]]
         frame[_BLACKS] = BLACK
         m = model(self._game.level_index)
+        # The move counter lives in the two inner rows of the bottom border: one pixel per move,
+        # two moves to a column, on a black track as long as the full budget. It empties from
+        # the right, one pixel per arrow press.
+        full = MOVE_BUDGET[self._game.level_index]
+        left = self._game.moves_left
+        frame[61:63, MARGIN:MARGIN + (full + 1) // 2] = BLACK
+        for k in range(min(left, full)):
+            frame[62 if k % 2 == 0 else 61, MARGIN + k // 2] = YELLOW
         for lit, (cell, _) in zip(view["lit"], m["plates"]):
             if not lit:
                 continue
@@ -673,6 +636,7 @@ class Bs01(ARCBaseGame):
         self.guards = ()
         self.loads = ()
         self.target = None
+        self.moves_left = 0
         self.script = []
         self.view = None
         self._refs = {}
@@ -685,19 +649,11 @@ class Bs01(ARCBaseGame):
     def on_set_level(self, level: Level) -> None:
         m = model(self.level_index)
         self.pos, self.guards, self.loads, self.target = start_state(m)
+        self.moves_left = MOVE_BUDGET[self.level_index]   # full again on entry and on RESET
         self.script = []
         self._refs = {s.name: s for s in level.get_sprites()
                       if s.name == "player" or s.name == "exit" or s.name.startswith(("guard_", "thing_"))}
         self._paint(self._settled())
-
-    def handle_reset(self) -> None:
-        """A full restart only from a fresh or finished game; otherwise the level starts over.
-        The engine's default also restarts the whole game when no action has been taken yet on a
-        level, which would wipe progress on a RESET sent right after a level is cleared."""
-        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
-            self.full_reset()
-        else:
-            self.level_reset()
 
     def _settled(self, state=None) -> dict:
         m = model(self.level_index)
@@ -755,9 +711,10 @@ class Bs01(ARCBaseGame):
         flows: list = []
         pos, guards, loads, target, caught, won = resolve(m, *old, move, flows)
         new = (pos, guards, loads, target)
-        stuck = (not caught) and (not won) and new not in analyse(self.level_index)
+        self.moves_left -= 1
+        spent = (not caught) and (not won) and self.moves_left <= 0   # a winning last move still wins
         self.pos, self.guards, self.loads, self.target = new
-        self.script = self._frames(m, old, new, move, flows, caught or stuck, won)
+        self.script = self._frames(m, old, new, move, flows, caught or spent, won)
         return True
 
     def _frames(self, m, old, new, move, flows, dies, won) -> list:

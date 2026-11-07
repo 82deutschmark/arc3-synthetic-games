@@ -3,19 +3,24 @@
 #   "order" list is gone (no rule ever read it).
 # Updated: 06-November-2026, Claude Fable 5.1 -- a RESET or a new level restarts the art's animation beat too, so the
 #   first frame no longer carries the old run's flame, pond and flower phase; unused constants removed.
+# Updated: 07-November-2026, Claude Opus 5.5 -- a thorn or a patrol now ends the run (GAME_OVER) instead of sending the
+#   pilgrim back to the last shrine, and each level has a move counter drawn as a draining bar in a new strip under
+#   the world (the world window is one cell row shorter); the counter running out ends the run too.
 #
 # Author: Claude Sonnet 5.5 Max
 # Date: 31-October-2026
-# PURPOSE: Version 2 of xb01 (shrines and seals in a scrolling world). Rules, map, levels, routes, the colours a
-#          rule reads, the inputs and the camera are unchanged; only the drawing changed. The world is still
+# PURPOSE: Version 2 of xb01 (shrines and seals in a scrolling world). Map, levels, routes, the colours a rule
+#          reads and the inputs are xb01's; a catch or a thorn now loses the run, a move counter was added and the
+#          world window lost its bottom cell row to the counter strip (07-Nov-2026). The world is still
 #          painted from the model each frame (it is larger than the 64-pixel camera), but from one pre-drawn
 #          world picture plus a few live pieces: a hooded pilgrim and horned patrols with faces, thorn bushes,
 #          barred seal slabs that join into gates, braziers, brick shrine buildings with roofs, a sanctum door
 #          with a stair, oaks, pines, ponds and flowers. Walking, patrols and scrolling slide over three frames
 #          and settle on the last.
 # SRP/DRY check: Pass. The art helpers below are a small sprite set kept in this file so it stands alone;
-#          the rules (Ground, Arrangement, passable, _step_foes, _caught, _send_back) are
-#          the xb01 code unchanged.
+#          the rules (Ground, Arrangement, passable, _step_foes, _caught) are the xb01 code; since
+#          07-Nov-2026 a catch or a thorn loses the run rather than sending the pilgrim back, and a move counter
+#          is drawn in a fixed strip under the world.
 # CHANGELOG
 # 31-Oct-2026 (Claude Sonnet 5.5 Max): xb02, sprite glow-up of xb01. Art and a three-frame slide only.
 
@@ -187,6 +192,17 @@ PROP_HUE = (6, 7, 10, 0, 12, 15)
 CELL = 4
 VIEW = 16
 SCREEN = VIEW * CELL
+VIEW_ROWS = VIEW - 1                 # world cell rows on screen; the bottom cell row is the counter strip
+PLAY_H = VIEW_ROWS * CELL            # pixel rows of world picture (the rest is the fixed counter strip)
+
+# Moves per level. Sized at twice the shortest winning line, found by a full breadth-first search over
+# (cell, lit shrines, patrol phase) with this file's own passable/_step_foes rules, where a thorn or a catch is a
+# loss: shortest lines 210, 211, 261, 327, 370, 426.
+BUDGETS = (420, 422, 522, 654, 740, 852)
+# The counter strip: a coarse bar where each block is COUNTER_UNIT moves, and a fine row under it that loses one
+# pixel per move and refills when a block falls, so every move visibly shrinks something.
+COUNTER_UNIT = 16
+COUNTER_TRACK, COUNTER_BAR, COUNTER_TICK = 3, 10, 0
 
 STONE_CH, THORN_CH = "#", "x"
 CORNERS = ((-1, -1, 0, 0), (1, -1, 3, 0), (-1, 1, 0, 3), (1, 1, 3, 3))
@@ -483,12 +499,12 @@ class Window(RenderableUserDisplay):
         g = self._g
         lv = g.arrangement
         k = max(1, min(3, g.tick))
-        if g.hit and k < 3:                                  # a catch: the picture holds still, then jumps back
+        if g.hit and k < 3:                                  # a catch: the picture holds still while the burst plays
             camx, camy = g.prev_cam[0] * CELL, g.prev_cam[1] * CELL
         else:
             camx = self._lerp(g.prev_cam[0], g.cam_x, k)
             camy = self._lerp(g.prev_cam[1], g.cam_y, k)
-        frame[:] = WORLD_IMG[camy:camy + SCREEN, camx:camx + SCREEN]
+        frame[:PLAY_H] = WORLD_IMG[camy:camy + PLAY_H, camx:camx + SCREEN]
 
         for (wx, wy) in PONDS:
             x, y = wx * CELL - camx, wy * CELL - camy
@@ -562,10 +578,23 @@ class Window(RenderableUserDisplay):
 
         if g.hit:
             frame[0, :] = FOE_BODY
-            frame[SCREEN - 1, :] = FOE_BODY
-            frame[:, 0] = FOE_BODY
-            frame[:, SCREEN - 1] = FOE_BODY
+            frame[PLAY_H - 1, :] = FOE_BODY
+            frame[:PLAY_H, 0] = FOE_BODY
+            frame[:PLAY_H, SCREEN - 1] = FOE_BODY
+        draw_counter(frame, g.moves_left, g.budget)      # last, so nothing from the world spills into the strip
         return frame
+
+
+def draw_counter(frame: np.ndarray, left: int, full: int) -> None:
+    """The fixed strip under the world: a black band, the coarse bar (one block per COUNTER_UNIT moves) over a
+    dark track as long as the level's whole counter, and the fine row under it that drains one pixel per move."""
+    frame[PLAY_H:, :] = BLK
+    blocks_full = -(-full // COUNTER_UNIT)
+    blocks = -(-max(0, left) // COUNTER_UNIT)
+    fine = left - COUNTER_UNIT * (blocks - 1) if left > 0 else 0
+    frame[PLAY_H + 1:PLAY_H + 3, 1:1 + blocks_full] = COUNTER_TRACK
+    frame[PLAY_H + 1:PLAY_H + 3, 1:1 + blocks] = COUNTER_BAR
+    frame[PLAY_H + 3, 1:1 + fine] = COUNTER_TICK
 
 
 def x_of(cell_coord: int, cam_px: int) -> int:
@@ -582,7 +611,8 @@ class Se01(ARCBaseGame):
         self.cam_x = self.cam_y = 0
         self.x, self.y = GROUND.start
         self.lit: set = set()
-        self.anchor = GROUND.start
+        self.budget = self.moves_left = BUDGETS[0]
+        self.dead = False
         self.foes: list = []
         self.flash = 0
         self.hit = 0
@@ -606,7 +636,8 @@ class Se01(ARCBaseGame):
         lv = self.arrangement = ARRANGEMENTS[index]
         self.x, self.y = GROUND.start
         self.lit = set()
-        self.anchor = GROUND.start
+        self.budget = self.moves_left = BUDGETS[index]     # the counter is full again on entry and on RESET
+        self.dead = False
         self.foes = [dict(x=f["ox"], y=f["oy"], ox=f["ox"], oy=f["oy"], dx=f["dx"],
                           dy=f["dy"], ln=f["ln"], t=0, back=False, px=f["ox"], py=f["oy"])
                      for f in lv.foes]
@@ -638,7 +669,7 @@ class Se01(ARCBaseGame):
 
     def _follow(self) -> None:
         self.cam_x = max(0, min(max(0, GROUND.w - VIEW), self.x - VIEW // 2))
-        self.cam_y = max(0, min(max(0, GROUND.h - VIEW), self.y - VIEW // 2))
+        self.cam_y = max(0, min(max(0, GROUND.h - VIEW_ROWS), self.y - VIEW_ROWS // 2))
         self.camera.x = self.cam_x * CELL
         self.camera.y = self.cam_y * CELL
 
@@ -660,11 +691,6 @@ class Se01(ARCBaseGame):
     def _caught(self) -> bool:
         return any((f["x"], f["y"]) == (self.x, self.y) for f in self.foes)
 
-    def _send_back(self) -> None:
-        self.x, self.y = self.anchor
-        self.hit = 1
-        self._follow()
-
     def step(self) -> None:
         if self.flash:
             self.flash -= 1
@@ -677,6 +703,8 @@ class Se01(ARCBaseGame):
             self.tail -= 1
             self.tick += 1
             if self.tail == 0:
+                if self.dead:                          # the catch burst or the last move has played: run over
+                    self.lose()
                 self.complete_action()
             return
 
@@ -691,6 +719,7 @@ class Se01(ARCBaseGame):
             self.complete_action()
             return
 
+        self.moves_left -= 1                           # every accepted move costs one, a bump included
         self.face = delta
         self.prev_x, self.prev_y = self.x, self.y
         self.prev_cam = (self.cam_x, self.cam_y)
@@ -698,9 +727,9 @@ class Se01(ARCBaseGame):
             f["px"], f["py"] = f["x"], f["y"]
 
         nx, ny = self.x + delta[0], self.y + delta[1]
-        if GROUND.thorn(nx, ny):
+        if GROUND.thorn(nx, ny):                       # a thorn: the pilgrim recoils and the run is lost
             self.bump = (nx, ny)
-            self._send_back()
+            self.hit = 1
         elif self.passable(nx, ny):
             self.x, self.y = nx, ny
             if (nx, ny) in GROUND.shrines:
@@ -708,7 +737,6 @@ class Se01(ARCBaseGame):
                 if i not in self.lit:
                     self.just = i
                 self.lit.add(i)
-                self.anchor = (nx, ny)
             if (nx, ny) == GROUND.sanctum:
                 self.flash = self.FLASH_FRAMES
                 self.tick = 1
@@ -720,7 +748,8 @@ class Se01(ARCBaseGame):
         if self._caught():
             if self.bump is None:
                 self.bump = (self.x, self.y)
-            self._send_back()
+            self.hit = 1
+        self.dead = bool(self.hit) or self.moves_left <= 0
         self._follow()
         self._sync()
         self.tick, self.tail = 1, 2                    # play the slide: this frame, then two more

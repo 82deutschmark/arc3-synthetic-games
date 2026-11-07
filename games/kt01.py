@@ -1,12 +1,13 @@
 # Author: GPT 6.1 Sol
 # Date: 25-October-2026
+# Updated: 07-November-2026, Claude Opus 5.5 -- a wrong pull ends the run as GAME_OVER (it silently restarted the level); no custom reset, as in the public games.
 # PURPOSE: ARC-AGI-3 game g036 in one file (numpy + arcengine): level data, the cord rules, and the
 #   scene drawn as named, layered engine sprites (green bench cloth, a wooden lattice of slats, the
 #   cord one sprite per cell, a head with an eye, start and finish eyelets, crossing marks, spools of
 #   spare thread, daisies).
 # SRP/DRY check: Pass -- keeps the parent's movement/crossing functions and named sprite art;
 #   adds six mixed-turn routing layouts through explicit crossing data; rules, safe opening,
-#   unlimited Undo, current-level RESET and the once-decided tension-wave presentation are retained.
+#   unlimited Undo and the once-decided tension-wave presentation are retained.
 # CHANGELOG: 25-Oct-2026 (GPT 6.1 Sol) -- a separate tougher review version after Mark's "Better
 #   but still seems very easy" note. Ordinary open slat meetings can turn but cannot be reused;
 #   marked railed crossings retain straight-through two-pass order. Six levels compose these
@@ -1299,15 +1300,6 @@ class G036(ARCBaseGame):
         clear_translation(self)
         super().full_reset()
 
-    def handle_reset(self) -> None:
-        # The engine normally treats a second RESET (zero presses since the first) as a full
-        # restart. During play the player's retry always belongs to this level, even immediately
-        # after a wrong pull or level transition. A finished run may start afresh.
-        if self._state == GameState.WIN:
-            self.full_reset()
-        else:
-            self.level_reset()
-
     # ── drawing: sprites take their pixels from the state; nothing here changes a rule ──
 
     def _sprite(self, name: str):
@@ -1418,10 +1410,8 @@ class G036(ARCBaseGame):
         if self.pull_good:
             self.next_level()
         else:
-            # Keep the accumulated press count for scoring; handle_reset owns retry semantics.
-            presses = self._action_count
-            self.level_reset()
-            self._action_count = presses
+            # A wrong pull ends the run, as a loss does in the public games; RESET restarts the level.
+            self.lose()
 
     def step(self) -> None:
         if self.action.id == GameAction.RESET:

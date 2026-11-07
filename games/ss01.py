@@ -1,5 +1,6 @@
 # Author: GPT-6 Astra
 # Date: 2026-10-21 01:10
+# Updated: 07-November-2026, Claude Opus 5.5 -- no custom reset: RESET follows the engine's rule, as in the public games.
 # PURPOSE: Deterministic shared-supply fruit allocation puzzle; owns fixed orders, pure threading/undo rules and named fruit/stick sprites for the ARC runtime. Offline generation uses the same allocation rules.
 # SRP/DRY check: Pass â€” one allocation transition governs runtime, dynamic-programming witnesses and random tests; uses standard ARC sprite/camera interfaces.
 
@@ -218,9 +219,6 @@ class Ss01(ARCBaseGame):
             if self.animation and index==self.animation[0]:
                 x,y=self.animation[1:]
             add(f"fruit-{index}",fruit_pixels(kind),x,y,tags)
-
-    def handle_reset(self):
-        self.full_reset() if self._state in (GameState.NOT_PLAYED,GameState.WIN) else self.level_reset()
 
     def finish_step(self):
         if solved(self.spec,self.st):

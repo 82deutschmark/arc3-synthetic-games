@@ -1,5 +1,6 @@
 # Author: GPT-6 Astra Ultra
 # Date: 27-October-2026
+# Updated: 07-November-2026, Claude Opus 5.5 -- a second RESET no longer stays on the level (the engine's rule, as in the public games); undo no longer refunds the press.
 # PURPOSE: Human-readable NT63 rebuild with fruit ballast, opposite lift pans,
 # recoverable cargo, gradual gravity/crystal lessons and genuine engine Undo.
 # SRP/DRY check: Pass — native named sprites; one shared pure rule transition is
@@ -386,13 +387,6 @@ class Bl01(ARCBaseGame):
             self.current_level.add_sprite(block(f'progress-{index}', 5 + index * 6, 2, 4, 3,
                                                14 if index < self.level_index else 12 if index == self.level_index else 1, 20))
 
-    def full_reset(self):
-        # A second RESET still means retry this orchard, preserving prior clears.
-        if self._score >= len(SPECS):
-            super().full_reset()
-        else:
-            self.level_reset()
-
     def step(self):
         if self.action.id == GameAction.RESET:
             self.complete_action()
@@ -402,11 +396,12 @@ class Bl01(ARCBaseGame):
             before = self.logical
             if aid == 7:
                 if self.history:
-                    self.logical, self.remaining = self.history.pop()
+                    # undo puts the scene back but, as in the public games, never refunds spent presses
+                    self.logical = self.history.pop()
                 after, path = self.logical, [self.logical[0]]
             else:
                 command = (6, int(self.action.data.get('x', -1)), int(self.action.data.get('y', -1))) if aid == 6 else aid
-                self.history.append((before, self.remaining))
+                self.history.append(before)
                 after, path = transition(self.spec, before, command)
                 self.logical = after
                 self.remaining -= 1

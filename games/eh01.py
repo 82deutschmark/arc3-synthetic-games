@@ -8,8 +8,9 @@
 #   marks for it. At no marks a cell
 #   scars and may never be entered again. Walking on through a dark pit drops you back to the
 #   entrance; looking at it from the next cell is safe. Light every key, light the ring, walk in.
-#   If the way is cut so the level can no longer be won, the walker dies on the spot (a short
-#   visible fade) and the run ends as GAME_OVER; RESET starts the level again as entered.
+#   Every walk and every look spends one step from a bar under the key slots; when the bar runs
+#   out the walker dies (a short visible fade) and the run ends as GAME_OVER; RESET starts the
+#   level again as entered, with a full bar.
 #   Changes from the first version: the retreat moved from ACTION7 (Undo on the site) to
 #   ACTION5; walking forward no longer lights anything, so the lantern is the only way to see;
 #   every effect is animated (the walker slides back, the cell flares, the mark burns, the key
@@ -20,11 +21,13 @@
 #   restarting the level (RESET restarts it); the action-count workaround and two unused helpers are gone.
 # Updated: 06-November-2026, Claude Fable 5.1 -- header and catalog now say a dead end ends the run;
 #   dropped mentions of a solver that is not in this repository; engine arguments passed by name.
+# Updated: 07-November-2026, Claude Opus 5.5 -- dead-end detector removed; a step bar under the key
+#   slots (about twice each level's shortest win) now ends the run when it runs out, like the public games.
 """Echo -- the lantern is how you see.
 
 ACTION1-4 walk up/down/left/right. ACTION5 (Space) steps back the way you just came and lights
-the cell you left. No text, no counters: the slots along the top are the keys, the ring at the
-right of them is the way out. RESET restarts the level.
+the cell you left. No text: the slots along the top are the keys, the ring at the right of them is
+the way out, and the white bar under them is the steps left. RESET restarts the level.
 """
 
 import copy
@@ -71,6 +74,14 @@ DIRS = {"U": (0, -1), "D": (0, 1), "L": (-1, 0), "R": (1, 0)}
 ACTION_DIR = {1: "U", 2: "D", 3: "L", 4: "R"}
 LOOK = 5
 ACTIONS = [1, 2, 3, 4, 5]
+
+# Steps per level, one per walk or look (bumps included; RESET free). Sized as twice the shortest
+# winning line, found by breadth-first search over Core's own rules (lighting a plain floor cell
+# was pruned: walking back reaches the same cell for one action and keeps the mark). Shortest
+# lines: 7, 16, 24, 24, 24, 27, 36, 32.
+BUDGETS = [14, 32, 48, 48, 48, 54, 72, 64]
+C_STEP = C_WHITE       # a step left in the bar
+C_SPENT = C_BLACK      # a spent step: back to the band's black
 
 WALL, FLOOR, START, TRAP, KEY, EXIT, THIN = "#", ".", "S", "T", "K", "E", "o"
 
@@ -269,111 +280,6 @@ class Core:
             return self.look()
         return []
 
-    # -- the one ending that is not a win -----------------------------------
-
-    def _sink(self, c):
-        return c in self.cells and c not in self.revealed and self.content[c] == TRAP
-
-    def _reach(self, pos, p):
-        """Cells you can come to stand on, and the unlit pits among them. A pit can be stood on
-        but not walked through: leaving it forward drops you at the entrance."""
-        seen = {pos}
-        sinks = set()
-        q = deque([pos])
-        while q:
-            a = q.popleft()
-            if a != pos and self._sink(a):
-                sinks.add(a)
-                continue
-            for n in neighbours(a):
-                if n in p and n not in seen:
-                    seen.add(n)
-                    q.append(n)
-        return seen, sinks
-
-    def _fall_state(self, cell):
-        c = self.copy()
-        c.revealed.add(cell)
-        c.pos = self.start
-        c.trail = None
-        return c
-
-    def lost(self):
-        """True when the level can no longer be won. Every test here is a necessary condition for
-        winning, so a True is a true dead end."""
-        if self.free:
-            return False
-        p = self.passable()
-        if self._sink(self.pos):
-            # standing on an unlit pit: step back with a look, or fall to the entrance
-            opts = []
-            if self.trail is not None and self.looks[self.trail] > 0:
-                c2 = self.copy()
-                c2.look()
-                opts.append(c2)
-            if any(n in p for n in neighbours(self.pos)):
-                opts.append(self._fall_state(self.pos))
-            return all(o.lost() for o in opts)
-        if self.looks[self.pos] > 0:
-            sides = [(self.pos, self.trail, p)]
-        else:
-            # standing on a scar: you may step off it, never back on, so you commit to one side
-            q = p - {self.pos}
-            sides = [(n, None, q) for n in neighbours(self.pos) if n in q]
-            if not sides:
-                return True
-        sinks = set()
-        for pos, trail, pp in sides:
-            reach, sk = self._reach(pos, pp | {pos})
-            if not self._dead(reach, pos, trail, pp):
-                return False
-            sinks |= sk
-        # no way to win by walking: a fall is the one thing left that moves you somewhere new
-        return all(self._fall_state(s).lost() for s in sinks)
-
-    def _dead(self, reach, pos, trail, p):
-        if not (self.exits & reach):
-            return True
-        needs = []
-        for k in self.keys - self.taken:
-            if k not in reach:
-                return True
-            needs.append(k)
-        for e in self.exits:
-            if e in reach and e not in self.revealed:
-                needs.append(e)
-        for n in needs:
-            # a cell can only be lit from a stand on it: you must be able to step ONTO it, unless
-            # you are on it now with a way back to look through
-            if n == pos and trail is not None and self.looks[trail] > 0:
-                continue
-            if self.looks[n] <= 0:
-                return True
-        if not needs:
-            return False
-        # each look costs at least one mark on a neighbour you can stand on: a matching problem
-        cap = {c: self.looks[c] for c in reach if self.looks[c] > 0 and c in p | {pos}}
-        match = {}
-
-        def place(n, seen):
-            for v in neighbours(n):
-                if v in cap and v not in seen:
-                    seen.add(v)
-                    used = match.setdefault(v, [])
-                    if len(used) < cap[v]:
-                        used.append(n)
-                        return True
-                    for i, other in enumerate(used):
-                        if place(other, seen):
-                            used[i] = n
-                            return True
-            return False
-
-        for n in needs:
-            if not place(n, set()):
-                return True
-        return False
-
 
 # ---------------------------------------------------------------------------
 # Pictures
@@ -523,6 +429,21 @@ class Eh01Display(RenderableUserDisplay):
         opened = core.ring_open() if g.vis.get("taken") is None else (g.vis["taken"] >= n)
         frame[ey - 1:ey + 9, ex - 1:ex + 10] = C_BLACK
         self._ringpic(frame, ex, ey - 1 + 0, C_OPEN if opened else C_SHUT, opened, C_BLACK)
+        self._draw_steps(frame, g)
+
+    @staticmethod
+    def _draw_steps(frame, g):
+        """The step bar: two thin white lines in the band's two free rows under the slots (the
+        ring's picture ends one row above), one pixel per step. The top line drains first from
+        its right end, then the bottom one; spent steps go back to the band's black."""
+        full = g.budget
+        half = (full + 1) // 2
+        x0 = (64 - half) // 2
+        left = max(0, g.steps)
+        for row, n_full, n_left in ((HUD_H - 2, full - half, max(0, left - half)),
+                                    (HUD_H - 1, half, min(left, half))):
+            frame[row, x0:x0 + n_full] = C_SPENT
+            frame[row, x0:x0 + n_left] = C_STEP
 
     # -- the walker ----------------------------------------------------------
 
@@ -584,6 +505,7 @@ class Eh01(ARCBaseGame):
         self.core = Core(LEVELS[0])
         self.vis = {}
         self.anim = None
+        self.budget = self.steps = BUDGETS[0]
 
         levels = [Level(sprites=[], grid_size=(64, 64), data=ldef, name=ldef["name"])
                   for ldef in LEVELS]
@@ -601,13 +523,7 @@ class Eh01(ARCBaseGame):
         self.core = Core(LEVELS[self.level_index])
         self.vis = {}
         self.anim = None
-
-    def handle_reset(self) -> None:
-        """Full restart only from a fresh or finished game; otherwise the level starts over."""
-        if self._state in (GameState.NOT_PLAYED, GameState.WIN):
-            self.full_reset()
-        else:
-            self.level_reset()
+        self.budget = self.steps = BUDGETS[self.level_index]   # a full bar on every entry and RESET
 
     # -- layout of the top band ---------------------------------------------
 
@@ -725,8 +641,10 @@ class Eh01(ARCBaseGame):
         if self.anim is None:
             ev = self.core.act(aid)
             frames = self._build(aid, ev) if ev else [{}]
-            if self.core.lost():
-                frames += self._death()
+            if aid in ACTIONS:                      # only the offered actions spend a step
+                self.steps -= 1
+                if self.steps <= 0 and not any(f.get("win") for f in frames):
+                    frames += self._death()
             self.anim = frames
         frame = self.anim.pop(0)
         self.vis = frame
