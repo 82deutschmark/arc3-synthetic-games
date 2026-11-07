@@ -16,7 +16,8 @@ It is not a training system. No rewards, no splits, no solutions, and nothing he
 - `docs/catalog.json`: the single source of truth for the game list. `docs/catalog.js` renders it into `docs/index.html`, and arc.markbarney.net mirrors it from the same file, so treat the schema as public.
 - `tools/runtime.py`: the shared loader and observation serialiser. The only place games get imported.
 - `tools/validate.py`: integrity and smoke check. Rewrites `docs/validation.json`.
-- `tools/make_media.py`: redraws `docs/previews/` from the real engine.
+- `tools/make_media.py`: redraws `docs/previews/` from the real engine (`--game ID`, `--stale`, `--all`) and records the source hash each picture came from in `docs/previews/manifest.json`.
+- `.githooks/pre-commit`: runs `make_media.py --stale` and stages the result. Turn it on once per clone with `git config core.hooksPath .githooks`.
 - `examples/collect.py`: random-policy rollout example.
 - `docs/*-plan.md`: plans, named as the standards say.
 
@@ -31,7 +32,7 @@ python -m venv .venv
 .venv/bin/python examples/collect.py --game wb02 --steps 16 --output rollouts/x.jsonl
 ```
 
-`validate.py` is the only check, and it is shallow: hashes, import, a reset and one action. It says nothing about whether a game can be won. After changing a game, play it through `tools/runtime.py`, confirm the thing you changed actually changed, and say what you did and didn't check.
+`validate.py` is the only check, and it is shallow: hashes, stale previews, import, a reset and one action. It says nothing about whether a game can be won. After changing a game, play it through `tools/runtime.py`, confirm the thing you changed actually changed, and say what you did and didn't check.
 
 ## Open review notes
 
@@ -42,7 +43,7 @@ Read these before starting work. They list what is known to be wrong or undecide
 
 ## Rules for this repo
 
-1. **Games are hash-pinned.** `docs/catalog.json` holds each game's SHA-256 and `validate.py` enforces it. Change a game, update its hash in the same change. `.gitattributes` forces LF line endings so the hashes hold on Windows. Leave it alone.
+1. **Games are hash-pinned.** `docs/catalog.json` holds each game's SHA-256 and `validate.py` enforces it. Change a game, update its hash in the same change, and redraw its pictures (`make_media.py --stale`; the pre-commit hook does it for you). `.gitattributes` forces LF line endings so the hashes hold on Windows. Leave it alone.
 2. **Ids are short tags** like `DZ01`. Renaming a game means moving its file and previews, and keeping the old id in the entry's `"was"` list so old links still resolve.
 3. **The source is readable by design,** and so is the browse page, which is a spoilers page. Don't write examples or docs that suggest putting either in front of an agent being tested.
 4. **Public repo.** No credentials, personal data, play traces, rollouts, virtualenvs or caches. `rollouts/` is gitignored for this.

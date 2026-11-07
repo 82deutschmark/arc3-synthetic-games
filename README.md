@@ -56,7 +56,7 @@ A few things before you point anything at it:
 | `games/` | The games, one `.py` each. Hashes are in the catalog, so don't edit them. |
 | `docs/catalog.json` | The list of games: id, class, path, hash, levels, inputs, and the write-ups the page shows. |
 | `docs/index.html` | The browse page. |
-| `docs/previews/` | Real engine frames: each game's opening screen, plus a strip of the opening of every level. |
+| `docs/previews/` | Real engine frames: each game's opening screen, plus a strip of the opening of every level. Redrawn by `tools/make_media.py` (needs Pillow, which `requirements.txt` installs); `validate.py` fails if one is out of date. |
 | `tools/runtime.py` | Loads a game, serialises observations. |
 | `tools/validate.py` | The smoke check. Writes `docs/validation.json`. |
 | `tools/make_media.py` | Redraws a game's pictures from the real engine. |

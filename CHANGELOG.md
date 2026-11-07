@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.2 — 7 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call ("I'd like it so that they get regenerated automatically"), plan in `docs/07-Nov-2026-auto-previews-plan.md`: previews can no longer lag their game. `tools/make_media.py` gains `--stale` and `--all` and writes `docs/previews/manifest.json`, the source hash each game's pictures were drawn from. `tools/validate.py` fails a game whose pictures are missing or older than its source. `.githooks/pre-commit` redraws stale pictures and stages them; enable it once per clone with `git config core.hooksPath .githooks` (Git does not clone hooks, so `validate.py` is the backstop for everyone else). Pillow is now in `requirements.txt`, because drawing needs it. The first full redraw changed only four level strips (cg01, dw01, ff01, mp01); every other picture came out byte-identical, so they were already current. Game rules are untouched.
+
 ## 0.9.1 â€” 7 November 2026
 
 Claude Sonnet 5.5, at Mark Barney's call ("I don't want anything to be too busy. Don't forget about animations."): a second art round on all fifteen rebuilt highlighted games (PT02, TE02, DZ02, LT04, ES02, EH02, FF02, SE02, BS02, WF03, ST02, BL02, KT02, WB03, SS02). Backgrounds are calmer, with quieter textures and fewer, larger props, so the pieces you play stand out. Motion is richer: pieces crouch, leap, slide and land with dust, blocked moves bump and wince, lost runs close in or shake, wins and new levels sweep or iris, and the scenery sways during the frames after each action. The game only draws frames when you act, so nothing moves while it waits for you. LT04's late missions get a further calming pass. Rules are unchanged: random play from every level on each game matches the 0.9.0 and 0.8.9 versions step for step.

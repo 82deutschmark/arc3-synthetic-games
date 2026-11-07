@@ -2,21 +2,25 @@
 # Date: 29-October-2026
 # PURPOSE: Verify release file integrity and exercise real engine resets and actions.
 # SRP/DRY check: Pass — catalog and runtime are reused; no duplicate game rules.
+# Updated: 07-Nov-2026, Claude Sonnet 5.5 -- fails a game whose pictures were drawn from an older source (docs/previews/manifest.json).
 # Updated: 30-October-2026, Claude Sonnet 5.5 Medium — also checks that every featured game has its replay and level strip.
 from __future__ import annotations
 
 import hashlib
 import json
+from make_media import is_stale, read_manifest
 from runtime import CATALOG, ROOT, frame_record, load_game, perform
 
 
 def main():
     failures = []
+    manifest = read_manifest()
     for entry in CATALOG['games']:
         try:
             assert hashlib.sha256((ROOT / entry['path']).read_bytes()).hexdigest() == entry['sha256'], 'source hash mismatch'
             if entry['preview']:
                 assert (ROOT / 'docs' / entry['preview']).is_file(), 'missing preview'
+                assert not is_stale(entry, manifest), 'previews are stale: run tools/make_media.py --stale'
             game = load_game(entry['id'])
             frame = perform(game, 0)
             observation = frame_record(frame)
