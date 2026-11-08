@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.17 — 8 November 2026
+
+Claude Sonnet 5.5 Medium, at Mark Barney's call (find exact numbers): the Why page's counts are now exact and sourced. From the live player on 8 November: 1,046 distinct games made by the team and its agents (not the 25 public games, not the 252 imported ARC Prize environments), 46 approved, 4.4 percent, 95.6 percent not kept; 800 batch games credited to GPT, none approved. From the Games page: 643 games, 502 lines of descent, 918 saved versions, written by Claude models 422 (Opus 5.5 211), GPT models 360, people 111, other 25. Many versions carry no model name, so the per-model split is a floor for each name. No game changed. Catalog version is now 0.9.17.
+
 ## 0.9.16 — 8 November 2026
 
 Claude Sonnet 5.5 Medium, at Mark Barney's call (lean on Budd and Scarfe's paper, drop the bitterness, check the numbers, more academic): `docs/why.html` is rewritten around the paper's claims (novelty is not creativity, slop, human supervision, co-creation), ARC's own constraints (ten people per environment, two full solves; the public set easier with more clarity and fun, from section 3.6 of the ARC-AGI-3 paper), and our own counts from the live player on 8 November: 1,358 games including the 25 public ones, about a thousand from batch generators, 46 approved, so more than nine in ten not kept. The earlier ninety-five percent and eighteen hundred figures are gone; the counts do not support eighteen hundred. No game changed. Catalog version is now 0.9.16.
