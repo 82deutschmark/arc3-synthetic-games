@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.15 — 8 November 2026
+
+Claude Sonnet 5.5 Medium, at Mark Barney's call: the Why page gains a section on what slop is (Dr. Tim Scarfe's sense: it doesn't respect the constraints of its domain; here, easy for people, hard for AI, and fun) and why most of the team's games were slop. The count is from the live player on 8 November: more than thirteen hundred games, forty-six approved. The Boss's own figure was about eighteen hundred, which I did not find in any count. No game changed. Catalog version is now 0.9.15.
+
 ## 0.9.14 — 8 November 2026
 
 Claude Sonnet 5.5 Medium, at Mark Barney's call (the page needs tidying, the summaries are not good, KT03's is bad, the Why page needs to talk up the producer and the iteration): `docs/why.html` is rewritten in his words and matches arc-explainer's Why page: these are the best of, played and reworked by people, no one lost a job, speed of iteration, "they laughed". KT03's teaser and "why AI struggles" are rewritten in plain words. No game changed. Catalog version is now 0.9.14.
