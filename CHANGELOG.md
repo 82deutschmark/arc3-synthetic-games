@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.16 — 8 November 2026
+
+Claude Sonnet 5.5 Medium, at Mark Barney's call (lean on Budd and Scarfe's paper, drop the bitterness, check the numbers, more academic): `docs/why.html` is rewritten around the paper's claims (novelty is not creativity, slop, human supervision, co-creation), ARC's own constraints (ten people per environment, two full solves; the public set easier with more clarity and fun, from section 3.6 of the ARC-AGI-3 paper), and our own counts from the live player on 8 November: 1,358 games including the 25 public ones, about a thousand from batch generators, 46 approved, so more than nine in ten not kept. The earlier ninety-five percent and eighteen hundred figures are gone; the counts do not support eighteen hundred. No game changed. Catalog version is now 0.9.16.
+
 ## 0.9.15 — 8 November 2026
 
 Claude Sonnet 5.5 Medium, at Mark Barney's call: the Why page gains a section on what slop is (Dr. Tim Scarfe's sense: it doesn't respect the constraints of its domain; here, easy for people, hard for AI, and fun) and why most of the team's games were slop. The count is from the live player on 8 November: more than thirteen hundred games, forty-six approved. The Boss's own figure was about eighteen hundred, which I did not find in any count. No game changed. Catalog version is now 0.9.15.
