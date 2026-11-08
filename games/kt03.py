@@ -1,0 +1,2573 @@
+# Author: Claude Sonnet 5.5
+# Date: 07-Nov-2026
+# PURPOSE: kt03 is kt02 (itself kt01's cord on the lattice of slats, redrawn) made readable, at Mark Barney's call: a
+#   player could not tell whether they were on the right track or what to do, and learned the rule only by losing a level.
+#   THE PUZZLE IS UNCHANGED: the same ten levels in the same order, the same slat layouts, start and finish eyelets, marked
+#   crossings and two-pass rule (the strand laid second ends on top), the same four directions and ACTION7 take-back.
+#   WHAT IS NEW:
+#   * Three pulls. ACTION5 (Space) is a pull wherever the head is, not only on the finish. The cord tightens from the head
+#     back along the route as before: in the good colour when nothing is wrong, in a different colour (magenta) when
+#     something is, and the wrong crossings are marked. A good pull on the finish clears the level; a good pull anywhere
+#     else changes nothing; a wrong pull uses up one of three spools on the rack and the third wrong pull is GAME_OVER.
+#     A pull changes no cord state, so take-back does not undo it.
+#   * Live indicators before any pull, fading with the level: levels 1 to 3 show each crossing's state at once (waiting,
+#     one pass in, doomed, held, failed); levels 4 to 6 show a crossing only once both passes are laid; levels 7 to 10 show
+#     nothing until a pull. A crossing is DOOMED when its first pass used the strand that is meant to end on top, because a
+#     strand can cross only once, so the second pass can no longer come out right. That is read from the cord, not searched.
+#   * Big glyph tiles in the open cloth that change with the state, in the made-up script of tools/glyphs (kana set 31):
+#     closed shapes in green when on track (purple on the finish), broken dashes in red when wrong (orange when stuck),
+#     open strokes after a take-back (light blue) or a blocked move (white). The characters, props and cloth change with them.
+#   * Everything on the picture is still or changes only because the state changed; the free-running scenery of kt02 is gone.
+#     A faint marker shows the stop a take-back returns to, and a stuck head (no legal move off the finish) is shown.
+#   Everything on screen is a named engine sprite on a layer; no letters or digits are drawn anywhere.
+#   Integration: arcengine only; game_id kt03; plan in docs/07-Nov-2026-kt02-legibility-plan.md.
+# SRP/DRY check: Pass - the rules (try_step, failed_marks, build_board) and the level data are kt02's, copied verbatim; the new
+#   rule reads (crossing_status, is_stuck) are pure functions over the same state; the art builders and the game class only
+#   read that state. The glyph shapes are copied from tools/glyphs/sets/glyphs_kana_31.json because a game is one file.
+# CHANGELOG: 07-Nov-2026 (Claude Sonnet 5.5) -- first version of kt03.
+
+import numpy as np
+
+
+from arcengine import (
+    ARCBaseGame,
+    BlockingMode,
+    Camera,
+    GameAction,
+    InteractionMode,
+    Level,
+    Sprite,
+)
+
+
+# ── the sixteen ARC colours by name (1 to 4 are greys and are never used for art) ──
+WHT, BLK, MAG, PNK, RED, BLU, LBL, YEL, ORG, MAR, GRN, PUR = 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+
+# ── rule-carrying colours (kt01's, so the marks and the cord read exactly as before) ──
+RIM = BLK          # black: slat rim, start eyelet, eyes
+UNDER = BLK        # black: a strand gone into the groove at a crossing
+JUNCTION = YEL     # a crossing that asks for nothing (no level carries one)
+WANT_H = BLU       # blue: the across strand must end on top
+WANT_V = WHT       # white: the up-and-down strand must end on top
+CORD = LBL         # light blue strand
+PLAYER = PUR       # purple head
+END = PUR          # purple finish eyelet; the cord's colour on a good pull
+START = RIM
+
+
+# ── what the player is told, and when (picture and feedback only; no rule reads these) ──
+PULLS = 3                  # wrong pulls allowed per attempt; the third one ends the run
+TIER_FULL, TIER_DONE = 3, 6   # level indexes: below TIER_FULL crossings show every state live; below TIER_DONE only once both
+                              # passes are laid; from TIER_DONE nothing is shown until a pull
+WAITING, ONE_PASS, DOOMED, HELD, FAILED = "waiting", "one pass", "doomed", "held", "failed"
+STATUS_COLOUR = {ONE_PASS: YEL, HELD: GRN, DOOMED: RED, FAILED: RED}   # a crossing's bars, by state; waiting keeps its mark colour
+ON_TRACK, READY_COL, WRONG_COL, STUCK_COL, UNDO_COL, BLOCKED_COL = GRN, PUR, RED, ORG, LBL, WHT   # glyph colours by state
+
+
+# ── motion timing: how the head glides, bumps and how the iris opens (all picture; no rule reads these) ──
+
+GLIDE_FRAMES = 6                           # wind-up, three travelling frames, overshoot, settle
+GLIDE_FRACTION = (0.0, 0.25, 0.55, 0.85, 1.0, 1.0)
+GLIDE_OVERSHOOT = (0, 0, 0, 0, 1, 0)       # pixels past the target along the move on each frame
+GLIDE_HOP = (0, 0, 1, 1, 0, 0)             # a little lift on sideways moves
+BUMP_FRAMES = 3                            # a blocked move: four frames in all, lean, bonk, recoil, rest
+IRIS_FRAMES = 5                            # the opening circle that follows a level clear
+IRIS_FIRST = 7                             # the circle never starts as solid black: it opens on the head already
+IRIS_REACH = 46                            # radius at which the circle has left the frame's corners
+
+
+# ── refined level data; the parent's cord and crossing rules below are unchanged ──
+
+N = 16
+CELL = 4
+LO, HI = 1, N - 2
+
+UP, DOWN, LEFT, RIGHT = (0, -1), (0, 1), (-1, 0), (1, 0)
+DIRS = (UP, DOWN, LEFT, RIGHT)
+
+LEVELS_SPEC = [{'cols': [],
+  'rows': [],
+  'cuts': [],
+  'start': (3, 4),
+  'end': (4, 9),
+  'marks': {},
+  'undos': 4,
+  'track': [(3, 4),
+            (4, 4),
+            (5, 4),
+            (6, 4),
+            (7, 4),
+            (8, 4),
+            (9, 4),
+            (7, 5),
+            (7, 6),
+            (7, 7),
+            (6, 7),
+            (5, 7),
+            (4, 7),
+            (4, 8),
+            (4, 9)]},
+ {'cols': [5],
+  'rows': [5],
+  'cuts': [],
+  'start': (2, 12),
+  'end': (12, 2),
+  'marks': {(5, 5): 'v'},
+  'undos': 4,
+  'track': [(2, 2),
+            (2, 3),
+            (2, 4),
+            (2, 5),
+            (2, 6),
+            (2, 7),
+            (2, 8),
+            (2, 9),
+            (2, 10),
+            (2, 11),
+            (2, 12),
+            (3, 2),
+            (3, 5),
+            (3, 11),
+            (4, 2),
+            (4, 5),
+            (4, 11),
+            (5, 2),
+            (5, 3),
+            (5, 4),
+            (5, 5),
+            (5, 6),
+            (5, 7),
+            (5, 8),
+            (5, 9),
+            (5, 10),
+            (5, 11),
+            (6, 2),
+            (6, 5),
+            (6, 11),
+            (7, 2),
+            (7, 5),
+            (7, 11),
+            (8, 2),
+            (8, 5),
+            (8, 11),
+            (9, 2),
+            (9, 5),
+            (9, 11),
+            (10, 2),
+            (10, 5),
+            (10, 11),
+            (11, 2),
+            (11, 3),
+            (11, 4),
+            (11, 5),
+            (11, 6),
+            (11, 7),
+            (11, 8),
+            (11, 9),
+            (11, 10),
+            (11, 11),
+            (12, 2),
+            (12, 5),
+            (13, 5)]},
+ {'cols': [6],
+  'rows': [6, 10],
+  'cuts': [],
+  'start': (2, 3),
+  'end': (6, 11),
+  'marks': {(6, 6): 'v'},
+  'crossings': [(6, 6)],
+  'undos': 4,
+  'track': [(2, 3),
+            (2, 4),
+            (2, 5),
+            (2, 6),
+            (2, 7),
+            (2, 8),
+            (2, 9),
+            (2, 10),
+            (2, 11),
+            (2, 12),
+            (3, 3),
+            (3, 6),
+            (3, 10),
+            (3, 12),
+            (4, 3),
+            (4, 6),
+            (4, 10),
+            (4, 12),
+            (5, 3),
+            (5, 6),
+            (5, 10),
+            (5, 12),
+            (6, 3),
+            (6, 4),
+            (6, 5),
+            (6, 6),
+            (6, 7),
+            (6, 8),
+            (6, 9),
+            (6, 10),
+            (6, 11),
+            (6, 12),
+            (7, 3),
+            (7, 6),
+            (7, 10),
+            (7, 12),
+            (8, 3),
+            (8, 6),
+            (8, 10),
+            (8, 12),
+            (9, 3),
+            (9, 6),
+            (9, 10),
+            (9, 12),
+            (10, 3),
+            (10, 6),
+            (10, 10),
+            (10, 12),
+            (11, 3),
+            (11, 6),
+            (11, 10),
+            (11, 12),
+            (12, 3),
+            (12, 4),
+            (12, 5),
+            (12, 6),
+            (12, 7),
+            (12, 8),
+            (12, 9),
+            (12, 10),
+            (12, 11),
+            (12, 12)]},
+ {'cols': [9],
+  'rows': [9],
+  'cuts': [],
+  'start': (1, 2),
+  'end': (13, 13),
+  'marks': {(9, 9): 'h'},
+  'undos': 4,
+  'track': [(1, 2),
+            (1, 3),
+            (1, 4),
+            (1, 5),
+            (1, 6),
+            (1, 7),
+            (1, 8),
+            (1, 9),
+            (1, 10),
+            (1, 11),
+            (1, 12),
+            (1, 13),
+            (2, 2),
+            (2, 9),
+            (2, 13),
+            (3, 2),
+            (3, 9),
+            (3, 13),
+            (4, 2),
+            (4, 9),
+            (4, 13),
+            (5, 2),
+            (5, 9),
+            (5, 13),
+            (5, 14),
+            (5, 15),
+            (6, 2),
+            (6, 9),
+            (6, 13),
+            (7, 2),
+            (7, 9),
+            (7, 13),
+            (8, 2),
+            (8, 9),
+            (8, 13),
+            (9, 2),
+            (9, 3),
+            (9, 4),
+            (9, 5),
+            (9, 6),
+            (9, 7),
+            (9, 8),
+            (9, 9),
+            (9, 10),
+            (9, 11),
+            (9, 12),
+            (9, 13),
+            (10, 2),
+            (10, 9),
+            (10, 13),
+            (11, 2),
+            (11, 9),
+            (11, 13),
+            (12, 2),
+            (12, 9),
+            (12, 13),
+            (13, 2),
+            (13, 3),
+            (13, 4),
+            (13, 5),
+            (13, 6),
+            (13, 7),
+            (13, 8),
+            (13, 9),
+            (13, 10),
+            (13, 11),
+            (13, 12),
+            (13, 13)]},
+ {'cols': [4, 10],
+  'crossings': [(4, 5), (10, 10)],
+  'cuts': [],
+  'end': (10, 6),
+  'marks': {(4, 5): 'h', (10, 10): 'v'},
+  'rows': [5, 10],
+  'start': (1, 1),
+  'track': [(1, 1),
+            (1, 2),
+            (1, 3),
+            (1, 4),
+            (1, 5),
+            (1, 6),
+            (1, 7),
+            (1, 8),
+            (1, 9),
+            (1, 10),
+            (1, 11),
+            (1, 12),
+            (1, 13),
+            (1, 14),
+            (2, 1),
+            (2, 5),
+            (2, 10),
+            (2, 14),
+            (3, 1),
+            (3, 5),
+            (3, 10),
+            (3, 14),
+            (4, 1),
+            (4, 2),
+            (4, 3),
+            (4, 4),
+            (4, 5),
+            (4, 6),
+            (4, 7),
+            (4, 8),
+            (4, 9),
+            (4, 10),
+            (4, 11),
+            (4, 12),
+            (4, 13),
+            (4, 14),
+            (5, 1),
+            (5, 5),
+            (5, 10),
+            (5, 14),
+            (6, 1),
+            (6, 5),
+            (6, 10),
+            (6, 14),
+            (7, 1),
+            (7, 5),
+            (7, 10),
+            (7, 14),
+            (8, 1),
+            (8, 5),
+            (8, 10),
+            (8, 14),
+            (9, 1),
+            (9, 5),
+            (9, 10),
+            (9, 14),
+            (10, 1),
+            (10, 2),
+            (10, 3),
+            (10, 4),
+            (10, 5),
+            (10, 6),
+            (10, 7),
+            (10, 8),
+            (10, 9),
+            (10, 10),
+            (10, 11),
+            (10, 12),
+            (10, 13),
+            (10, 14),
+            (11, 1),
+            (11, 5),
+            (11, 10),
+            (11, 14),
+            (12, 1),
+            (12, 5),
+            (12, 10),
+            (12, 14),
+            (13, 1),
+            (13, 5),
+            (13, 10),
+            (13, 14),
+            (14, 1),
+            (14, 2),
+            (14, 3),
+            (14, 4),
+            (14, 5),
+            (14, 6),
+            (14, 7),
+            (14, 8),
+            (14, 9),
+            (14, 10),
+            (14, 11),
+            (14, 12),
+            (14, 13),
+            (14, 14)],
+  'undos': 4},
+ {'cols': [4, 8, 12],
+  'crossings': [(4, 5), (12, 5), (8, 11)],
+  'cuts': [],
+  'end': (8, 6),
+  'marks': {(4, 5): 'h', (8, 11): 'v', (12, 5): 'h'},
+  'rows': [5, 11],
+  'start': (1, 1),
+  'track': [(1, 1),
+            (1, 2),
+            (1, 3),
+            (1, 4),
+            (1, 5),
+            (1, 6),
+            (1, 7),
+            (1, 8),
+            (1, 9),
+            (1, 10),
+            (1, 11),
+            (1, 12),
+            (1, 13),
+            (1, 14),
+            (2, 1),
+            (2, 5),
+            (2, 11),
+            (2, 14),
+            (3, 1),
+            (3, 5),
+            (3, 11),
+            (3, 14),
+            (4, 1),
+            (4, 2),
+            (4, 3),
+            (4, 4),
+            (4, 5),
+            (4, 6),
+            (4, 7),
+            (4, 8),
+            (4, 9),
+            (4, 10),
+            (4, 11),
+            (4, 12),
+            (4, 13),
+            (4, 14),
+            (5, 1),
+            (5, 5),
+            (5, 11),
+            (5, 14),
+            (6, 1),
+            (6, 5),
+            (6, 11),
+            (6, 14),
+            (7, 1),
+            (7, 5),
+            (7, 11),
+            (7, 14),
+            (8, 1),
+            (8, 2),
+            (8, 3),
+            (8, 4),
+            (8, 5),
+            (8, 6),
+            (8, 7),
+            (8, 8),
+            (8, 9),
+            (8, 10),
+            (8, 11),
+            (8, 12),
+            (8, 13),
+            (8, 14),
+            (9, 1),
+            (9, 5),
+            (9, 11),
+            (9, 14),
+            (10, 1),
+            (10, 5),
+            (10, 11),
+            (10, 14),
+            (11, 1),
+            (11, 5),
+            (11, 11),
+            (11, 14),
+            (12, 1),
+            (12, 2),
+            (12, 3),
+            (12, 4),
+            (12, 5),
+            (12, 6),
+            (12, 7),
+            (12, 8),
+            (12, 9),
+            (12, 10),
+            (12, 11),
+            (12, 12),
+            (12, 13),
+            (12, 14),
+            (13, 1),
+            (13, 5),
+            (13, 11),
+            (13, 14),
+            (14, 1),
+            (14, 2),
+            (14, 3),
+            (14, 4),
+            (14, 5),
+            (14, 6),
+            (14, 7),
+            (14, 8),
+            (14, 9),
+            (14, 10),
+            (14, 11),
+            (14, 12),
+            (14, 13),
+            (14, 14)],
+  'undos': 4},
+ {'cols': [4, 8, 12],
+  'crossings': [(4, 4), (8, 4), (12, 4), (8, 12)],
+  'cuts': [],
+  'end': (12, 13),
+  'marks': {(4, 4): 'h', (8, 4): 'h', (8, 12): 'v', (12, 4): 'h'},
+  'rows': [4, 8, 12],
+  'start': (1, 1),
+  'track': [(1, 1),
+            (1, 2),
+            (1, 3),
+            (1, 4),
+            (1, 5),
+            (1, 6),
+            (1, 7),
+            (1, 8),
+            (1, 9),
+            (1, 10),
+            (1, 11),
+            (1, 12),
+            (1, 13),
+            (1, 14),
+            (2, 1),
+            (2, 4),
+            (2, 8),
+            (2, 12),
+            (2, 14),
+            (3, 1),
+            (3, 4),
+            (3, 8),
+            (3, 12),
+            (3, 14),
+            (4, 1),
+            (4, 2),
+            (4, 3),
+            (4, 4),
+            (4, 5),
+            (4, 6),
+            (4, 7),
+            (4, 8),
+            (4, 9),
+            (4, 10),
+            (4, 11),
+            (4, 12),
+            (4, 13),
+            (4, 14),
+            (5, 1),
+            (5, 4),
+            (5, 8),
+            (5, 12),
+            (5, 14),
+            (6, 1),
+            (6, 4),
+            (6, 8),
+            (6, 12),
+            (6, 14),
+            (7, 1),
+            (7, 4),
+            (7, 8),
+            (7, 12),
+            (7, 14),
+            (8, 1),
+            (8, 2),
+            (8, 3),
+            (8, 4),
+            (8, 5),
+            (8, 6),
+            (8, 7),
+            (8, 8),
+            (8, 9),
+            (8, 10),
+            (8, 11),
+            (8, 12),
+            (8, 13),
+            (8, 14),
+            (9, 1),
+            (9, 4),
+            (9, 8),
+            (9, 12),
+            (9, 14),
+            (10, 1),
+            (10, 4),
+            (10, 8),
+            (10, 12),
+            (10, 14),
+            (11, 1),
+            (11, 4),
+            (11, 8),
+            (11, 12),
+            (11, 14),
+            (12, 1),
+            (12, 2),
+            (12, 3),
+            (12, 4),
+            (12, 5),
+            (12, 6),
+            (12, 7),
+            (12, 8),
+            (12, 9),
+            (12, 10),
+            (12, 11),
+            (12, 12),
+            (12, 13),
+            (12, 14),
+            (13, 1),
+            (13, 4),
+            (13, 8),
+            (13, 12),
+            (13, 14),
+            (14, 1),
+            (14, 2),
+            (14, 3),
+            (14, 4),
+            (14, 5),
+            (14, 6),
+            (14, 7),
+            (14, 8),
+            (14, 9),
+            (14, 10),
+            (14, 11),
+            (14, 12),
+            (14, 13),
+            (14, 14)],
+  'undos': 4},
+ {'cols': [4, 12],
+  'rows': [4, 12],
+  'cuts': [],
+  'start': (14, 14),
+  'end': (12, 14),
+  'marks': {(4, 4): 'h', (4, 12): 'v', (12, 4): 'v', (12, 12): 'v'},
+  'undos': 3},
+ {'cols': [4, 8, 12],
+  'crossings': [(4, 4), (8, 8), (12, 12)],
+  'cuts': [],
+  'end': (14, 3),
+  'marks': {(4, 4): 'h', (8, 8): 'v', (12, 12): 'h'},
+  'rows': [4, 8, 12],
+  'start': (1, 1),
+  'track': [(1, 1),
+            (1, 2),
+            (1, 3),
+            (1, 4),
+            (1, 5),
+            (1, 6),
+            (1, 7),
+            (1, 8),
+            (1, 9),
+            (1, 10),
+            (1, 11),
+            (1, 12),
+            (1, 13),
+            (1, 14),
+            (2, 1),
+            (2, 4),
+            (2, 8),
+            (2, 12),
+            (2, 14),
+            (3, 1),
+            (3, 4),
+            (3, 8),
+            (3, 12),
+            (3, 14),
+            (4, 1),
+            (4, 2),
+            (4, 3),
+            (4, 4),
+            (4, 5),
+            (4, 6),
+            (4, 7),
+            (4, 8),
+            (4, 9),
+            (4, 10),
+            (4, 11),
+            (4, 12),
+            (4, 13),
+            (4, 14),
+            (5, 1),
+            (5, 4),
+            (5, 8),
+            (5, 12),
+            (5, 14),
+            (6, 1),
+            (6, 4),
+            (6, 8),
+            (6, 12),
+            (6, 14),
+            (7, 1),
+            (7, 4),
+            (7, 8),
+            (7, 12),
+            (7, 14),
+            (8, 1),
+            (8, 2),
+            (8, 3),
+            (8, 4),
+            (8, 5),
+            (8, 6),
+            (8, 7),
+            (8, 8),
+            (8, 9),
+            (8, 10),
+            (8, 11),
+            (8, 12),
+            (8, 13),
+            (8, 14),
+            (9, 1),
+            (9, 4),
+            (9, 8),
+            (9, 12),
+            (9, 14),
+            (10, 1),
+            (10, 4),
+            (10, 8),
+            (10, 12),
+            (10, 14),
+            (11, 1),
+            (11, 4),
+            (11, 8),
+            (11, 12),
+            (11, 14),
+            (12, 1),
+            (12, 2),
+            (12, 3),
+            (12, 4),
+            (12, 5),
+            (12, 6),
+            (12, 7),
+            (12, 8),
+            (12, 9),
+            (12, 10),
+            (12, 11),
+            (12, 12),
+            (12, 13),
+            (12, 14),
+            (13, 1),
+            (13, 4),
+            (13, 8),
+            (13, 12),
+            (13, 14),
+            (14, 1),
+            (14, 2),
+            (14, 3),
+            (14, 4),
+            (14, 5),
+            (14, 6),
+            (14, 7),
+            (14, 8),
+            (14, 9),
+            (14, 10),
+            (14, 11),
+            (14, 12),
+            (14, 13),
+            (14, 14)],
+  'undos': 4},
+ {'cols': [3, 6, 9, 12],
+  'crossings': [(3, 4), (6, 4), (9, 4), (12, 4), (6, 12)],
+  'cuts': [],
+  'end': (14, 13),
+  'marks': {(3, 4): 'h', (6, 4): 'h', (6, 12): 'v', (9, 4): 'h', (12, 4): 'v'},
+  'rows': [4, 8, 12],
+  'start': (1, 1),
+  'track': [(1, 1),
+            (1, 2),
+            (1, 3),
+            (1, 4),
+            (1, 5),
+            (1, 6),
+            (1, 7),
+            (1, 8),
+            (1, 9),
+            (1, 10),
+            (1, 11),
+            (1, 12),
+            (1, 13),
+            (1, 14),
+            (2, 1),
+            (2, 4),
+            (2, 8),
+            (2, 12),
+            (2, 14),
+            (3, 1),
+            (3, 2),
+            (3, 3),
+            (3, 4),
+            (3, 5),
+            (3, 6),
+            (3, 7),
+            (3, 8),
+            (3, 9),
+            (3, 10),
+            (3, 11),
+            (3, 12),
+            (3, 13),
+            (3, 14),
+            (4, 1),
+            (4, 4),
+            (4, 8),
+            (4, 12),
+            (4, 14),
+            (5, 1),
+            (5, 4),
+            (5, 8),
+            (5, 12),
+            (5, 14),
+            (6, 1),
+            (6, 2),
+            (6, 3),
+            (6, 4),
+            (6, 5),
+            (6, 6),
+            (6, 7),
+            (6, 8),
+            (6, 9),
+            (6, 10),
+            (6, 11),
+            (6, 12),
+            (6, 13),
+            (6, 14),
+            (7, 1),
+            (7, 4),
+            (7, 8),
+            (7, 12),
+            (7, 14),
+            (8, 1),
+            (8, 4),
+            (8, 8),
+            (8, 12),
+            (8, 14),
+            (9, 1),
+            (9, 2),
+            (9, 3),
+            (9, 4),
+            (9, 5),
+            (9, 6),
+            (9, 7),
+            (9, 8),
+            (9, 9),
+            (9, 10),
+            (9, 11),
+            (9, 12),
+            (9, 13),
+            (9, 14),
+            (10, 1),
+            (10, 4),
+            (10, 8),
+            (10, 12),
+            (10, 14),
+            (11, 1),
+            (11, 4),
+            (11, 8),
+            (11, 12),
+            (11, 14),
+            (12, 1),
+            (12, 2),
+            (12, 3),
+            (12, 4),
+            (12, 5),
+            (12, 6),
+            (12, 7),
+            (12, 8),
+            (12, 9),
+            (12, 10),
+            (12, 11),
+            (12, 12),
+            (12, 13),
+            (12, 14),
+            (13, 1),
+            (13, 4),
+            (13, 8),
+            (13, 12),
+            (13, 14),
+            (14, 1),
+            (14, 2),
+            (14, 3),
+            (14, 4),
+            (14, 5),
+            (14, 6),
+            (14, 7),
+            (14, 8),
+            (14, 9),
+            (14, 10),
+            (14, 11),
+            (14, 12),
+            (14, 13),
+            (14, 14)],
+  'undos': 4}]
+
+DECOR_CELLS = ()
+
+
+def build_board(spec: dict) -> tuple[dict, dict]:
+    track: dict[tuple[int, int], bool] = {}
+    for i in range(LO, HI + 1):
+        for cell in ((i, LO), (i, HI), (LO, i), (HI, i)):
+            track[cell] = True
+    for x in spec["cols"]:
+        for y in range(LO, HI + 1):
+            track[(x, y)] = True
+    for y in spec["rows"]:
+        for x in range(LO, HI + 1):
+            track[(x, y)] = True
+    if "track" in spec:
+        track = {tuple(c): True for c in spec["track"]}
+    for cell in spec["cuts"]:
+        track.pop(tuple(cell), None)
+
+    junctions: dict[tuple[int, int], str | None] = {}
+    for x in spec["cols"]:
+        for y in spec["rows"]:
+            if (x, y) in track:
+                junctions[(x, y)] = spec["marks"].get((x, y))
+    if "crossings" in spec:
+        # An unmarked open meeting of slats is ordinary track: it may turn but cannot be reused.
+        # Only the visibly railed crossings have the established straight-through/two-pass rule.
+        junctions = {tuple(cell): spec["marks"].get(tuple(cell)) for cell in spec["crossings"]}
+    return track, junctions
+
+
+def axis_of(direction: tuple[int, int]) -> str:
+    return "H" if direction[1] == 0 else "V"
+
+
+def initial_state(spec: dict) -> dict:
+    start = tuple(spec["start"])
+    return {"pos": start, "spent": {start}, "cross": {}, "arms": {start: set()}}
+
+
+def clone_state(state: dict) -> dict:
+    return {
+        "pos": state["pos"],
+        "spent": set(state["spent"]),
+        "cross": dict(state["cross"]),
+        "arms": {k: set(v) for k, v in state["arms"].items()},
+    }
+
+
+def try_step(state: dict, direction: tuple[int, int], track: dict, junctions: dict):
+    dx, dy = direction
+    axis = axis_of(direction)
+    passed: list[tuple[int, int]] = []
+    cur = (state["pos"][0] + dx, state["pos"][1] + dy)
+    while True:
+        if cur not in track:
+            return None
+        if cur not in junctions:
+            break
+        if axis in state["cross"].get(cur, ()) or cur in passed:
+            return None
+        passed.append(cur)
+        cur = (cur[0] + dx, cur[1] + dy)
+    if cur in state["spent"]:
+        return None
+
+    out = clone_state(state)
+    back = (-dx, -dy)
+    out["arms"].setdefault(state["pos"], set()).add(direction)
+    for cell in passed:
+        arms = out["arms"].setdefault(cell, set())
+        arms.add(back)
+        arms.add(direction)
+        out["cross"][cell] = out["cross"].get(cell, ()) + (axis,)
+    out["arms"].setdefault(cur, set()).add(back)
+    out["spent"].add(cur)
+    out["pos"] = cur
+    return out
+
+
+def failed_marks(state: dict, junctions: dict) -> list:
+    bad = []
+    for cell, mark in junctions.items():
+        if mark is None:
+            continue
+        order = state["cross"].get(cell, ())
+        if len(order) < 2 or order[1] != ("H" if mark == "h" else "V"):
+            bad.append(cell)
+    return bad
+
+
+def knot_holds(state: dict, junctions: dict) -> bool:
+    return not failed_marks(state, junctions)
+
+
+def required_axis(mark: str) -> str:
+    """The strand that must end on top at a marked crossing: 'h' asks for the across strand, 'v' for the up-and-down one."""
+    return "H" if mark == "h" else "V"
+
+
+def crossing_status(state: dict, junctions: dict) -> dict:
+    """How each marked crossing stands, read from the cord alone. Each strand can cross a crossing only once, so a
+    crossing whose first pass was the strand meant to end on top is DOOMED: its second pass can only be the other one."""
+    out = {}
+    for cell, mark in junctions.items():
+        if mark is None:
+            continue
+        order = state["cross"].get(cell, ())
+        wanted = required_axis(mark)
+        if not order:
+            out[cell] = WAITING
+        elif len(order) == 1:
+            out[cell] = DOOMED if order[0] == wanted else ONE_PASS
+        else:
+            out[cell] = HELD if order[1] == wanted else FAILED
+    return out
+
+
+def is_stuck(state: dict, track: dict, junctions: dict, end: tuple) -> bool:
+    """No legal move from here, and not on the finish."""
+    if state["pos"] == tuple(end):
+        return False
+    return all(try_step(state, direction, track, junctions) is None for direction in DIRS)
+
+
+def tier_of(level_index: int) -> int:
+    """0: live crossing states; 1: live once both passes are laid; 2: pulls only."""
+    return 0 if level_index < TIER_FULL else 1 if level_index < TIER_DONE else 2
+
+
+def state_key(state: dict) -> tuple:
+    return (state["pos"], frozenset(state["spent"]),
+            tuple(sorted(state["cross"].items())))
+
+
+
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+# ART. Everything below only draws; it reads the state and never changes a rule.
+# Text-row sprites use one letter per colour; '.' is transparent. Letters with a fixed colour are listed in INK;
+# a, b, c are passed in per sprite so one design can be recoloured for any level.
+# ══════════════════════════════════════════════════════════════════════════════════════════════
+
+INK = {'k': BLK, 'w': WHT, 'y': YEL, 'r': RED, 'o': ORG, 'g': GRN, 'p': PNK, 'm': MAG, 'u': PUR, 'l': LBL,
+       'n': MAR, 'e': BLU}
+
+
+def paint(rows, **ink) -> list[list[int]]:
+    """Text rows to a pixel grid. Extra keyword letters (a, b, c ...) recolour the design."""
+    table = dict(INK)
+    table.update(ink)
+    return [[-1 if ch == '.' else table[ch] for ch in row] for row in rows]
+
+
+def frames_of(designs, **ink) -> list:
+    return [np.array(paint(rows, **ink), dtype=np.int8) for rows in designs]
+
+
+def shifted(rows, dx: int, top: int = 99) -> tuple:
+    """Slide the first `top` rows sideways by dx (used for sway); lower rows stay put."""
+    out = []
+    for i, row in enumerate(rows):
+        if i < top and dx:
+            w = len(row)
+            row = ('.' * dx + row)[:w] if dx > 0 else (row[-dx:] + '.' * -dx)
+        out.append(row)
+    return tuple(out)
+
+
+def outlined(grid: np.ndarray, colour: int = BLK) -> np.ndarray:
+    """Add a one-pixel outline round every filled pixel, inside the same box (leave a border when you draw)."""
+    h, w = grid.shape
+    out = grid.copy()
+    for y in range(h):
+        for x in range(w):
+            if grid[y, x] != -1:
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < w and 0 <= ny < h and grid[ny, nx] != -1:
+                    out[y, x] = colour
+                    break
+    return out
+
+
+# ── the head: a round purple tip with a face; the way it last moved decides where it looks ──
+_HEAD = {
+    # Six by six, drawn one pixel past its cell on every side (see _place_head) so the knob reads bigger than the 4-pixel
+    # lattice while the cord itself stays four wide. P body, h pink cheek/shine, w white of the eye, k outline and pupil.
+    "front": (".kkkk.", "kPhPPk", "kwkkwk", "khPPhk", "kPkkPk", ".kkkk."),
+    "up":    (".kkkk.", "kwkkwk", "kPhPPk", "kPPPPk", "kPPPPk", ".kkkk."),
+    "down":  (".kkkk.", "kPhPPk", "kPPPPk", "kwkkwk", "khkkhk", ".kkkk."),
+    "left":  (".kkkk.", "kPhPPk", "kkwkwk", "khPPhk", "kPkkPk", ".kkkk."),
+    "right": (".kkkk.", "kPhPPk", "kwkwkk", "khPPhk", "kPkkPk", ".kkkk."),
+    "happy": (".kkkk.", "kPhPPk", "kkPPkk", "khPPhk", "kwwwwk", ".kkkk."),     # squinting grin: the pull held
+    "sad":   (".kkkk.", "kPhPPk", "kwkkwk", "klPPlk", "kkPPkk", ".kkkk."),     # tears and a frown: the pull failed
+    "blink": (".kkkk.", "kPhPPk", "kPPPPk", "khPPhk", "kPkkPk", ".kkkk."),     # eyes shut while it waits
+}
+FACING = {UP: "up", DOWN: "down", LEFT: "left", RIGHT: "right"}
+HEAD_FRAMES = {face: np.array(paint(rows, P=PLAYER, h=PNK), dtype=np.int8) for face, rows in _HEAD.items()}
+
+
+# ── slat tiles: a bevelled wooden strip with a black rim wherever it meets cloth ──
+def _slat(cell, track, wood) -> list[list[int]]:
+    """One wooden slat tile. An edge facing cloth gets a black rim, then a light line (top and left) or a shadow
+    line (bottom and right) inside it, so a run of slats reads as one rounded rod. A corner where both sides face
+    cloth is cut round; an inside corner whose diagonal is cloth is black. Only crossings keep plain body colour."""
+    body, hi, shade = wood
+    x, y = cell
+    px = [[body] * CELL for _ in range(CELL)]
+    up, down = (x, y - 1) in track, (x, y + 1) in track
+    left, right = (x - 1, y) in track, (x + 1, y) in track
+    for k in range(CELL):
+        if not up:
+            px[0][k], px[1][k] = RIM, hi
+        if not down:
+            px[CELL - 1][k], px[CELL - 2][k] = RIM, shade
+        if not left:
+            px[k][0], px[k][1] = RIM, hi
+        if not right:
+            px[k][CELL - 1], px[k][CELL - 2] = RIM, shade
+    for j, i, dx, dy in ((0, 0, -1, -1), (0, 3, 1, -1), (3, 0, -1, 1), (3, 3, 1, 1)):
+        side_x, side_y = (x + dx, y) in track, (x, y + dy) in track
+        if not side_x and not side_y:
+            px[j][i] = -1
+        elif side_x and side_y and (x + dx, y + dy) not in track:
+            px[j][i] = RIM
+    if up and down and left and right:                  # a crossing: a bright rivet and its shadow
+        px[1][1], px[2][2] = hi, shade
+    elif (x * 5 + y * 3) % 4 == 0:                      # a grain fleck on some plain runs, never on the rim
+        gy, gx = 1 + (x + y) % 2, 1 + (x * 2 + y) % 2
+        if px[gy][gx] == body:
+            px[gy][gx] = shade
+    return px
+
+
+def _crossing(mark: str | None, status: str = WAITING) -> list[list[int]]:
+    """kt01's two bars per marked crossing, along the strand that must end on top. A waiting crossing keeps its mark
+    colour; one pass in is yellow, held is green, doomed or failed is red and dashed (shape as well as colour)."""
+    colour = JUNCTION if mark is None else WANT_H if mark == 'h' else WANT_V
+    colour = STATUS_COLOUR.get(status, colour)
+    dashed = status in (DOOMED, FAILED)
+    px = [[-1] * CELL for _ in range(CELL)]
+    for k in range(CELL):
+        if dashed and k % 2:
+            continue
+        if mark == 'h':
+            px[0][k] = px[CELL - 1][k] = colour
+        else:
+            px[k][0] = px[k][CELL - 1] = colour
+    return px
+
+
+def _eyelet(colour: int) -> list[list[int]]:
+    px = [[colour] * CELL for _ in range(CELL)]
+    for y in range(1, CELL - 1):
+        for x in range(1, CELL - 1):
+            px[y][x] = -1
+    return px
+
+
+def _arm(px, direction, colour) -> None:
+    # kt01's two-pixel arm toward one side of the cell.
+    if direction == UP:
+        rows, cols = (0, 1), (1, 2)
+    elif direction == DOWN:
+        rows, cols = (2, 3), (1, 2)
+    elif direction == LEFT:
+        rows, cols = (1, 2), (0, 1)
+    else:
+        rows, cols = (1, 2), (2, 3)
+    for r in rows:
+        for c in cols:
+            px[r][c] = colour
+
+
+def _cord_pixels(arms, order, colour) -> list[list[int]]:
+    """The strand in one cell. At a crossing laid twice the first strand is drawn gone-under and
+    the second over it, exactly kt01's pixel order."""
+    px = [[-1] * CELL for _ in range(CELL)]
+    if len(order) == 2:
+        under_axis = order[0]
+        for axis in (under_axis, order[1]):
+            for direction in arms:
+                if axis_of(direction) == axis:
+                    _arm(px, direction, UNDER if axis == under_axis else colour)
+    else:
+        for direction in arms:
+            _arm(px, direction, colour)
+    return px
+
+
+def _spool(thread: int, phase: int = 0) -> list[list[int]]:
+    # A wooden spool wound with coloured thread: bench scenery in the right margin, it counts nothing. The shine slides
+    # between two spots (phase 0 and 1) so the thread looks to be turning.
+    shine = WHT if thread != WHT else YEL
+    top = [RIM, shine if phase else thread, thread, RIM]
+    low = [RIM, thread, thread if phase else shine, RIM]
+    return [[ORG, YEL, YEL, ORG], top, low, [ORG, MAR, MAR, ORG]]
+
+
+def _spool_used() -> list[list[int]]:
+    """A spent pull: the same spool with its thread gone and its shine out."""
+    return [[ORG, MAR, MAR, ORG], [RIM, MAR, MAR, RIM], [RIM, MAR, MAR, RIM], [ORG, MAR, MAR, ORG]]
+
+
+def _undo_corners(colour: int) -> list[list[int]]:
+    """Four corner pixels marking the stop a take-back returns to."""
+    px = [[-1] * CELL for _ in range(CELL)]
+    for y, x in ((0, 0), (0, CELL - 1), (CELL - 1, 0), (CELL - 1, CELL - 1)):
+        px[y][x] = colour
+    return px
+
+
+def _rack(count: int) -> list[list[int]]:
+    """The wooden shelf the spools stand on: a shelf above the first spool and one under each, with the
+    shelf board's light edge on top. Height 6*(count-1)+8 so it lines up with SPOOL_TOP and SPOOL_GAP."""
+    height = 6 * (count - 1) + 8
+    px = [[MAR] * CELL for _ in range(height)]
+    shelves = [0] + [6 * i + 6 for i in range(count)]
+    for s in shelves:
+        for k in range(CELL):
+            px[s][k], px[s + 1][k] = YEL, ORG
+    for r in range(height):
+        px[r][0] = RIM if px[r][0] == MAR else px[r][0]
+    return px
+
+
+# ── the glyph script: kana set 31 of tools/glyphs (a closed shape, an open stroke, broken dashes; seven each) ──
+GLYPHS = {
+    'A': (
+        ('####.', '...#.', '#####', '#.#..', '..#..'),
+        ('###..', '#....', '#####', '..#..', '#####'),
+        ('###.#', '..#.#', '.####', '..#.#', '..#.#'),
+        ('..#..', '#####', '..#..', '#####', '#.#..'),
+        ('#####', '....#', '.####', '....#', '.####'),
+        ('###..', '..#.#', '#####', '#...#', '###.#'),
+        ('.###.', '...#.', '...#.', '#..#.', '#####'),
+    ),
+    'B': (
+        ('..#.#', '#####', '#.#.#', '###.#', '..#.#'),
+        ('###..', '#.#.#', '#.###', '#.#.#', '###.#'),
+        ('.###.', '##.#.', '.###.', '..#..', '#####'),
+        ('#####', '#..#.', '####.', '..#..', '####.'),
+        ('###..', '..#..', '####.', '#.#..', '#####'),
+        ('#.#.#', '#####', '#.#.#', '###.#', '.#..#'),
+        ('####.', '#....', '#####', '#.#..', '####.'),
+    ),
+    'C': (
+        ('.#...', '#####', '.#..#', '.#..#', '#...#'),
+        ('#####', '.....', '#####', '.....', '.##..'),
+        ('####.', '...#.', '...#.', '.....', '..###'),
+        ('..#..', '####.', '..#..', '#.###', '..#..'),
+        ('#####', '....#', '....#', '...#.', '.#...'),
+        ('..##.', '.....', '.....', '.....', '#####'),
+        ('#####', '....#', '.....', '..##.', '.##..'),
+    ),
+}
+GLYPH_COUNT = 7
+# state -> (family, colour, first glyph index): B closed = on track or ready, C broken = wrong or stuck, A open = a take-back or a
+# blocked move. Tile k shows glyph (first + k) % 7 of the family, so tiles differ from each other and every state has its own shapes.
+SIGNALS = {
+    "on track": ("B", ON_TRACK, 0), "ready": ("B", READY_COL, 3), "wrong": ("C", WRONG_COL, 0),
+    "stuck": ("C", STUCK_COL, 3), "undo": ("A", UNDO_COL, 0), "blocked": ("A", BLOCKED_COL, 3),
+}
+_TILE_CACHE: dict = {}
+
+
+def _tile(family: str, index: int, colour: int, cells: int) -> np.ndarray:
+    """A black plate with one glyph on it. Three cells wide (12 px): the glyph doubled. Two cells (8 px): the glyph at its own size."""
+    key = (family, index, colour, cells)
+    if key not in _TILE_CACHE:
+        scale, plate = (2, CELL * 3) if cells >= 3 else (1, 7)
+        px = np.full((CELL * cells, CELL * cells), -1, dtype=np.int8)
+        px[0:plate, 0:plate] = BLK
+        for y, row in enumerate(GLYPHS[family][index % GLYPH_COUNT]):
+            for x, ch in enumerate(row):
+                if ch == '#':
+                    px[1 + y * scale:1 + (y + 1) * scale, 1 + x * scale:1 + (x + 1) * scale] = colour
+        _TILE_CACHE[key] = px
+    return _TILE_CACHE[key]
+
+
+PANEL_W, PANEL_H = 14, 15
+
+
+def _crossing_picture(top_axis: str, colour: int) -> np.ndarray:
+    """Five by five: two strands crossing with `top_axis` laid over the other (the over strand runs through whole in the
+    cord colour, the under strand is two stubs), on a black plate."""
+    px = np.full((7, 7), BLK, dtype=np.int8)
+    for k in range(5):
+        if top_axis == "H":
+            px[3, 1 + k] = colour
+        else:
+            px[1 + k, 3] = colour
+    for k in (0, 1, 3, 4):
+        if top_axis == "H":
+            px[1 + k, 3] = ORG
+        else:
+            px[3, 1 + k] = ORG
+    return px
+
+
+def _panel(top_axis: str) -> np.ndarray:
+    """The wordless teaching panel for the level's mark: the crossing picture the mark asks for beside the closed green glyph,
+    and the other picture beside the broken red glyph. Two strips, each a crossing picture and a small glyph tile."""
+    px = np.full((PANEL_H, PANEL_W), BLK, dtype=np.int8)
+    other = "H" if top_axis == "V" else "V"
+    for row, (axis, family, colour) in enumerate(((top_axis, "B", ON_TRACK), (other, "C", WRONG_COL))):
+        y = row * 8
+        px[y:y + 7, 0:7] = _crossing_picture(axis, CORD)
+        tile = _tile(family, 0, colour, 2)[0:7, 0:7]
+        px[y:y + 7, 7:14] = np.where(tile == -1, BLK, tile)
+    return px
+
+
+SHOWER = 8
+SHOWER_COLOURS = (YEL, PNK, ORG, GRN, WHT, MAG, LBL, RED)
+
+
+def _scrap(colour: int, turned: bool) -> list[list[int]]:
+    """A streamer of ribbon: three pixels wide and five tall with a pale highlight, or turned on its side as it tumbles."""
+    if turned:
+        return [[colour, colour, colour, colour, -1], [WHT, WHT, colour, colour, colour], [-1, colour, colour, colour, colour]]
+    return [[-1, colour, colour], [colour, colour, -1], [colour, WHT, -1], [-1, colour, WHT], [colour, colour, -1]]
+
+
+def _spark(colour: int, big: bool) -> list[list[int]]:
+    if big:
+        return [[-1, -1, colour, -1, -1], [-1, colour, WHT, colour, -1], [colour, WHT, WHT, WHT, colour],
+                [-1, colour, WHT, colour, -1], [-1, -1, colour, -1, -1]]
+    return [[-1, colour, -1], [colour, WHT, colour], [-1, colour, -1]]
+
+
+# ── props: small scenes you could stand on a sewing table. Each builder returns animation frames. ──
+def b_yarn(a, b):
+    """A ball of yarn with a face; it blinks."""
+    open_ = ("..kkkk..", ".kbaaak.", "kbaaaaak", "kakaakak", "kpaaaapk", "kaakkaak", ".kaaaak.", "..kkkk..")
+    shut = ("..kkkk..", ".kbaaak.", "kbaaaaak", "kaaaaaak", "kpaaaapk", "kaakkaak", ".kaaaak.", "..kkkk..")
+    return frames_of([open_, open_, shut], a=a, b=b)
+
+
+def b_thimble(a, b):
+    rows = ("........", "..kkkk..", ".kaaaak.", "kanaanak", "kaaaaaak", "kanaanak", "kbbbbbbk", ".kkkkkk.")
+    wink = ("........", "..kkkk..", ".kaaaak.", "kaaanaak", "kanaaank", "kaaaaaak", "kbbbbbbk", ".kkkkkk.")
+    return frames_of([rows, wink], a=a, b=b)
+
+
+def b_button(a, b):
+    rows = ("..kkkk..", ".kbaaak.", "kbaaaaak", "kaaaaaak", "kakaakak", "kaaaaaak", ".kaaaak.", "..kkkk..")
+    thread = ("..kkkk..", ".kbaaak.", "kakaakak", "kaakkaak", "kakaakak", "kaaaaaak", ".kaaaak.", "..kkkk..")
+    return frames_of([rows, thread], a=a, b=b)
+
+
+def b_pincushion(a, b):
+    rows = (".b...y..", ".w...w.b", ".w.b.w.w", ".kkkkkk.", "kaaaaaak", "kaaaabak", ".kkkkkk.", "........")
+    glint = (".b...w..", ".w...w.b", ".w.b.w.w", ".kkkkkk.", "kaaaaaak", "kaaaabak", ".kkkkkk.", "........")
+    return frames_of([rows, glint], a=a, b=b, y=YEL)
+
+
+def b_mushroom(a, b):
+    rows = ("..kkkk..", ".kawaak.", "kaaaawak", "kwaaaaak", "kkkkkkkk", ".kbkkbk.", ".kbbbbk.", "..kkkk..")
+    return frames_of([rows], a=a, b=b)
+
+
+def b_flower(a, b):
+    """A flower with a face that sways on its stem."""
+    head = ("..aaaa..", ".abbbba.", "abkbbkba", "abbkkbba", ".abbbba.", "..aaaa..", "...gg...", "..gggg..")
+    return frames_of([head, shifted(head, 1, 6), head, shifted(head, -1, 6)], a=a, b=b)
+
+
+def b_butterfly(a, b):
+    open_ = ("aa....aa", "aaa..aaa", "abbkkbba", "aabkkbaa", ".aakkaa.", "..akka..", "...kk...", "........")
+    folded = ("........", "..a..a..", "..aaaa..", ".abkkba.", ".abkkba.", "..akka..", "...kk...", "........")
+    return frames_of([open_, folded], a=a, b=b)
+
+
+def b_spoolbig(a, b):
+    rows = ("kkkkkkkk", "kbbbbbbk", ".kaaaak.", ".kabaak.", ".kaaabk.", ".kabaak.", "kbbbbbbk", "kkkkkkkk")
+    shift = ("kkkkkkkk", "kbbbbbbk", ".kaaaak.", ".kaabak.", ".kabaak.", ".kaaabk.", "kbbbbbbk", "kkkkkkkk")
+    return frames_of([rows, shift], a=a, b=b)
+
+
+def b_cloud(a, b):
+    """A fat cloud with a face (12 by 8): used on the sky level; it drifts."""
+    g = np.full((8, 12), -1, dtype=np.int8)
+    for cx, cy, r in ((3.3, 4.3, 2.6), (6.0, 3.0, 3.0), (8.8, 4.3, 2.6)):
+        for y in range(8):
+            for x in range(12):
+                if (x - cx) ** 2 + (y - cy) ** 2 <= r * r:
+                    g[y, x] = a
+    g[5, 3:9] = a
+    g = outlined(g)
+    g[4, 4] = g[4, 7] = BLK
+    g[5, 5] = g[5, 6] = BLK
+    return [g]
+
+
+def b_star(a, b):
+    """A little star that twinkles: bright cross, then a dot."""
+    cross = (".a..", "aaa.", ".a..", "....")
+    dot = ("....", ".a..", "....", "....")
+    return frames_of([cross, dot, cross, cross], a=a)
+
+
+def b_flower4(a, b):
+    rows = (".a..", "aba.", ".ag.", "..g.")
+    sway = ("..a.", ".aba", "..ag", "..g.")
+    return frames_of([rows, sway], a=a, b=b)
+
+
+def b_heart(a, b):
+    rows = ("a..a", "aaaa", ".aa.", "....")
+    beat = ("a..a", "aaaa", "aaaa", ".aa.")
+    return frames_of([rows, beat], a=a)
+
+
+def b_bead(a, b):
+    rows = (".aa.", "abaa", "aaaa", ".aa.")
+    return frames_of([rows], a=a, b=WHT)
+
+
+# ── pass 2 props: eight-by-eight creatures and objects, each with a face that blinks or wiggles ──
+def _blink(rows, row, shut):
+    """The same picture with one row swapped: the blink frame."""
+    out = list(rows)
+    out[row] = shut
+    return tuple(out)
+
+
+def b_moon(a, b):
+    """A crescent moon cut from two discs, outlined, with a closed sleepy eye, a rosy cheek and a glint; it opens an eye now and then."""
+    g = np.full((8, 8), -1, dtype=np.int8)
+    for y in range(8):
+        for x in range(8):
+            if (x - 3.4) ** 2 + (y - 3.5) ** 2 <= 8.4 and (x - 5.6) ** 2 + (y - 2.7) ** 2 > 6.0:
+                g[y, x] = a
+    g = outlined(g)
+    g[2, 3] = WHT                    # glint
+    g[5, 2] = PNK                    # cheek
+    shut, wide = g.copy(), g.copy()
+    shut[3, 2] = shut[3, 3] = BLK    # a closed eye: a dash
+    wide[3, 2], wide[4, 2] = BLK, BLK  # an open eye: two pixels down
+    return [shut, shut, wide, shut]
+
+
+def b_owl(a, b):
+    r = ("k.kkkk.k", "kakaakak", "kwwkkwwk", "kwkwwkwk", "kaayyaak", "kabbbbak", ".kabbak.", "..kyyk..")
+    s = _blink(_blink(r, 2, "kaaaaaak"), 3, "kakaakak")
+    return frames_of([r, r, r, s], a=a, b=b)
+
+
+def b_cat(a, b):
+    r = ("kk....kk", "kbkkkkbk", "kaaaaaak", "kakaakak", "kaappaak", "kaakkaak", ".kaaaak.", "..kkkk..")
+    return frames_of([r, r, _blink(r, 3, "kaaaaaak")], a=a, b=b)
+
+
+def b_bunny(a, b):
+    r = (".kk..kk.", "kbk..kbk", "kbk..kbk", ".kaaaak.", "kakaakak", "kaappaak", ".kaaaak.", "..kkkk..")
+    return frames_of([r, r, r, _blink(r, 4, "kaaaaaak")], a=a, b=b)
+
+
+def b_frog(a, b):
+    r = (".kk..kk.", "kwwkkwwk", "kwkaakwk", "kaaaaaak", "kakkkkak", "kaaaaaak", "kbaaaabk", ".kk..kk.")
+    s = _blink(_blink(r, 1, "kaakkaak"), 2, "kaaaaaak")
+    return frames_of([r, r, r, s], a=a, b=b)
+
+
+def b_penguin(a, b):
+    r = ("..kkkk..", ".kaaaak.", "kakaakak", "kaaooaak", "kawwwwak", "kawwwwak", ".kawwak.", "..oo.oo.")
+    return frames_of([r, r, _blink(r, 2, "kaaaaaak")], a=a, b=b)
+
+
+def b_ghost(a, b):
+    r = ("..kkkk..", ".kaaaak.", "kakaakak", "kakaakak", "kaakkaak", "kaaaaaak", "kaaaaaak", "kakkakak")
+    s = ("..kkkk..", ".kaaaak.", "kaaaaaak", "kakaakak", "kaakkaak", "kaaaaaak", "kaaaaaak", "kkakkaka")
+    return frames_of([r, r, s, r], a=a, b=b)
+
+
+def b_bat(a, b):
+    up = ("k......k", "kk.kk.kk", "kakkkkak", "kawkkwak", ".kaaaak.", "..kwwk..", "...kk...", "........")
+    down = ("........", "k..kk..k", "kakkkkak", "kawkkwak", ".kaaaak.", "..kwwk..", "...kk...", "........")
+    return frames_of([up, down], a=a, b=b)
+
+
+def b_pumpkin(a, b):
+    r = ("...gg...", ".kkggkk.", "kabaabak", "kakaakak", "kaaaaaak", "kakwwkak", ".kaaaak.", "..kkkk..")
+    return frames_of([r, r, _blink(r, 3, "kaaaaaak")], a=a, b=b)
+
+
+def b_apple(a, b):
+    r = ("...kg...", ".kkkgkk.", "kawaaaak", "kwaaaaak", "kakaakak", "kaakkaak", ".kaaaak.", "..kkkk..")
+    return frames_of([r, r, _blink(r, 4, "kaaaaaak")], a=a, b=b)
+
+
+def b_cupcake(a, b):
+    r = ("...rr...", "..kaak..", ".kaaaak.", "kakaakak", "kkkkkkkk", ".kbwbwk.", ".kbbbbk.", "..kkkk..")
+    return frames_of([r, r, _blink(r, 3, "kaaaaaak")], a=a, b=b)
+
+
+def b_icecream(a, b):
+    r = ("..kkkk..", ".kwaaak.", "kakaakak", "kaappaak", "kkkkkkkk", ".kbkbbk.", "..kbbk..", "...kk...")
+    return frames_of([r, r, _blink(r, 2, "kaaaaaak")], a=a, b=b)
+
+
+def b_bell(a, b):
+    r = ("...kk...", "..kaak..", ".kawaak.", ".kaaaak.", "kakaakak", "kaaaaaak", "kkkkkkkk", "..kbbk..")
+    swing = _blink(r, 7, "...kbbk.")
+    return frames_of([r, swing], a=a, b=b)
+
+
+def b_acorn(a, b):
+    r = ("..kkkk..", ".kbbbbk.", "kbkbkbbk", "kkkkkkkk", "kakaakak", ".kaaaak.", "..kaak..", "...kk...")
+    return frames_of([r, r, _blink(r, 4, "kaaaaaak")], a=a, b=b)
+
+
+def b_fish(a, b):
+    r = ("........", "..kkkk.k", ".kaaaakk", "kwkaaabk", "kaaaaabk", ".kaaaakk", "..kkkk.k", "........")
+    t = ("........", "..kkkk..", ".kaaaak.", "kwkaaabk", "kaaaaabk", ".kaaaakk", "..kkkk.k", "........")
+    return frames_of([r, t], a=a, b=b)
+
+
+def b_balloon(a, b):
+    r = ("..kkkk..", ".kwaaak.", "kwaaaaak", "kakaakak", "kaaaaaak", ".kaaaak.", "..kkkk..", "...k....")
+    return frames_of([r, _blink(r, 7, "....k...")], a=a, b=b)
+
+
+def b_sun(a, b):
+    r = ("o..oo..o", ".kkkkkk.", "kaaaaaak", "kakaakak", "kaakkaak", "kaaaaaak", ".kkkkkk.", "o..oo..o")
+    t = ("..o..o..", ".kkkkkk.", "kaaaaaak", "kakaakak", "kaakkaak", "kaaaaaak", ".kkkkkk.", "..o..o..")
+    return frames_of([r, t], a=a, b=b)
+
+
+def b_rocket(a, b):
+    r = ("...kk...", "..kaak..", ".kallak.", ".kaaaak.", ".kaaaak.", "kbkaakbk", "kb.kk.bk", "..yooy..")
+    return frames_of([r, _blink(r, 7, "...yy...")], a=a, b=b)
+
+
+def b_ufo(a, b):
+    r = ("..kkkk..", ".kwlllk.", "klkllklk", "kaaaaaak", "kayaayak", ".kkkkkk.", "........", "........")
+    return frames_of([r, _blink(r, 4, "kawaawak")], a=a, b=b)
+
+
+
+# ── pass 3 heroes: twelve-by-twelve creatures (three cells square) with real faces; each level gets one or two ──
+def _disc(g, cx, cy, r, colour):
+    for y in range(g.shape[0]):
+        for x in range(g.shape[1]):
+            if (x - cx) ** 2 + (y - cy) ** 2 <= r * r:
+                g[y, x] = colour
+
+
+def _hero(a, b, ears, face='plain'):
+    """A big round-headed creature. `ears` picks round, point, long or none; `face` plain, owl (huge eyes and a beak) or
+    frog (eyes up on bumps and a wide mouth). Returns three frames: eyes open, eyes open, eyes shut."""
+    g = np.full((12, 12), -1, dtype=np.int8)
+    if ears == 'round':
+        _disc(g, 2.3, 2.3, 2.0, a)
+        _disc(g, 8.7, 2.3, 2.0, a)
+    elif ears == 'point':
+        for y, w in ((0, 1), (1, 2), (2, 3)):
+            g[y, 2:2 + w] = a
+            g[y, 10 - w:10] = a
+    elif ears == 'long':
+        g[0:5, 2:4] = a
+        g[0:5, 8:10] = a
+    if face == 'frog':
+        _disc(g, 2.6, 2.8, 2.2, a)
+        _disc(g, 8.4, 2.8, 2.2, a)
+    _disc(g, 5.5, 6.8, 4.3, a)
+    _disc(g, 5.5, 8.8, 2.5, b)
+    if ears == 'round':                            # inner ear
+        g[2, 2] = g[2, 9] = b
+    if ears == 'long':
+        g[1:3, 2] = b
+        g[1:3, 9] = b
+    g = outlined(g)
+    if face == 'owl':
+        _disc(g, 3.3, 5.3, 1.9, WHT)
+        _disc(g, 7.7, 5.3, 1.9, WHT)
+        g = outlined(g)
+        g[5, 3] = g[6, 3] = g[5, 8] = g[6, 8] = BLK
+        g[7, 5] = g[7, 6] = ORG                    # beak
+        g[8, 5] = g[8, 6] = ORG
+        g[9, 3:9] = np.where(g[9, 3:9] == b, YEL, g[9, 3:9])
+    elif face == 'frog':
+        g[3, 2] = g[3, 9] = WHT
+        g[4, 2] = g[4, 9] = BLK
+        g[4, 4] = g[4, 7] = BLK                    # nostrils
+        g[8, 2:10] = BLK                           # a wide, wide mouth
+        g[9, 3:9] = np.where(g[9, 3:9] == b, PNK, g[9, 3:9])
+    else:
+        g[5, 3] = g[6, 3] = g[5, 8] = g[6, 8] = BLK
+        g[5, 4] = g[5, 9] = WHT                    # glints
+        g[7, 5] = g[7, 6] = BLK                    # nose
+        g[8, 4] = g[8, 7] = BLK                    # smile
+        g[9, 5] = g[9, 6] = BLK
+        g[7, 2] = g[7, 9] = PNK                    # cheeks
+    shut = g.copy()
+    for ex in ((3, 8) if face != 'frog' else (2, 9)):
+        top = 5 if face != 'frog' else 3
+        shut[top, ex] = a if face != 'owl' else WHT
+    if face == 'owl':
+        shut[5, 3] = shut[5, 8] = WHT
+    return [g, g, g, shut]
+
+
+def b_bear(a, b):
+    return _hero(a, b, 'round')
+
+
+def b_cat3(a, b):
+    return _hero(a, b, 'point')
+
+
+def b_bunny3(a, b):
+    return _hero(a, b, 'long')
+
+
+def b_owl3(a, b):
+    return _hero(a, b, 'point', 'owl')
+
+
+def b_frog3(a, b):
+    return _hero(a, b, 'none', 'frog')
+
+
+# kind -> (cells wide, cells high, builder, ticks per animation frame, bob offsets for a gentle drift)
+PROPS = {
+    'yarn': (2, 2, b_yarn, 2, ()), 'thimble': (2, 2, b_thimble, 3, ()), 'button': (2, 2, b_button, 3, ()),
+    'pincushion': (2, 2, b_pincushion, 2, ()), 'mushroom': (2, 2, b_mushroom, 1, ()),
+    'flower': (2, 2, b_flower, 1, ()), 'butterfly': (2, 2, b_butterfly, 1, ((0, 0), (1, -1), (2, 0), (1, 1))),
+    'spoolbig': (2, 2, b_spoolbig, 2, ()), 'moon': (2, 2, b_moon, 3, ()),
+    'cloud': (3, 2, b_cloud, 1, ((0, 0), (1, 0), (2, 0), (3, 0), (2, 0), (1, 0))),
+    'star': (1, 1, b_star, 1, ()), 'flower4': (1, 1, b_flower4, 1, ()), 'heart': (1, 1, b_heart, 2, ()),
+    'bead': (1, 1, b_bead, 1, ()),
+    'owl': (2, 2, b_owl, 2, ()), 'cat': (2, 2, b_cat, 2, ()), 'bunny': (2, 2, b_bunny, 2, ()),
+    'frog': (2, 2, b_frog, 2, ()), 'penguin': (2, 2, b_penguin, 2, ()), 'ghost': (2, 2, b_ghost, 2, ((0, 0), (0, -1), (0, 0), (0, 1))),
+    'bat': (2, 2, b_bat, 1, ((0, 0), (1, 0), (2, 0), (1, 0))), 'pumpkin': (2, 2, b_pumpkin, 2, ()),
+    'apple': (2, 2, b_apple, 2, ()), 'cupcake': (2, 2, b_cupcake, 2, ()), 'icecream': (2, 2, b_icecream, 2, ()),
+    'bell': (2, 2, b_bell, 1, ()), 'acorn': (2, 2, b_acorn, 2, ()), 'fish': (2, 2, b_fish, 1, ((0, 0), (1, 0), (2, 0), (1, 0))),
+    'balloon': (2, 2, b_balloon, 1, ((0, 0), (0, -1), (0, -2), (0, -1))), 'sun': (2, 2, b_sun, 1, ()),
+    'rocket': (2, 2, b_rocket, 1, ()), 'ufo': (2, 2, b_ufo, 1, ((0, 0), (1, 0), (2, 0), (1, 0))),
+    'bear': (3, 3, b_bear, 2, ()), 'cat3': (3, 3, b_cat3, 2, ()), 'bunny3': (3, 3, b_bunny3, 2, ()),
+    'owl3': (3, 3, b_owl3, 2, ()), 'frog3': (3, 3, b_frog3, 2, ()),
+}
+
+
+# ── the creature that walks the top margin of the cloth; legs alternate and it never does anything ──
+def b_ladybug(a, b):
+    """Ten by four, facing right: red shell with spots, a black head with a white eye, legs that alternate."""
+    one = ("..kkkkk...", ".kabaabkkk", "kaabaakkwk", ".k.k.k.kk.")
+    two = ("..kkkkk...", ".kabaabkkk", "kaabaakkwk", "..k.k.k.k.")
+    return frames_of([one, two], a=a, b=b)
+
+
+def b_bee(a, b):
+    """A striped bee: wings beat above, stripes along the back, a black eye and a stinger."""
+    one = ("..w.ww....", ".kabkabkkk", "kabkabkkwk", ".kkkkkkk..")
+    two = ("...wwww...", ".kabkabkkk", "kabkabkkwk", ".kkkkkkk..")
+    return frames_of([one, two], a=a, b=b)
+
+
+def b_caterpillar(a, b):
+    """Round segments with a face; the humps take turns to rise."""
+    one = ("..kk.kk.kk", ".kaakabkak", "kaabkaakwk", "kkkkkkkkkk")
+    two = (".kk.kk..kk", "kaakabkakk", "kaabkaakwk", ".kk.kkkkkk")
+    return frames_of([one, two], a=a, b=b)
+
+
+def b_snail(a, b):
+    """A shell with a spiral on a soft body, one eye on a stalk."""
+    one = (".kkkk....k", "kabbak...k", "kabaakkkwk", "kkkkkkkkkk")
+    two = (".kkkk...k.", "kabbak..kk", "kabaakkkwk", "kkkkkkkkkk")
+    return frames_of([one, two], a=a, b=b)
+
+
+def b_mouse(a, b):
+    """A mouse facing right: round ear, pink nose and a tail behind that flicks."""
+    one = ("..kk......", ".kbakkkk..", "kaaaaaaakw", ".k.k..k.kk")
+    two = ("..kk......", ".kbakkkk..", "kkaaaaaakw", "k.k.k.k.kk")
+    return frames_of([one, two], a=a, b=b)
+
+
+def b_crab(a, b):
+    """A crab: claws that open and close, two stalk eyes, legs that shuffle."""
+    one = ("k.k.kk.k.k", "kkkabbakkk", ".kaaaaaak.", ".k.k..k.k.")
+    two = ("kk......kk", "kkkabbakkk", ".kaaaaaak.", "k.k.kk.k.k")
+    return frames_of([one, two], a=a, b=b)
+
+
+def b_duck(a, b):
+    """A duck on a waddle: round body, white eye, orange bill and a bobbing tail."""
+    one = ("....kkk...", "k.kkaakwk.", "kkaaaaaakb", ".kkaaaakk.")
+    two = ("....kkk...", "..kkaakwk.", "kkaaaaaakb", "..kkaakk..")
+    return frames_of([one, two], a=a, b=b)
+
+
+def b_beetle(a, b):
+    """A shiny beetle: a domed shell with a seam, two horns, six legs that scuttle."""
+    one = ("....k.k...", ".kkkabakkk", "kaabaabkkw", ".k.k.k.kk.")
+    two = ("....k.k...", ".kkkabakkk", "kaabaabkkw", "..k.k.k.k.")
+    return frames_of([one, two], a=a, b=b)
+
+
+MOVERS = {'ladybug': b_ladybug, 'bee': b_bee, 'caterpillar': b_caterpillar, 'snail': b_snail,
+          'mouse': b_mouse, 'crab': b_crab, 'duck': b_duck, 'beetle': b_beetle}
+
+MOVER_W = 10
+
+
+def relined(frames, colour):
+    """Dark cloths swallow a black outline, so on them every outline pixel (black touching empty space) is redrawn
+    in a bright line colour; eyes and other inner black stay black."""
+    out = []
+    for f in frames:
+        g = f.copy()
+        h, w = f.shape
+        for y in range(h):
+            for x in range(w):
+                if f[y, x] == BLK and any(not (0 <= x + dx < w and 0 <= y + dy < h) or f[y + dy, x + dx] == -1
+                                           for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                    g[y, x] = colour
+        out.append(g)
+    return out
+
+
+def dressed(frames, theme):
+    return relined(frames, theme['line']) if theme.get('line') is not None else frames
+
+
+# A sad, dimmed twin of any picture: every colour goes one step darker and redder, and each eye (a black pixel ringed by
+# colour in the upper half) gets a tear running down from it. Used for the props and walkers on a lost run.
+TINT = {WHT: PNK, YEL: ORG, ORG: RED, PNK: MAG, LBL: BLU, GRN: PUR, BLU: PUR, RED: MAR, MAG: MAR, PUR: MAR}
+
+
+def grieved(frames):
+    out = []
+    for f in frames:
+        g = f.copy()
+        h, w = f.shape
+        for y in range(h):
+            for x in range(w):
+                g[y, x] = TINT.get(int(f[y, x]), f[y, x])
+        for y in range(1, int(h * 0.55) + 1):
+            for x in range(w):
+                if f[y, x] != BLK or y + 1 >= h or f[y + 1, x] in (-1, BLK):
+                    continue
+                around = [f[y + dy, x + dx] for dx, dy in ((1, 0), (-1, 0), (0, -1)) if 0 <= x + dx < w]
+                if sum(1 for v in around if v not in (-1, BLK)) >= 2:
+                    g[y + 1, x] = LBL
+        out.append(g)
+    return out
+
+
+# ── the cloth of each level: a 64 by 64 backdrop built from a weave, a hem and a pattern ──
+def _hem_band(style: str, hem: int, hem2: int) -> np.ndarray:
+    """The three-pixel border strip for the top edge (3 rows by 64 columns); the other edges are this strip turned.
+    Each level has its own trim so no two tables share an edge."""
+    xs = np.arange(64)
+    band = np.full((3, 64), hem, dtype=np.int8)
+    # Calm trims only (round A of 07-Nov): a plain hem with, at most, one quiet line of long dashes or widely spaced dots.
+    if style == 'stitch':                       # a hem line and a dashed running stitch
+        band[1, :] = -1
+        band[2, xs % 2 == 1] = -1
+    elif style in ('scallop', 'zigzag', 'dash'):  # a plain hem with one stitched line of long dashes
+        band[1, xs % 8 < 4] = hem2
+    elif style in ('beads', 'dots', 'checker'):   # a plain hem with one row of well-spaced dots
+        band[1, xs % 6 == 2] = hem2
+    return band
+
+
+def make_cloth(theme: dict, track=(), phase: int = 0) -> np.ndarray:
+    """The 64 by 64 backdrop. `phase` (0, 1 or 2) moves a slow glint across the pattern's main ink: the cloth shimmers."""
+    base, ink = theme['cloth'], theme['ink']
+    ys, xs = np.mgrid[0:64, 0:64]
+    cloth = np.full((64, 64), base, dtype=np.int8)
+    kind = theme['pat']
+    if kind == 'tufts':          # little tufts of yellow and white blossom
+        cloth[(ys % 16 == 5) & ((xs % 16 == 5) | (xs % 16 == 6))] = ink[0]
+        cloth[(ys % 16 == 4) & (xs % 16 == 5)] = ink[0]
+    elif kind == 'quilt':        # a stitched diamond quilt
+        cloth[(((xs + ys) % 8 == 0) | ((xs - ys) % 8 == 0)) & ((xs // 2 + ys // 2) % 2 == 0)] = ink[0]
+    elif kind == 'polka':
+        shift = ((ys // 8) % 2) * 4
+        cloth[(((xs + shift) % 8) // 2 == 1) & ((ys % 8) // 2 == 1)] = ink[0]
+    elif kind == 'gingham':      # big calm sixteen-pixel checks, plain
+        light = ((xs // 16) + (ys // 16)) % 2 == 1   # four by four big checks: calm
+        cloth[light] = ink[0]
+    elif kind == 'dashes':       # a few puffs of white, like wind on a clear sky
+        cloth[(ys % 8 == 5) & ((xs + (ys // 8) * 4) % 8 < 2)] = ink[0]
+    elif kind == 'plaid':        # two wide tartan bands each way and a few bright thread dots, nothing finer
+        cloth[((xs % 32) >= 13) & ((xs % 32) < 17)] = ink[0]
+        cloth[((ys % 32) >= 13) & ((ys % 32) < 17)] = ink[0]
+    elif kind == 'argyle':
+        d = np.abs(xs % 16 - 8) + np.abs(ys % 16 - 8)
+        cloth[d == 6] = ink[0]   # one solid thin diamond line, no dither
+    elif kind == 'stripes':
+        cloth[(ys % 8) < 2] = ink[0]
+    elif kind == 'confetti':     # a night cloth sprinkled with bright thread ends
+        seed = 7
+        for _ in range(22):
+            seed = (seed * 1103515245 + 12345) & 0x7fffffff
+            x, y = (seed >> 4) % 64, (seed >> 12) % 64
+            cloth[y, x] = ink[(seed >> 20) % len(ink)]
+    # the shimmer: one third of the main-ink pixels (by blocks of five) turn to the glint colour, a different third each phase
+    glint = theme.get('glint')
+    if glint is not None:
+        cloth[(cloth == ink[0]) & (((xs // 5) + (ys // 5)) % 3 == phase)] = glint
+    # a one-pixel halo of plain cloth round every slat, so a busy weave never runs into a slat's black rim
+    for cx, cy in track:
+        cloth[max(0, cy * CELL - 1):cy * CELL + CELL + 1, max(0, cx * CELL - 1):cx * CELL + CELL + 1] = base
+    # the trim round the edge: the band is laid on all four sides (turned for the sides) over the cloth
+    band = _hem_band(theme.get('trim', 'stitch'), theme['hem'], theme.get('hem2', theme['hem']))
+    for edge, strip in ((cloth[0:3, :], band), (cloth[61:64, :], band[::-1]),
+                        (cloth[:, 0:3], band.T), (cloth[:, 61:64], band.T[:, ::-1])):
+        edge[strip != -1] = strip[strip != -1]
+    return cloth
+
+
+# ── the ten themes: cloth, trim, glint, wood, props, heroes, walkers, ambient life, spool thread ──
+# amb entries are (style, colours, how many); `hero` props are the big twelve-pixel creatures.
+THEMES = [
+    # 1  garden table: green cloth, blossom tufts, scalloped hem, a bear, petals and fireflies
+    dict(cloth=GRN, pat='tufts', ink=(YEL, WHT), glint=WHT, trim='stitch', hem=YEL, hem2=WHT, wood=(ORG, YEL, MAR), petal=YEL,
+         hero=[('bear', ORG, YEL), ('bunny3', WHT, PNK)],
+         big=[('mushroom', RED, WHT), ('flower', RED, YEL), ('frog', LBL, YEL), ('butterfly', PNK, YEL)],
+         small=[('flower4', YEL, ORG), ('flower4', WHT, YEL), ('flower4', PNK, YEL)],
+         mover=('snail', ORG, PNK), mover2=('mouse', LBL, PNK), thread=(RED, YEL, PNK, LBL)),
+    # 2  night quilt: blue cloth with stitched diamonds, bead trim, an owl, fireflies and a shooting star
+    dict(cloth=BLU, pat='quilt', ink=(PUR,), glint=LBL, trim='beads', hem=YEL, hem2=PNK, wood=(ORG, YEL, MAR), petal=PNK,
+         hero=[('owl3', ORG, YEL)],
+         big=[('moon', YEL, 0), ('cat', WHT, PNK), ('yarn', PUR, PNK)],
+         small=[('star', YEL, 0), ('star', WHT, 0), ('star', YEL, 0), ('star', WHT, 0)],
+         mover=('bee', YEL, BLK), mover2=('crab', ORG, YEL), thread=(YEL, PNK, WHT, ORG)),
+    # 3  grape velvet: purple cloth with magenta polka dots, zigzag ribbon, a frog and rising hearts
+    dict(cloth=PUR, pat='polka', ink=(MAG,), glint=PNK, trim='dash', hem=PNK, hem2=YEL, wood=(RED, ORG, MAR), petal=PNK,
+         hero=[('frog3', GRN, YEL)],
+         big=[('cupcake', PNK, YEL), ('pincushion', RED, YEL), ('yarn', GRN, YEL)],
+         small=[('heart', PNK, 0), ('heart', YEL, 0), ('bead', LBL, 0), ('bead', YEL, 0)],
+         mover=('caterpillar', GRN, YEL), mover2=('duck', YEL, ORG), thread=(PNK, YEL, LBL, GRN)),
+    # 4  gingham cloth: big calm orange and yellow checks, racing-flag trim, a cat, leaves and birds
+    dict(cloth=ORG, pat='gingham', ink=(YEL,), trim='dots', hem=RED, hem2=YEL, wood=(MAR, ORG, RED), petal=PNK,
+         hero=[('cat3', PUR, PNK)],
+         big=[('apple', RED, WHT), ('penguin', BLU, LBL), ('acorn', YEL, RED)],
+         small=[('bead', BLU, 0), ('heart', RED, 0), ('flower4', PUR, YEL), ('bead', GRN, 0)],
+         mover=('ladybug', RED, BLK), mover2=('mouse', PUR, PNK), thread=(GRN, BLU, PUR, WHT)),
+    # 5  sky picnic: light blue cloth, fat clouds with faces, a bunny, birds and bubbles
+    dict(cloth=LBL, pat='dashes', ink=(WHT,), glint=YEL, trim='scallop', hem=WHT, hem2=YEL, wood=(ORG, YEL, MAR), petal=YEL,
+         hero=[('bunny3', WHT, PNK)],
+         big=[('cloud', WHT, 0), ('balloon', RED, 0), ('cloud', WHT, 0), ('sun', YEL, 0)],
+         small=[('star', WHT, 0), ('star', YEL, 0), ('bead', PNK, 0), ('flower4', PNK, YEL)],
+         mover=('bee', YEL, BLK), mover2=('duck', WHT, ORG), thread=(BLU, RED, YEL, PNK)),
+    # 6  tartan: red plaid cloth with wide bands, green bamboo slats, zigzag trim, an owl, leaves
+    dict(cloth=RED, pat='plaid', ink=(MAR,), glint=RED, trim='dash', hem=MAR, hem2=ORG, wood=(GRN, YEL, MAR), petal=YEL,
+         hero=[('owl3', PUR, PNK)],
+         big=[('bell', YEL, ORG), ('bunny', WHT, PNK), ('thimble', YEL, ORG)],
+         small=[('heart', YEL, 0), ('star', YEL, 0), ('flower4', WHT, YEL)],
+         mover=('caterpillar', YEL, BLK), mover2=('crab', ORG, YEL), thread=(LBL, YEL, GRN, WHT)),
+    # 7  argyle: maroon cloth with red diamonds, bead trim, a cat, embers rising
+    dict(cloth=MAR, pat='argyle', ink=(RED,), glint=MAG, trim='beads', hem=ORG, hem2=YEL, wood=(ORG, YEL, MAR), petal=ORG,
+         hero=[('cat3', YEL, ORG)],
+         big=[('ghost', WHT, 0), ('fish', ORG, YEL), ('mushroom', YEL, WHT)],
+         small=[('star', YEL, 0), ('heart', PNK, 0), ('bead', LBL, 0), ('flower4', YEL, ORG)],
+         mover=('snail', LBL, YEL), mover2=('beetle', GRN, YEL), thread=(YEL, LBL, PNK, GRN)),
+    # 8  candy cloth: magenta with pink polka dots, racing-flag trim, a frog, sprinkles and hearts
+    dict(cloth=MAG, pat='polka', ink=(PNK,), glint=PUR, trim='dots', hem=PNK, hem2=WHT, wood=(ORG, YEL, MAR), petal=YEL,
+         hero=[('frog3', GRN, YEL)],
+         big=[('icecream', LBL, ORG), ('cupcake', WHT, YEL), ('butterfly', YEL, ORG)],
+         small=[('heart', WHT, 0), ('heart', YEL, 0), ('bead', LBL, 0), ('star', YEL, 0)],
+         mover=('ladybug', LBL, BLK), mover2=('mouse', WHT, PNK), thread=(LBL, YEL, GRN, ORG)),
+    # 9  cheesecloth: yellow stripes, scalloped hem, a bear, green bubbles
+    dict(cloth=YEL, pat='stripes', ink=(ORG,), glint=MAR, trim='scallop', hem=ORG, hem2=RED, wood=(MAR, ORG, RED), petal=RED,
+         hero=[('bear', MAR, ORG)],
+         big=[('pumpkin', ORG, RED), ('penguin', PUR, LBL), ('fish', BLU, LBL)],
+         small=[('heart', RED, 0), ('bead', BLU, 0), ('flower4', PUR, ORG), ('bead', GRN, 0)],
+         mover=('caterpillar', PUR, PNK), mover2=('crab', RED, ORG), thread=(PUR, BLU, RED, GRN)),
+    # 10  night cloth: black with bright thread confetti, bead trim, an owl, twinkles and a comet
+    dict(cloth=BLK, line=LBL, pat='confetti', ink=(PUR, BLU, MAG), glint=LBL, trim='beads', hem=MAG, hem2=PNK, wood=(ORG, YEL, MAR), petal=PNK,
+         hero=[('owl3', PUR, PNK)],
+         big=[('moon', YEL, 0), ('rocket', RED, YEL), ('ufo', GRN, 0)],
+         small=[('star', YEL, 0), ('star', PNK, 0), ('star', LBL, 0), ('star', WHT, 0)],
+         mover=('bee', YEL, BLK), mover2=('beetle', PNK, YEL), thread=(YEL, PNK, LBL, GRN)),
+]
+
+SPOOL_X, SPOOL_TOP, SPOOL_GAP = N * CELL - CELL, 8, 6   # the thread rack: one spool per pull left
+PANEL_LEVELS = (1, 3)      # level indexes that get the teaching panel (the first of each kind of mark)
+TILE_COUNT = 4             # glyph tiles per level, as many as the open cloth holds
+MOVER_Y = 0               # a creature stands in the very top margin of the cloth
+MOVER2_Y = 60             # a second one in the bottom margin
+MOVER_SPAN = 4 * (N - 3) - MOVER_W   # how far apart the two ends of a margin lane are
+
+
+_PLAN_CACHE: dict = {}
+
+
+def free_spots(blocked: set, wide: int, high: int) -> list:
+    """Every top-left cell where a wide-by-high block of cells is entirely free."""
+    return [(cx, cy) for cy in range(N - high + 1) for cx in range(N - wide + 1)
+            if all((cx + i, cy + j) not in blocked for i in range(wide) for j in range(high))]
+
+
+def scenery_plan(index: int, track: dict, spec: dict) -> tuple:
+    """Where everything that is not the lattice goes on level `index`: (panel cell or None, [(cell x, cell y, cells)] glyph
+    tiles, props). Deterministic, so the level builder and the game class agree. The panel and tiles take the open cloth first,
+    biggest first, each with a ring of cloth to itself; props take what is left."""
+    if index in _PLAN_CACHE:
+        return _PLAN_CACHE[index]
+    blocked = set(track) | {(x, 0) for x in range(N)} | {(x, N - 1) for x in range(N)} \
+        | {(0, y) for y in range(N)} | {(N - 1, y) for y in range(N)}
+    seed = 3000 + index * 91
+
+    def place(wide: int, high: int):
+        nonlocal seed
+        spots = free_spots(blocked, wide, high)
+        if not spots:
+            return None
+        seed = (seed * 1103515245 + 12345) & 0x7fffffff
+        cx, cy = spots[(seed >> 8) % len(spots)]
+        for i in range(-1, wide + 1):
+            for j in range(-1, high + 1):
+                blocked.add((cx + i, cy + j))
+        return cx, cy
+
+    panel = place(4, 4) if index in PANEL_LEVELS else None
+    tiles = []
+    for _ in range(TILE_COUNT):
+        spot = place(3, 3)
+        if spot:
+            tiles.append((spot[0], spot[1], 3))
+    while len(tiles) < TILE_COUNT:
+        spot = place(2, 2)
+        if not spot:
+            break
+        tiles.append((spot[0], spot[1], 2))
+    _PLAN_CACHE[index] = (panel, tiles, plan_props(index, blocked))
+    return _PLAN_CACHE[index]
+
+
+def plan_props(index: int, blocked: set) -> list:
+    """Scatter the level's props on cloth that is still free after the lattice, the panel and the glyph tiles. A prop only
+    goes where every cell it covers is free. Returns (name, kind, x, y, frames, period, bob, sad frames) rows. Heroes are
+    placed first so they get the open ground; any that find no free spot do not appear on that level."""
+    theme = THEMES[index]
+    blocked = set(blocked)
+    seed = 1000 + index * 77
+    plan = []
+
+    def pick(wide, high, a, b, kind):
+        nonlocal seed
+        spots = free_spots(blocked, wide, high)
+        if not spots:
+            return
+        seed = (seed * 1103515245 + 12345) & 0x7fffffff
+        cx, cy = spots[(seed >> 8) % len(spots)]
+        ring = 1 if wide > 1 else 0        # breathing room: a big prop keeps a one-cell ring of cloth to itself
+        for i in range(-ring, wide + ring):
+            for j in range(-ring, high + ring):
+                blocked.add((cx + i, cy + j))
+        _, _, builder, period, bob = PROPS[kind]
+        px, py = cx * CELL, cy * CELL
+        frames = dressed(builder(a, b), theme)
+        plan.append((f"prop_{len(plan):02d}_{kind}", kind, px, py, frames, period, bob, grieved(frames)))
+
+    for kind, a, b in theme['hero']:
+        pick(PROPS[kind][0], PROPS[kind][1], a, b, kind)
+    for kind, a, b in theme['big']:
+        pick(PROPS[kind][0], PROPS[kind][1], a, b, kind)
+    for kind, a, b in theme['small']:
+        pick(1, 1, a, b, kind)
+    return plan
+
+
+def build_levels() -> list[Level]:
+    levels: list[Level] = []
+    for index, spec in enumerate(LEVELS_SPEC):
+        theme = THEMES[index]
+        track, junctions = build_board(spec)
+        start, end = tuple(spec["start"]), tuple(spec["end"])
+        panel, tiles, props = scenery_plan(index, track, spec)
+        sprites: list[Sprite] = []
+
+        def add(pixels, name, x, y, layer, tags=(), visible=True):
+            sprites.append(Sprite(
+                pixels=pixels, name=name, x=x, y=y, layer=layer, tags=list(tags),
+                blocking=BlockingMode.NOT_BLOCKED,
+                interaction=InteractionMode.INTANGIBLE, visible=visible,
+            ))
+
+        # the world: cloth, then props, then the two creatures, then the glyph tiles and the teaching panel
+        add(make_cloth(theme, track), "cloth", 0, 0, -6, ("cloth",))
+        for name, kind, px, py, frames, period, bob, sad in props:
+            add(frames[0], name, px, py, -4, ("prop", kind))
+        mover_kind, mover_a, mover_b = theme['mover']
+        add(dressed(MOVERS[mover_kind](mover_a, mover_b), theme)[0], "mover", 4, MOVER_Y, -3, ("creature",))
+        m2_kind, m2_a, m2_b = theme['mover2']
+        add(dressed(MOVERS[m2_kind](m2_a, m2_b), theme)[0], "mover2", 4, MOVER2_Y, -3, ("creature",))
+        for k, (tx, ty, cells) in enumerate(tiles):
+            add(_tile("B", k, ON_TRACK, cells), f"glyph_{k}", tx * CELL, ty * CELL, -3, ("glyph",))
+        if panel:
+            marks = [m for m in spec["marks"].values() if m]
+            add(_panel(required_axis(marks[0])), "panel", panel[0] * CELL + 1, panel[1] * CELL, -3, ("picture",))
+        # the lattice and its cord
+        for cell in sorted(track):
+            add(_slat(cell, track, theme['wood']), f"t_{cell[0]}_{cell[1]}", cell[0] * CELL, cell[1] * CELL, -1, ("slat",))
+        add(_eyelet(END), "anchor", end[0] * CELL, end[1] * CELL, 0, ("eyelet",))
+        if start != end:
+            add(_eyelet(START), "eyelet", start[0] * CELL, start[1] * CELL, 0, ("eyelet",))
+        for cell in sorted(track):
+            add([[-1] * CELL for _ in range(CELL)], f"cord_{cell[0]}_{cell[1]}",
+                cell[0] * CELL, cell[1] * CELL, 1, ("cord",))
+        for cell in sorted(junctions):
+            add(_crossing(junctions[cell]), f"x_{cell[0]}_{cell[1]}", cell[0] * CELL, cell[1] * CELL, 2, ("mark",))
+            mark = junctions[cell]
+            if mark is not None:
+                solid = [[WANT_H if mark == "h" else WANT_V] * CELL for _ in range(CELL)]
+                add(solid, f"flash_{cell[0]}_{cell[1]}", cell[0] * CELL, cell[1] * CELL, 3,
+                    ("flash",), visible=False)
+        add(_undo_corners(MAR), "undo_mark", 0, 0, 2, ("undo",), visible=False)
+        # the thread rack: one spool per pull left
+        add(_rack(PULLS), "rack", SPOOL_X, SPOOL_TOP - 2, 4, ("rack",))
+        for i in range(PULLS):
+            add(_spool(theme['thread'][i % len(theme['thread'])]), f"spool_{i}", SPOOL_X, SPOOL_TOP + i * SPOOL_GAP, 5, ("spool",))
+        # feedback sprites, hidden until needed: win sparkles round the finish, a dimming veil for a lost run
+        for k in range(6):
+            add(_spark(YEL, False), f"spark_{k}", 0, 0, 9, ("spark",), visible=False)
+        # the level-clear shower: ribbon scraps that rain down the whole frame while a good pull tightens
+        for k in range(SHOWER):
+            add(_scrap(SHOWER_COLOURS[k % len(SHOWER_COLOURS)], False), f"shower_{k:02d}", 0, -9, 10, ("shower",), visible=False)
+        add(make_veil(), "veil", 0, 0, 7, ("veil",), visible=False)
+        add(make_iris(0, 0, 0), "iris", 0, 0, 11, ("iris",), visible=False)   # the opening circle after a level clear
+        add(HEAD_FRAMES["front"], "head", start[0] * CELL, start[1] * CELL, 8, ("head",))
+        levels.append(Level(sprites=sprites, grid_size=(N * CELL, N * CELL)))
+    return levels
+
+
+def make_veil() -> np.ndarray:
+    """A black frame with rounded-off corners laid over a lost run: a clean vignette, no speckle."""
+    ys, xs = np.mgrid[0:64, 0:64]
+    edge = np.minimum(np.minimum(xs, ys), np.minimum(63 - xs, 63 - ys))
+    corner = np.minimum(xs, 63 - xs) + np.minimum(ys, 63 - ys)
+    veil = np.full((64, 64), -1, dtype=np.int8)
+    veil[(edge < 1) | (corner < 9)] = BLK
+    return veil
+
+
+def make_iris(cx: int, cy: int, radius: float) -> np.ndarray:
+    """A black cover with a round window of the given radius open at (cx, cy); radius 0 is all black."""
+    ys, xs = np.mgrid[0:64, 0:64]
+    return np.where((xs - cx) ** 2 + (ys - cy) ** 2 > radius ** 2, BLK, -1).astype(np.int8)
+
+
+def lost_cloth(cloth: np.ndarray, theme: dict) -> np.ndarray:
+    """The same cloth after a lost pull: every plain pixel goes deep maroon (black on dark cloths) and every
+    patterned or hemmed pixel goes red, so the whole table looks wounded while the weave stays visible."""
+    base = theme['cloth']
+    dim = BLK if base in (MAR, BLK) else MAR
+    return np.where(cloth == base, dim, RED).astype(np.int8)
+
+
+class Kt03(ARCBaseGame):
+
+    CINCH_FRAMES = 8
+    # Where the win sparkles sit round the finish eyelet, in pixels from its centre.
+    SPARK_RING = ((-7, -2), (-4, -6), (1, -8), (5, -5), (7, 0), (5, 5), (0, 7), (-5, 5))
+    SPARK_COLOURS = (YEL, WHT, PNK, LBL, ORG, GRN)
+
+    def __init__(self) -> None:
+        spec = LEVELS_SPEC[0]
+        self.track, self.junctions = build_board(spec)
+        self.state = initial_state(spec)
+        self.history: list[dict] = []
+        self.cinch = 0
+        self.pull_good = None          # the decided result of the pull being played: True, False, or None when no pull is running
+        self.pull_bad = ()             # the crossings that made it wrong
+        self.pull_order = {}
+        self.pull_length = 0
+        self.pull_at_finish = False    # whether that pull was made on the finish (only then can it clear the level)
+        self.run_over = False          # whether a wrong pull being played is the last one, so the run ends
+        self.pulls_left = PULLS
+        self.verdict = None            # what the last pull found at each marked crossing; shown until the next input
+        self.last_event = None         # "undo" or "blocked" until the next input that moves the cord
+        self.tick = 0
+        self.clock = 0
+        self.facing = "front"
+        self.glide = None              # the head's current glide: (start pixel, end pixel, frame index)
+        self.bump = 0                  # frames left of a blocked-move reaction
+        self.bump_dir = (0, 0)
+        self.iris = 0                  # frames left of the opening circle on a fresh level
+        self.arriving = False
+        self._cache_level = None
+        camera = Camera(
+            width=N * CELL, height=N * CELL,
+            background=BLK, letter_box=BLK,
+        )
+        super().__init__(game_id="kt03", levels=build_levels(), camera=camera,
+                         available_actions=[1, 2, 3, 4, 5, 7])
+
+    def on_set_level(self, level: Level) -> None:
+        self.glide, self.bump, self.bump_dir = None, 0, (0, 0)
+        self.iris = IRIS_FRAMES if self.arriving else 0       # only a level clear opens with the circle
+        self.arriving = False
+        spec = LEVELS_SPEC[self.level_index]
+        self.track, self.junctions = build_board(spec)
+        self.state = initial_state(spec)
+        self.history = []
+        self.cinch = 0
+        self.pull_good = None
+        self.pull_bad = ()
+        self.pull_order = {}
+        self.pull_length = 0
+        self.pull_at_finish = False
+        self.run_over = False
+        self.pulls_left = PULLS
+        self.verdict = None
+        self.last_event = None
+        self.tick = 0
+        self.clock = 0
+        self.facing = "front"
+        self._cache_level = None
+        self._redraw()
+
+    def level_reset(self) -> None:
+        super().level_reset()
+
+    def full_reset(self) -> None:
+        super().full_reset()
+
+    # ── what the player is shown: read from the cord and the last pull, never a rule ──
+
+    def _end(self) -> tuple:
+        return tuple(LEVELS_SPEC[self.level_index]["end"])
+
+    def _shown_statuses(self) -> dict:
+        """The state of each marked crossing that the player is shown right now: the last pull's findings if there are
+        any, otherwise as much of the live state as this level gives (see the tiers at the top of the file)."""
+        if self.verdict is not None:
+            return self.verdict
+        live = crossing_status(self.state, self.junctions)
+        tier = tier_of(self.level_index)
+        if tier == 0:
+            return live
+        if tier == 1:
+            return {cell: (s if s in (HELD, FAILED) else WAITING) for cell, s in live.items()}
+        return {cell: WAITING for cell in live}
+
+    def _mood(self) -> tuple:
+        """(signal name, wrong, stuck): which glyph state to show. Wrong beats stuck, stuck beats the one-input events, which beat
+        'ready' on the finish; 'on track' is the rest."""
+        shown = self._shown_statuses().values()
+        wrong = any(s in (DOOMED, FAILED) for s in shown)
+        stuck = is_stuck(self.state, self.track, self.junctions, self._end())
+        at_finish = self.state["pos"] == self._end()
+        if wrong:
+            name = "wrong"
+        elif stuck:
+            name = "stuck"
+        elif self.last_event in ("undo", "blocked"):
+            name = self.last_event
+        elif at_finish and (tier_of(self.level_index) == 2 or not failed_marks(self.state, self.junctions)):
+            name = "ready"
+        else:
+            name = "on track"
+        return name, wrong, stuck
+
+    # ── drawing: sprites take their pixels from the state; nothing here changes a rule ──
+
+    def _sprite(self, name: str):
+        found = self.current_level.get_sprites_by_name(name)
+        return found[0] if found else None
+
+    def _scenery(self):
+        """Per-level sprite lookups, done once per level object: the props, the two creatures, the glyph tiles, the rack's
+        spools, the undo marker, the cloth and its red twin. Rebuilt whenever the engine hands us a fresh level object."""
+        if self._cache_level is not self.current_level:
+            theme = THEMES[self.level_index]
+            _, tiles, props = scenery_plan(self.level_index, self.track, LEVELS_SPEC[self.level_index])
+            self._props = []
+            for name, kind, px, py, frames, period, bob, sad in props:
+                sprite = self._sprite(name)
+                if sprite is not None:
+                    self._props.append((sprite, frames, px, py, sad))
+            self._walkers = []
+            for name, (kind, a, b), lane in (("mover", theme['mover'], MOVER_Y), ("mover2", theme['mover2'], MOVER2_Y)):
+                frames = dressed(MOVERS[kind](a, b), theme)
+                self._walkers.append((self._sprite(name), frames[0], grieved(frames)[0], lane))
+            self._tiles = [(self._sprite(f"glyph_{k}"), cells) for k, (_, _, cells) in enumerate(tiles)]
+            self._sparks = [self._sprite(f"spark_{k}") for k in range(6)]
+            self._shower = [self._sprite(f"shower_{k:02d}") for k in range(SHOWER)]
+            self._spools = [(self._sprite(f"spool_{i}"), theme['thread'][i % len(theme['thread'])]) for i in range(PULLS)]
+            self._undo_mark = self._sprite("undo_mark")
+            self._veil = self._sprite("veil")
+            self._iris = self._sprite("iris")
+            self._cloth = self._sprite("cloth")
+            if self._cloth is not None:
+                self._cloth_ok = make_cloth(theme, self.track, 0)
+                self._cloth_bad = lost_cloth(self._cloth_ok, theme)
+            self._cache_level = self.current_level
+        return self._props
+
+    def _head_offset(self) -> tuple[int, int]:
+        """Where the head is drawn, in pixels, and everything that nudges it: the glide's wind-up, travel, overshoot and
+        hop; a blocked move's lean and recoil; a cleared level's tug and hop of joy; a wrong pull's shudder, and the slump
+        of a lost run."""
+        pos = self.state["pos"]
+        px, py = pos[0] * CELL - 1, pos[1] * CELL - 1      # the six-pixel head overhangs its four-pixel cell by one on each side
+        if self.glide:
+            (sx, sy), (ex, ey), i = self.glide
+            ux, uy = (ex > sx) - (ex < sx), (ey > sy) - (ey < sy)
+            along = -1 if i == 0 else None                  # frame 0 is the wind-up: one pixel back against the move
+            dist = max(abs(ex - sx), abs(ey - sy))
+            if along is None:
+                along = round(dist * GLIDE_FRACTION[i]) + GLIDE_OVERSHOOT[i]
+            px, py = sx - 1 + ux * along, sy - 1 + uy * along
+            if uy == 0:
+                py -= GLIDE_HOP[i]
+        elif self.bump:
+            k = BUMP_FRAMES - self.bump
+            lean = (1, 1, -1, 0)[k]
+            dx, dy = self.bump_dir
+            if dx or dy:
+                px, py = px + dx * lean, py + dy * lean
+            else:
+                py += (0, 1, -1, 0)[k]                      # nowhere to lean: a little shake up and down instead
+        elif self.cinch and self.pull_good:
+            if self.cinch in (6, 5):
+                # The whole tip draws one pixel back along its actual incoming strand, then settles in place.
+                # This tug never changes the cord state or the decided outcome.
+                previous = self.history[-1]["pos"] if self.history else self.state["pos"]
+                px += (previous[0] > pos[0]) - (previous[0] < pos[0])
+                py += (previous[1] > pos[1]) - (previous[1] < pos[1])
+            if self.pull_at_finish:
+                py -= {4: 1, 3: 2, 2: 1}.get(self.cinch, 0)     # then a hop of joy, on the finish only
+        elif self.pull_good is False:
+            if self.cinch > 3:
+                px += 1 if self.cinch % 2 else -1           # a shudder
+            if self.run_over:
+                py += 1                                     # and the slump stays on a lost run
+        return px, py
+
+    def _place_head(self) -> None:
+        head = self._sprite("head")
+        if head is not None:
+            head.set_position(*self._head_offset())
+
+    def _animate_scenery(self, sad: bool, cleared: bool) -> None:
+        """The scenery. It holds still unless the state changes: the props and the two creatures go sad (and the creatures swap
+        ends of their lanes) when the glyphs say wrong or the run is lost; a cleared level makes the props hop and rains the
+        ribbon shower. Nothing here moves on the clock."""
+        for sprite, frames, bx, by, sad_frames in self._scenery():
+            sprite.pixels = (sad_frames if sad else frames)[(bx // CELL) % len(frames)]
+            if sad:
+                sprite.set_position(bx, by + 1)                   # a slump
+            elif cleared:
+                sprite.set_position(bx, by - (self.cinch % 2))    # a hop
+            else:
+                sprite.set_position(bx, by)
+        left, right = CELL, CELL + MOVER_SPAN
+        for n, (walker, calm_frame, sad_frame, lane) in enumerate(self._walkers):
+            if walker is None:
+                continue
+            frame = sad_frame if sad else calm_frame
+            if n == 1:
+                frame = frame[:, ::-1].copy()       # the bottom creature faces the other way
+            walker.pixels = frame
+            # calm: the top creature stands at the left end of its lane and the bottom one at the right; sad: they swap ends
+            walker.set_position((right if sad else left) if n == 0 else (left if sad else right), lane)
+        # the level-clear shower: scraps rain down the whole frame while a good pull on the finish tightens
+        for k, scrap in enumerate(self._shower):
+            if scrap is None:
+                continue
+            y = (8 - self.cinch) * 9 + (k * 23) % 14 - 12
+            showing = cleared and k % 2 == 0 and self.cinch > 0 and -3 < y < 64
+            scrap.set_visible(showing)
+            if showing:
+                scrap.pixels = np.array(_scrap(SHOWER_COLOURS[k % len(SHOWER_COLOURS)], (self.cinch + k) % 2 == 0), dtype=np.int8)
+                scrap.set_position(2 + (k * 37 + 5) % 58 + (self.cinch + k) % 3, y)
+
+    def _redraw(self) -> None:
+        state = self.state
+        decided = self.pull_good is not None
+        good_pull = self.pull_good is True
+        cleared = good_pull and self.pull_at_finish
+        failed = self.pull_good is False and self.run_over          # the run is lost: the red, dimmed, wilted look
+        name, wrong, stuck = self._mood()
+        sad = wrong or failed
+        # A monotone tension wave starts at the head and runs back through the route. A good pull runs it in purple, a
+        # wrong one in magenta; a good pull on the finish then holds the intact, settled purple cord.
+        progress = min(1.0, (self.CINCH_FRAMES - self.cinch + 1) / 6) if decided else 0.0
+        threshold = self.pull_length * (1 - progress)
+        wave = END if good_pull else MAG
+        for cell in self.track:
+            sprite = self._sprite(f"cord_{cell[0]}_{cell[1]}")
+            if sprite is None:
+                continue
+            arms = state["arms"].get(cell)
+            if arms:
+                colour = wave if decided and self.pull_order.get(cell, -1) >= threshold else CORD
+                sprite.pixels = np.array(_cord_pixels(arms, state["cross"].get(cell, ()), colour),
+                                         dtype=np.int8)
+                sprite.set_visible(True)
+            else:
+                sprite.set_visible(False)
+        # the crossings: bars recoloured by the state the player is shown; the failed ones also flash while the pull plays
+        shown = self._shown_statuses()
+        for cell, mark in self.junctions.items():
+            mark_sprite = self._sprite(f"x_{cell[0]}_{cell[1]}")
+            if mark_sprite is not None:
+                mark_sprite.pixels = np.array(_crossing(mark, shown.get(cell, WAITING)), dtype=np.int8)
+            if mark is not None:
+                flash = self._sprite(f"flash_{cell[0]}_{cell[1]}")
+                if flash is not None:
+                    flash.set_visible(self.cinch > 2 and cell in self.pull_bad)
+        self._life(sad, failed, cleared)
+        # the glyph tiles change shape and colour with the state
+        family, glyph_colour, first = SIGNALS[name]
+        for k, (tile, cells) in enumerate(self._tiles):
+            if tile is not None:
+                tile.pixels = _tile(family, first + k, glyph_colour, cells)
+        # the rack: a spool for each pull left, a dull one for each pull used
+        for i, (spool, thread) in enumerate(self._spools):
+            if spool is not None:
+                spool.pixels = np.array(_spool(thread, 0) if i < self.pulls_left else _spool_used(), dtype=np.int8)
+        # the marker on the stop a take-back returns to: faint normally, bright while the glyphs say wrong or stuck
+        if self._undo_mark is not None:
+            if self.history and not decided:
+                previous = self.history[-1]["pos"]
+                self._undo_mark.pixels = np.array(_undo_corners(WHT if (wrong or stuck) else MAR), dtype=np.int8)
+                self._undo_mark.set_position(previous[0] * CELL, previous[1] * CELL)
+                self._undo_mark.set_visible(True)
+            else:
+                self._undo_mark.set_visible(False)
+        head = self._sprite("head")
+        if head is not None:
+            if failed or (self.pull_good is False and self.cinch):
+                face = "sad"
+            elif cleared and self.cinch <= 5:
+                face = "happy"
+            elif sad:
+                face = "sad"
+            else:
+                face = self.facing
+                if self.glide and self.glide[2] == 0:
+                    face = 'blink'                       # eyes squeezed shut for the wind-up
+                elif self.bump and BUMP_FRAMES - self.bump in (1, 2):
+                    face = 'sad'                         # a bonk
+            head.pixels = HEAD_FRAMES[face]
+        self._place_head()
+        # win sparkles ring the finish while a good pull on it tightens, and stay on the last level's settled frame
+        end = LEVELS_SPEC[self.level_index]["end"]
+        cx, cy = end[0] * CELL + CELL // 2, end[1] * CELL + CELL // 2
+        for k, spark in enumerate(self._sparks):
+            if spark is None:
+                continue
+            showing = cleared and k < 4 and self.cinch <= 6 and (k + self.cinch) % 3 != 0
+            spark.set_visible(showing)
+            if showing:
+                dx, dy = self.SPARK_RING[(k + self.cinch) % len(self.SPARK_RING)]
+                big = (k + self.cinch) % 2 == 0
+                spark.pixels = np.array(_spark(self.SPARK_COLOURS[(k + self.cinch) % 6], big), dtype=np.int8)
+                size = 5 if big else 3
+                spark.set_position(min(N * CELL - size, max(0, cx + dx - size // 2)),
+                                   min(N * CELL - size, max(0, cy + dy - size // 2)))
+        self._draw_dust()
+        if self._veil is not None:
+            self._veil.set_visible(failed and self.cinch <= 3)
+        if self._iris is not None:
+            if self.iris:
+                theirs = LEVELS_SPEC[self.level_index]["start"]
+                self._iris.pixels = make_iris(theirs[0] * CELL + CELL // 2, theirs[1] * CELL + CELL // 2,
+                                              IRIS_FIRST + (IRIS_REACH - IRIS_FIRST) * (IRIS_FRAMES - self.iris) / IRIS_FRAMES)
+            self._iris.set_visible(bool(self.iris))
+
+    def _life(self, sad: bool, failed: bool, cleared: bool) -> None:
+        """Everything that is only for looking at: the scenery, the creatures and the cloth. The cloth goes red and dim while the
+        glyphs say wrong, and on a lost run."""
+        self._scenery()
+        self._animate_scenery(sad, cleared)
+        if self._cloth is not None:
+            self._cloth.pixels = self._cloth_bad if (sad or (failed and self.cinch <= 3)) else self._cloth_ok
+
+    def _draw_dust(self) -> None:
+        """Dust left behind by a glide, and the spark of a bonk, borrowing the win sparkles' sprites while those are idle."""
+        if self.pull_good is not None or not self._sparks or self._sparks[0] is None:
+            return
+        colour = THEMES[self.level_index]['hem2']
+        puff = self._sparks[0]
+        if self.glide and 1 <= self.glide[2] <= 3:
+            (sx, sy), (ex, ey), i = self.glide
+            ux, uy = (ex > sx) - (ex < sx), (ey > sy) - (ey < sy)
+            puff.pixels = np.array(_spark(colour, False), dtype=np.int8)
+            # it hangs where the head left, drifting a pixel back and a pixel up each frame
+            puff.set_position(min(61, max(0, sx + 1 - ux * (i - 1))), min(61, max(0, sy + 1 - uy * (i - 1) - i)))
+            puff.set_visible(True)
+        elif self.bump and BUMP_FRAMES - self.bump in (1, 2) and any(self.bump_dir):
+            px, py = self.state["pos"][0] * CELL + 1, self.state["pos"][1] * CELL + 1
+            puff.pixels = np.array(_spark(colour, False), dtype=np.int8)
+            puff.set_position(min(61, max(0, px + self.bump_dir[0] * 4)), min(61, max(0, py + self.bump_dir[1] * 4)))
+            puff.set_visible(True)
+        else:
+            puff.set_visible(False)
+
+    # ── the controls: kt01's moves, and the pull, which is now allowed anywhere ──
+
+    def lay(self, direction: tuple[int, int]) -> bool:
+        nxt = try_step(self.state, direction, self.track, self.junctions)
+        if nxt is None:
+            return False
+        self.history.append(self.state)
+        self.state = nxt
+        self.facing = FACING[direction]
+        return True
+
+    def retract(self) -> bool:
+        # 21-Oct-2026: no ration. A take-back works whenever any cord is laid, so a cord run into a
+        # dead end (every way forward spent or off the slats) can always be backed out of. It still
+        # costs a press like any move. It refuses only at the start eyelet, where nothing is laid.
+        if not self.history:
+            return False
+        self.state = self.history.pop()
+        if self.history:
+            previous = self.history[-1]["pos"]
+            dx, dy = self.state["pos"][0] - previous[0], self.state["pos"][1] - previous[1]
+            direction = ((dx > 0) - (dx < 0), (dy > 0) - (dy < 0))
+            self.facing = FACING[direction]
+        else:
+            self.facing = "front"
+        return True
+
+    def pull(self) -> bool:
+        """Pull the cord tight from wherever the head is. The result is decided now, once; later frames only play it. A crossing is
+        wrong when it is doomed or failed, and on the finish a crossing not yet finished is wrong too, because the knot would not
+        hold. A good pull on the finish clears the level; a good pull elsewhere changes nothing; a wrong pull costs a pull."""
+        at_finish = self.state["pos"] == self._end()
+        findings, wrong = {}, []
+        for cell, status in crossing_status(self.state, self.junctions).items():
+            unfinished = at_finish and status in (WAITING, ONE_PASS)
+            findings[cell] = FAILED if unfinished else status
+            if unfinished or status in (DOOMED, FAILED):
+                wrong.append(cell)
+        self.verdict = findings
+        self.pull_bad = tuple(wrong)
+        self.pull_good = not wrong
+        self.pull_at_finish = at_finish
+        self.run_over = bool(wrong) and self.pulls_left <= 1
+        route = []
+        states = self.history + [self.state]
+        for before, after in zip(states, states[1:]):
+            start, end = before["pos"], after["pos"]
+            dx = (end[0] > start[0]) - (end[0] < start[0])
+            dy = (end[1] > start[1]) - (end[1] < start[1])
+            cell = start
+            while cell != end:
+                route.append(cell)
+                cell = (cell[0] + dx, cell[1] + dy)
+        route.append(self.state["pos"])
+        self.pull_length = len(route) - 1
+        # The wave starts at the head and runs back to the start: the head's end of the route has the highest order.
+        self.pull_order = {cell: index for index, cell in enumerate(route)}
+        self.cinch = self.CINCH_FRAMES
+        return True
+
+    def _settle(self) -> None:
+        if self.pull_good and self.pull_at_finish:
+            self.next_level()
+        elif self.pull_good:
+            self.pull_good = None              # a good pull away from the finish changes nothing
+        elif self.run_over:
+            self.pulls_left = 0
+            self.lose()                        # the last pull was wrong: the run ends; RESET restarts the level with three
+        else:
+            self.pulls_left -= 1               # a wrong pull uses a spool; the findings stay on the crossings until the next input
+            self.pull_good = None
+
+    def _start_glide(self, before: tuple[int, int]) -> None:
+        """The head travels from the cell it left to the cell it now rests in (a jump over crossings is one long glide)."""
+        now = self.state["pos"]
+        self.glide = ((before[0] * CELL, before[1] * CELL), (now[0] * CELL, now[1] * CELL), 0)
+
+    def step(self) -> None:
+        if self.action.id == GameAction.RESET:
+            self.complete_action()
+            return
+        self.clock += 1                # the frame clock runs on every frame, glide and celebration frames included
+        if self.iris:                  # the circle opening on a fresh level
+            self.iris -= 1
+            self._redraw()
+            if not self.iris:
+                self.complete_action()
+            return
+        if self.glide:
+            start, end, i = self.glide
+            self.glide = (start, end, i + 1)
+            if i + 1 == GLIDE_FRAMES - 1:
+                self._redraw()
+                self.glide = None
+                self.complete_action()
+            else:
+                self._redraw()
+            return
+        if self.bump:
+            self.bump -= 1
+            self._redraw()
+            if not self.bump:
+                self.complete_action()
+            return
+        if self.cinch:
+            self.cinch -= 1
+            if self.cinch == 0:
+                advancing = bool(self.pull_good) and self.pull_at_finish and not self.is_last_level()
+                self.arriving = advancing
+                self._settle()
+                self._redraw()
+                if not advancing:      # a clear that moves on lets the engine swap levels, then the circle opens
+                    self.complete_action()
+            else:
+                self._redraw()
+            return
+
+        self.tick += 1
+        self.verdict = None            # the last pull's findings are shown until the next input
+        action = self.action.id
+        before = self.state["pos"]
+        moved = False
+        direction = (0, 0)
+        if action == GameAction.ACTION1:
+            direction = UP
+            moved = self.lay(UP)
+        elif action == GameAction.ACTION2:
+            direction = DOWN
+            moved = self.lay(DOWN)
+        elif action == GameAction.ACTION3:
+            direction = LEFT
+            moved = self.lay(LEFT)
+        elif action == GameAction.ACTION4:
+            direction = RIGHT
+            moved = self.lay(RIGHT)
+        elif action == GameAction.ACTION5:
+            self.last_event = None
+            self.pull()
+            self._redraw()
+            return
+        elif action == GameAction.ACTION7:
+            moved = self.retract()
+        if moved:
+            self.last_event = "undo" if action == GameAction.ACTION7 else None
+            self._start_glide(before)
+        elif action in (GameAction.ACTION1, GameAction.ACTION2, GameAction.ACTION3, GameAction.ACTION4,
+                        GameAction.ACTION7):
+            self.last_event = "blocked"
+            self.bump, self.bump_dir = BUMP_FRAMES, direction
+        self._redraw()
+        if not (self.glide or self.bump):
+            self.complete_action()

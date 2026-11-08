@@ -3,7 +3,20 @@
 Author: Claude Sonnet 5.5
 Date: 07-Nov-2026
 Asked by: Mark Barney (a human cannot tell if they are on the right track or what to do; an agent cannot filter noise, so every moving thing must carry meaning; no smiley faces, use a made-up script instead; change the scenery; the level 2 hint does not read).
-Status: PLAN (revised 07-Nov-2026 after Mark's third reply), awaiting approval. No KT02 code changed.
+Status: BUILT as a new game, KT03 (`games/kt03.py`), on 07-Nov-2026, after Mark's fourth reply ("obviously it needs a new ID ... whatever makes the most sense ... the edges of the screen aren't important, I lean towards bigger stuff ... the glyphs change ... get it done"). KT02 is unchanged. What follows is the plan as written; "As built" below says where the build differs.
+
+## As built (KT03)
+
+- **New id, KT02 untouched.** KT03 takes KT02's place in the highlighted list, as LT05 and DZ03 did.
+- **Open decisions settled by the recommendation:** a good pull away from the finish is free (only wrong pulls use a pull); ramp cut-offs 1-3 / 4-6 / 7-10; edit-in-place replaced by a new id.
+- **Bigger glyphs, not 4×4 corner glyphs.** Mark said the edges do not matter and to lean bigger, so the signals are glyph tiles in the open cloth instead: 12×12 px (the 5×5 glyph doubled) where a 3×3-cell gap exists, 8×8 where only 2×2 does. Four per level. They use the existing 5×5 kana set 31 from `tools/glyphs/sets/`, so the 4×4 generator work was dropped. Every level got at least four tiles; level 10 only has room for the small size.
+- **The glyphs change as you go wrong.** Closed shapes in green when on track (purple when on the finish), broken dashes in red when wrong (orange when stuck), open strokes in light blue after an undo and white after a blocked move. Tile k shows glyph `(first + k) % 7` of the family, so tiles differ and each state has its own shapes.
+- **Mood follows what is shown.** The whole cloth turns red and dim, the two creatures swap ends and the props droop while the glyphs say wrong. Refinement of the plan's "mood stays live on every level": on levels 7-10 nothing is live, so the mood changes only after a pull (otherwise it would give away what the pull is meant to report). STUCK, the undo marker and the pulls-left rack stay live on every level.
+- **Crossings.** Bars recolour by state on levels where it is live: yellow after one pass, green when held, red and dashed (shape as well as colour) when doomed or failed. A pull shows the same on every level until the next input.
+- **Pull.** As in I below. A pull on the finish with an unfinished crossing counts as wrong. The wave colour is the verdict; wrong crossings flash during the pull and stay marked after it.
+- **No free-running motion.** The ambient drifters, the corner flowers, the idle blink, the spool shine and the cloth shimmer are gone; the creatures and props are still unless the state changes.
+- **Teaching panel** replaces the old level-2 tag and picture, on levels 2 and 4 (the first of each mark): two strips, each a crossing picture beside a glyph tile. The picture the mark asks for sits beside the closed green glyph, the other one beside the broken red glyph.
+- **Not done or not checked:** no person has played it. The pulls-left rack is still the small right-margin one. The panel's crossing pictures are subtle at 5×5. Whether the ramp cut-offs feel right is untested. The play checks were scratch scripts and are not in the repo; `solutions/kt03_clear_levels.py` is.
 Revision: Mark does not want to learn the rule by losing a level. Space is now a pull that plays the cinch animation in a different colour when the knot is wrong, and the player gets three pulls (I). Early levels get live help that fades (J). The glyph generators now live in this repo under `tools/glyphs/` (see `docs/07-Nov-2026-glyph-tools-plan.md`).
 
 ## What is wrong (read from `games/kt02.py`)
@@ -89,6 +102,8 @@ In: the picture, the feedback, and two small action-meaning changes: (1) Space w
 `CHANGELOG.md` entry; `docs/catalog.json` hash and any description; README/EVALUATION unchanged unless they describe KT02's feedback. A how-to-play note goes on the browse page only, never anywhere an agent sees it.
 
 ## Decisions for Mark
+
+All settled; see "As built" at the top. (Open questions 1 to 4 below were answered by Mark's "whatever makes the most sense" and "obviously it needs a new ID".)
 
 Settled by Mark: DOOMED on the first pass is wanted ("learning the rule by losing the level is insanely annoying"); Space is a pull that plays the animation in a different colour when wrong; three pulls; early levels easier; glyphs come from the copycats work, now in `tools/glyphs/`.
 
