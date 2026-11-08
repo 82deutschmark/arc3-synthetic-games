@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.9.2 � 7 November 2026
+## 0.9.3 — 7 November 2026
+
+Gemini 3.8 Flash High, at Mark Barney's call: benchmark review and ranking of all fifteen featured games (including BL02, SS02 and KT02, reflecting the 0.8.8 engine standardizations and 0.9.1 art rebuilds), in docs/reviews/2026-11-07-featured-fifteen-review.md. Identifies the Top 5 strongest games as ARC-AGI-3 holdouts (EH02, BL02, KT02, ST02, SS02) and documents search depth, visual transparency, and design gaps across the full set. Linked from AGENTS.md. No game code changed.
+
+
+## 0.9.2 — 7 November 2026
 
 Claude Sonnet 5.5, at Mark Barney's call ("I'd like it so that they get regenerated automatically"), plan in `docs/07-Nov-2026-auto-previews-plan.md`: previews can no longer lag their game. `tools/make_media.py` gains `--stale` and `--all` and writes `docs/previews/manifest.json`, the source hash each game's pictures were drawn from. `tools/validate.py` fails a game whose pictures are missing or older than its source. `.githooks/pre-commit` redraws stale pictures and stages them; enable it once per clone with `git config core.hooksPath .githooks` (Git does not clone hooks, so `validate.py` is the backstop for everyone else). Pillow is now in `requirements.txt`, because drawing needs it. The first full redraw changed only four level strips (cg01, dw01, ff01, mp01); every other picture came out byte-identical, so they were already current. Game rules are untouched.
 
