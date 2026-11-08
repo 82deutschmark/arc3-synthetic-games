@@ -1,11 +1,11 @@
 {
-  "version": "0.9.4",
+  "version": "0.9.5",
   "snapshot_date": "2026-11-02",
   "featured": [
     "pt02",
     "te02",
     "dz03",
-    "lt04",
+    "lt05",
     "es02",
     "eh02",
     "ff02",
@@ -1728,6 +1728,46 @@
         "special": "In the pictures, this redraw is the same game with a far richer world: nine different looks instead of one, every building and creature drawn as its own small character, and gentle life everywhere (blinking, drifting, flickering). Roughly three times the drawing weight of the old version, with no words or numbers on screen and no grey.",
         "look": "Every mission is its own season with its own ground, streets, roofs and trees. Mission one is a green summer town with windmill and pond, two is yellow desert with pyramid and tents, three is a white snowy town with igloos and penguins, four is a purple mushroom night, five is a seaside with lighthouse and boats and striped awnings, six is orange autumn with leaves and haystacks, seven is a pink and blue candy town with cupcakes and lollipops, eight is a dark moonlit city with an observatory, owls and bats, and nine is a bright carnival with a big top, balloons and confetti. Everything is a named picture: people with faces who cheer or wince, cars, ambulances with flashing lights, roofs with their own dressing (snow, frosting, bunting, solar panels), tall landmarks, little animals in the corners, flames and blasts. A won mission bursts into fireworks; a lost run goes red with a storm cloud and a sad face.",
         "vsPublic": "BP35 and LF52 are the only public games whose view scrolls, and in both you move pieces through the world; in LT03 you never move anyone, you pan across a busy city and aim. SC25’s fireball and CD82’s dye are aimed at boards that hold still, and KA59’s bombs wait on a fuse, but here your own shot arrives late and the target keeps walking. WA30 has other movers that act after each of your moves; from the fourth mission this city also answers you, sending crowds and ambulances to every heavy or fire blast."
+      }
+    },
+    {
+      "id": "lt05",
+      "class_name": "Lt05",
+      "path": "games/lt05.py",
+      "sha256": "f15a0a7888f39921d2ed1f77e5eddfdfb99f24adf10b16f264bcfc2b6c6ba730",
+      "levels": 9,
+      "human": null,
+      "preview": "previews/lt05.png",
+      "media": {
+        "play": "previews/lt05.png",
+        "levels": "previews/lt05-levels.png"
+      },
+      "tiles": 9,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "play": "https://arc3.sonpham.net/games/lt05",
+      "spoiler": {
+        "teaser": "Lock Target. Five munitions, each with one job: freeze a raider, lure the crowd away, then bring the block down on them.",
+        "hard": "Nothing on screen tells you what a munition does until you have seen it: a phone freezes one raider, a green pulse sends every civilian and ambulance walking to the spot, and a single round flattens a whole screen. A roof protects whoever is under it, so a shot at a house does nothing to the raider inside until the roof comes down. A bot has to read the roofs, notice who is walking where, and find the order: signal, lure, wait, fire. In the family of SC25's aimed fireball.",
+        "rules": [
+          "You look down on a city from the air, where people and cars are small squares coloured in the middle: red for targets, yellow for street traffic, green for people inside schools and hospitals, and ambulances carry pink crosses.",
+          "Click anywhere on the map to use the selected munition, press space or click a pod in the tray to switch, and use the arrow keys to pan across a city of four districts, with arrows at the screen edge pointing to targets out of view; every action, even panning, moves the city on one step, and undo just waits a step.",
+          "Precision lands next step and is tiny, but takes two steps off a roof; heavy lands four steps late with a wide blast and kills everyone in the open; both take two steps off every roof they touch, and a roof is gone after three. Anyone standing under a roof is safe from every blast until it is down, so a target hiding in a house needs the roof broken first.",
+          "Signal (from mission one) is instant: click a target to freeze it for a few steps, show it bigger and confirm who it is; a click on nothing is refused and costs no round. It is how you hold a target still long enough to switch munitions and fire.",
+          "Aid (from mission four) sends every civilian, crowd and ambulance in the open within reach walking to the spot for a while, and never a target; it does nothing else. Fire (from mission five) is one round that lands two steps late and wipes a square fifty-odd cells across, everything in the open, and brings every roof in it down: lure the innocent off with aid, freeze the targets, then fire.",
+          "A mission is won when every target is gone, nothing is still falling and no fire is burning. The shield bar at the top shows what you lost: red where people died (ambulances cost more), violet where a hospital or school was hit, dim for anything else, and a red cross or green burst marks where someone fell. Plain buildings cost nothing. From the fourth mission an empty shield fails the mission and you start it over.",
+          "A target left alone too long pulls a crowd around itself and then blows up among them, so freezing it also stops its clock. Later missions add targets riding in cars with passengers (hit the car and everyone in it goes), targets that show only part red or look like street traffic until you signal them, and a sensor that only updates every third step."
+        ],
+        "special": "Every munition does one thing you can see, and the jobs chain: the phone holds a target, the green pulse empties the street, the big round clears the block, and the roof rule makes you break a house before you can hit who is inside it. There is no luck anywhere; the same moves always do the same thing. Nothing is hidden from the picture: the attack fuse and the stale-sensor eye are drawn, and the old unseen timers are gone.",
+        "look": "The same nine seasonal cities as LT04: a green summer town with windmill and pond, a yellow desert, a snowy town with igloos, a purple mushroom night, a seaside with a lighthouse, orange autumn, a candy town, a moonlit city and a carnival. New: a phone icon for signal, a green pulse that spreads across the city for aid, a square fireball that sweeps the screen for fire, roofs that crack, fall and leave rubble, a marked raider with a bigger bracket and bigger red square, and a red cross or green burst where each person or raider fell.",
+        "vsPublic": "BP35 and LF52 are the only public games whose view scrolls, and in both you move pieces through the world; in LT05 you never move anyone, you pan across a busy city and use munitions. SC25's fireball and CD82's dye are aimed at boards that hold still, and KA59's bombs wait on a fuse, but here your own shot arrives late and the target keeps walking, until you freeze it. WA30 has other movers that act after each of your moves; in this city a left-alone raider pulls a crowd round itself, and your own aid pulse sends the crowd away."
       }
     },
     {

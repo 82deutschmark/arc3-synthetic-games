@@ -16,10 +16,15 @@
 #   hidden from the picture. Dropped from lt04: the incident fires and the injured patient, the response meter, the world
 #   slow-down, the raiders' double step on every 7th turn and the confidence that crept up every 18th turn (none were
 #   drawn). The attack fuse and the stale-sensor eye stay: both are on screen. No letters, digits or words are drawn.
+#   Who fell is drawn: a red cross where a person died, a green burst where a raider did (each drifts up and fades over ten
+#   turns), and the shield bar's empty part is coloured by what emptied it (red people, violet a hospital or school).
 # SRP/DRY check: Pass -- the Lt05 class holds the rules; everything under THE ART only draws from the rule state and never
 #   writes to it. The art is lt04's, edited only where a munition, the marked raider or a removed system is drawn.
 # CHANGELOG
-# 07-November-2026, Claude Sonnet 5.5: first version, from lt04 (see PURPOSE). Plan: docs/07-Nov-2026-lt04-munitions-rework-plan.md.
+# 07-November-2026, Claude Sonnet 5.5: first version, from lt04 (see PURPOSE).
+# 07-November-2026, Claude Sonnet 5.5: kill marks and a shield bar that shows what emptied it (Mark: clearer civilian and
+#   hostile kill indicators); the great blast drawn as a square to match its reach; ground scorch capped so it cannot hide
+#   the blast. Plan: docs/07-Nov-2026-lt04-munitions-rework-plan.md.
 
 from __future__ import annotations
 from copy import deepcopy
@@ -1750,12 +1755,20 @@ def draw_console(game, phase):
         targets[:, index * pitch:index * pitch + 3] = glyph
     put(game, 'mission_targets', targets, 1, 0, 40, ['mission'])
     shield = np.full((4, 12), -1, dtype=np.int8)
-    shield_colour = GRN if game.risk > 40 else YEL if game.risk > 20 else RED
+    shield_colour = GRN if game.risk > 40 else YEL if game.risk > 20 else ORG
+    # what is left is green (then yellow, then orange); what is gone shows what took it: red for people lost, violet for
+    # a hospital or school hit, dim for anything else, in that order along the empty part of the bar
+    gone = [col for col in range(12) if game.risk < (col + 1) * 120 // 12]
+    taken = game.lost['people'] + game.lost['wards'] + game.lost['other']
+    gone_colour = {}
+    for number, col in enumerate(gone):
+        share = (number + 0.5) / max(1, len(gone)) * max(1, taken)
+        gone_colour[col] = RED if share < game.lost['people'] else VIO if share < game.lost['people'] + game.lost['wards'] else MAR
     for row, inset in enumerate((0, 1, 2, 4)):
         for col in range(inset, 12 - inset):
             if col in (3, 8) and row < 3:
                 continue
-            shield[row, col] = shield_colour if game.risk >= (col + 1) * 120 // 12 else MAR
+            shield[row, col] = gone_colour.get(col, shield_colour)
     if game.risk < getattr(game, '_risk_before', game.risk) and phase < 4 and phase % 2 == 0:
         shield[shield >= 0] = WHT                          # the shield bar flashes white when it is hit
     put(game, 'civilian_condition', shield, 30, 0, 40, ['condition'])
@@ -1833,6 +1846,25 @@ def draw_console(game, phase):
             connector = np.full((1, 60), ORG, dtype=np.int8)
             connector[0, max(0, index * 12 - 2):min(60, index * 12 + 11)] = YEL
             put(game, 'payload_switch_connector', connector, 2, 52, 43, ['selection_feedback'])
+
+
+MARK_PICTURES = {
+    'person': ('r...r', '.r.r.', '..w..', '.r.r.', 'r...r'),          # a red cross where a civilian or responder fell
+    'hostile': ('..g..', '.gwg.', 'gwwwg', '.gwg.', '..g..'),          # a green burst where a raider fell
+}
+
+
+def draw_marks(game, phase):
+    """Where someone fell: a red cross for a person, a green burst for a raider. Each drifts up and blinks out over
+    MARK_TURNS turns, so the player sees at a glance who the last shot took."""
+    t = game.tick * FRAME_COUNT + phase
+    for mark in game.marks:
+        age = game.tick - mark['tick']
+        if age >= MARK_TURNS - 3 and (t // 2) % 2:
+            continue
+        x, y = mark['pos']
+        put(game, 'mark_%s_%d_%d_%d' % (mark['kind'], mark['tick'], x, y), lambda: art(MARK_PICTURES[mark['kind']]),
+            x - 2, y - 3 - age // 3, 24, ['kill_mark', mark['kind']], True, key=('mark', mark['kind']))
 
 
 def draw_edge_cues(game):
@@ -2111,6 +2143,7 @@ def art_frame(game, phase, frames):
     draw_shots(game, phase, frames)
     draw_events(game, phase, frames)
     draw_contacts(game, phase)
+    draw_marks(game, phase)
     draw_console(game, phase)
     draw_edge_cues(game)
     draw_bump(game, phase)

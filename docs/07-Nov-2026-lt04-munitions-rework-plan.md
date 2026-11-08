@@ -1,6 +1,6 @@
 # Plan: LT05, a rework of LT04's munitions
 
-Date: 07-Nov-2026. Author: Claude Sonnet 5.5, at Mark Barney's direction. Status: waiting for approval. Nothing has been built. LT05 is a new game in its own file, `games/lt05.py`, made from `games/lt04.py`; LT04 stays as it is.
+Date: 07-Nov-2026. Author: Claude Sonnet 5.5, at Mark Barney's direction. Status: built and checked in the real engine (see the as-built section at the end); Mark's answers: LT05 replaces LT04, Heavy stays, Fire unlocks wherever it makes sense. LT05 is a new game in its own file, `games/lt05.py`, made from `games/lt04.py`; LT04 stays as it is.
 
 ## Why
 
@@ -64,3 +64,14 @@ Other games, the lab upload, difficulty tuning beyond what the new rules force.
 1. ~~Edit in place or new number~~ Settled: a new game, LT05.
 2. **Which mission unlocks Fire?** It is available from mission 1 today. A screen-wide blast from the start skips the lesson.
 3. **Does Heavy stay as is?** With Fire taking the big-blast role, Heavy and Fire overlap unless Heavy is trimmed or dropped.
+
+## As built (07-Nov-2026)
+
+- LT05 is `games/lt05.py`; it replaces LT04 in the highlighted list; LT04 stays in `games/` and the catalog.
+- Precision: delay 1, radius 1, two roof steps. Heavy unchanged (delay 4, radius 5, two roof steps). Fire: delay 2, a box 26 cells out each way, one round, takes a whole roof (three steps). Aid: delay 2, reach 64, lures every civilian, crowd and ambulance in the open for 50 steps, never a hostile. Signal: instant, radius 2 around the click, seven steps of freeze.
+- Unlocks (0-based mission index, in `UNLOCK_MISSION`): signal, heavy, precision from mission 1; aid from mission 4, where crowds first appear; fire from mission 5, one mission after aid, so the player has met the lure before the payoff.
+- The house rule covers everyone under a standing roof, civilians as well as raiders. The two hidden clocks are gone. Incidents, the injured patient, the response meter and the world slow-down are gone with them.
+- Kill display (Mark's later request): a red cross and a green burst mark where people and raiders fell; the shield bar's empty part is coloured by what emptied it. No digits or words anywhere.
+- Fire's drawn blast is a square, to match its rules reach, and the ground scorch under any blast is capped, so the blast stays visible.
+- Not changed: the cars that carry a raider and passengers. A blast that hits the car takes everyone in it; the way out is to hit the raider while it is outside the car.
+- Open: fire's box and the shield costs are untuned; no person has played it.
