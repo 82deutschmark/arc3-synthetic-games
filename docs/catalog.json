@@ -1,22 +1,22 @@
 {
-  "version": "0.9.11",
+  "version": "0.9.12",
   "snapshot_date": "2026-11-02",
   "featured": [
-    "pt02",
-    "te02",
-    "dz03",
-    "lt05",
-    "es02",
     "eh02",
-    "ff02",
-    "se02",
+    "bl02",
+    "kt03",
+    "st02",
+    "ss02",
+    "pt02",
+    "dz03",
     "wb03",
     "bs02",
+    "te02",
     "wf03",
-    "st02",
-    "bl02",
-    "ss02",
-    "kt03"
+    "lt05",
+    "es02",
+    "se02",
+    "ff02"
   ],
   "highlight": {
     "games": [
@@ -2181,5 +2181,105 @@
       }
     }
   ],
-  "slippery": "The Slippery Seven are the seven public ARC-AGI-3 games our AI agents fail most: DC22, G50T, M0R0, SC25, SK48, TN36 and TR87."
+  "slippery": "The Slippery Seven are the seven public ARC-AGI-3 games our AI agents fail most: DC22, G50T, M0R0, SC25, SK48, TN36 and TR87.",
+  "ranking": {
+    "reviewer": "Gemini 3.8 Flash High",
+    "date": "2026-11-07",
+    "source": "docs/reviews/2026-11-07-featured-fifteen-review.md",
+    "note": "Graded as tests for AI agents. KT03, DZ03 and LT05 are newer builds of KT02, DZ02 and LT04, which are the games the review graded; their places are the old ones.",
+    "tiers": [
+      {
+        "name": "Strongest",
+        "games": [
+          "eh02",
+          "bl02",
+          "kt03",
+          "st02",
+          "ss02"
+        ]
+      },
+      {
+        "name": "Strong, with a caveat",
+        "games": [
+          "pt02",
+          "dz03",
+          "wb03",
+          "bs02",
+          "te02"
+        ]
+      },
+      {
+        "name": "Weaker as tests",
+        "games": [
+          "wf03",
+          "lt05",
+          "es02",
+          "se02",
+          "ff02"
+        ]
+      }
+    ],
+    "games": {
+      "eh02": {
+        "grade": "A+",
+        "why": "Looking costs you. Every peek wears away the floor you need to get back, so you can't explore for free."
+      },
+      "bl02": {
+        "grade": "A+",
+        "why": "Down doesn't move you down. It drops a counterweight, so heavy carries take you down and light ones take you up."
+      },
+      "kt03": {
+        "grade": "A",
+        "why": "Order matters: which strand ends on top depends on which you cross second. A knot you can't judge one crossing at a time."
+      },
+      "st02": {
+        "grade": "A",
+        "why": "You never push anything. You turn the sun and the shadows do it. Too many boards to brute force."
+      },
+      "ss02": {
+        "grade": "A",
+        "why": "Fruit arrives in a fixed line and the obvious placement starves a later order. You have to plan many steps ahead."
+      },
+      "pt02": {
+        "grade": "B+",
+        "why": "Fair, readable timing fights. Early levels are easy and the enemies never move, but the late ones have real depth."
+      },
+      "dz03": {
+        "grade": "B+",
+        "why": "Rich digging and falling sand. A lot of rules arrive at once, which makes it hard to tell what caused what."
+      },
+      "wb03": {
+        "grade": "B",
+        "why": "Steering one boat shoves all the others downwind. The scrolling sea adds searching more than thinking."
+      },
+      "bs02": {
+        "grade": "B",
+        "why": "Ring bells to herd the guards. A basic solver clears every level in a blink."
+      },
+      "te02": {
+        "grade": "B-",
+        "why": "A cable and a pulley, but each level is small enough to scrub through with unlimited undo."
+      },
+      "wf03": {
+        "grade": "C+",
+        "why": "Water-jug puzzle with a twist. Level one falls to five presses of one button, and wrong clicks cost nothing."
+      },
+      "lt05": {
+        "grade": "C",
+        "why": "Five munitions and a crowd that moves on hidden beats. Ambitious; what the crowd will do is hard to see."
+      },
+      "es02": {
+        "grade": "C",
+        "why": "Spreading an outbreak. People move on hidden beats you can't read from one frame."
+      },
+      "se02": {
+        "grade": "C-",
+        "why": "A shrine opens a gate forty steps away, off screen. It tests memory of a long walk, not working things out."
+      },
+      "ff02": {
+        "grade": "D+",
+        "why": "Eat the small fry, grow big. A reflex arcade game, not a thinking one."
+      }
+    }
+  }
 }
