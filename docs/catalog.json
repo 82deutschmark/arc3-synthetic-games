@@ -1,10 +1,11 @@
 {
-  "version": "0.9.1",
+  "version": "0.9.3",
   "snapshot_date": "2026-11-02",
   "featured": [
     "pt02",
     "te02",
     "dz02",
+    "dz03",
     "lt04",
     "es02",
     "eh02",
@@ -1651,6 +1652,44 @@
         "special": "In the pictures, every level has its own backdrop, sand colours, buried set piece and wall pattern, none of it grey, and the whole screen is built from named, moving sprites with faces and shading instead of painted specks. The file is about two and a half times as long as the original, almost all of it picture and animation data.",
         "look": "Level one is a sunny desert with cactus, dunes and a castle on the horizon, sand in yellow and orange bands. Level two is a tropical beach with palms, green turf and blue water pockets. Level three is a fiery brick cellar of orange and red with gold crates and a purple seam. Level four is a pink and sky-blue night with a moon, white sparkles and deep blue pools. Level five is a red sunset canyon with pyramids and a setting sun, magenta strata and glowing ember blocks. Level six is a meadow in green and yellow with buried purple stones and drifting fireflies. Level seven is a purple and magenta crystal night with a moon and blooming petals. Level eight is a dark star-sky cave of pink gems and a blue web, with a tall striped ladder creature. The miner has a lamp helmet, overalls and boots, and his eyes cross out when he loses. Creatures have faces whose eyes follow him, little critters crawl, swim and flit in the hollows, and clouds, palms and stars gently move. A win throws a themed shower and fireworks; a loss turns the world dark red with a ghost rising and a sad rain cloud.",
         "vsPublic": "BP35 is the closest: a tall shaft that runs past the screen, where clicking breaks some blocks and every action, undo included, counts on the bar. In DZ01 walking and fighting are free and only digging uses up the bar, the ground’s colour tells you whether it takes one, two or three clicks or never breaks, and sand and loose items fall into whatever you open. In TU93, an enemy kills you or dies depending on which side you meet it from; here a fight trades stripes for hearts, and the price is drawn on the creature before you start."
+      }
+    },
+    {
+      "id": "dz03",
+      "class_name": "Dz03",
+      "path": "games/dz03.py",
+      "sha256": "a45b84abb37a92d06e09b0873b838a12898dd264becc9520b02683ac56a9f9a4",
+      "levels": 8,
+      "human": null,
+      "preview": "previews/dz03.png",
+      "media": {
+        "play": "previews/dz03.png",
+        "levels": "previews/dz03-levels.png"
+      },
+      "tiles": 8,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "play": "https://arc3.sonpham.net/games/dz03",
+      "spoiler": {
+        "teaser": "Dig Zone. Inspired by the desert levels of Super Mario Bros. 2 on the original NES.",
+        "hard": "Every dig comes out of a bar, and the picture on the ground tells you how it behaves: loose sand pours into any hole you open, packed sand holds so a tunnel through it stays open, and quicksand pours and slumps sideways into every gap near it. Creatures sleep until a square beside them opens, then they come for you. So it's planning, not poking: a bot that clicks around to see what happens runs the bar dry or wakes something it cannot fight.",
+        "rules": [
+          "You see a green hero at the top of a sand shaft whose checkered finish lies out of sight far below, and a strip at the side with your hearts, a star slot and a bar: its yellow is your digging budget, a green dot on it shows how deep you are, and it ends in the same checkers.",
+          "Arrow keys walk, and up climbs one step when loose sand, packed sand or earth is right beside the hero; click the square straight above, below, left or right of him to dig it: any sand takes one click, earth two, rock three, and black bedrock never breaks.",
+          "Loose sand and quicksand pour: dig under the hero and he drops into the hole, and they, hearts, stars and batteries fall into any hole opened under them. Quicksand also slumps off a ledge diagonally into a gap beside it, and gives nothing to climb. Packed sand never pours, so a corridor dug through it stays open; loose sand above a cut made in the top row of a band still pours in, so cut the row below.",
+          "A creature is asleep while it is sealed in. When a square beside it opens, by your digging or a collapse, it wakes, and after each of your moves it takes one step toward you through open squares; if it ends up beside you it fights. Walk into one yourself to fight it too, which costs no clicks: you punch out a stripe, it punches out a heart, so a one-stripe crab costs nothing, a two-stripe mole one heart and a three-stripe worm two.",
+          "Lose your last heart, or empty the bar while the finish is still out of reach, and the run ends, and a reset starts the level over; walking onto a heart gives one back, up to three, and a blue battery in the sand puts clicks back.",
+          "A star you can carry still works: space lights it, and while its ring of sparks lasts, creatures go flat at a touch and sand digs for free. Red-eyed creatures still come down with the sand and start the fight if they land on your head. Loose sand dropped into a corridor shuts it, which also shuts out whatever is chasing you."
+        ],
+        "special": "Two new sands and creatures that hunt. Every level is built so the straight way down is blocked, and you travel sideways under ledges through packed sand, with sleeping creatures sealed in the walls beside your tunnel.",
+        "look": "Level one is a sunny desert with cactus, dunes and a castle on the horizon, sand in yellow and orange bands. Level two is a tropical beach with palms, green turf and blue water pockets. Level three is a fiery brick cellar of orange and red with gold crates and a purple seam. Level four is a pink and sky-blue night with a moon, white sparkles and deep blue pools. Level five is a red sunset canyon with pyramids and a setting sun, magenta strata and glowing ember blocks. Level six is a meadow in green and yellow with buried purple stones and drifting fireflies. Level seven is a purple and magenta crystal night with a moon and blooming petals. Level eight is a dark star-sky cave of pink gems and a blue web, with a tall striped ladder creature. The miner has a lamp helmet, overalls and boots, and his eyes cross out when he loses. Creatures have faces whose eyes follow him, little critters crawl, swim and flit in the hollows, and clouds, palms and stars gently move. A win throws a themed shower and fireworks; a loss turns the world dark red with a ghost rising and a sad rain cloud.",
+        "vsPublic": "BP35 is the closest: a tall shaft that runs past the screen, where clicking breaks some blocks and every action, undo included, counts on the bar. In DZ03 walking and fighting are free and only digging uses up the bar, the picture on the ground tells you how it behaves, loose sand and quicksand fall into whatever you open while packed sand stays put, and a creature you free comes to find you. In TU93, an enemy kills you or dies depending on which side you meet it from; here a fight trades stripes for hearts, and the price is drawn on the creature before you start."
       }
     },
     {
