@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.7 — 7 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call ("that game should also be present in the ARC3 synthetic games repository"), plan in `docs/07-Nov-2026-xa03-crawler-plan.md`: XA03, the crawler, added byte for byte from the version published on the Games page. Six big castle rooms, a key that changes colour and shape, locks, rune gates, crab and guard patrols, two bodies on the later worlds, and a lantern that burns a drop a move. It is not in the highlighted list. Catalog entry, hash and previews included. Not human-tested.
+
 ## 0.9.6 — 7 November 2026
 
 Claude Sonnet 5.5, at Mark Barney's call: notes for the assistant fixing the Play links, in `docs/reviews/2026-11-07-play-links-and-lab.md`, linked from `AGENTS.md`. The lab only opens games published to it, so unpublished games (DZ03 and LT05 today) fall back to its browse list; TE02 and SE02 open different games with the same ids; the note records how the lab resolves an id, how games get published and what blocks it. No game or link was changed. The catalog version stays at 0.9.5.
