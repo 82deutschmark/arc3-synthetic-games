@@ -40,6 +40,7 @@ Read these before starting work. They list what is known to be wrong or undecide
 
 - [docs/reviews/2026-11-07-featured-fifteen-review.md](docs/reviews/2026-11-07-featured-fifteen-review.md): benchmark review and ranking of all fifteen featured games as ARC-AGI-3 holdouts, covering the Top 5 strongest games and the design gaps in the rest.
 - [docs/reviews/2026-11-06-fixes-and-docs-review.md](docs/reviews/2026-11-06-fixes-and-docs-review.md): the fixes verified, and the open items, starting with `EVALUATION.md`, which makes claims that aren't true.
+- [docs/reviews/2026-11-07-play-links-and-lab.md](docs/reviews/2026-11-07-play-links-and-lab.md): why Play buttons land on the wrong game (the lab only opens games published to it), which links are dead, the TE02 and SE02 id collision, and how games get onto the lab.
 - [docs/reviews/2026-11-05-featured-twelve-review.md](docs/reviews/2026-11-05-featured-twelve-review.md): the adversarial review of the featured games and the design calls it left for Mark.
 
 ## Rules for this repo
