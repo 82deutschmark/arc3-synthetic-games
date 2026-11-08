@@ -1,5 +1,5 @@
 {
-  "version": "0.9.16",
+  "version": "0.9.17",
   "snapshot_date": "2026-11-02",
   "featured": [
     "eh02",
@@ -2178,6 +2178,44 @@
         "special": "A game of long routes: the shortest known walk for each world is hundreds of moves. The picture is built from named, faced pieces with a hop, a bump, a lifting gate, a puff when sent back, and an iris that closes on a win or a loss. The lantern's flame shrinks as the oil goes and the edges of the world dim when it is low.",
         "look": "A green meadow inside black-and-maroon brick, with six different moats outside the rooms (a lake, a blossom pond, a night sea, lava, ice and a sky of clouds). Round-faced bodies carry their key as a gem and wear what they have picked up; crabs are magenta, guards are light blue, and a worn trail of footprints runs along every patrol's path.",
         "vsPublic": "An original, not built on one public game, and not yet compared with the public 25 one game at a time."
+      }
+    },
+    {
+      "id": "cb01",
+      "class_name": "Cb01",
+      "path": "games/cb01.py",
+      "sha256": "60c0b48c57ddee31a3baf5fefd81a6e30aca246b042d8e42e12799b0a33ecfb0",
+      "levels": 6,
+      "human": null,
+      "preview": "previews/cb01.png",
+      "media": {
+        "play": "previews/cb01.png",
+        "levels": "previews/cb01-levels.png"
+      },
+      "tiles": 6,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "play": "https://arc3.sonpham.net/games/cb01",
+      "spoiler": {
+        "teaser": "A tiny card battler. Drop slow units on a field and watch them walk at three enemy towers. Knock all three down before the wheel runs dark.",
+        "hard": "Time only moves when you commit a card, and the wheel never gives a shade back, not even on undo, so every wasted beat is gone for good. The obvious first card is often the wrong one: a unit that walks straight in dies to tower fire, a slow tank has to go early to soak the shots, and a ranged unit can hit a tower from just outside its reach. Which tower a unit goes for depends on the column you drop it in. Plainly: the puzzle is small and exact, so it is only moderately hard for an agent once it has found the controls; the hard part for a newcomer is working out what each unit is for.",
+        "rules": [
+          "Five cards sit along the bottom, the chosen one raised in a yellow frame. Action 5 flips to the next card and costs nothing. A click inside the light-blue band at the bottom of the field drops that unit in the column you clicked. A click anywhere else does nothing and costs nothing, but the band flashes.",
+          "Dropping a card plays one beat: two small steps of the world. Units walk slowly toward the nearest tower and stop to fight whatever is in reach. Towers and guards shoot back. Any arrow key plays one beat with no card dropped, which is how you let the last units finish.",
+          "The round wheel in the corner has eight wedges of two shades. One shade goes dark at the end of every beat, and the next one to go is orange. A dark shade never comes back. If every shade is dark and a tower still stands, the level is lost: the wheel and towers flash, and a reset starts the level again.",
+          "Walker: cheap, hits once a step. Tank: slow, tough, hits hard but rarely. Archer: fragile, but hits from three squares away, further than a tower's two. Runner: hits twice a step. Red guards stand still and strike anything next to them. In the last level, enemies come out of the gates between the towers, a lit gate shows one coming, and one that reaches the blue band takes a shade off the wheel.",
+          "Undo takes back the board and your hand one beat, but never the shade. The wheel flashes so you can see it stayed dark.",
+          "Destroy all three towers to clear a level. There are six levels, each teaching one thing: straight to the tower, towers that shoot, reach, a short wheel, three different towers, and the push."
+        ],
+        "special": "Clash Royale's core in a turn-based box: a hand of cards, units that act on their own, towers to take down, and a clock. There is no regenerating meter and no real-time reflex; time is spent by committing a card. The clock is a wheel, not a number.",
+        "look": "A red-and-maroon castle wall across the top with three towers, green field, a light-blue drop band, and a black card row along the bottom with the wheel in the corner. Blue walkers, purple tanks, yellow archers and light-blue runners are yours; red guards and orange pushers are the enemy's. No text."
       }
     }
   ],
