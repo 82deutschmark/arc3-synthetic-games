@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.4 - 7 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call ("blow up DZ02 ... dig sideways ... more peril in freeing the enemies ... two distinct types of sand"), plan in `docs/07-Nov-2026-dz03-sand-mechanics-plan.md`: a new game, DZ03, built from DZ02 (DZ02 stays). Two new sands: packed sand never pours, so a tunnel through it stays open and the hero can travel sideways for one click a square; quicksand pours and also slumps diagonally off ledges into gaps, and gives nothing to climb. Creatures now sleep while sealed in and wake when a square beside them opens, then step toward the hero after each of his moves and fight him if they reach him (a lit star flattens them free). Eight new levels where the straight way down is blocked, so the tunnels matter; every level was shown winnable by a search through the game's own rules, and budgets sit three clicks above the cheapest line found. Not play-tested by a person, and not yet on the Games page. Earth, rock, bedrock, hearts, the star, energy cells, inputs, win and loss are as in DZ02. DZ03 takes DZ02's place in the highlighted list; the DZ02 file stays in `games/`.
+
 ## 0.9.3 — 7 November 2026
 
 Gemini 3.8 Flash High, at Mark Barney's call: benchmark review and ranking of all fifteen featured games (including BL02, SS02 and KT02, reflecting the 0.8.8 engine standardizations and 0.9.1 art rebuilds), in docs/reviews/2026-11-07-featured-fifteen-review.md. Identifies the Top 5 strongest games as ARC-AGI-3 holdouts (EH02, BL02, KT02, ST02, SS02) and documents search depth, visual transparency, and design gaps across the full set. Linked from AGENTS.md. No game code changed.
