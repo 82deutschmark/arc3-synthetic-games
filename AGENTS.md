@@ -6,9 +6,9 @@ Guidance for AI coding agents working in this repo. Humans: start with [README.m
 
 ## What this repo is for
 
-New ARC-AGI-3 style games for other people to clone and run in their own training and evaluation pipelines. The main use is as holdouts for anyone who trained on the 25 public games and has nothing left to test on. The games are the product. Judge every change by whether an outsider who clones this gets games that load and behave exactly as documented, on any OS, with only `requirements.txt` installed.
+New ARC-AGI-3 style games, released for everyone to clone and use as training data for their agents. Anyone who wants a held-out test set can use them that way too: they run their agent through the harness, with no access to the source. The games are the product. Judge every change by whether an outsider who clones this gets games that load and behave exactly as documented, on any OS, with only `requirements.txt` installed.
 
-It is not a training system. No rewards, no splits, no solutions, and nothing here should claim any.
+It is not a training system: no rewards, no train/test split, and nothing here should claim any. Solutions, solvers, win paths and play records are welcome as training data. Add them, and say plainly what each one proves (for example "cleared every mission in the real engine").
 
 ## Layout
 
@@ -18,6 +18,7 @@ It is not a training system. No rewards, no splits, no solutions, and nothing he
 - `tools/validate.py`: integrity and smoke check. Rewrites `docs/validation.json`.
 - `tools/make_media.py`: redraws `docs/previews/` from the real engine (`--game ID`, `--stale`, `--all`) and records the source hash each picture came from in `docs/previews/manifest.json`.
 - `tools/glyphs/`: generators and finished sets of made-up 5×5 symbols in TR87's style (`tr87_glyphs*.py`, `sets/`), for games that need an unreadable script. Reuse these rather than drawing new glyphs by hand; the README there says what each needs.
+- `solutions/`: scripted clears and other worked solutions, one file per game. Each says in its header what it proves and what it doesn't (for example whether it reads engine internals rather than frames).
 - `.githooks/pre-commit`: runs `make_media.py --stale` and stages the result. Turn it on once per clone with `git config core.hooksPath .githooks`.
 - `examples/collect.py`: random-policy rollout example.
 - `docs/*-plan.md`: plans, named as the standards say.
@@ -48,7 +49,7 @@ Read these before starting work. They list what is known to be wrong or undecide
 
 1. **Games are hash-pinned.** `docs/catalog.json` holds each game's SHA-256 and `validate.py` enforces it. Change a game, update its hash in the same change, and redraw its pictures (`make_media.py --stale`; the pre-commit hook does it for you). `.gitattributes` forces LF line endings so the hashes hold on Windows. Leave it alone.
 2. **Ids are short tags** like `DZ01`. Renaming a game means moving its file and previews, and keeping the old id in the entry's `"was"` list so old links still resolve.
-3. **The source is readable by design,** and so is the browse page, which is a spoilers page. Don't write examples or docs that suggest putting either in front of an agent being tested.
-4. **Public repo.** No credentials, personal data, play traces, rollouts, virtualenvs or caches. `rollouts/` is gitignored for this.
+3. **Nothing here is hidden, by design.** The source, any solutions and the browse page (a spoilers page) are public, and they are training data. Holdout use is the evaluator's job: they run their agent through `tools/runtime.py` with no access to these files, and an example that evaluates an agent should do the same. Never hold something back from the repo for that reason.
+4. **Public repo.** No credentials, personal data, virtualenvs or caches. Solutions and play records are welcome. Very large raw rollouts stay out because of their size; `rollouts/` is gitignored for that.
 5. **Don't hardcode counts or versions in prose.** Game counts, highlighted counts and version numbers live in `docs/catalog.json` and `CHANGELOG.md`. Docs point at them.
 6. **Be honest about scope.** The README and `VALIDATION.md` say what the checks prove. Extend them if you extend the checks, and report failures as failures.

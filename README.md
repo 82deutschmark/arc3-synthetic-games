@@ -4,15 +4,15 @@ New ARC-AGI-3 style games, one Python file each, running on the ARC engine. Made
 
 ## Why they exist
 
-ARC-AGI-3 has 25 public games. If you trained your agent on all 25, congratulations, you've got nothing left to test it on. These are your holdouts. Games you haven't seen, your agent hasn't seen, and nobody told it the rules.
+ARC-AGI-3 has 25 public games. These are more of them, made the same way, and they're free for everyone to use. Train your agents on them: the source, the levels and any solutions or play records added here are all open. Or, if you trained your agent on all 25 and have nothing left to test it on, hold some back as your holdouts: games you haven't seen, your agent hasn't seen, and nobody told it the rules.
 
-They aren't copies of the public games. Plenty are cousins of the ones agents fail hardest (the Slippery Seven, see the catalog), and the [browse page](https://82deutschmark.github.io/arc3-synthetic-games/) says what makes a bot sweat on each highlighted game. The page shows only Mark's hand-picked best, the ones he liked most and thinks a person can play. The other games in `games/` are in the catalog too, but nobody has singled them out the same way. Want to train on them instead? Go ahead, but then you've burned your holdout. Your call.
+They aren't copies of the public games. Plenty are cousins of the ones agents fail hardest (the Slippery Seven, see the catalog), and the [browse page](https://82deutschmark.github.io/arc3-synthetic-games/) says what makes a bot sweat on each highlighted game. The page shows only Mark's hand-picked best, the ones he liked most and thinks a person can play. The other games in `games/` are in the catalog too, but nobody has singled them out the same way. Train on all of them, some of them or none. If you want a clean holdout, keep the games you hold back out of your training. Your call.
 
-## The catch
+## Nothing is hidden
 
-The source is right here. Anyone, or any coding agent, who can read `games/dz01.py` can read the rules and the win condition. The browse page is a spoilers page on purpose, too.
+The source is right here, on purpose. Anyone, or any coding agent, who can read `games/dz01.py` can read the rules and the win condition. The browse page is a spoilers page on purpose, too. For training, that's the point: read whatever helps.
 
-So the harness is on you. Your agent should only ever see what the engine gives it: frames in, actions out. If it can open files in this repo, you're not testing anything.
+If you use some games as a held-out test, the harness is on you. Run your agent through `tools/runtime.py` so it only sees what the engine gives it (frames in, actions out), with no access to this repo's files. Nothing here is held back to make that easier.
 
 ## Try it
 
@@ -44,7 +44,7 @@ An observation is `frames` (the grid), `state`, `levels_completed` and `availabl
 A few things before you point anything at it:
 
 - The `--seed` in `collect.py` seeds the random policy only. The games are hand-built levels. There's no level generator.
-- No rewards, no train/test split, no solutions. You decide what counts as success.
+- No rewards and no train/test split. You decide what counts as success and how to divide the games. Solutions, solvers and play records are welcome in this repo as training data.
 - Several games share ideas with each other. If you split them yourself, split by family, not at random.
 - Rollouts get big fast. `rollouts/` is gitignored; keep your data somewhere else.
 
@@ -62,6 +62,7 @@ A few things before you point anything at it:
 | `tools/make_media.py` | Redraws a game's pictures from the real engine. |
 | `tools/glyphs/` | Generators and finished sets of made-up 5×5 symbols in TR87's style, for games that need a script nobody can read. See its README. |
 | `examples/collect.py` | The random-policy collector. |
+| `solutions/` | Scripted clears and other worked solutions, one file per game, each saying what it proves. |
 
 ## How far to trust it
 
@@ -69,7 +70,7 @@ Not very far, and [VALIDATION.md](VALIDATION.md) says so. The check proves a gam
 
 ## Contributing
 
-If you're a person, read this README and [CREDITS.md](CREDITS.md). If you're an agent, or sending one in, read [AGENTS.md](AGENTS.md) and [CODING_STANDARDS.md](CODING_STANDARDS.md). Don't commit credentials, play traces or big data.
+If you're a person, read this README and [CREDITS.md](CREDITS.md). If you're an agent, or sending one in, read [AGENTS.md](AGENTS.md) and [CODING_STANDARDS.md](CODING_STANDARDS.md). Don't commit credentials or personal data. Solutions and play records are welcome; say what each one proves. Very large raw rollouts aren't, because of their size.
 
 ## Licence
 

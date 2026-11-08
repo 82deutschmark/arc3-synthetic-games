@@ -100,7 +100,7 @@ Pure reactive policies (predicting next-action directly from the frame) achieve 
 
 When an agent has been developed or fine-tuned against the 25 public demonstration games, its performance on those 25 no longer measures fluid intelligence—it measures memorization or overfitting.
 
-This repository's games are meant to serve as an out-of-distribution holdout suite.
+This repository's games are meant to serve as an out-of-distribution holdout suite. They are equally free to train on; this section is for people who choose to hold some out.
 
 ### 3.1 The Air-Gap Rule (Preventing Data Leakage)
 

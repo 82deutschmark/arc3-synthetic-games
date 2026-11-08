@@ -29,7 +29,7 @@ Every card's Play button links to `https://arc3.sonpham.net/games/<id>`, built f
 
 ## What LT05 and DZ03 need
 
-Neither has been vetted or published. LT05 is nine missions with win traces I only have as a throwaway script (signal then precision, every mission cleared in the real engine). LT05's level 1 can't be lost, but the vet gate's other checks have not been run on it.
+Neither has been vetted or published. LT05 is nine missions with a scripted clear of every mission in the real engine (signal then precision), now in `solutions/lt05_clear_missions.py`. It reads engine internals, so it is an oracle-style script, not a frames-only agent. LT05's level 1 can't be lost, but the vet gate's other checks have not been run on it.
 
 ## Not done
 
