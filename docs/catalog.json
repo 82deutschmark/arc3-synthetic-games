@@ -1,5 +1,5 @@
 {
-  "version": "0.9.10",
+  "version": "0.9.11",
   "snapshot_date": "2026-11-02",
   "featured": [
     "pt02",
@@ -2109,7 +2109,7 @@
       "id": "kt03",
       "class_name": "Kt03",
       "path": "games/kt03.py",
-      "sha256": "fd1e93cbcc6de9817284888012c7bed4b1105b08ac61206d284292cad836c49e",
+      "sha256": "068c87ce39f0088db592ab3721acf434b5651f92ca5410c260505f80482a839d",
       "levels": 10,
       "human": null,
       "preview": "previews/kt03.png",
@@ -2133,14 +2133,14 @@
         "rules": [
           "The arrow keys lay the cord along the slats from the black start eyelet. It can't leave the slats and can't go back over a spot it already covers.",
           "Space is a pull, anywhere. The cord tightens from the head back along the route, in purple if nothing is wrong and in magenta if something is. On the purple finish eyelet a good pull holds the knot and moves you on. Anywhere else a good pull changes nothing and costs nothing.",
-          "You have three pulls a level, shown as three spools on the rack. Each wrong pull dulls one and marks the wrong crossings in red dashes. The third wrong pull ends the run; a reset starts the level again with three. A pull on the finish while a crossing is still unfinished counts as wrong.",
+          "You have three pulls a level, shown as three white lights down the right edge. Each wrong pull puts one out and marks the wrong crossings in pink dashes. The third wrong pull ends the run; a reset starts the level again with three. A pull on the finish while a crossing is still unfinished counts as wrong.",
           "Undo takes the cord back one step at a time, as far as the start eyelet, as often as you like, so a dead end never traps you. Four faint corner dots mark the stop that undo returns to.",
           "At a crossing the cord goes straight through, never turning. Each crossing takes one pass across and one pass up and down, and the second pass is the one that ends up on top. A blue bar on a crossing says the across strand must end on top; a white bar says the up and down strand must.",
-          "Big black tiles in the cloth carry a glyph that changes with the state: closed shapes in green when you are on track (purple on the finish), broken dashes in red when something is wrong (orange when you are stuck with no legal move), open strokes in light blue after an undo and in white after a blocked move. On levels one to three a crossing's bars also turn yellow after one pass, green when held and red and dashed when doomed or failed; on levels four to six only once both passes are in; from level seven only after a pull.",
+          "Big black tiles in the cloth carry a glyph that changes with the state: closed yellow shapes when you are on track (purple on the finish), broken pink dashes when something is wrong (orange when you are stuck with no legal move), open strokes in light blue after an undo and in white after a blocked move. On levels one to three a crossing's bars also turn light blue after one pass, yellow when held and pink and dashed when doomed or failed; on levels four to six only once both passes are in; from level seven only after a pull.",
           "There are ten levels, the same as KT02: from a single winding run with no crossings to a lattice with five."
         ],
-        "special": "It is KT02's puzzle with the guesswork taken out. The same ten levels and the same two-pass rule, but the picture now answers back: big glyphs in a made-up script change shape and colour as you go wrong, the cloth turns red and the creatures swap sides, and the free-running scenery is gone so every change on screen means something.",
-        "look": "Every level is still its own tablecloth with its own weave, trim and slat colours, but nothing wanders any more. Open cloth carries big black tiles with a bold glyph: green closed shapes when you are on track, red broken dashes when something is wrong. Levels two and four have a small panel showing the crossing picture each mark asks for beside the glyph it earns. When you go wrong the whole cloth turns red and dim, the two creatures on the edges swap ends and the props droop; a good pull on the finish still showers the screen with ribbon and sparkles, and a lost run turns everything dim and red."
+        "special": "It is KT02's puzzle with the guesswork taken out. The same ten levels and the same two-pass rule, but the picture now answers back: big glyphs in a made-up script change shape and colour as you go wrong, the cloth turns pink and the creatures swap sides, and the free-running scenery is gone so every change on screen means something.",
+        "look": "Every level is still its own tablecloth with its own weave, trim and slat colours, but nothing wanders any more. Open cloth carries big black tiles with a bold glyph: yellow closed shapes when you are on track, pink broken dashes when something is wrong. Levels two and four have a small panel showing the crossing picture each mark asks for beside the glyph it earns. When you go wrong the whole cloth turns pink and magenta, the two creatures on the edges swap ends and the props droop; a good pull on the finish still showers the screen with ribbon and sparkles, and a lost run adds a dark vignette. Three plain white lights down the right edge count the pulls left."
       }
     },
     {

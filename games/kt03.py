@@ -8,14 +8,14 @@
 #   * Three pulls. ACTION5 (Space) is a pull wherever the head is, not only on the finish. The cord tightens from the head
 #     back along the route as before: in the good colour when nothing is wrong, in a different colour (magenta) when
 #     something is, and the wrong crossings are marked. A good pull on the finish clears the level; a good pull anywhere
-#     else changes nothing; a wrong pull uses up one of three spools on the rack and the third wrong pull is GAME_OVER.
+#     else changes nothing; a wrong pull puts out one of three white lights down the right edge and the third wrong pull is GAME_OVER.
 #     A pull changes no cord state, so take-back does not undo it.
 #   * Live indicators before any pull, fading with the level: levels 1 to 3 show each crossing's state at once (waiting,
 #     one pass in, doomed, held, failed); levels 4 to 6 show a crossing only once both passes are laid; levels 7 to 10 show
 #     nothing until a pull. A crossing is DOOMED when its first pass used the strand that is meant to end on top, because a
 #     strand can cross only once, so the second pass can no longer come out right. That is read from the cord, not searched.
 #   * Big glyph tiles in the open cloth that change with the state, in the made-up script of tools/glyphs (kana set 31):
-#     closed shapes in green when on track (purple on the finish), broken dashes in red when wrong (orange when stuck),
+#     closed shapes in yellow when on track (purple on the finish), broken dashes in pink when wrong (orange when stuck),
 #     open strokes after a take-back (light blue) or a blocked move (white). The characters, props and cloth change with them.
 #   * Everything on the picture is still or changes only because the state changed; the free-running scenery of kt02 is gone.
 #     A faint marker shows the stop a take-back returns to, and a stuck head (no legal move off the finish) is shown.
@@ -25,6 +25,9 @@
 #   rule reads (crossing_status, is_stuck) are pure functions over the same state; the art builders and the game class only
 #   read that state. The glyph shapes are copied from tools/glyphs/sets/glyphs_kana_31.json because a game is one file.
 # CHANGELOG: 07-Nov-2026 (Claude Sonnet 5.5) -- first version of kt03.
+#   07-Nov-2026 (Claude Sonnet 5.5) -- colours and the pulls counter, at Mark Barney's call: green and red mean different things in
+#   different cultures, so yellow now says on track and held, pink says wrong, and the cloth turns pink and magenta (not red) when
+#   wrong; the thread rack of coloured spools is replaced by three plain white lights, one per pull left. Rules untouched.
 
 import numpy as np
 
@@ -60,8 +63,8 @@ PULLS = 3                  # wrong pulls allowed per attempt; the third one ends
 TIER_FULL, TIER_DONE = 3, 6   # level indexes: below TIER_FULL crossings show every state live; below TIER_DONE only once both
                               # passes are laid; from TIER_DONE nothing is shown until a pull
 WAITING, ONE_PASS, DOOMED, HELD, FAILED = "waiting", "one pass", "doomed", "held", "failed"
-STATUS_COLOUR = {ONE_PASS: YEL, HELD: GRN, DOOMED: RED, FAILED: RED}   # a crossing's bars, by state; waiting keeps its mark colour
-ON_TRACK, READY_COL, WRONG_COL, STUCK_COL, UNDO_COL, BLOCKED_COL = GRN, PUR, RED, ORG, LBL, WHT   # glyph colours by state
+STATUS_COLOUR = {ONE_PASS: LBL, HELD: YEL, DOOMED: PNK, FAILED: PNK}   # a crossing's bars, by state; waiting keeps its mark colour
+ON_TRACK, READY_COL, WRONG_COL, STUCK_COL, UNDO_COL, BLOCKED_COL = YEL, PUR, PNK, ORG, LBL, WHT   # glyph colours by state
 
 
 # ── motion timing: how the head glides, bumps and how the iris opens (all picture; no rule reads these) ──
@@ -1155,7 +1158,7 @@ def _slat(cell, track, wood) -> list[list[int]]:
 
 def _crossing(mark: str | None, status: str = WAITING) -> list[list[int]]:
     """kt01's two bars per marked crossing, along the strand that must end on top. A waiting crossing keeps its mark
-    colour; one pass in is yellow, held is green, doomed or failed is red and dashed (shape as well as colour)."""
+    colour; one pass in is light blue, held is yellow, doomed or failed is pink and dashed (shape as well as colour)."""
     colour = JUNCTION if mark is None else WANT_H if mark == 'h' else WANT_V
     colour = STATUS_COLOUR.get(status, colour)
     dashed = status in (DOOMED, FAILED)
@@ -1209,18 +1212,14 @@ def _cord_pixels(arms, order, colour) -> list[list[int]]:
     return px
 
 
-def _spool(thread: int, phase: int = 0) -> list[list[int]]:
-    # A wooden spool wound with coloured thread: bench scenery in the right margin, it counts nothing. The shine slides
-    # between two spots (phase 0 and 1) so the thread looks to be turning.
-    shine = WHT if thread != WHT else YEL
-    top = [RIM, shine if phase else thread, thread, RIM]
-    low = [RIM, thread, thread if phase else shine, RIM]
-    return [[ORG, YEL, YEL, ORG], top, low, [ORG, MAR, MAR, ORG]]
-
-
-def _spool_used() -> list[list[int]]:
-    """A spent pull: the same spool with its thread gone and its shine out."""
-    return [[ORG, MAR, MAR, ORG], [RIM, MAR, MAR, RIM], [RIM, MAR, MAR, RIM], [ORG, MAR, MAR, ORG]]
+def _pip(lit: bool) -> list[list[int]]:
+    """One pull left, said as plainly as possible: a black window with a white light in it, or the window dark once that pull is spent."""
+    px = [[BLK] * CELL for _ in range(CELL)]
+    if lit:
+        for y in (1, 2):
+            for x in (1, 2):
+                px[y][x] = WHT
+    return px
 
 
 def _undo_corners(colour: int) -> list[list[int]]:
@@ -1228,20 +1227,6 @@ def _undo_corners(colour: int) -> list[list[int]]:
     px = [[-1] * CELL for _ in range(CELL)]
     for y, x in ((0, 0), (0, CELL - 1), (CELL - 1, 0), (CELL - 1, CELL - 1)):
         px[y][x] = colour
-    return px
-
-
-def _rack(count: int) -> list[list[int]]:
-    """The wooden shelf the spools stand on: a shelf above the first spool and one under each, with the
-    shelf board's light edge on top. Height 6*(count-1)+8 so it lines up with SPOOL_TOP and SPOOL_GAP."""
-    height = 6 * (count - 1) + 8
-    px = [[MAR] * CELL for _ in range(height)]
-    shelves = [0] + [6 * i + 6 for i in range(count)]
-    for s in shelves:
-        for k in range(CELL):
-            px[s][k], px[s + 1][k] = YEL, ORG
-    for r in range(height):
-        px[r][0] = RIM if px[r][0] == MAR else px[r][0]
     return px
 
 
@@ -1321,8 +1306,8 @@ def _crossing_picture(top_axis: str, colour: int) -> np.ndarray:
 
 
 def _panel(top_axis: str) -> np.ndarray:
-    """The wordless teaching panel for the level's mark: the crossing picture the mark asks for beside the closed green glyph,
-    and the other picture beside the broken red glyph. Two strips, each a crossing picture and a small glyph tile."""
+    """The wordless teaching panel for the level's mark: the crossing picture the mark asks for beside the closed yellow glyph,
+    and the other picture beside the broken pink glyph. Two strips, each a crossing picture and a small glyph tile."""
     px = np.full((PANEL_H, PANEL_W), BLK, dtype=np.int8)
     other = "H" if top_axis == "V" else "V"
     for row, (axis, family, colour) in enumerate(((top_axis, "B", ON_TRACK), (other, "C", WRONG_COL))):
@@ -1837,7 +1822,7 @@ def make_cloth(theme: dict, track=(), phase: int = 0) -> np.ndarray:
     return cloth
 
 
-# ── the ten themes: cloth, trim, glint, wood, props, heroes, walkers, ambient life, spool thread ──
+# ── the ten themes: cloth, trim, glint, wood, props, heroes, walkers ──
 # amb entries are (style, colours, how many); `hero` props are the big twelve-pixel creatures.
 THEMES = [
     # 1  garden table: green cloth, blossom tufts, scalloped hem, a bear, petals and fireflies
@@ -1845,64 +1830,64 @@ THEMES = [
          hero=[('bear', ORG, YEL), ('bunny3', WHT, PNK)],
          big=[('mushroom', RED, WHT), ('flower', RED, YEL), ('frog', LBL, YEL), ('butterfly', PNK, YEL)],
          small=[('flower4', YEL, ORG), ('flower4', WHT, YEL), ('flower4', PNK, YEL)],
-         mover=('snail', ORG, PNK), mover2=('mouse', LBL, PNK), thread=(RED, YEL, PNK, LBL)),
+         mover=('snail', ORG, PNK), mover2=('mouse', LBL, PNK)),
     # 2  night quilt: blue cloth with stitched diamonds, bead trim, an owl, fireflies and a shooting star
     dict(cloth=BLU, pat='quilt', ink=(PUR,), glint=LBL, trim='beads', hem=YEL, hem2=PNK, wood=(ORG, YEL, MAR), petal=PNK,
          hero=[('owl3', ORG, YEL)],
          big=[('moon', YEL, 0), ('cat', WHT, PNK), ('yarn', PUR, PNK)],
          small=[('star', YEL, 0), ('star', WHT, 0), ('star', YEL, 0), ('star', WHT, 0)],
-         mover=('bee', YEL, BLK), mover2=('crab', ORG, YEL), thread=(YEL, PNK, WHT, ORG)),
+         mover=('bee', YEL, BLK), mover2=('crab', ORG, YEL)),
     # 3  grape velvet: purple cloth with magenta polka dots, zigzag ribbon, a frog and rising hearts
     dict(cloth=PUR, pat='polka', ink=(MAG,), glint=PNK, trim='dash', hem=PNK, hem2=YEL, wood=(RED, ORG, MAR), petal=PNK,
          hero=[('frog3', GRN, YEL)],
          big=[('cupcake', PNK, YEL), ('pincushion', RED, YEL), ('yarn', GRN, YEL)],
          small=[('heart', PNK, 0), ('heart', YEL, 0), ('bead', LBL, 0), ('bead', YEL, 0)],
-         mover=('caterpillar', GRN, YEL), mover2=('duck', YEL, ORG), thread=(PNK, YEL, LBL, GRN)),
+         mover=('caterpillar', GRN, YEL), mover2=('duck', YEL, ORG)),
     # 4  gingham cloth: big calm orange and yellow checks, racing-flag trim, a cat, leaves and birds
     dict(cloth=ORG, pat='gingham', ink=(YEL,), trim='dots', hem=RED, hem2=YEL, wood=(MAR, ORG, RED), petal=PNK,
          hero=[('cat3', PUR, PNK)],
          big=[('apple', RED, WHT), ('penguin', BLU, LBL), ('acorn', YEL, RED)],
          small=[('bead', BLU, 0), ('heart', RED, 0), ('flower4', PUR, YEL), ('bead', GRN, 0)],
-         mover=('ladybug', RED, BLK), mover2=('mouse', PUR, PNK), thread=(GRN, BLU, PUR, WHT)),
+         mover=('ladybug', RED, BLK), mover2=('mouse', PUR, PNK)),
     # 5  sky picnic: light blue cloth, fat clouds with faces, a bunny, birds and bubbles
     dict(cloth=LBL, pat='dashes', ink=(WHT,), glint=YEL, trim='scallop', hem=WHT, hem2=YEL, wood=(ORG, YEL, MAR), petal=YEL,
          hero=[('bunny3', WHT, PNK)],
          big=[('cloud', WHT, 0), ('balloon', RED, 0), ('cloud', WHT, 0), ('sun', YEL, 0)],
          small=[('star', WHT, 0), ('star', YEL, 0), ('bead', PNK, 0), ('flower4', PNK, YEL)],
-         mover=('bee', YEL, BLK), mover2=('duck', WHT, ORG), thread=(BLU, RED, YEL, PNK)),
+         mover=('bee', YEL, BLK), mover2=('duck', WHT, ORG)),
     # 6  tartan: red plaid cloth with wide bands, green bamboo slats, zigzag trim, an owl, leaves
     dict(cloth=RED, pat='plaid', ink=(MAR,), glint=RED, trim='dash', hem=MAR, hem2=ORG, wood=(GRN, YEL, MAR), petal=YEL,
          hero=[('owl3', PUR, PNK)],
          big=[('bell', YEL, ORG), ('bunny', WHT, PNK), ('thimble', YEL, ORG)],
          small=[('heart', YEL, 0), ('star', YEL, 0), ('flower4', WHT, YEL)],
-         mover=('caterpillar', YEL, BLK), mover2=('crab', ORG, YEL), thread=(LBL, YEL, GRN, WHT)),
+         mover=('caterpillar', YEL, BLK), mover2=('crab', ORG, YEL)),
     # 7  argyle: maroon cloth with red diamonds, bead trim, a cat, embers rising
     dict(cloth=MAR, pat='argyle', ink=(RED,), glint=MAG, trim='beads', hem=ORG, hem2=YEL, wood=(ORG, YEL, MAR), petal=ORG,
          hero=[('cat3', YEL, ORG)],
          big=[('ghost', WHT, 0), ('fish', ORG, YEL), ('mushroom', YEL, WHT)],
          small=[('star', YEL, 0), ('heart', PNK, 0), ('bead', LBL, 0), ('flower4', YEL, ORG)],
-         mover=('snail', LBL, YEL), mover2=('beetle', GRN, YEL), thread=(YEL, LBL, PNK, GRN)),
+         mover=('snail', LBL, YEL), mover2=('beetle', GRN, YEL)),
     # 8  candy cloth: magenta with pink polka dots, racing-flag trim, a frog, sprinkles and hearts
     dict(cloth=MAG, pat='polka', ink=(PNK,), glint=PUR, trim='dots', hem=PNK, hem2=WHT, wood=(ORG, YEL, MAR), petal=YEL,
          hero=[('frog3', GRN, YEL)],
          big=[('icecream', LBL, ORG), ('cupcake', WHT, YEL), ('butterfly', YEL, ORG)],
          small=[('heart', WHT, 0), ('heart', YEL, 0), ('bead', LBL, 0), ('star', YEL, 0)],
-         mover=('ladybug', LBL, BLK), mover2=('mouse', WHT, PNK), thread=(LBL, YEL, GRN, ORG)),
+         mover=('ladybug', LBL, BLK), mover2=('mouse', WHT, PNK)),
     # 9  cheesecloth: yellow stripes, scalloped hem, a bear, green bubbles
     dict(cloth=YEL, pat='stripes', ink=(ORG,), glint=MAR, trim='scallop', hem=ORG, hem2=RED, wood=(MAR, ORG, RED), petal=RED,
          hero=[('bear', MAR, ORG)],
          big=[('pumpkin', ORG, RED), ('penguin', PUR, LBL), ('fish', BLU, LBL)],
          small=[('heart', RED, 0), ('bead', BLU, 0), ('flower4', PUR, ORG), ('bead', GRN, 0)],
-         mover=('caterpillar', PUR, PNK), mover2=('crab', RED, ORG), thread=(PUR, BLU, RED, GRN)),
+         mover=('caterpillar', PUR, PNK), mover2=('crab', RED, ORG)),
     # 10  night cloth: black with bright thread confetti, bead trim, an owl, twinkles and a comet
     dict(cloth=BLK, line=LBL, pat='confetti', ink=(PUR, BLU, MAG), glint=LBL, trim='beads', hem=MAG, hem2=PNK, wood=(ORG, YEL, MAR), petal=PNK,
          hero=[('owl3', PUR, PNK)],
          big=[('moon', YEL, 0), ('rocket', RED, YEL), ('ufo', GRN, 0)],
          small=[('star', YEL, 0), ('star', PNK, 0), ('star', LBL, 0), ('star', WHT, 0)],
-         mover=('bee', YEL, BLK), mover2=('beetle', PNK, YEL), thread=(YEL, PNK, LBL, GRN)),
+         mover=('bee', YEL, BLK), mover2=('beetle', PNK, YEL)),
 ]
 
-SPOOL_X, SPOOL_TOP, SPOOL_GAP = N * CELL - CELL, 8, 6   # the thread rack: one spool per pull left
+PIP_X, PIP_TOP, PIP_GAP = N * CELL - CELL, 8, 6   # the pulls left: one light per pull, in the right margin
 PANEL_LEVELS = (1, 3)      # level indexes that get the teaching panel (the first of each kind of mark)
 TILE_COUNT = 4             # glyph tiles per level, as many as the open cloth holds
 MOVER_Y = 0               # a creature stands in the very top margin of the cloth
@@ -2036,10 +2021,9 @@ def build_levels() -> list[Level]:
                 add(solid, f"flash_{cell[0]}_{cell[1]}", cell[0] * CELL, cell[1] * CELL, 3,
                     ("flash",), visible=False)
         add(_undo_corners(MAR), "undo_mark", 0, 0, 2, ("undo",), visible=False)
-        # the thread rack: one spool per pull left
-        add(_rack(PULLS), "rack", SPOOL_X, SPOOL_TOP - 2, 4, ("rack",))
+        # the pulls left: a black window with a white light for each pull, down the right margin
         for i in range(PULLS):
-            add(_spool(theme['thread'][i % len(theme['thread'])]), f"spool_{i}", SPOOL_X, SPOOL_TOP + i * SPOOL_GAP, 5, ("spool",))
+            add(_pip(True), f"pip_{i}", PIP_X, PIP_TOP + i * PIP_GAP, 5, ("pip",))
         # feedback sprites, hidden until needed: win sparkles round the finish, a dimming veil for a lost run
         for k in range(6):
             add(_spark(YEL, False), f"spark_{k}", 0, 0, 9, ("spark",), visible=False)
@@ -2070,11 +2054,13 @@ def make_iris(cx: int, cy: int, radius: float) -> np.ndarray:
 
 
 def lost_cloth(cloth: np.ndarray, theme: dict) -> np.ndarray:
-    """The same cloth after a lost pull: every plain pixel goes deep maroon (black on dark cloths) and every
-    patterned or hemmed pixel goes red, so the whole table looks wounded while the weave stays visible."""
+    """The same cloth while the glyphs say wrong, and after a lost run: every plain pixel goes magenta and every patterned or
+    hemmed pixel goes pink (the other way round on a cloth that is already magenta), so the whole table changes colour while the
+    weave stays visible. Pink, not red: red and green mean different things in different cultures, so the wrong signal is pink
+    wherever it appears. Never purple, which means ready."""
     base = theme['cloth']
-    dim = BLK if base in (MAR, BLK) else MAR
-    return np.where(cloth == base, dim, RED).astype(np.int8)
+    plain, pattern = (PNK, MAG) if base == MAG else (MAG, PNK)
+    return np.where(cloth == base, plain, pattern).astype(np.int8)
 
 
 class Kt03(ARCBaseGame):
@@ -2189,8 +2175,8 @@ class Kt03(ARCBaseGame):
         return found[0] if found else None
 
     def _scenery(self):
-        """Per-level sprite lookups, done once per level object: the props, the two creatures, the glyph tiles, the rack's
-        spools, the undo marker, the cloth and its red twin. Rebuilt whenever the engine hands us a fresh level object."""
+        """Per-level sprite lookups, done once per level object: the props, the two creatures, the glyph tiles, the pulls-left
+        lights, the undo marker, the cloth and its red twin. Rebuilt whenever the engine hands us a fresh level object."""
         if self._cache_level is not self.current_level:
             theme = THEMES[self.level_index]
             _, tiles, props = scenery_plan(self.level_index, self.track, LEVELS_SPEC[self.level_index])
@@ -2206,7 +2192,7 @@ class Kt03(ARCBaseGame):
             self._tiles = [(self._sprite(f"glyph_{k}"), cells) for k, (_, _, cells) in enumerate(tiles)]
             self._sparks = [self._sprite(f"spark_{k}") for k in range(6)]
             self._shower = [self._sprite(f"shower_{k:02d}") for k in range(SHOWER)]
-            self._spools = [(self._sprite(f"spool_{i}"), theme['thread'][i % len(theme['thread'])]) for i in range(PULLS)]
+            self._pips = [self._sprite(f"pip_{i}") for i in range(PULLS)]
             self._undo_mark = self._sprite("undo_mark")
             self._veil = self._sprite("veil")
             self._iris = self._sprite("iris")
@@ -2336,10 +2322,10 @@ class Kt03(ARCBaseGame):
         for k, (tile, cells) in enumerate(self._tiles):
             if tile is not None:
                 tile.pixels = _tile(family, first + k, glyph_colour, cells)
-        # the rack: a spool for each pull left, a dull one for each pull used
-        for i, (spool, thread) in enumerate(self._spools):
-            if spool is not None:
-                spool.pixels = np.array(_spool(thread, 0) if i < self.pulls_left else _spool_used(), dtype=np.int8)
+        # the pulls left: a lit window for each, a dark one for each pull used
+        for i, pip in enumerate(self._pips):
+            if pip is not None:
+                pip.pixels = np.array(_pip(i < self.pulls_left), dtype=np.int8)
         # the marker on the stop a take-back returns to: faint normally, bright while the glyphs say wrong or stuck
         if self._undo_mark is not None:
             if self.history and not decided:
