@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.14 — 8 November 2026
+
+Claude Sonnet 5.5 Medium, at Mark Barney's call (the page needs tidying, the summaries are not good, KT03's is bad, the Why page needs to talk up the producer and the iteration): `docs/why.html` is rewritten in his words and matches arc-explainer's Why page: these are the best of, played and reworked by people, no one lost a job, speed of iteration, "they laughed". KT03's teaser and "why AI struggles" are rewritten in plain words. No game changed. Catalog version is now 0.9.14.
+
 ## 0.9.13 — 8 November 2026
 
 Claude Sonnet 5.5 Medium, at Mark Barney's call (SS02 went too far; he liked SS01's look better): SS01 takes SS02's place in the highlighted list and in the ranking, fifth among the strongest. Same puzzle, same eight levels and inputs; SS02 only dressed it as a market with stalls and a vendor cat. SS02 stays in `games/`. No game changed. Catalog version is now 0.9.13.

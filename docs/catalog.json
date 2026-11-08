@@ -1,5 +1,5 @@
 {
-  "version": "0.9.13",
+  "version": "0.9.14",
   "snapshot_date": "2026-11-02",
   "featured": [
     "eh02",
@@ -2128,8 +2128,8 @@
       ],
       "play": "https://arc3.sonpham.net/games/kt03",
       "spoiler": {
-        "teaser": "Knot Tying, made readable. Lay a cord over and under, and big glyphs tell you when you are going wrong.",
-        "hard": "The rule is quiet: the strand laid second ends on top, and each crossing's bars say which strand has to win. Levels one to three show a crossing going wrong the moment you lay its first pass, levels four to six only once both passes are in, and from level seven nothing is shown until you pull. You get three pulls a level, so a bad guess costs a spool, not the run, but the third wrong pull ends it. A bot that wanders the slats and pulls will burn its three pulls; one that works out the order from the bars will not.",
+        "teaser": "Knot Tying. Lay a cord over and under, then pull it tight. Three pulls a level.",
+        "hard": "Which strand ends up on top depends on the order you cross, so you can't judge a knot one crossing at a time. Early levels show you when a crossing goes wrong. Every level after shows less, until from level seven the pull is the only thing that tells you. Three pulls a level, so one bad guess costs a little and three end the run.",
         "rules": [
           "The arrow keys lay the cord along the slats from the black start eyelet. It can't leave the slats and can't go back over a spot it already covers.",
           "Space is a pull, anywhere. The cord tightens from the head back along the route, in purple if nothing is wrong and in magenta if something is. On the purple finish eyelet a good pull holds the knot and moves you on. Anywhere else a good pull changes nothing and costs nothing.",
