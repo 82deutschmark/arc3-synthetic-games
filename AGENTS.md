@@ -17,6 +17,7 @@ It is not a training system. No rewards, no splits, no solutions, and nothing he
 - `tools/runtime.py`: the shared loader and observation serialiser. The only place games get imported.
 - `tools/validate.py`: integrity and smoke check. Rewrites `docs/validation.json`.
 - `tools/make_media.py`: redraws `docs/previews/` from the real engine (`--game ID`, `--stale`, `--all`) and records the source hash each picture came from in `docs/previews/manifest.json`.
+- `tools/glyphs/`: generators and finished sets of made-up 5×5 symbols in TR87's style (`tr87_glyphs*.py`, `sets/`), for games that need an unreadable script. Reuse these rather than drawing new glyphs by hand; the README there says what each needs.
 - `.githooks/pre-commit`: runs `make_media.py --stale` and stages the result. Turn it on once per clone with `git config core.hooksPath .githooks`.
 - `examples/collect.py`: random-policy rollout example.
 - `docs/*-plan.md`: plans, named as the standards say.

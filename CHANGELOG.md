@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.8 — 7 November 2026
+
+Claude Sonnet 5.5, at Mark Barney's call (the glyph generators "will be useful for people making synthetic games"), plan in `docs/07-Nov-2026-glyph-tools-plan.md`: the three generators of made-up TR87-style symbol sets are now in `tools/glyphs/`, ported from the copycats project (which keeps its copies). Katakana and hangul nudged by a pixel or two (`tr87_glyphs_kana.py`, needs only numpy), real characters shrunk to 5×5 (`tr87_glyphs_cjk.py`, needs a CJK font), and random strokes (`tr87_glyphs.py`), with the finished sets and TR87's 21 originals as data, so a set can be used without running anything. Changed for any-OS use: no other project's files, fonts looked up on macOS, Windows and Linux, UTF-8 output, `--out` for where files go; the algorithms and their random order are unchanged. Also adds `docs/07-Nov-2026-kt02-legibility-plan.md`, a plan for making KT02 readable (not started). No game changed, so no hashes or previews moved. Checked on Windows: the kana sets regenerate byte for byte, and every shipped set passes the family and distinctness rules. Not reproduced: the CJK and random-stroke generators run to the end but give different sets from the shipped ones, which were made on macOS; fonts are the likely cause, and for the random strokes that is a guess, not something I tested. The catalog version stays at 0.9.7.
+
 ## 0.9.7 — 7 November 2026
 
 Claude Sonnet 5.5, at Mark Barney's call ("that game should also be present in the ARC3 synthetic games repository"), plan in `docs/07-Nov-2026-xa03-crawler-plan.md`: XA03, the crawler, added byte for byte from the version published on the Games page. Six big castle rooms, a key that changes colour and shape, locks, rune gates, crab and guard patrols, two bodies on the later worlds, and a lantern that burns a drop a move. It is not in the highlighted list. Catalog entry, hash and previews included. Not human-tested.

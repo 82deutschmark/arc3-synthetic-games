@@ -60,6 +60,7 @@ A few things before you point anything at it:
 | `tools/runtime.py` | Loads a game, serialises observations. |
 | `tools/validate.py` | The smoke check. Writes `docs/validation.json`. |
 | `tools/make_media.py` | Redraws a game's pictures from the real engine. |
+| `tools/glyphs/` | Generators and finished sets of made-up 5×5 symbols in TR87's style, for games that need a script nobody can read. See its README. |
 | `examples/collect.py` | The random-policy collector. |
 
 ## How far to trust it
