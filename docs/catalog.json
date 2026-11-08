@@ -1,12 +1,12 @@
 {
-  "version": "0.9.12",
+  "version": "0.9.13",
   "snapshot_date": "2026-11-02",
   "featured": [
     "eh02",
     "bl02",
     "kt03",
     "st02",
-    "ss02",
+    "ss01",
     "pt02",
     "dz03",
     "wb03",
@@ -2186,7 +2186,7 @@
     "reviewer": "Gemini 3.8 Flash High",
     "date": "2026-11-07",
     "source": "docs/reviews/2026-11-07-featured-fifteen-review.md",
-    "note": "Graded as tests for AI agents. KT03, DZ03 and LT05 are newer builds of KT02, DZ02 and LT04, which are the games the review graded; their places are the old ones.",
+    "note": "Graded as tests for AI agents. KT03, DZ03 and LT05 are newer builds of KT02, DZ02 and LT04, which are the games the review graded; SS01 is the plainer-looking first build of SS02, with the same puzzle and levels. Their places are the graded games' places.",
     "tiers": [
       {
         "name": "Strongest",
@@ -2195,7 +2195,7 @@
           "bl02",
           "kt03",
           "st02",
-          "ss02"
+          "ss01"
         ]
       },
       {
@@ -2236,10 +2236,6 @@
         "grade": "A",
         "why": "You never push anything. You turn the sun and the shadows do it. Too many boards to brute force."
       },
-      "ss02": {
-        "grade": "A",
-        "why": "Fruit arrives in a fixed line and the obvious placement starves a later order. You have to plan many steps ahead."
-      },
       "pt02": {
         "grade": "B+",
         "why": "Fair, readable timing fights. Early levels are easy and the enemies never move, but the late ones have real depth."
@@ -2279,6 +2275,10 @@
       "ff02": {
         "grade": "D+",
         "why": "Eat the small fry, grow big. A reflex arcade game, not a thinking one."
+      },
+      "ss01": {
+        "grade": "A",
+        "why": "Fruit arrives in a fixed line and the obvious placement starves a later order. You have to plan many steps ahead."
       }
     }
   }

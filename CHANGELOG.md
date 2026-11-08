@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.13 — 8 November 2026
+
+Claude Sonnet 5.5 Medium, at Mark Barney's call (SS02 went too far; he liked SS01's look better): SS01 takes SS02's place in the highlighted list and in the ranking, fifth among the strongest. Same puzzle, same eight levels and inputs; SS02 only dressed it as a market with stalls and a vendor cat. SS02 stays in `games/`. No game changed. Catalog version is now 0.9.13.
+
 ## 0.9.12 — 8 November 2026
 
 Claude Sonnet 5.5 Medium, at Mark Barney's call (put the games in the order the Gemini review recommended and say which are strongest): `docs/catalog.json` `featured` is now in the review's order (EH02, BL02, KT03, ST02, SS02, then PT02, DZ03, WB03, BS02, TE02, then WF03, LT05, ES02, SE02, FF02), and a new `ranking` entry carries the three tiers, each game's grade and a one-line reason, written from `docs/reviews/2026-11-07-featured-fifteen-review.md`. KT03, DZ03 and LT05 take the places of KT02, DZ02 and LT04, the games the review actually graded; the entry says so. No game changed. The browse page here ignores `ranking` and just follows the new order; arc-explainer's synthetic games page shows the tiers and grades. Catalog version is now 0.9.12.
