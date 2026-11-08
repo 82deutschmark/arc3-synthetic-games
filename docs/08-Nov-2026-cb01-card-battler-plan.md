@@ -1,95 +1,107 @@
-# CB01: a card battler in the style of Clash Royale (plan only, nothing built yet)
+# CB01: a small card battler in the style of Clash Royale (plan only, nothing built yet)
 
-Author: Claude Sonnet 5.5
+Author: Claude Sonnet 5.5 (plan revised after a four-design comparison and a three-judge review)
 Date: 08-Nov-2026
-Asked by: Mark Barney ("mechanics similar to the original Clash Royale"). He then narrowed it: "I don't want anything too crazy.
-What I'm really looking for first is a plan on how it could be done." So this file is the plan and the feasibility read.
-No game code has been written. Implementation waits for his go-ahead on this plan.
+Asked by: Mark Barney. First "mechanics similar to the original Clash Royale", then "nothing too crazy, a plan first", then
+a steer: keep the core loop, slow units that go for towers, win by taking down the THREE enemy towers, no numeric timer
+(maybe a circle losing slices), action button cycles the hand, click deploys, and each level teaches one thing the way
+Clash Royale's tutorial does. No game code exists yet. Building waits for the Boss's go-ahead.
 
-## Feasibility read (short, honest)
+## Feasibility, short
 
-**Yes, it can be done, and a small version is a good fit.** The engine is turn based and deterministic, with a 64 by 64
-picture and a fixed set of inputs. Clash Royale is real time, but its core is already a clock plus a few rules:
-elixir fills at a steady rate, a hand of four cards cycles in a fixed order (it is not random after the first deal),
-units walk down a lane on their own, and towers shoot. All of that can run on a tick. What we lose is the thumb
-speed. What we keep is the part people actually like: spend a limited resource on the right counter at the right moment.
+Yes. The engine is turn based and deterministic, which suits a small tower-push game. Clash Royale's real-time rush
+becomes a step-by-step push you watch play out. What is kept: choosing a card, choosing where it goes, then watching
+slow units do their own thing against towers. What is lost: thumb speed. This will feel more like a tactics puzzle
+than the phone game, and that is the one real risk to the fun. A paper mock of the picture should be checked first.
 
-What is hard, honestly:
-- **Readability.** A 64 by 64 picture has to hold two towers a side, two lanes, a river, a hand of four cards and a
-  meter. Units will be five or six pixels across. They must be told apart by shape and colour alone, with no text.
-- **Fun is unproven until someone plays it.** Turn-based Clash tends to turn into a tactics puzzle. That is fine
-  for this project (it is what an ARC game is), but it is a different feeling from the phone game.
-- **No hidden information.** The enemy's plan has to be visible, otherwise a person cannot learn the game cold.
+## The four ways to do the clock (the Boss asked for options)
 
-## The smallest rule set that still feels like Clash Royale
+1. **Beat Wheel. Time moves only when you drop a card.** Cycling cards is free. Each drop lets the world play one beat
+   (units walk, fight, towers shoot) and one slice of the wheel goes dark for good. Plain, nothing moves while you think.
+2. **Every-Press Clock.** Every input, even flipping through the hand, costs time. Pressure is real, but a newcomer
+   pays for simply looking at their hand, and flipping cards becomes a hidden wait button.
+3. **Pour Clock.** The wheel doubles as the elixir: each beat a slice pours into a meter you spend on cards. Elegant
+   and most like Clash Royale, but two gauges moving together are hard to tell apart on a 64 by 64 picture, and waiting
+   has to be discovered.
+4. **Patience Ring.** The enemy plays a fixed list of cards and the ring shows how many it has left. Charming, but a
+   newcomer reads the ring as tower health, and showing the whole future makes each level solve-once.
 
-The board is a tall arena. The enemy is at the top, you are at the bottom, a river runs across the middle with one
-bridge in each of two lanes. Each side has two towers, one at the end of each lane.
+All three reviewers (a first-time player, an AI that must struggle, and a game producer) ranked **Beat Wheel** first and
+agreed on the grafts below. That is the recommendation.
 
-1. **Time moves when you press.** Every press (move the lane cursor, change the selected card, or play it) lets
-   one tick of the match pass: units walk, towers shoot, elixir fills. There is no wait key. Dithering costs time, just
-   like in the real game. A visible bar along the side drains with the match; when it empties the match is over.
-2. **Elixir.** A row of ten pips. One fills every couple of ticks. Each card shows its cost as pips on the card.
-3. **A hand of four cards**, with the next card shown beside it. Playing a card sends it to the back of the line and
-   brings in the next one, in a fixed order, as in the real game.
-4. **Three kinds of unit, one clear counter triangle**, told apart by shape and colour:
-   the Giant is slow and tough and only goes for towers; the Archers shoot from a distance and beat the Giant as it
-   walks; the Swarm is cheap, fast and kills Archers, but the Giant's stomp wipes it out. Every card is one of these.
-5. **You place a card at your side of a lane** (left lane or right lane). After that it acts on its own: walks,
-   fights what it meets, hits the tower at the end.
-6. **Two towers a side**, each with a visible health bar and a shot that hits the nearest unit in range.
-7. **The enemy plays a fixed, visible script.** The top of the picture shows the enemy's elixir and the card they will
-   play next. Nothing is random, so a person can read the plan and counter it. That is also what makes it a puzzle.
-8. **Winning and losing are visible.** Destroy both enemy towers to win the level. You lose when both of yours fall,
-   or when the clock bar empties with your side behind. Loss is shown (towers crumble, the bar empties), never a
-   silent restart. Reset, undo and the loss rule follow the public games: reset restarts the level, undo takes back the
-   board but never gives back clock time.
+## Recommended design: Beat Wheel, with grafts
 
-Inputs: Left and Right pick the lane, Up and Down change the selected card, Space plays it, undo as the engine defines it.
-(No click needed, so a cold player can find everything with the arrow keys.)
+- **Field.** Three enemy towers across the top, each with a few health pips. A bright band across the bottom third is
+  where you may drop units. A hand of unit pictures along the very bottom, the chosen one raised and framed.
+- **Controls.** Action 5 flips to the next card in the hand (free, nothing else moves). A click inside the band drops the
+  chosen card there. A click outside the band does nothing and costs nothing, but the band flashes so a cold player
+  learns where legal ground is. The first card is already selected, so the first thing a person discovers is the click.
+  The second card appearing in level two is what teaches action 5.
+- **Units walk straight to the nearest tower, slowly.** So the column you click decides which tower you hit.
+- **The clock.** A round wheel of eight slices, each with two shades, so sixteen readable steps. One shade goes dark at
+  the end of every beat and never comes back. The next one to go blinks first, so a loss never comes as a surprise.
+  No numbers, no words. Tight levels start with some slices already dark.
+- **One drop = one round of play**, a few small steps of motion, so units visibly get somewhere within a few clicks. If
+  the hand is empty, or you want the world to keep going, any arrow press plays one beat with no card (it costs a slice
+  like any beat). Level one ends with an empty hand and the world still moving, so this is learned by doing.
+- **Winning.** All three enemy towers down.
+- **Losing.** The wheel goes fully dark with an enemy tower standing. It is shown: the wheel darkens, the towers flash,
+  then the level restarts. Never a silent restart. From the defence level on, an enemy that reaches your edge takes a
+  slice off the wheel (a leak), so no second health system is needed.
+- **Undo** takes back the board and the hand but not the slice, the same as the public games. The slice flashes on undo
+  so a player can see why it stayed dark. Reset restarts the level.
+- **No elixir.** The hand is finite and the wheel is the only other limit. This was the main simplification: one gauge,
+  one job.
+- **Art.** Early-console look, flat saturated fields, no grey (rubble and dark slices stay coloured). Towers, wheel and
+  four unit shapes get the most pixels: Walker small and round, Tank wide and dark, Archer thin with a visible arrow dot,
+  Runner lean and leaning forward. Your side cool colours, the enemy warm. Named sprites, no text anywhere.
 
-## What I dropped, and why
+## Levels: one idea each, learned by the last card failing
 
-King tower and its wake-up rule; spells and buildings; evolutions, rarity and card levels; double-speed elixir and
-overtime; placing a unit anywhere on your half (only the lane is chosen); random starting hands; units that change
-target mid-walk in clever ways; emotes; two-player. Each of these adds rules without adding the main feeling.
+1. **Straight to the tower.** One card, the Walker. Towers do not shoot. Teaches click-to-drop and that the column picks the tower.
+2. **Towers shoot back.** A Walker dies on arrival. A second card, the Tank, soaks the shots. Teaches cycling (action 5).
+3. **Out-reach them.** A guard blocks the path and a tower hits hard. The Archer shoots over it. Teaches ranged.
+4. **Fast hands.** The wheel is short and the Tank is too slow; the Runner finishes the job. Teaches fast attackers.
+5. **Three different towers.** One guarded, one hard-hitting, one plain, so one spammed card cannot win. Teaches mixing.
+6. **The push.** An enemy shows a small marker at the top edge a beat before it arrives and walks at your side; leaks cost
+   slices. Teaches defending as well as attacking. Pick leaks or own towers for this level, not both.
 
-## What it will and will not feel like
+Each level should have two or three workable answers, not one hidden intended order.
 
-Plays like Clash Royale: the elixir squeeze, the rotating hand, counter-playing what the enemy just dropped,
-pushing one lane while defending the other, towers as the goal.
-Does not: no reflexes, no free placement, no deck building, no opponent that reacts to you (the enemy is a script).
+## What this plays like, and what it does not
+
+Like Clash Royale: choosing the right unit for the tower, units doing their own thing, tanks soaking, archers out-ranging,
+a running clock, three towers to topple. Not like it: no elixir, no real-time reflexes, no free placement anywhere on the
+field, no deck building, and the opponent is mostly buildings until the last level.
+
+## Risks and how they are handled
+
+- **Feels like a puzzle, not a battle.** Mock it on paper first and keep levels short with visible motion.
+- **Hard for an AI is only moderate.** The state is small and exact, so a searcher could brute-force early levels. The
+  defences are: it must discover the controls from the picture, the first obvious card is wrong at least once per level,
+  slow units show mistakes many beats later, and the wheel punishes blind trial. This is honest: the hardness is
+  middling and needs checking with a real solver.
+- **Readability.** Eight wedges, health pips and four silhouettes in a few pixels is tight. Fallback: six wedges.
+- **Action 5 as pure card selection** departs from the older rule that the fifth action must do something in the world.
+  The Boss asked for it by name, so the plan follows him. It never acts as a wait: waiting is the arrow press.
+- **Engine fit not yet checked.** Whether one input can play out several animated beats before control returns must be
+  confirmed in the first hour of the build; if not, a drop becomes a single step and the wheel is rebalanced.
+- **Vetting gate.** A winning recording is needed to pass it, or a Boss-approved bypass.
 
 ## Id
 
-**CB01** (a Clash-style battler). Checked: no existing game here uses it, and it shares no pair of letters with any of
-the 25 public games' tags. The id is only a tag; nothing readable ends up in the game.
-
-## Art
-
-Early-console cartridge look: flat saturated fields, no grey, no text on the play surface. The arena is one green and one
-blue field split by a river and two bridges. Towers, units and cards are named sprites (not specks): the Giant is a
-big square-shouldered figure, the Archers a small figure with a bow arc, the Swarm three tiny bodies. Enemy side
-warm colours, your side cool colours. A card shows its unit picture and its cost as pips.
+**CB01**. No existing game here uses it, and it shares no two letters with any of the 25 public games. The id is only a tag.
 
 ## Plan of work (if approved)
 
-1. Build `games/cb01.py` with the engine, rules as plain functions first (tick, fight, towers), art and engine glue last.
-2. Four levels: one lane with a scripted Giant push; two lanes; the enemy mixes the three kinds; a tight clock.
-3. Write a solver that searches presses over the real engine and records the winning routes in `solutions/`.
-4. Make previews (`tools/make_media.py`), add the catalog entry and a changelog entry, run `tools/validate.py`.
-5. Check by hand in the engine that the picture reads: units told apart, the bar and the enemy's next card visible.
-6. Branch and pull request. Publishing to the Games page is left to the scheduled task on the Mac Mini.
+1. Check the engine can animate several steps per input; draw one level's picture and look at it.
+2. Build `games/cb01.py`: rules as plain functions first (walk, fight, tower shots, wheel), art and engine glue last.
+3. Build the six levels above; tune the wheel by playing.
+4. Write a solver that searches the real engine and records a winning route per level in `solutions/`.
+5. Previews (`tools/make_media.py`), catalog entry, changelog entry, `tools/validate.py`.
+6. Branch and pull request. The scheduled task files it on the Games page; nothing is published by hand.
 7. A plain note to the Boss: what plays like Clash Royale, what does not, what is rough.
-
-## Open calls I made so the Boss does not have to
-
-- Every press ticks the clock (instead of a free selection). It keeps the pressure and avoids a wait key.
-- Two towers per side, no king.
-- Win by destroying both enemy towers, with the clock as the fail.
-- Four levels for the first version.
 
 ## Docs and changelog touchpoints
 
-`docs/catalog.json` (entry and hash), `docs/previews/`, `docs/validation.json`, `CHANGELOG.md`, `solutions/cb01_*.py`.
-No count or version is written into prose.
+`docs/catalog.json`, `docs/previews/`, `docs/validation.json`, `CHANGELOG.md`, `solutions/cb01_*.py`.
