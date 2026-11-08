@@ -1,5 +1,5 @@
 {
-  "version": "0.9.5",
+  "version": "0.9.7",
   "snapshot_date": "2026-11-02",
   "featured": [
     "pt02",
@@ -2103,6 +2103,43 @@
         ],
         "special": "In the pictures, every object is a separate drawn character with eyes and a mouth rather than specks painted on the screen, each level has its own look and gentle moving life, and this is the much heavier, much longer game next to the original, with the same rules and the same ten levels.",
         "look": "Every level is its own tablecloth with its own weave, edge trim and slat colours. Level one is green meadow cloth with a bear and a bunny and a snail on the edge. Level two is a night quilt with an owl, a moon and fireflies. Level three is purple velvet with a frog and rising hearts. Level four is orange gingham with a cat and a penguin. Level five is a sky picnic with smiling clouds and a bunny. Level six is red tartan with green bamboo slats and an owl. Level seven is a maroon diamond cloth with a cat and a ghost. Level eight is candy magenta with a frog and ice cream. Level nine is a yellow cheesecloth with a bear. Level ten is a black night cloth with bright thread confetti, a bat, a rocket and an owl. Little creatures walk the edges, petals, birds, embers and hearts drift by, and the cord's head has its own faces. A good pull showers the screen with ribbon streamers and sparkles at the finish; a lost run turns everything dim and red, with tears on the faces."
+      }
+    },
+    {
+      "id": "xa03",
+      "class_name": "Xa03",
+      "path": "games/xa03.py",
+      "sha256": "676c23cbedd2c7747afb05cb03b1c37547710c3093149f3f48bc1fe5c13a5e74",
+      "levels": 6,
+      "human": null,
+      "preview": "previews/xa03.png",
+      "media": {
+        "play": "previews/xa03.png",
+        "levels": "previews/xa03-levels.png"
+      },
+      "tiles": 6,
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "play": "https://arc3.sonpham.net/games/xa03",
+      "spoiler": {
+        "teaser": "The Crawler. Six big castle rooms, one key that changes colour and shape, locked doors and rune gates, patrols, and a lantern that burns down with every move.",
+        "hard": "The world is far bigger than the window, so the plan has to be held in memory: which tile changes the colour, which the shape, which rune lights which gate. A patrol or a guard sends you back to the last lit rune and wipes your key, so a careless walk costs the whole trip. The lantern burns a drop a move, and when it is out the run ends, so wandering is not free.",
+        "rules": [
+          "Arrow keys walk one square. You carry a key with a colour and a shape, drawn as a gem on your chest. A colour tile changes the colour, a shape tile changes the shape, and a lock opens only when both match.",
+          "Standing on a rune lights it. A gate across a hall opens when every rune it waits on is lit. A lit rune is also where you are sent back to.",
+          "A crab patrol sends you back to the last lit rune and wipes your key, unless you carry the anchor. A sword fells one crab, once. A guard blocks you unless you hold a sword, and a guard fells any crab it meets.",
+          "Boots let you cross rubble. Some pieces on the floor are cursed twins of real ones: they weigh a lot, and a heavy load makes every patrol move twice.",
+          "On the later worlds there are two bodies; the fifth key, or walking into the other body, swaps which one you steer.",
+          "Reach the doorway with the key it shows. The lantern burns one drop for every move, including the fifth key, and the run ends when it is out."
+        ],
+        "special": "A game of long routes: the shortest known walk for each world is hundreds of moves. The picture is built from named, faced pieces with a hop, a bump, a lifting gate, a puff when sent back, and an iris that closes on a win or a loss. The lantern's flame shrinks as the oil goes and the edges of the world dim when it is low.",
+        "look": "A green meadow inside black-and-maroon brick, with six different moats outside the rooms (a lake, a blossom pond, a night sea, lava, ice and a sky of clouds). Round-faced bodies carry their key as a gem and wear what they have picked up; crabs are magenta, guards are light blue, and a worn trail of footprints runs along every patrol's path.",
+        "vsPublic": "An original, not built on one public game, and not yet compared with the public 25 one game at a time."
       }
     }
   ],
