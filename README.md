@@ -48,6 +48,18 @@ A few things before you point anything at it:
 - Several games share ideas with each other. If you split them yourself, split by family, not at random.
 - Rollouts get big fast. `rollouts/` is gitignored; keep your data somewhere else.
 
+## GPT-6.1 Terra replays
+
+One attempt per game using the Duck harness, medium reasoning, and a 15-minute cap.
+The results show how far this setup got in that attempt.
+
+| Game | Levels cleared | Moves | Ended by | Replay |
+| --- | ---: | ---: | --- | --- |
+| DZ03 | 0 / 8 | 109 | Time limit | [Video](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/dz03.mp4) · [Full recording](docs/replays/terra-medium/dz03.jsonl.gz) |
+
+The video shows the board after each move. To step through all engine frames,
+decompress the full recording and open the JSONL in [ARC Prize Custom Replay](https://arcprize.org/replay/custom).
+
 ## What's in here
 
 | Path | What it is |
