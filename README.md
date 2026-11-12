@@ -76,7 +76,7 @@ Terra completed **SS01**. It cleared at least one level in 8 of 15 games.
 
 ## Qwen Flash-Next replays
 
-The competition Qwen Flash-Next model and drafter played the same game versions on a Vast GPU. All 15 games ran together with a 15-minute limit. Qwen cleared **no levels** in this run. Each Run Inspector contains the board, recorded thinking, Python tool calls, and results.
+The competition Qwen Flash-Next model and drafter played the same game versions on a Vast GPU. All 15 games ran together with a 15-minute limit, compared with roughly nine hours available in the Kaggle competition configuration. Qwen cleared **no levels** in this short run. Each Run Inspector contains the board, recorded thinking, Python tool calls, and results.
 
 | Game | Levels cleared | Moves | Replay |
 | --- | ---: | ---: | --- |
