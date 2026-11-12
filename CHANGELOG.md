@@ -2,7 +2,7 @@
 
 ## 11 November 2026 — Replay records
 
-GPT-6.1 Sol added the first Terra showcase replay and its result to the README. The DZ03 recording includes every frame returned by the engine.
+GPT-6.1 Sol added the first Terra showcase replay and its result to the README. The DZ03 recording includes every frame returned by the engine. The README now links to Son's Run Inspector for DZ03, EH02, and BL02, with the recorded decision notes and Python calls and results beside the board.
 
 ## 0.9.18 — 8 November 2026
 
