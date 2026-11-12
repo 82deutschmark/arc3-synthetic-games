@@ -1,5 +1,9 @@
 # Changelog
 
+## 12 November 2026 — Qwen replay records
+
+GPT-6.1 added the competition Qwen Flash-Next showcase results and full Run Inspector replays for all featured games, including the 15-minute run limit.
+
 ## 11 November 2026 — Replay records
 
 GPT-6.1 Sol added the complete Terra showcase results and linked every game's board, decision notes, tool calls, and results.

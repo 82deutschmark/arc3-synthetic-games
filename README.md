@@ -74,6 +74,28 @@ Terra completed **SS01**. It cleared at least one level in 8 of 15 games.
 | SE02 | 0 / 6 | 75 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=se02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/se02.jsonl.gz) |
 | FF02 | 1 / 8 | 342 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=ff02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/ff02.jsonl.gz) |
 
+## Qwen Flash-Next replays
+
+The competition Qwen Flash-Next model and drafter played the same game versions on a Vast GPU. All 15 games ran together with a 15-minute limit. Qwen cleared **no levels** in this run. Each Run Inspector contains the board, recorded thinking, Python tool calls, and results.
+
+| Game | Levels cleared | Moves | Replay |
+| --- | ---: | ---: | --- |
+| EH02 | 0 / 8 | 4 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=3&turn=1) |
+| BL02 | 0 / 8 | 5 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=0&turn=1) |
+| KT03 | 0 / 10 | 6 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=6&turn=1) |
+| ST02 | 0 / 8 | 10 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=11&turn=1) |
+| SS01 | 0 / 8 | 4 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=10&turn=1) |
+| PT02 | 0 / 8 | 12 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=8&turn=1) |
+| DZ03 | 0 / 8 | 13 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=2&turn=1) |
+| WB03 | 0 / 8 | 10 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=13&turn=1) |
+| BS02 | 0 / 8 | 9 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=1&turn=1) |
+| TE02 | 0 / 8 | 11 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=12&turn=1) |
+| WF03 | 0 / 8 | 12 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=14&turn=1) |
+| LT05 | 0 / 9 | 20 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=7&turn=1) |
+| ES02 | 0 / 8 | 11 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=4&turn=1) |
+| SE02 | 0 / 6 | 67 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=9&turn=1) |
+| FF02 | 0 / 8 | 8 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=5&turn=1) |
+
 ## What's in here
 
 | Path | What it is |
