@@ -1,5 +1,9 @@
 # Changelog
 
+## 12 November 2026 — Model results on the games page
+
+GPT-6.1 added the outside-game scores and Run Inspector links to the games page, with links to the featured runs and analysis.
+
 ## 12 November 2026 — Complete outside-game comparison
 
 GPT-6.1 added the final Terra replay, the full outside-game comparison, and analysis of the model runs and human records.
