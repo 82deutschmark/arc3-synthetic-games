@@ -1,0 +1,13 @@
+# Showcase analysis notes
+
+Terra's 15 featured-game results: 17 of 121 levels, one full win (SS01), seven other games with at least one level, seven with no levels. Three zero-level games ended on inference timeouts; four hit the clock. The logs for the zero-level games repeatedly show uncertainty about the objective and difficulty separating animated changes from action effects.
+
+SS01: Terra completed 8/8 in 229 actions. The catalog records a human completing 8/8 in 484. This is a weak hard-test game for Terra; keep it as a warm-up or make a harder variant if the goal is to challenge this model.
+
+EH02: one recorded human cleared all eight levels, and the first-level baseline is 25 actions. Terra and Sol each cleared just level one, using 27 and 10 actions. Using the [ARC scoring formula](https://arcprize.org/media/ARC_AGI_3_Technical_Report.pdf), their level-one efficiency is about 86% and the 115% cap respectively. Finishing level one efficiently is not the same as solving the full game. These are team records, not a full official human study.
+
+Outside games: the three selected Red Blue Pill games MM01, SK01, RS01 were all completed (17/17 total levels) with the same 15-minute limit as Terra's featured runs. This is the same number of levels Terra cleared across all 15 featured games (17/121). RS01 still took 600 actions. Simon SO01 6/7, SO02 4/7, and SO03 1/7 all ended in inference timeouts. That is 11/21 levels for the Simon sample and 28/38 for the combined outside sample.
+
+The selected Red Blue Pill game files were present in March 2026. The three selected Simon source files first appeared in that repository on 6 October 2026, after the 1 June 2026 published knowledge cutoff for GPT-6.1 Terra. The [Simon game files were committed on 6 October](https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data/commit/71c8107c4985aa62340020bc94b9ee3ad2465ccb); OpenAI lists [1 June 2026 as Terra's knowledge cutoff](https://developers.openai.com/api/docs/models/gpt-6.1-terra). Publication dates and a knowledge cutoff do not disclose the training set. The six games were selected, not a random sample; IDs were absent from the model prompts.
+
+Qwen 15-minute test: 0/15 levels/games, 202 actions, 144 Python tool calls. The model had images and working tools, used the actual competition weights, 341-of-512 experts, fd1ec drafter and recorded patches. It spent about seven minutes before the first SS01 action. Qwen ran 15 sessions on one GPU, while Terra used at most two Codex sessions; the harness prompts and observations differed, and actual Kaggle submission runtime was much longer. This comparison shows short-run performance, not an isolated model-only or training-data test. Qwen 30-minute test remains pending.
