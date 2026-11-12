@@ -1,5 +1,9 @@
 # Changelog
 
+## 12 November 2026 — Sol replays and human comparison
+
+GPT-6.1 added full Sol replays for PT02, DZ03, and EH02, compared recorded human actions, and clarified the Qwen run conditions.
+
 ## 12 November 2026 — Qwen replay records
 
 GPT-6.1 added the competition Qwen Flash-Next showcase results and full Run Inspector replays for all featured games, including the 15-minute run limit.

@@ -74,9 +74,23 @@ Terra completed **SS01**. It cleared at least one level in 8 of 15 games.
 | SE02 | 0 / 6 | 75 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=se02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/se02.jsonl.gz) |
 | FF02 | 1 / 8 | 342 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=ff02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/ff02.jsonl.gz) |
 
+## GPT-6.1 Sol replays
+
+Sol played PT02, DZ03, and EH02 with the same game versions and 15-minute setup as Terra. Its full Run Inspector replays show the recorded world-model notes, Python calls and results, and game frames.
+
+| Game | Levels cleared | Moves | Ended by | Replay |
+| --- | ---: | ---: | --- | --- |
+| PT02 | 2 / 8 | 82 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/sol-medium/viewer.html#run=pt02&game=0&turn=1) · [Frame recording](docs/replays/sol-medium/pt02.jsonl.gz) |
+| DZ03 | 1 / 8 | 83 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/sol-medium/viewer.html#run=dz03&game=0&turn=1) · [Frame recording](docs/replays/sol-medium/dz03.jsonl.gz) |
+| EH02 | 1 / 8 | 68 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/sol-medium/viewer.html#run=eh02&game=0&turn=1) · [Frame recording](docs/replays/sol-medium/eh02.jsonl.gz) |
+
+## Human comparison
+
+On SS01, Terra completed all eight levels in 229 actions; the recorded human completed them in 484. EH02 is the only featured game with per-level human baselines in the team records: on level one the human used 25 actions, Terra used 27, and Sol used 10. Using ARC's squared efficiency formula and per-level cap, that is about 86% for Terra and 115% for Sol on that level. EH02's baseline comes from one recorded player; SS01 has only a game-wide human total, so its per-level RHAE cannot be calculated from that record.
+
 ## Qwen Flash-Next replays
 
-The competition Qwen Flash-Next model and drafter played the same game versions on a Vast GPU. All 15 games ran together with a 15-minute limit, compared with roughly nine hours available in the Kaggle competition configuration. Qwen cleared **no levels** in this short run. Each Run Inspector contains the board, recorded thinking, Python tool calls, and results.
+The competition Qwen Flash-Next model and drafter played the same game versions on a Vast GPU. All 15 games ran together with a 15-minute limit, compared with roughly nine hours available in the Kaggle competition configuration. Qwen cleared **no levels** in this short run. Qwen and Terra used different harness prompts, observation formats, and concurrency, so this is not a model-only comparison. Each Run Inspector contains the board, recorded thinking, Python tool calls, and results.
 
 | Game | Levels cleared | Moves | Replay |
 | --- | ---: | ---: | --- |
