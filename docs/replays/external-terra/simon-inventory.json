@@ -1,0 +1,31 @@
+{
+  "total": 22,
+  "already_attempted": [
+    "aquarium_sorter",
+    "balloon_festival",
+    "color_sorter",
+    "dungeon_key_hunt",
+    "frog_crossing",
+    "gem_mine"
+  ],
+  "remaining": [
+    "badge_placement",
+    "ball_sifting",
+    "flood",
+    "ice_rink_stars",
+    "klotski",
+    "maze",
+    "one_step_tetris",
+    "paired_pieces",
+    "potion_brewer",
+    "projectile_dodge",
+    "rail_selector",
+    "sheep_herder",
+    "sokoban",
+    "symmetric_maze",
+    "tile_rotation",
+    "toy_train"
+  ],
+  "criterion": "Native descriptive-name game modules deriving from AugmentedGame, excluding official short-code games and adapter namespaces",
+  "repository_commit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0"
+}

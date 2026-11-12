@@ -134,9 +134,9 @@ Qwen played the same 15 pinned game versions with a 30-minute limit and all 15 g
 
 ## Terra on outside games
 
-Terra played three selected games from [Red Blue Pill](https://github.com/theredbluepill/arc-interactive) and six from [Simon Ouellette](https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data), using the same 15-minute setup as the featured games. SO01–SO06 are opaque aliases for the Simon games; their rules were unchanged. The Run Inspectors contain the recorded reasoning notes, Python calls, results, and frames. The original game code and revisions are identified by the [provenance record](docs/replays/external-terra/provenance.json).
+Terra played three selected games from [Red Blue Pill](https://github.com/theredbluepill/arc-interactive) and all native homemade games in the pinned [Simon Ouellette collection](https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data), using the same 15-minute setup as the featured games. SO01–SO22 are opaque aliases for the Simon games; their rules were unchanged. The Run Inspectors contain the recorded reasoning notes, Python calls, results, and frames. The original game code and revisions are identified by the [provenance record](docs/replays/external-terra/provenance.json).
 
-SO04–SO06 ran concurrently; the earlier outside batch used two workers.
+SO04–SO06 ran concurrently; the earlier outside batch used two workers. The remaining batch ran sequentially. A fresh inventory found 22 native homemade implementations, correcting the earlier chat count of 21; six had already been attempted, leaving 16, all included here. Third-party adapters and short-code official derivatives are excluded. The [inventory](docs/replays/external-terra/simon-inventory.json) records the exact roster.
 
 The runs did not have per-level human baselines, so use the levels and moves below rather than the stored zero score. Simon recordings use Terra's actual input actions with the saved frames.
 
@@ -151,8 +151,26 @@ The runs did not have per-level human baselines, so use the levels and moves bel
 | Simon Ouellette | SO04 | 1 / 7 | 341 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so04&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so04.jsonl.gz) |
 | Simon Ouellette | SO05 | 7 / 7 | 1002 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so05&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so05.jsonl.gz) |
 | Simon Ouellette | SO06 | 6 / 6 | 70 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so06&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so06.jsonl.gz) |
+| Simon Ouellette | SO07 — Badge Placement | 7 / 7 | 426 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so07&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so07.jsonl.gz) |
+| Simon Ouellette | SO08 — Ball Sifting | 6 / 6 | 537 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so08&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so08.jsonl.gz) |
+| Simon Ouellette | SO09 — Flood | 7 / 7 | 440 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so09&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so09.jsonl.gz) |
+| Simon Ouellette | SO10 — Ice Rink Stars | 7 / 7 | 137 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so10&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so10.jsonl.gz) |
+| Simon Ouellette | SO11 — Klotski | 7 / 7 | 121 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so11&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so11.jsonl.gz) |
+| Simon Ouellette | SO12 — Maze | 7 / 7 | 794 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so12&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so12.jsonl.gz) |
+| Simon Ouellette | SO13 — One Step Tetris | 8 / 8 | 77 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so13&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so13.jsonl.gz) |
+| Simon Ouellette | SO14 — Paired Pieces | 4 / 7 | 119 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so14&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so14.jsonl.gz) |
+| Simon Ouellette | SO15 — Potion Brewer | 6 / 7 | 487 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so15&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so15.jsonl.gz) |
+| Simon Ouellette | SO16 — Projectile Dodge | 7 / 7 | 189 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so16&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so16.jsonl.gz) |
+| Simon Ouellette | SO17 — Rail Selector | 7 / 7 | 128 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so17&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so17.jsonl.gz) |
+| Simon Ouellette | SO18 — Sheep Herder | 4 / 7 | 479 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so18&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so18.jsonl.gz) |
+| Simon Ouellette | SO19 — Sokoban | 7 / 7 | 341 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so19&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so19.jsonl.gz) |
+| Simon Ouellette | SO20 — Symmetric Maze | 7 / 7 | 117 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so20&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so20.jsonl.gz) |
+| Simon Ouellette | SO21 — Tile Rotation | 7 / 7 | 121 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so21&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so21.jsonl.gz) |
+| Simon Ouellette | SO22 — Toy Train | 6 / 7 | 1025 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so22&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so22.jsonl.gz) |
 
-Terra finished all three selected Red Blue Pill games and cleared 25 of 41 levels across the six Simon games. It cleared 17 of 121 levels across the featured games. The [showcase analysis](docs/reviews/2026-11-12-model-showcase-analysis.md) explains the human comparison, model differences, and game-publication dates.
+Terra finished all three selected Red Blue Pill games and cleared 129 of 153 levels across the Simon collection. It cleared 17 of 121 levels across the featured games. The [showcase analysis](docs/reviews/2026-11-12-model-showcase-analysis.md) explains the human comparison, model differences, and game-publication dates.
+
+[Labeled starting-frame previews](docs/replays/external-terra/previews/simon-remaining.png) · [Machine-readable remaining-batch results](docs/replays/external-terra/simon-remaining-results.json)
 
 ## What's in here
 
