@@ -1,0 +1,468 @@
+/*
+Author: Claude Opus 5.5 (Bubba) (7-Oct changes only; the file predates headers)
+Date: 07-October-2026
+PURPOSE: The trace viewer page (viewer.html): routes a run/game/turn link to the overview or one game's replay and
+  draws the board, event log, scrubber and decision pane from api.js payloads, live-tailing a game still playing.
+  7-Oct: Spark samples (run "spark:<job>:<sample>", fed by spark-watch.js) get no trace votes and re-read their
+  in-page steps each refresh; a route that fails now says so in the header instead of staying on "Loading".
+SRP/DRY check: Pass - the Spark source lives in spark-watch.js behind api.js; this file only gained the two checks.
+*/
+import { fetchGame, fetchGameFrames, fetchGameStep, fetchRunOverview, fetchRunsIndex, fetchViewerVersion } from "./api.js?v=20261011-kaggle";
+import { isSparkRun } from "./spark-watch.js?v=20261011-kaggle";
+
+// run name -> {avg_score, actions, ...}; empty when the index is unavailable (live mode).
+const runsIndex = new Map();
+fetchRunsIndex().then((payload) => {
+  const rows = (payload && payload.runs) || payload || [];
+  rows.forEach((r) => runsIndex.set(r.run, r));
+}).catch(() => {});
+import { initBoard, setPalette, showBoard, setClicks, clearPins, colorAt, redraw, view, setDiff, clearDiff, setDiffImage } from "./board.js?v=20261030-diffpane";
+import { initCoordRefs, showTooltip } from "./coords.js?v=20261030-diffpane";
+import { renderDecision } from "./decision.js?v=20261031-anim";
+import { EventLog } from "./log.js?v=20261030-diffpane";
+import { renderOverview } from "./overview.js?v=20261030-diffpane";
+import { Scrubber } from "./scrubber.js";
+import {
+  canonicalGameRef,
+  framePositionForRoute,
+  parseViewerHash,
+  resolveGameIndex,
+  viewerHash,
+} from "./viewer-route.js?v=20260911-turn-links";
+
+const POLL_MS = 1500;
+
+const state = {
+  run: null,
+  overview: null,
+  overviewRun: null,
+  gameIndex: null,
+  game: null,
+  frames: [],
+  stepCache: new Map(),
+  viewerVersion: null,
+};
+
+const el = {
+  overview: document.querySelector("#overview"),
+  cards: document.querySelector("#cards"),
+  totals: document.querySelector("#totals"),
+  overviewFilter: document.querySelector("#overview-filter"),
+  replay: document.querySelector("#replay"),
+  crumb: document.querySelector("#crumb"),
+  runSelect: document.querySelector("#run-select"),
+  back: document.querySelector("#back"),
+  board: document.querySelector("#board-canvas"),
+  decision: document.querySelector("#decision-body"),
+  logBody: document.querySelector("#log-body"),
+  tooltip: document.querySelector("#tooltip"),
+  boardMeta: document.querySelector("#board-meta"),
+  boardMode: document.querySelector("#board-mode"),
+  decisionMode: document.querySelector("#decision-mode"),
+  shareTurn: document.querySelector("#share-turn"),
+};
+
+// Which board a turn's row shows:
+//   consequence - the frame AFTER the turn's action(s) (the result). This is the default.
+//   state       - the frame the model reasoned against (board at the START of the turn).
+//   diff        - the consequence, with cells this turn changed (vs the state) highlighted.
+//   model       - the diff image the harness sent the model this turn (ARC3_DIFF_IMAGE; Son 30-Oct-2026: "add the
+//                 visualization of the diff image as some harness has it enabled"): the turn's state board vs the
+//                 state board of the previous analyzer turn, changed cells in their new colour, the rest navy.
+// The row is stamped with the action's OUTCOME, so "consequence" is what you get by default;
+// the other modes disambiguate "what the model saw" from "what its action produced".
+const BOARD_MODES = new Set(["state", "consequence", "diff", "model"]);
+let boardMode = (() => {
+  try { const m = localStorage.getItem("arc3-board-mode"); return BOARD_MODES.has(m) ? m : "consequence"; }
+  catch (_) { return "consequence"; }
+})();
+
+const DECISION_MODES = new Set(["review", "literal"]);
+let decisionMode = (() => {
+  try { const m = localStorage.getItem("arc3-decision-mode"); return DECISION_MODES.has(m) ? m : "review"; }
+  catch (_) { return "review"; }
+})();
+
+const log = new EventLog(el.logBody, { onSelect: (frame) => scrubber.seek(frame, { user: true }) });
+const scrubber = new Scrubber(document.querySelector("#scrub"), { onSeek: selectFrame });
+
+initBoard(el.board, { onCursor: showCursorReadout });
+initCoordRefs(el.tooltip);
+
+function syncModeButtons() {
+  if (!el.boardMode) return;
+  el.boardMode.querySelectorAll("button[data-mode]").forEach((b) =>
+    b.classList.toggle("on", b.dataset.mode === boardMode));
+}
+if (el.boardMode) {
+  el.boardMode.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-mode]");
+    if (!btn || !BOARD_MODES.has(btn.dataset.mode)) return;
+    boardMode = btn.dataset.mode;
+    try { localStorage.setItem("arc3-board-mode", boardMode); } catch (_) {}
+    syncModeButtons();
+    const frame = state.frames[scrubber.pos];
+    if (frame) selectFrame(scrubber.pos);
+  });
+  syncModeButtons();
+}
+
+function syncDecisionModeButtons() {
+  if (!el.decisionMode) return;
+  el.decisionMode.querySelectorAll("button[data-mode]").forEach((button) =>
+    button.classList.toggle("on", button.dataset.mode === decisionMode));
+}
+if (el.decisionMode) {
+  el.decisionMode.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-mode]");
+    if (!button || !DECISION_MODES.has(button.dataset.mode)) return;
+    decisionMode = button.dataset.mode;
+    try { localStorage.setItem("arc3-decision-mode", decisionMode); } catch (_) {}
+    syncDecisionModeButtons();
+    if (state.frames[scrubber.pos]) selectFrame(scrubber.pos);
+  });
+  syncDecisionModeButtons();
+}
+
+el.back.addEventListener("click", () => location.hash = viewerHash({ run: state.run }));
+el.runSelect.addEventListener("change", () => {
+  location.hash = viewerHash({ run: el.runSelect.value });
+});
+window.addEventListener("hashchange", route);
+
+// Son 31-Oct-2026: a run's tabs are Viewer and Statistics (Debugger, Execution trace and Score over time are off the bar;
+// their pages still open by link). "← runs" goes back to the list the run was opened from.
+function syncRunTabs() {
+  const suffix = location.hash;
+  const targets = {
+    "rt-viewer": "./viewer.html",
+  };
+  Object.entries(targets).forEach(([id, path]) => {
+    const anchor = document.getElementById(id);
+    if (anchor) anchor.href = path + suffix;
+  });
+
+}
+
+
+function replaceHash(hash) {
+  if (hash === location.hash) return;
+  history.replaceState(null, "", `${location.pathname}${location.search}${hash}`);
+  syncRunTabs();
+}
+
+async function route() {
+  const target = parseViewerHash();
+  const { run, game, instance } = target;
+  state.run = run;
+  if (game === null) return showOverview();
+  if (typeof game === "string" || instance !== null) {
+    const payload = state.overview && state.overviewRun === run
+      ? state.overview : await fetchRunOverview(run);
+    state.overview = payload;
+    // The URL identifies the data directory. Some historical exports inherited
+    // `selected_run: "runs"` from their nested artifact directory, so trusting
+    // that metadata here turns a valid deep link into /data/runs/game-N.json.
+    // Keep an explicit requested run authoritative and use selected_run only
+    // for the no-run default route.
+    state.run = run || payload.selected_run;
+    state.overviewRun = state.run;
+    const index = resolveGameIndex(payload.games, game, instance);
+    if (index < 0) throw new Error(`Game ${game} is not present in ${state.run}`);
+    return showGame(index, { target });
+  }
+  await showGame(game, { target });
+}
+
+async function showOverview() {
+  state.gameIndex = null;
+  el.overview.hidden = false;
+  el.replay.hidden = true;
+  el.back.hidden = true;
+  await refreshOverview();
+}
+
+async function refreshOverview() {
+  const requestedRun = state.run;
+  const payload = await fetchRunOverview(requestedRun);
+  state.overview = payload;
+  state.run = requestedRun || payload.selected_run;
+  state.overviewRun = state.run;
+  setPalette(payload.arc_palette, payload.color_chars);
+  renderRunSelect(payload);
+  el.crumb.innerHTML = `<b>${payload.run_name}</b> · ${payload.games.length} games`;
+  renderOverview(el.cards, el.totals, payload, {
+    filterEl: el.overviewFilter,
+    onOpen: (index) => {
+      const ref = canonicalGameRef(payload.games, index);
+      location.hash = viewerHash({ run: state.run, ...ref });
+    },
+  });
+}
+
+function runLabel(run) {
+  const info = runsIndex.get(run);
+  if (!info) return run;
+  return `${run} \u00b7 ${info.actions} acts \u00b7 ${info.avg_score.toFixed(3)}`;
+}
+
+function renderRunSelect(payload) {
+  const runs = payload.available_runs || [];
+  el.runSelect.innerHTML = runs.map((run) => `<option value="${run}">${runLabel(run)}</option>`).join("");
+  el.runSelect.value = state.run || payload.selected_run;
+}
+
+async function showGame(index, { target = null } = {}) {
+  state.gameIndex = index;
+  state.stepCache.clear();
+  el.overview.hidden = true;
+  el.replay.hidden = false;
+  el.back.hidden = false;
+  el.logBody.innerHTML = "";
+  log.rows = [];
+  clearPins();
+
+  if (!state.overview || state.overviewRun !== state.run) {
+    const requestedRun = state.run;
+    const payload = await fetchRunOverview(requestedRun);
+    state.overview = payload;
+    state.run = requestedRun || payload.selected_run;
+    state.overviewRun = state.run;
+  }
+  // Always (re)apply the palette from the overview we hold. Deep-linking with a game_id string
+  // resolves the overview inside route() without ever setting the palette, so keying this off a
+  // fresh fetch here would leave the board painting every cell "#000" (all black).
+  setPalette(state.overview.arc_palette, state.overview.color_chars);
+  const hasSelectionTarget = target && (target.turn !== null || target.frame !== null);
+  await refreshGame({ resetToLive: !hasSelectionTarget, target });
+}
+
+async function refreshGame({ resetToLive = false, target = null } = {}) {
+  const [game, frames] = await Promise.all([
+    fetchGame(state.run, state.gameIndex),
+    fetchGameFrames(state.run, state.gameIndex),
+  ]);
+  state.game = game;
+  state.frames = frames.frames || [];
+  // A live Spark sample's latest turn keeps growing; its steps are built in the page, so re-reading them is free.
+  if (isSparkRun(state.run)) state.stepCache.clear();
+
+  const ended = game.status !== "playing";
+  el.crumb.innerHTML = `<b>${state.run.toUpperCase()}</b> · <span class="status-${game.status}">${game.status}</span> · level ${game.levels_completed ?? 0}/${game.total_levels ?? "?"}`;
+
+  log.render(state.frames, game.viewer_steps);
+  if (resetToLive) scrubber.live = true;
+  scrubber.setFrames(state.frames, { ended });
+  const targetPosition = framePositionForRoute(state.frames, target || {});
+  if (targetPosition !== null) scrubber.seek(targetPosition, { user: true });
+}
+
+// The board the model reasoned against for this frame's turn: the frame just BEFORE the turn's
+// first action. Every action in a multi-click turn shares one reasoning board (the model saw
+// the board once, then emitted the whole batch), so all of a turn's rows resolve to the same
+// state image -- while the click marker still shows which click within the batch you're on.
+function stateBoardFor(frame) {
+  const turn = frame.analysis_step;
+  let j = frame.frameIndex;
+  // Walk back over the other actions of this same turn so every row of a multi-click turn
+  // resolves to the ONE board the model reasoned against. Runs without analysis_step fall
+  // through to the immediately-preceding frame, which is still the pre-action board.
+  if (turn !== undefined && turn !== null) {
+    while (j > 0 && state.frames[j - 1] && state.frames[j - 1].analysis_step === turn) j -= 1;
+  }
+  const ref = j > 0 ? state.frames[j - 1] : null;
+  return ref ? ref.board_ascii : frame.board_ascii;
+}
+
+// The frame the model reasoned against at the start of turn `turn`: the last frame before that turn's first action.
+function turnStartFrame(turn) {
+  let ref = state.frames[0] || null;
+  for (const f of state.frames) {
+    if (f.type === "action" && f.analysis_step !== undefined && f.analysis_step !== null && f.analysis_step >= turn) break;
+    ref = f;
+  }
+  return ref;
+}
+
+/**
+ * The diff image the harness built for this frame's turn, by its own rules (_prepare_auto_diff): the board at the
+ * start of the previous analyzer turn vs the board at the start of this one. None on the first turn, on the turn
+ * after a game over, across a level change, or when no cell changed. Returns {current, reference, span, reason}.
+ */
+function modelDiffFor(frame) {
+  const turn = frame.analysis_step;
+  if (turn === undefined || turn === null) return { current: frame, reference: null, reason: "not a model turn" };
+  const current = turnStartFrame(turn);
+  const turns = (state.game?.viewer_steps || []).map((s) => s.analysisStep).filter((t) => Number.isFinite(t) && t < turn);
+  if (!turns.length) return { current, reference: null, reason: "first turn: no diff image" };
+  const prev = Math.max(...turns);
+  const reference = turnStartFrame(prev);
+  // the harness labels the image by action count ("Diff image (step a -> b)")
+  const span = `turn ${prev} → ${turn}, actions ${reference?.action_num ?? 0} → ${current?.action_num ?? 0}`;
+  // a game over anywhere in the previous turn (its last frame is then the automatic RESET, not the death)
+  if (state.frames.some((f) => f.analysis_step === prev && f.game_over)) {
+    return { current, reference: null, span, reason: "turn after a game over: no diff image" };
+  }
+  if ((reference?.level ?? null) !== (current?.level ?? null)) return { current, reference: null, span, reason: "new level: no diff image" };
+  if (reference?.board_ascii === current?.board_ascii) return { current, reference: null, span, reason: "nothing changed: no diff image" };
+  return { current, reference, span, reason: "" };
+}
+
+/**
+ * The fatal step diff image (ARC3_GAMEOVER_DIFF_IMAGE) attached on the turn after a game over: the last frame before
+ * the death vs the death frame. Null on any other turn. Checked against E7's request logs (tu93: 12 of 12).
+ */
+function fatalDiffFor(frame) {
+  const turn = frame.analysis_step;
+  if (turn === undefined || turn === null) return null;
+  const turns = (state.game?.viewer_steps || []).map((s) => s.analysisStep).filter((t) => Number.isFinite(t) && t < turn);
+  if (!turns.length) return null;
+  const prev = Math.max(...turns);
+  const death = [...state.frames].reverse().find((f) => f.analysis_step === prev && f.game_over);
+  const alive = death ? state.frames[death.frameIndex - 1] : null;
+  if (!death || !alive) return null;
+  return { alive, death, span: `actions ${alive.action_num ?? 0} → ${death.action_num ?? 0}` };
+}
+
+function renderBoardForFrame(frame) {
+  if (boardMode === "model") {
+    const m = modelDiffFor(frame);
+    showBoard(m.current?.board_ascii || frame.board_ascii);
+    const changed = setDiffImage(m.reference?.board_ascii || null);
+    return { ...m, changed };
+  }
+  if (boardMode === "state") {
+    clearDiff();
+    showBoard(stateBoardFor(frame));
+  } else if (boardMode === "diff") {
+    showBoard(frame.board_ascii);
+    setDiff(stateBoardFor(frame));
+  } else {
+    clearDiff();
+    showBoard(frame.board_ascii);
+  }
+}
+
+async function selectFrame(index) {
+  const frame = state.frames[index];
+  if (!frame) return;
+
+  const ref = canonicalGameRef(state.overview?.games || [], state.gameIndex);
+  replaceHash(viewerHash({
+    run: state.run,
+    ...ref,
+    turn: frame.analysis_step ?? null,
+    frame: frame.frameIndex,
+  }));
+
+  const modelDiff = renderBoardForFrame(frame);
+  log.select(index);
+
+  // Every MOUSE action of this turn is marked; the one you are looking at is opaque, the
+  // rest of the batch translucent -- so a multi-click turn reads as "here, here, then here".
+  const turn = frame.analysis_step;
+  const clicks = state.frames
+    .filter((f) => f.click && turn !== undefined && f.analysis_step === turn)
+    .map((f) => ({ ...f.click, current: f.frameIndex === index }));
+  setClicks(clicks);
+
+  // Whether this run's harness sent the image at all (run-overview harnessImages, written by the exporter from the
+  // run's own notebook since 30-Oct-2026; older exports don't say).
+  const sent = state.overview?.harnessImages?.diffImage;
+  const harnessNote = sent === true ? "" : sent === false ? " (this run's harness had it off)" : "";
+  const modeTag = boardMode === "state" ? "state (pre-action) · "
+    : boardMode === "diff" ? "consequence + diff · "
+    : boardMode === "model" ? (modelDiff?.reason ? `model's diff image: ${modelDiff.reason}${harnessNote} · `
+      : `model's diff image, ${modelDiff?.span} (${modelDiff?.changed} cells changed)${harnessNote} · `) : "";
+  el.boardMeta.textContent = `${modeTag}${frame.title || ""} · ${frame.action_display || ""} · score ${frame.score ?? 0} · ${frame.state || ""}`;
+
+  const steps = state.game.viewer_steps || [];
+  const step = steps.find((s) => s.analysisStep === turn);
+  if (!step) {
+    renderDecision(el.decision, null);
+    return;
+  }
+  // The previous turn is needed to diff the prompt: only the delta is worth reading.
+  const previous = step.stepIndex > 0 ? await loadStep(step.stepIndex - 1) : null;
+  renderDecision(el.decision, await loadStep(step.stepIndex), {
+    currentClick: frame.click,
+    previousStep: previous,
+    mode: decisionMode,
+    // Son 30-Oct: the diff image next to the frame the model received ("in our harness we also do diff map")
+    modelImages: { diff: modelDiffFor(frame), fatal: fatalDiffFor(frame), flags: state.overview?.harnessImages || null },
+    // Votes are filed against stored runs; a Spark sample (spark-watch.js) is watched, not voted on.
+    feedback: null,
+  });
+}
+
+async function copyTurnLink() {
+  const url = location.href;
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch (_) {
+    const input = document.createElement("textarea");
+    input.value = url;
+    input.style.position = "fixed";
+    input.style.opacity = "0";
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    input.remove();
+  }
+  if (!el.shareTurn) return;
+  const previous = el.shareTurn.textContent;
+  el.shareTurn.textContent = "Link copied";
+  setTimeout(() => { el.shareTurn.textContent = previous; }, 1400);
+}
+
+el.shareTurn?.addEventListener("click", copyTurnLink);
+
+async function loadStep(stepIndex) {
+  if (state.stepCache.has(stepIndex)) return state.stepCache.get(stepIndex);
+  const payload = await fetchGameStep(state.run, state.gameIndex, stepIndex);
+  state.stepCache.set(stepIndex, payload.step);
+  return payload.step;
+}
+
+function showCursorReadout(cell, event) {
+  if (!cell) {
+    el.tooltip.hidden = true;
+    return;
+  }
+  const { value, css } = colorAt(cell.row, cell.col);
+  el.tooltip.querySelector(".label").textContent = `row ${cell.row} · col ${cell.col} = ${value}`;
+  const swatch = el.tooltip.querySelector(".swatch");
+  swatch.hidden = false;
+  swatch.style.background = css;
+  showTooltip(el.tooltip, event);
+}
+
+// Live-tail. Files are append-only, so re-fetching is safe at any moment; the scrubber decides
+// whether to follow the newest frame or hold position.
+async function poll() {
+  try {
+    const { version } = await fetchViewerVersion();
+    if (state.viewerVersion !== null && version !== state.viewerVersion) return location.reload();
+    state.viewerVersion = version;
+
+    if (state.gameIndex !== null && state.game?.status === "playing") {
+      await refreshGame();
+    } else if (state.gameIndex === null) {
+      await refreshOverview();
+    }
+  } catch (error) {
+    console.error("poll failed", error);
+  }
+}
+
+window.addEventListener("resize", () => {
+  const frame = state.frames[scrubber.pos];
+  if (frame) renderBoardForFrame(frame);
+});
+
+syncRunTabs();
+route().catch((error) => {
+  console.error("route failed", error);
+  el.crumb.textContent = `Could not load this run: ${error.message}`;
+});
+setInterval(poll, POLL_MS);
