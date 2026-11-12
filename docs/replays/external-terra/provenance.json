@@ -46,5 +46,29 @@
     "originalSourceSha256": "b79edf7a7069463baa1de3dcf05e973b6aa0737df4d2927962ce35a8db8342de",
     "stagedSourceSha256": "462bbdb7a90065643eaab8736bd82c4b7f23a73b93c07df43e53faeb2a924857",
     "idAliasChanged": true
+  },
+  {
+    "id": "so04",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "26e3d300a04117f73092fffd534401c1ed5710c8009dc0378a70395a6924e0b5",
+    "stagedSourceSha256": "1ebcf55b17449a7f2bf57c29824a1089451e6b7bd392698c503680b7d5ad2090",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so05",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "33f67718a62c589888828727fbbcef696a41d58d3e769aa7125463b557271a17",
+    "stagedSourceSha256": "8844e44a7d1ef453aad5c12544ea3d26e56c04a19b54a3aa40110bd856d7539a",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so06",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "09e1183de9e08003a764bbbe1fddc14597fc3cc316da69794624452629607995",
+    "stagedSourceSha256": "15672e8da0bc2c66606f7f2c58bffe71bce4acef56c4d617278f0647e0d709c1",
+    "idAliasChanged": true
   }
 ]

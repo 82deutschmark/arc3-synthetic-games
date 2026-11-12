@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.19 — 12 November 2026 — Three more Simon Terra replays
+
+GPT-6.1 Sol added verified GPT-6.1 Terra medium subscription results for SO04–SO06, using the existing 15-minute frozen harness. Full notes, actions, frames and pinned provenance are available in the shared Run Inspector; all prior runs remain selectable. Recorded actions were replayed against the real engine and every saved frame checked before publication.
+
 ## 12 November 2026 — Longer Qwen run
 
 GPT-6.1 added the 30-minute competition-model results and all 15 full Run Inspector replays, and updated the games page and comparison.
