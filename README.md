@@ -110,6 +110,28 @@ The competition Qwen Flash-Next model and drafter played the same game versions 
 | SE02 | 0 / 6 | 67 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=9&turn=1) |
 | FF02 | 0 / 8 | 8 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=5&turn=1) |
 
+### Qwen: 30-minute run
+
+Qwen played the same 15 pinned game versions with a 30-minute limit and all 15 games running together on one GPU. It cleared **KT03 level one** in 15 actions; Terra used 13 actions on that level. No other levels were cleared. All games ended at the time limit. The longer run used 340 actions in total.
+
+| Game | Levels cleared | Moves | Replay |
+| --- | ---: | ---: | --- |
+| BL02 | 0 / 8 | 15 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=0&turn=1) |
+| BS02 | 0 / 8 | 22 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=1&turn=1) |
+| DZ03 | 0 / 8 | 19 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=2&turn=1) |
+| EH02 | 0 / 8 | 10 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=3&turn=1) |
+| ES02 | 0 / 8 | 62 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=4&turn=1) |
+| FF02 | 0 / 8 | 8 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=5&turn=1) |
+| KT03 | 1 / 10 | 15 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=6&turn=1) |
+| LT05 | 0 / 9 | 23 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=7&turn=1) |
+| PT02 | 0 / 8 | 12 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=8&turn=1) |
+| SE02 | 0 / 6 | 13 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=9&turn=1) |
+| SS01 | 0 / 8 | 65 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=10&turn=1) |
+| ST02 | 0 / 8 | 10 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=11&turn=1) |
+| TE02 | 0 / 8 | 17 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=12&turn=1) |
+| WB03 | 0 / 8 | 18 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=13&turn=1) |
+| WF03 | 0 / 8 | 31 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=14&turn=1) |
+
 ## Terra on outside games
 
 Terra played three selected games from [Red Blue Pill](https://github.com/theredbluepill/arc-interactive) and three from [Simon Ouellette](https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data), using the same 15-minute setup as the featured games. SO01–SO03 are opaque aliases for the Simon games; their rules were unchanged. The Run Inspectors contain the recorded reasoning notes, Python calls, results, and frames. The original game code and revisions are identified by the [provenance record](docs/replays/external-terra/provenance.json).
