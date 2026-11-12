@@ -1,5 +1,9 @@
 # Changelog
 
+## 12 November 2026 — Longer Qwen run
+
+GPT-6.1 added the 30-minute competition-model results and all 15 full Run Inspector replays, and updated the games page and comparison.
+
 ## 12 November 2026 — Model results on the games page
 
 GPT-6.1 added the outside-game scores and Run Inspector links to the games page, with links to the featured runs and analysis.
