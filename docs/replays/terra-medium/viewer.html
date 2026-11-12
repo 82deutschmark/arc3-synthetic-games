@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ARC3 Run Inspector</title>
+  <link rel="stylesheet" href="./static/css/theme.css?v=20260823-scroll" />
+  <link rel="stylesheet" href="./static/css/app.css?v=20261031-anim" />
+  <link rel="stylesheet" href="./static/css/trace-votes.css?v=20261002-votes" />
+  <script>
+  (function(){try{var t=localStorage.getItem('arc3-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <script defer src="./static/js/theme-toggle.js"></script>
+</head>
+<body>
+<nav class="runtabs"><a class="rt-home" href="https://github.com/82deutschmark/arc3-synthetic-games#gpt-61-terra-replays">&larr; runs</a><a class="rt-tab active" id="rt-viewer">Viewer</a><button data-theme-toggle class="theme-toggle" style="margin-left:auto;align-self:center"></button></nav>
+<style>
+.sitetabs { display: flex; gap: 6px; align-items: center; padding: 10px 16px;
+  border-bottom: 1px solid var(--wash-line); font: 13px system-ui, sans-serif; background: var(--bg); }
+.sitetabs a { padding: 7px 16px; border-radius: 8px; text-decoration: none; color: inherit;
+  opacity: .65; border: 1px solid transparent; }
+.sitetabs a:hover { opacity: 1; background: var(--wash); }
+.sitetabs a.active { opacity: 1; font-weight: 600; background: var(--wash-2); border-color: var(--wash-line); }
+.runtabs { position: sticky; top: 0; z-index: 100; display: flex; gap: 6px; align-items: flex-end;
+  padding: 10px 16px 0; min-height: 42px; box-sizing: border-box; background: var(--bg);
+  border-bottom: 1px solid var(--wash-line); font: 13px system-ui, sans-serif; }
+.runtabs .rt-home { margin-right: 12px; padding-bottom: 9px; opacity: .7; text-decoration: none; color: inherit; }
+.runtabs .rt-home:hover { opacity: 1; }
+.runtabs .rt-tab { padding: 7px 16px; border-radius: 8px 8px 0 0; text-decoration: none; color: inherit;
+  opacity: .65; border: 1px solid var(--wash-line); border-bottom: none;
+  background: var(--wash); position: relative; top: 1px; }
+.runtabs .rt-tab.active { opacity: 1; background: var(--wash-2); font-weight: 600; }
+.mode-seg { display: inline-flex; margin-left: 10px; border: 1px solid var(--wash-line);
+  border-radius: 7px; overflow: hidden; vertical-align: middle; }
+.mode-seg button { font: 11px/1 system-ui, sans-serif; padding: 5px 9px; border: none;
+  background: var(--wash); color: inherit; opacity: .6; cursor: pointer;
+  border-left: 1px solid var(--wash-line); }
+.mode-seg button:first-child { border-left: none; }
+.mode-seg button:hover { opacity: .9; }
+.mode-seg button.on { background: var(--wash-2); opacity: 1; font-weight: 600; }
+.overview-filter { padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--chrome); }
+.overview-filter .mode-seg { margin-left: 0; }
+</style>
+<script>
+(function(){
+  const sync = () => {
+    document.getElementById("rt-viewer").href = "./viewer.html" + location.hash;
+  };
+  sync(); window.addEventListener("hashchange", sync);
+})();
+</script>
+
+  <div id="app">
+    <header class="topbar">
+      <span class="brand">ARC3 RUN INSPECTOR</span>
+      <button id="back" hidden>← All games</button>
+      <select id="run-select" aria-label="Run"></select>
+      <a class="runs-link" href="https://github.com/82deutschmark/arc3-synthetic-games#gpt-61-terra-replays">all runs →</a>
+      <span class="crumb" id="crumb">Loading…</span>
+      <span class="spacer"></span>
+      <span class="crumb">←/→ step · ⇧←/→ turn · space play</span>
+    </header>
+
+    <section class="screen" id="overview">
+      <div class="overview-filter" id="overview-filter" hidden></div>
+      <div class="totals" id="totals"></div>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <section class="screen" id="replay" hidden>
+      <div class="pane" id="log-pane">
+        <div class="pane-head">Event log<span class="spacer"></span></div>
+        <div class="pane-body">
+          <table class="log">
+            <thead>
+              <tr><th>#</th><th>turn</th><th>ty</th><th>Δ</th><th>action &amp; decision</th></tr>
+            </thead>
+            <tbody id="log-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="gutter" id="gutter-log" role="separator" aria-orientation="vertical"
+           aria-label="Resize event log" tabindex="0"></div>
+
+      <div class="pane" id="board-pane">
+        <div class="pane-head">Board<span class="mode-seg" id="board-mode" role="group" aria-label="Board view mode"><button type="button" data-mode="state" title="The board the model reasoned against — the state at the START of this turn, before its action ran">State</button><button type="button" data-mode="consequence" title="The board AFTER this turn's action (the result). Default.">Consequence</button><button type="button" data-mode="diff" title="The result, with the cells this turn changed (vs the state) highlighted">Consequence + Diff</button><button type="button" data-mode="model" title="The diff image the harness sends the model (ARC3_DIFF_IMAGE): cells that changed since its previous turn in their new colour, everything else dark navy. None on the first turn, after a game over or on a new level.">Model's diff</button></span><span class="spacer"></span><span id="board-meta"></span></div>
+        <div class="pane-body">
+          <div class="board-wrap">
+            <canvas id="board-canvas"></canvas>
+          </div>
+          <div class="board-foot" id="scrub">
+            <div class="scrub-banner" id="scrub-banner" hidden>
+              <span id="scrub-banner-text"></span>
+              <span class="spacer"></span>
+              <button id="scrub-return" type="button">▶ Return to live</button>
+            </div>
+            <div class="scrub">
+              <div class="scrub-track">
+                <input type="range" id="scrub-slider" min="0" max="0" value="0" />
+                <div class="scrub-ticks" id="scrub-ticks"></div>
+              </div>
+              <div class="scrub-row">
+                <span class="transport">
+                  <button id="scrub-first" type="button" title="First frame (Home)">⏮</button>
+                  <button id="scrub-prev" type="button" title="Previous frame (←)">◀</button>
+                  <button id="scrub-play" type="button" title="Play / pause (space)">▶</button>
+                  <button id="scrub-next" type="button" title="Next frame (→)">▶|</button>
+                  <button id="scrub-last" type="button" title="Latest frame (End)">⏭</button>
+                </span>
+                <span id="scrub-label">No frames</span>
+                <span class="spacer"></span>
+                <span class="live-dot" id="scrub-dot">● LIVE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gutter" id="gutter-decision" role="separator" aria-orientation="vertical"
+           aria-label="Resize decision panel" tabindex="0"></div>
+
+      <div class="pane" id="decision-pane">
+        <div class="pane-head">Decision<span class="mode-seg" id="decision-mode" role="group" aria-label="Decision trace mode"><button type="button" data-mode="review" title="Curated trace review with prompt diffs, frame inputs, and tool-call highlighting">Review</button><button type="button" data-mode="literal" title="Literal stored model inputs and outputs in chronological order, with trace timestamps">Literal</button></span><span class="spacer"></span><button id="share-turn" type="button" title="Copy a link to this exact game, turn, and action frame">Copy turn link</button></div>
+        <div class="pane-body" id="decision-body"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tooltip" id="tooltip" hidden>
+    <span class="swatch"></span><span class="label"></span>
+  </div>
+
+  <script>
+  // Draggable pane dividers. Widths live on #app as CSS custom properties that
+  // #replay's grid template reads, so the board pane is whatever is left over --
+  // board.js measures its parent at draw time, which is why the only thing needed
+  // after a drag is a resize event to make it recompute the cell size.
+  (function () {
+    const app = document.getElementById("app");
+    const STORE_KEY = "arc3-viewer-pane-widths";
+    const MIN_BOARD = 260;
+    const BOUNDS = { log: [180, 640], decision: [300, 1200] };
+
+    const clamp = (value, [lo, hi]) => Math.min(hi, Math.max(lo, value));
+    const read = () => ({
+      log: parseFloat(getComputedStyle(app).getPropertyValue("--col-log")) || 300,
+      decision: parseFloat(getComputedStyle(app).getPropertyValue("--col-decision")) || 420,
+    });
+
+    // Never let a drag squeeze the board out of existence: whatever the side panes
+    // ask for, the other two tracks plus MIN_BOARD have to fit in the window.
+    function apply(next) {
+      const total = window.innerWidth;
+      const log = clamp(next.log, [BOUNDS.log[0], Math.min(BOUNDS.log[1], total - MIN_BOARD - BOUNDS.decision[0])]);
+      const decision = clamp(next.decision, [BOUNDS.decision[0], Math.min(BOUNDS.decision[1], total - MIN_BOARD - log)]);
+      app.style.setProperty("--col-log", `${Math.round(log)}px`);
+      app.style.setProperty("--col-decision", `${Math.round(decision)}px`);
+      return { log, decision };
+    }
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+      if (saved && saved.log && saved.decision) apply(saved);
+    } catch (e) {}
+
+    function drag(gutter, key, sign) {
+      gutter.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        const startX = event.clientX;
+        const start = read()[key];
+        gutter.setPointerCapture(event.pointerId);
+        gutter.classList.add("dragging");
+        document.body.classList.add("pane-dragging");
+
+        const move = moveEvent => {
+          const next = read();
+          next[key] = start + sign * (moveEvent.clientX - startX);
+          apply(next);
+        };
+        const done = () => {
+          gutter.removeEventListener("pointermove", move);
+          gutter.classList.remove("dragging");
+          document.body.classList.remove("pane-dragging");
+          try { localStorage.setItem(STORE_KEY, JSON.stringify(read())); } catch (e) {}
+          // board.js only recomputes its cell size on resize.
+          window.dispatchEvent(new Event("resize"));
+        };
+        gutter.addEventListener("pointermove", move);
+        gutter.addEventListener("pointerup", done, { once: true });
+        gutter.addEventListener("pointercancel", done, { once: true });
+      });
+
+      // Keyboard parity for the separator role.
+      gutter.addEventListener("keydown", event => {
+        const step = event.shiftKey ? 48 : 12;
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        event.preventDefault();
+        const next = read();
+        next[key] += sign * (event.key === "ArrowRight" ? step : -step);
+        apply(next);
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(read())); } catch (e) {}
+        window.dispatchEvent(new Event("resize"));
+      });
+    }
+
+    // Dragging the right gutter rightwards shrinks the decision pane, hence sign -1.
+    drag(document.getElementById("gutter-log"), "log", 1);
+    drag(document.getElementById("gutter-decision"), "decision", -1);
+    window.addEventListener("resize", () => apply(read()));
+  })();
+  </script>
+
+  <script type="module" src="./static/js/main.js?v=20261031-anim"></script>
+</body>
+</html>

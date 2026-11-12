@@ -50,15 +50,15 @@ A few things before you point anything at it:
 
 ## GPT-6.1 Terra replays
 
-One attempt per game using the Duck harness, medium reasoning, and a 15-minute cap.
-The results show how far this setup got in that attempt.
+One attempt per game with the Duck harness, medium reasoning, and a 15-minute cap.
+Open a replay to step through the boards, Terra's recorded decision notes,
+Python tool calls, and their results. The full recording contains the engine frames.
 
 | Game | Levels cleared | Moves | Ended by | Replay |
 | --- | ---: | ---: | --- | --- |
-| DZ03 | 0 / 8 | 109 | Time limit | [Video](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/dz03.mp4) · [Full recording](docs/replays/terra-medium/dz03.jsonl.gz) |
-
-The video shows the board after each move. To step through all engine frames,
-decompress the full recording and open the JSONL in [ARC Prize Custom Replay](https://arcprize.org/replay/custom).
+| DZ03 | 0 / 8 | 109 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=dz03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/dz03.jsonl.gz) |
+| EH02 | 1 / 8 | 76 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=eh02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/eh02.jsonl.gz) |
+| BL02 | 0 / 8 | 103 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=bl02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/bl02.jsonl.gz) |
 
 ## What's in here
 
