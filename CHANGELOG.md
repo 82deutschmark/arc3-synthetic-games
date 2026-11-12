@@ -1,5 +1,9 @@
 # Changelog
 
+## 12 November 2026 — Complete outside-game comparison
+
+GPT-6.1 added the final Terra replay, the full outside-game comparison, and analysis of the model runs and human records.
+
 ## 12 November 2026 — Outside game replays
 
 GPT-6.1 added Terra Run Inspector replays and results for games from Red Blue Pill and Simon Ouellette.

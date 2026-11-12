@@ -124,7 +124,9 @@ The runs did not have per-level human baselines, so use the levels and moves bel
 | Simon Ouellette | SO01 | 6 / 7 | 222 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so01.jsonl.gz) |
 | Simon Ouellette | SO02 | 4 / 7 | 855 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so02&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so02.jsonl.gz) |
 
-SO03 is still running; its result and replay will be added when it finishes.
+| Simon Ouellette | SO03 | 1 / 7 | 157 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so03&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so03.jsonl.gz) |
+
+Terra finished all three selected Red Blue Pill games and cleared 11 of 21 levels across the three Simon games. It cleared 17 of 121 levels across the featured games. The [showcase analysis](docs/reviews/2026-11-12-model-showcase-analysis.md) explains the human comparison, model differences, and game-publication dates.
 
 ## What's in here
 
