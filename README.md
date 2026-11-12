@@ -134,7 +134,9 @@ Qwen played the same 15 pinned game versions with a 30-minute limit and all 15 g
 
 ## Terra on outside games
 
-Terra played three selected games from [Red Blue Pill](https://github.com/theredbluepill/arc-interactive) and three from [Simon Ouellette](https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data), using the same 15-minute setup as the featured games. SO01–SO03 are opaque aliases for the Simon games; their rules were unchanged. The Run Inspectors contain the recorded reasoning notes, Python calls, results, and frames. The original game code and revisions are identified by the [provenance record](docs/replays/external-terra/provenance.json).
+Terra played three selected games from [Red Blue Pill](https://github.com/theredbluepill/arc-interactive) and six from [Simon Ouellette](https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data), using the same 15-minute setup as the featured games. SO01–SO06 are opaque aliases for the Simon games; their rules were unchanged. The Run Inspectors contain the recorded reasoning notes, Python calls, results, and frames. The original game code and revisions are identified by the [provenance record](docs/replays/external-terra/provenance.json).
+
+SO04–SO06 ran concurrently; the earlier outside batch used two workers.
 
 The runs did not have per-level human baselines, so use the levels and moves below rather than the stored zero score. Simon recordings use Terra's actual input actions with the saved frames.
 
@@ -146,8 +148,11 @@ The runs did not have per-level human baselines, so use the levels and moves bel
 | Simon Ouellette | SO01 | 6 / 7 | 222 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so01.jsonl.gz) |
 | Simon Ouellette | SO02 | 4 / 7 | 855 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so02&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so02.jsonl.gz) |
 | Simon Ouellette | SO03 | 1 / 7 | 157 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so03&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so03.jsonl.gz) |
+| Simon Ouellette | SO04 | 1 / 7 | 341 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so04&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so04.jsonl.gz) |
+| Simon Ouellette | SO05 | 7 / 7 | 1002 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so05&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so05.jsonl.gz) |
+| Simon Ouellette | SO06 | 6 / 6 | 70 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so06&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so06.jsonl.gz) |
 
-Terra finished all three selected Red Blue Pill games and cleared 11 of 21 levels across the three Simon games. It cleared 17 of 121 levels across the featured games. The [showcase analysis](docs/reviews/2026-11-12-model-showcase-analysis.md) explains the human comparison, model differences, and game-publication dates.
+Terra finished all three selected Red Blue Pill games and cleared 25 of 41 levels across the six Simon games. It cleared 17 of 121 levels across the featured games. The [showcase analysis](docs/reviews/2026-11-12-model-showcase-analysis.md) explains the human comparison, model differences, and game-publication dates.
 
 ## What's in here
 
