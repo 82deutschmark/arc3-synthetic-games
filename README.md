@@ -50,15 +50,29 @@ A few things before you point anything at it:
 
 ## GPT-6.1 Terra replays
 
-One attempt per game with the Duck harness, medium reasoning, and a 15-minute cap.
-Open a replay to step through the boards, Terra's recorded decision notes,
-Python tool calls, and their results. The full recording contains the engine frames.
+The Duck harness used GPT-6.1 Terra at medium reasoning with a 15-minute cap per game.
+The Run Inspector shows the boards, Terra's recorded decision notes, Python tool calls,
+and their results. The frame recording contains every frame returned by the engine.
+
+Terra completed **SS01**. It cleared at least one level in 8 of 15 games.
 
 | Game | Levels cleared | Moves | Ended by | Replay |
 | --- | ---: | ---: | --- | --- |
-| DZ03 | 0 / 8 | 109 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=dz03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/dz03.jsonl.gz) |
 | EH02 | 1 / 8 | 76 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=eh02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/eh02.jsonl.gz) |
 | BL02 | 0 / 8 | 103 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=bl02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/bl02.jsonl.gz) |
+| KT03 | 2 / 10 | 386 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=kt03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/kt03.jsonl.gz) |
+| ST02 | 2 / 8 | 87 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=st02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/st02.jsonl.gz) |
+| SS01 | 8 / 8 | 229 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=ss01&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/ss01.jsonl.gz) |
+| PT02 | 0 / 8 | 79 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=pt02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/pt02.jsonl.gz) |
+| DZ03 | 0 / 8 | 109 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=dz03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/dz03.jsonl.gz) |
+| WB03 | 0 / 8 | 77 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=wb03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/wb03.jsonl.gz) |
+| BS02 | 1 / 8 | 92 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=bs02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/bs02.jsonl.gz) |
+| TE02 | 0 / 8 | 96 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=te02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/te02.jsonl.gz) |
+| WF03 | 1 / 8 | 71 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=wf03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/wf03.jsonl.gz) |
+| LT05 | 0 / 9 | 46 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=lt05&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/lt05.jsonl.gz) |
+| ES02 | 1 / 8 | 99 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=es02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/es02.jsonl.gz) |
+| SE02 | 0 / 6 | 75 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=se02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/se02.jsonl.gz) |
+| FF02 | 1 / 8 | 342 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=ff02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/ff02.jsonl.gz) |
 
 ## What's in here
 
