@@ -70,5 +70,149 @@
     "originalSourceSha256": "09e1183de9e08003a764bbbe1fddc14597fc3cc316da69794624452629607995",
     "stagedSourceSha256": "15672e8da0bc2c66606f7f2c58bffe71bce4acef56c4d617278f0647e0d709c1",
     "idAliasChanged": true
+  },
+  {
+    "id": "so07",
+    "name": "badge_placement",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "fb1de3eed1e4c40041737e44221e30e5be9c0de608cab07311a1ffff5138da5a",
+    "stagedSourceSha256": "25ce6d006245415c1dd33a570cce2848207330d5796cc798a7d290fa6078c2dc",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so08",
+    "name": "ball_sifting",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "b8d8ef87c11f675d6e7837ba31bd699d40d8cc837a828f4576a03c796ecde88d",
+    "stagedSourceSha256": "60b4745717d8fc695fd60e46fd142e893dbb6d0022a9916d7e0c8a49d75dad34",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so09",
+    "name": "flood",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "322e6622aca61f8677b5344b736bf40af436bac55194f2ef3777df127ddfeb62",
+    "stagedSourceSha256": "de6dfc067e9cdab469289e7cc27a5720840873ede87a0b8ad9f9896889dbef81",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so10",
+    "name": "ice_rink_stars",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "7ea39fbff38dd4b4c8ad27eaf6a46552b9fb373d001df4c8d5278b39ceeee05e",
+    "stagedSourceSha256": "c171fd5c1ae2e3689a60f3b47d7f070f3cf6da6215492a84a6e45e85bb64a0f4",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so11",
+    "name": "klotski",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "6823a781e4324253f83005400fad4f25bffb40f86c650e3992a1fc4e90ac6e52",
+    "stagedSourceSha256": "5a8faf2af8859beb4c18821b6dfee9c44fd52bb4f67f2759ac34d2a6a4acabd7",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so12",
+    "name": "maze",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "8d295fb42e5639fa7746ffc0e6ac41393de9341a1e9914ad84394bf93994c680",
+    "stagedSourceSha256": "77c905b76dfefea6352e73409f7d21f76100a2779e17ef0037f63d58877eced0",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so13",
+    "name": "one_step_tetris",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "b07d2fd1ccee1d91c8fd7d8c90fa4397a1cd5a3ff1fcfbc5740477e8e83e9d2b",
+    "stagedSourceSha256": "0f0dde90fd6024c776f0cfae99d4d454ba171e63f1ce41d89e504cc2c49a6a20",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so14",
+    "name": "paired_pieces",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "28573707a694061f0fcb0cb15b1c0347ae6aee98198b4e5a8a6b46e3aa2d6ba5",
+    "stagedSourceSha256": "8dc4cd05ea1f23960a0ec865de4590274d9f3c6596f69c6427939a32f4ad0c2c",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so15",
+    "name": "potion_brewer",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "cac77ab1845e0caefad365ddd2fb3670efeb75a283323ba882d967a1846cd259",
+    "stagedSourceSha256": "45f143081e312b1d1e449cb2e3216fd2c408d0355f685e6801d7e12e132f4356",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so16",
+    "name": "projectile_dodge",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "65f113a6a21915fb75d810f15c2bc8469e19230ad97d7fd3854765f2bd448685",
+    "stagedSourceSha256": "59cca2e2787f5b1881c48be0b76e7faef4a0b21465df234f62f4f02a43ddc675",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so17",
+    "name": "rail_selector",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "230f6970ae0e9bf46659fbf12f2744e25ad32d2a588d316b6b45f27ba42d90c5",
+    "stagedSourceSha256": "abc599a5deea816bda9ed08b72fb612a197d5943766409cb54c3d408b6336f67",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so18",
+    "name": "sheep_herder",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "a0e40d52b76f4754a24276830bf3b84f4033b70c5b59f632d325f4882e7c3961",
+    "stagedSourceSha256": "f70d4d472e3743d2e6b58472e062695cf6d96d83574abced22acaae71d88ac7d",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so19",
+    "name": "sokoban",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "8a10a0b4853dd9016b05db15c8ce2843ae8b558deac65721f4f949d8ec343e14",
+    "stagedSourceSha256": "e1b7a9b308586a2ef48d1c9b1138e29caf6241fe90d31a14fd2962a7163ef1b9",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so20",
+    "name": "symmetric_maze",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "caac06244cd4c6e0ef78ee5bd21501bdb27a469892ad5ffac978ba790279845c",
+    "stagedSourceSha256": "d96d9931c797fdb2cd01738128fc5b559b8c3fd47b6ba1ff3bd6a1cca91fd7cb",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so21",
+    "name": "tile_rotation",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "298fa70fe8e4b3103f5a9164a4589ed0b58d84afc386ac96ef99a18f1cf37bb0",
+    "stagedSourceSha256": "f154cedc1d6626d83f590a73653a00e55927cc10188fba1724f220c822647676",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so22",
+    "name": "toy_train",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "0734240f91200c61d3ad96e88757677d41b7a6e64b3f5f0060f3e05c687bfed9",
+    "stagedSourceSha256": "e15fb8f92232979f412a4824c56649634a52971fd7faf8df8fe3d2122f2bcbfd",
+    "idAliasChanged": true
   }
 ]

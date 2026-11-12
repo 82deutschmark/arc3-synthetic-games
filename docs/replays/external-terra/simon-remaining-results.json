@@ -1,0 +1,192 @@
+{
+  "model": "gpt-6.1-terra",
+  "reasoning": "medium",
+  "source": "Codex subscription",
+  "game_limit_seconds": 900,
+  "execution": "sequential",
+  "new_games": 16,
+  "new_levels_cleared": 104,
+  "new_levels_total": 112,
+  "new_games_solved": 12,
+  "all_simon_levels_cleared": 129,
+  "all_simon_total_levels": 153,
+  "all_simon_games_solved": 14,
+  "results": [
+    {
+      "id": "so07",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 426,
+      "ending": "Completed",
+      "recorderCorrections": 303,
+      "verifiedFrames": 427,
+      "name": "badge_placement"
+    },
+    {
+      "id": "so08",
+      "source": "Simon Ouellette",
+      "levels": 6,
+      "total": 6,
+      "moves": 537,
+      "ending": "Completed",
+      "recorderCorrections": 362,
+      "verifiedFrames": 538,
+      "name": "ball_sifting"
+    },
+    {
+      "id": "so09",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 440,
+      "ending": "Completed",
+      "recorderCorrections": 203,
+      "verifiedFrames": 441,
+      "name": "flood"
+    },
+    {
+      "id": "so10",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 137,
+      "ending": "Completed",
+      "recorderCorrections": 108,
+      "verifiedFrames": 138,
+      "name": "ice_rink_stars"
+    },
+    {
+      "id": "so11",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 121,
+      "ending": "Completed",
+      "recorderCorrections": 37,
+      "verifiedFrames": 122,
+      "name": "klotski"
+    },
+    {
+      "id": "so12",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 794,
+      "ending": "Completed",
+      "recorderCorrections": 686,
+      "verifiedFrames": 795,
+      "name": "maze"
+    },
+    {
+      "id": "so13",
+      "source": "Simon Ouellette",
+      "levels": 8,
+      "total": 8,
+      "moves": 77,
+      "ending": "Completed",
+      "recorderCorrections": 57,
+      "verifiedFrames": 78,
+      "name": "one_step_tetris"
+    },
+    {
+      "id": "so14",
+      "source": "Simon Ouellette",
+      "levels": 4,
+      "total": 7,
+      "moves": 119,
+      "ending": "Inference timeout",
+      "recorderCorrections": 74,
+      "verifiedFrames": 120,
+      "name": "paired_pieces"
+    },
+    {
+      "id": "so15",
+      "source": "Simon Ouellette",
+      "levels": 6,
+      "total": 7,
+      "moves": 487,
+      "ending": "Time limit",
+      "recorderCorrections": 325,
+      "verifiedFrames": 488,
+      "name": "potion_brewer"
+    },
+    {
+      "id": "so16",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 189,
+      "ending": "Completed",
+      "recorderCorrections": 159,
+      "verifiedFrames": 190,
+      "name": "projectile_dodge"
+    },
+    {
+      "id": "so17",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 128,
+      "ending": "Completed",
+      "recorderCorrections": 110,
+      "verifiedFrames": 129,
+      "name": "rail_selector"
+    },
+    {
+      "id": "so18",
+      "source": "Simon Ouellette",
+      "levels": 4,
+      "total": 7,
+      "moves": 479,
+      "ending": "Inference timeout",
+      "recorderCorrections": 316,
+      "verifiedFrames": 480,
+      "name": "sheep_herder"
+    },
+    {
+      "id": "so19",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 341,
+      "ending": "Completed",
+      "recorderCorrections": 302,
+      "verifiedFrames": 342,
+      "name": "sokoban"
+    },
+    {
+      "id": "so20",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 117,
+      "ending": "Completed",
+      "recorderCorrections": 95,
+      "verifiedFrames": 118,
+      "name": "symmetric_maze"
+    },
+    {
+      "id": "so21",
+      "source": "Simon Ouellette",
+      "levels": 7,
+      "total": 7,
+      "moves": 121,
+      "ending": "Completed",
+      "recorderCorrections": 100,
+      "verifiedFrames": 122,
+      "name": "tile_rotation"
+    },
+    {
+      "id": "so22",
+      "source": "Simon Ouellette",
+      "levels": 6,
+      "total": 7,
+      "moves": 1025,
+      "ending": "Time limit",
+      "recorderCorrections": 705,
+      "verifiedFrames": 1026,
+      "name": "toy_train"
+    }
+  ]
+}

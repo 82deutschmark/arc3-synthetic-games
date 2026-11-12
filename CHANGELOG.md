@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.20 — 12 November 2026 — Remaining Simon Terra replays
+
+GPT-6.1 Sol added GPT-6.1 Terra medium Codex-subscription attempts for every remaining native homemade Simon game, correcting the inventory to 22 total. The new sequential batch cleared 104/112 levels and completed 12 games, with the same 15-minute cap. Full notes, calls, results, frames and pinned source provenance are in the existing Run Inspector. Every saved frame was checked against actual-action replay before publication. Added labeled real-engine PNG previews and retained all earlier runs.
+
 ## 0.9.19 — 12 November 2026 — Three more Simon Terra replays
 
 GPT-6.1 Sol added verified GPT-6.1 Terra medium subscription results for SO04–SO06, using the existing 15-minute frozen harness. Full notes, actions, frames and pinned provenance are available in the shared Run Inspector; all prior runs remain selectable. Recorded actions were replayed against the real engine and every saved frame checked before publication.
