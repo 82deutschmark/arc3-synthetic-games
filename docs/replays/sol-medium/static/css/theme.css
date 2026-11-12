@@ -1,0 +1,130 @@
+:root {
+  /* Surfaces. The lightness ladder is carried over from the old Observatory, hue rotated to ~222deg. */
+  --bg: #080c16;
+  --panel: #0c1220;
+  --chrome: #101828;
+  --raised: #1a2333;
+  --raised-hi: #232e42;
+  --tooltip: #1a2233;
+
+  --border: #212d42;
+  --border-strong: #2c3a54;
+  --hairline: #161f2e;
+
+  --text: #e2e6ee;
+  --text-dim: #aab3c4;
+  --muted: #6b7789;
+  --muted-2: #4a5568;
+
+  --accent: #3b82f6;
+  --accent-wash: rgba(59, 130, 246, 0.12);
+  --accent-line: rgba(59, 130, 246, 0.30);
+
+  --ok: #22c55e;
+  --err: #ef4444;
+  --warn: #f59e0b;
+  --scrub: #d29922;
+  --purple: #a356d6;
+
+  /* Semantic translucent washes for surfaces/borders drawn over --bg. These flip
+     with the theme so the many inline `rgba(255,255,255,…)` washes have a light
+     counterpart instead of vanishing on a pale background. */
+  --wash: rgba(255, 255, 255, 0.04);
+  --wash-2: rgba(255, 255, 255, 0.09);
+  --wash-line: rgba(255, 255, 255, 0.12);
+
+  --font: ui-monospace, "SF Mono", "Fira Code", "JetBrains Mono", Consolas, monospace;
+  --radius: 4px;
+
+  color-scheme: dark;
+}
+
+/* Light theme — same ~222deg hue family, lightness ladder inverted. Applied when
+   the root carries data-theme="light" (set by the toggle / system preference). */
+:root[data-theme="light"] {
+  /* A muted, slightly grey paper — the previous near-white ladder read as glary.
+     Panels stay just off-white so cards still lift off the greyer page. */
+  --bg: #e6e8ee;
+  --panel: #f7f8fa;
+  --chrome: #dfe3ea;
+  --raised: #d5dae4;
+  --raised-hi: #c7cfdc;
+  --tooltip: #fbfcfe;
+
+  --border: #c6cedb;
+  --border-strong: #a9b5c9;
+  --hairline: #dbe0e8;
+
+  --text: #0e131c;
+  --text-dim: #384558;
+  --muted: #566175;
+  --muted-2: #7d8a9f;
+
+  --accent: #2563eb;
+  --accent-wash: rgba(37, 99, 235, 0.10);
+  --accent-line: rgba(37, 99, 235, 0.34);
+
+  --ok: #16a34a;
+  --err: #dc2626;
+  --warn: #d97706;
+  --scrub: #b45309;
+  --purple: #7c3aed;
+
+  --wash: rgba(15, 23, 42, 0.04);
+  --wash-2: rgba(15, 23, 42, 0.07);
+  --wash-line: rgba(15, 23, 42, 0.14);
+
+  color-scheme: light;
+}
+
+/* The theme toggle button: compact, icon-only, inherits the themed button chrome. */
+.theme-toggle { padding: 4px 8px; line-height: 1; min-width: 30px; text-align: center; }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-2) var(--raised);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--raised); }
+::-webkit-scrollbar-thumb { background: var(--muted-2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Must outrank the id-level `display` rules that lay the screens out, or a hidden screen keeps
+   its box and steals half the viewport height from the visible one. */
+[hidden] { display: none !important; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  height: auto;
+  overflow: auto;
+  font-size: 12px;
+  /* Without this, every digit column jitters as the run ticks over. */
+  font-variant-numeric: tabular-nums;
+}
+
+button, select, input {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--text);
+  background: var(--raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+button:hover, select:hover { background: var(--raised-hi); }
+button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+button:disabled { opacity: 0.4; cursor: default; }
+
+.status-playing, .status-running { color: var(--accent); }
+.status-win { color: var(--ok); }
+.status-gave_up, .status-game_over, .status-lose { color: var(--err); }
+.status-pending, .status-starting { color: var(--warn); }
