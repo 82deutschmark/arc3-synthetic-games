@@ -8,6 +8,7 @@ Updated: 02-November-2026, Claude Opus 5.5 High — the Boss's spoilers page: th
 PURPOSE: Show the best games and what makes each one creative, rules included. All game data comes from catalog.json.
 Updated: 02-November-2026, Claude Opus 5.5 High — a dense card grid with one dialog for the details, and the clone line for people taking the games into their own training.
 Updated: 05-November-2026, Claude Sonnet 5.5 — says the picks are Mark's hand-picked best from everything the team made, the ones he liked most and thinks a person can play; the footer no longer implies the repository holds every game. The script link's cache version moves with catalog.js.
+Updated: 12-November-2026, GPT-6.1 — add the model results and links to their full replays.
 SRP/DRY check: Pass — catalog.json is the only game registry.
 -->
 <!doctype html>
@@ -22,6 +23,13 @@ SRP/DRY check: Pass — catalog.json is the only game registry.
 <header><a class="wordmark" href="./">ARC-3 SYNTHETIC GAMES</a><nav aria-label="Primary"><a href="why.html">Why</a><a href="catalog.json">Catalog</a><a href="https://github.com/82deutschmark/arc3-synthetic-games">GitHub<span aria-hidden="true">&nbsp;↗</span></a></nav></header>
 <main>
 <p class="lead-line"><b id="count">The games</b> by <a href="https://arc.markbarney.net/news#2026-10-18-special-turducken-takes-third">Team Turducken</a>, directed by Mark Barney. Hand-picked by Mark from everything the team made: the ones he liked most and thinks a person can play. ARC-AGI-3 style, Python on the ARC engine, MIT: fork them for your own training. Built to be hard for AI in ways a person finds easy; several borrow tricks from the Slippery Seven, the seven public games our agents fail most. Click a card for why (spoilers). <code class="clone">git clone https://github.com/82deutschmark/arc3-synthetic-games</code> <a href="https://github.com/82deutschmark/arc3-synthetic-games#quick-start">Quick start</a></p>
+<section id="results" class="release-note" aria-labelledby="results-title">
+<h2 id="results-title">How the models played</h2>
+<p>GPT-6.1 Terra cleared 17 of 121 levels across the featured games, finishing SS01. It played the selected games below with the same 15-minute limit. Each link opens the full Run Inspector, including its notes, tool calls, results, and frames.</p>
+<p><strong>Red Blue Pill:</strong> <a href="replays/external-terra/viewer.html#run=mm01&amp;game=0&amp;turn=1">MM01: 7/7</a> · <a href="replays/external-terra/viewer.html#run=sk01&amp;game=0&amp;turn=1">SK01: 5/5</a> · <a href="replays/external-terra/viewer.html#run=rs01&amp;game=0&amp;turn=1">RS01: 5/5</a>. All three completed.</p>
+<p><strong>Simon Ouellette:</strong> <a href="replays/external-terra/viewer.html#run=so01&amp;game=0&amp;turn=1">SO01: 6/7</a> · <a href="replays/external-terra/viewer.html#run=so02&amp;game=0&amp;turn=1">SO02: 4/7</a> · <a href="replays/external-terra/viewer.html#run=so03&amp;game=0&amp;turn=1">SO03: 1/7</a>. All three ended on inference timeouts; SO IDs are aliases.</p>
+<p><a href="https://github.com/82deutschmark/arc3-synthetic-games#gpt-61-terra-replays">All featured-game replays</a> · <a href="https://github.com/82deutschmark/arc3-synthetic-games#terra-on-outside-games">Outside-game details</a> · <a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/docs/reviews/2026-11-12-model-showcase-analysis.md">Analysis and human comparison</a></p>
+</section>
 <p id="error" role="alert" hidden></p>
 <section id="featured" aria-label="Games"></section>
 <p id="highlight" class="flag" hidden></p>
