@@ -1,5 +1,9 @@
 # Changelog
 
+## 12 November 2026 — Outside game replays
+
+GPT-6.1 added Terra Run Inspector replays and results for games from Red Blue Pill and Simon Ouellette.
+
 ## 12 November 2026 — Sol replays and human comparison
 
 GPT-6.1 added full Sol replays for PT02, DZ03, and EH02, compared recorded human actions, and clarified the Qwen run conditions.

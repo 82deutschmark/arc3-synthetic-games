@@ -1,0 +1,50 @@
+[
+  {
+    "id": "mm01",
+    "repository": "theredbluepill/arc-interactive",
+    "repositoryCommit": "02152bc4806869ace6ef167468970ca84bac0c5a",
+    "originalSourceSha256": "0ac57e05608ed9255461c43d76d091007e37da805692306c2ec202ba4398fd47",
+    "stagedSourceSha256": "0ac57e05608ed9255461c43d76d091007e37da805692306c2ec202ba4398fd47",
+    "idAliasChanged": false
+  },
+  {
+    "id": "sk01",
+    "repository": "theredbluepill/arc-interactive",
+    "repositoryCommit": "02152bc4806869ace6ef167468970ca84bac0c5a",
+    "originalSourceSha256": "d835aaeb2ef666618161d0a3d5f532362e23761bb5f59496e3d5365b14314eeb",
+    "stagedSourceSha256": "d835aaeb2ef666618161d0a3d5f532362e23761bb5f59496e3d5365b14314eeb",
+    "idAliasChanged": false
+  },
+  {
+    "id": "rs01",
+    "repository": "theredbluepill/arc-interactive",
+    "repositoryCommit": "02152bc4806869ace6ef167468970ca84bac0c5a",
+    "originalSourceSha256": "af925bc3b6a50020c233242b8b5fb36003fff4ec30b15660a7d395a014929503",
+    "stagedSourceSha256": "af925bc3b6a50020c233242b8b5fb36003fff4ec30b15660a7d395a014929503",
+    "idAliasChanged": false
+  },
+  {
+    "id": "so01",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "bc42cd133239da017ca79cc3edcb60777d41d8e58cdef40952ffb52ed957de89",
+    "stagedSourceSha256": "711f58fbe5e1e92971e2978da8f2751a4c3f8a2c1723e7295c799ba7dc88bedd",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so02",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "df7ea615dafcf0765e361619a16416c4af1b409b6f8bfd84a1548693a42da677",
+    "stagedSourceSha256": "2aab41a199ece2a5cfa02c1057dc67fd540782691de2fb55482f1e8dbf50646e",
+    "idAliasChanged": true
+  },
+  {
+    "id": "so03",
+    "repository": "SimonOuellette35/ARC-AGI-3-Training-Data",
+    "repositoryCommit": "e7e0494826eefc2874af2731e3dcdf2ad615e8b0",
+    "originalSourceSha256": "b79edf7a7069463baa1de3dcf05e973b6aa0737df4d2927962ce35a8db8342de",
+    "stagedSourceSha256": "462bbdb7a90065643eaab8736bd82c4b7f23a73b93c07df43e53faeb2a924857",
+    "idAliasChanged": true
+  }
+]

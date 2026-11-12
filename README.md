@@ -110,6 +110,22 @@ The competition Qwen Flash-Next model and drafter played the same game versions 
 | SE02 | 0 / 6 | 67 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=9&turn=1) |
 | FF02 | 0 / 8 | 8 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=5&turn=1) |
 
+## Terra on outside games
+
+Terra played three selected games from [Red Blue Pill](https://github.com/theredbluepill/arc-interactive) and three from [Simon Ouellette](https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data), using the same 15-minute setup as the featured games. SO01–SO03 are opaque aliases for the Simon games; their rules were unchanged. The Run Inspectors contain the recorded reasoning notes, Python calls, results, and frames. The original game code and revisions are identified by the [provenance record](docs/replays/external-terra/provenance.json).
+
+The runs did not have per-level human baselines, so use the levels and moves below rather than the stored zero score. Simon recordings use Terra's actual input actions with the saved frames.
+
+| Source | Game | Levels cleared | Moves | Ended by | Replay |
+| --- | --- | ---: | ---: | --- | --- |
+| Red Blue Pill | MM01 | 7 / 7 | 131 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=mm01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/mm01.jsonl.gz) |
+| Red Blue Pill | SK01 | 5 / 5 | 157 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=sk01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/sk01.jsonl.gz) |
+| Red Blue Pill | RS01 | 5 / 5 | 600 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=rs01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/rs01.jsonl.gz) |
+| Simon Ouellette | SO01 | 6 / 7 | 222 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so01.jsonl.gz) |
+| Simon Ouellette | SO02 | 4 / 7 | 855 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so02&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so02.jsonl.gz) |
+
+SO03 is still running; its result and replay will be added when it finishes.
+
 ## What's in here
 
 | Path | What it is |
