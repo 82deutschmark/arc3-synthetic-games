@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.22 — 22 November 2026 — The model results get their own page
+
+Claude Opus 5.5, at the Boss's call (the front page is for the games; how the models played belongs on its own page): a new page, `docs/models.html`, holds every model result with a link to its replay. The fifteen games are in one table, one column each for GPT-6.1 Terra, GPT-6.1 Sol and the 30-minute Qwen run, then the human comparison, then Terra's runs on Red Blue Pill's and Simon Ouellette's games, with Simon's game names where we have them. The front page drops its results section for one line pointing there, and the header on every page reads Games, Why, Models, GitHub (the raw catalog link stays in the small print). The README's long result tables are replaced by a short paragraph pointing to the page. Each card and game panel now leads with the game's name (a new `name` field in the catalog for the fifteen featured games), with the code under it. The front-page note about the outbreak and air-strike games named ES01 and LT03, which are not on the page; it now names ES02 and LT05, the versions shown, so those two cards are marked again. On a phone the header wraps instead of crowding. No game and no replay file changed. Catalog version is now 0.9.22.
+
 ## 0.9.21 — 22 November 2026 — The games lead again
 
 Claude Opus 5.5 Medium moved the model results on the games page below the game grid, at the Boss's request: a long block of replay links, mostly runs on other people's games, had been put between the introduction and the games. The page now opens on the fifteen games. The results section below them covers only these games (Terra, Sol and Qwen) with links to their replays and the analysis. The runs on Red Blue Pill's and Simon Ouellette's games are unchanged and still listed in the README; every replay file stays where it was.

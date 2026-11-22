@@ -48,129 +48,9 @@ A few things before you point anything at it:
 - Several games share ideas with each other. If you split them yourself, split by family, not at random.
 - Rollouts get big fast. `rollouts/` is gitignored; keep your data somewhere else.
 
-## GPT-6.1 Terra replays
+## How AI models played them
 
-The Duck harness used GPT-6.1 Terra at medium reasoning with a 15-minute cap per game.
-The Run Inspector shows the boards, Terra's recorded decision notes, Python tool calls,
-and their results. The frame recording contains every frame returned by the engine.
-
-Terra completed **SS01**. It cleared at least one level in 8 of 15 games.
-
-| Game | Levels cleared | Moves | Ended by | Replay |
-| --- | ---: | ---: | --- | --- |
-| EH02 | 1 / 8 | 76 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=eh02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/eh02.jsonl.gz) |
-| BL02 | 0 / 8 | 103 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=bl02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/bl02.jsonl.gz) |
-| KT03 | 2 / 10 | 386 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=kt03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/kt03.jsonl.gz) |
-| ST02 | 2 / 8 | 87 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=st02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/st02.jsonl.gz) |
-| SS01 | 8 / 8 | 229 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=ss01&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/ss01.jsonl.gz) |
-| PT02 | 0 / 8 | 79 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=pt02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/pt02.jsonl.gz) |
-| DZ03 | 0 / 8 | 109 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=dz03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/dz03.jsonl.gz) |
-| WB03 | 0 / 8 | 77 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=wb03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/wb03.jsonl.gz) |
-| BS02 | 1 / 8 | 92 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=bs02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/bs02.jsonl.gz) |
-| TE02 | 0 / 8 | 96 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=te02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/te02.jsonl.gz) |
-| WF03 | 1 / 8 | 71 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=wf03&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/wf03.jsonl.gz) |
-| LT05 | 0 / 9 | 46 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=lt05&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/lt05.jsonl.gz) |
-| ES02 | 1 / 8 | 99 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=es02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/es02.jsonl.gz) |
-| SE02 | 0 / 6 | 75 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=se02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/se02.jsonl.gz) |
-| FF02 | 1 / 8 | 342 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/terra-medium/viewer.html#run=ff02&game=0&turn=1) · [Frame recording](docs/replays/terra-medium/ff02.jsonl.gz) |
-
-## GPT-6.1 Sol replays
-
-Sol played PT02, DZ03, and EH02 with the same game versions and 15-minute setup as Terra. Its full Run Inspector replays show the recorded world-model notes, Python calls and results, and game frames.
-
-| Game | Levels cleared | Moves | Ended by | Replay |
-| --- | ---: | ---: | --- | --- |
-| PT02 | 2 / 8 | 82 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/sol-medium/viewer.html#run=pt02&game=0&turn=1) · [Frame recording](docs/replays/sol-medium/pt02.jsonl.gz) |
-| DZ03 | 1 / 8 | 83 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/sol-medium/viewer.html#run=dz03&game=0&turn=1) · [Frame recording](docs/replays/sol-medium/dz03.jsonl.gz) |
-| EH02 | 1 / 8 | 68 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/sol-medium/viewer.html#run=eh02&game=0&turn=1) · [Frame recording](docs/replays/sol-medium/eh02.jsonl.gz) |
-
-## Human comparison
-
-On SS01, Terra completed all eight levels in 229 actions; the recorded human completed them in 484. EH02 is the only featured game with per-level human baselines in the team records: on level one the human used 25 actions, Terra used 27, and Sol used 10. Using ARC's squared efficiency formula and per-level cap, that is about 86% for Terra and 115% for Sol on that level. EH02's baseline comes from one recorded player; SS01 has only a game-wide human total, so its per-level RHAE cannot be calculated from that record.
-
-## Qwen Flash-Next replays
-
-The competition Qwen Flash-Next model and drafter played the same game versions on a Vast GPU. All 15 games ran together with a 15-minute limit, compared with roughly nine hours available in the Kaggle competition configuration. Qwen cleared **no levels** in this short run. Qwen and Terra used different harness prompts, observation formats, and concurrency, so this is not a model-only comparison. Each Run Inspector contains the board, recorded thinking, Python tool calls, and results.
-
-| Game | Levels cleared | Moves | Replay |
-| --- | ---: | ---: | --- |
-| EH02 | 0 / 8 | 4 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=3&turn=1) |
-| BL02 | 0 / 8 | 5 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=0&turn=1) |
-| KT03 | 0 / 10 | 6 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=6&turn=1) |
-| ST02 | 0 / 8 | 10 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=11&turn=1) |
-| SS01 | 0 / 8 | 4 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=10&turn=1) |
-| PT02 | 0 / 8 | 12 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=8&turn=1) |
-| DZ03 | 0 / 8 | 13 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=2&turn=1) |
-| WB03 | 0 / 8 | 10 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=13&turn=1) |
-| BS02 | 0 / 8 | 9 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=1&turn=1) |
-| TE02 | 0 / 8 | 11 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=12&turn=1) |
-| WF03 | 0 / 8 | 12 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=14&turn=1) |
-| LT05 | 0 / 9 | 20 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=7&turn=1) |
-| ES02 | 0 / 8 | 11 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=4&turn=1) |
-| SE02 | 0 / 6 | 67 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=9&turn=1) |
-| FF02 | 0 / 8 | 8 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen&game=5&turn=1) |
-
-### Qwen: 30-minute run
-
-Qwen played the same 15 pinned game versions with a 30-minute limit and all 15 games running together on one GPU. It cleared **KT03 level one** in 15 actions; Terra used 13 actions on that level. No other levels were cleared. All games ended at the time limit. The longer run used 340 actions in total.
-
-| Game | Levels cleared | Moves | Replay |
-| --- | ---: | ---: | --- |
-| BL02 | 0 / 8 | 15 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=0&turn=1) |
-| BS02 | 0 / 8 | 22 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=1&turn=1) |
-| DZ03 | 0 / 8 | 19 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=2&turn=1) |
-| EH02 | 0 / 8 | 10 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=3&turn=1) |
-| ES02 | 0 / 8 | 62 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=4&turn=1) |
-| FF02 | 0 / 8 | 8 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=5&turn=1) |
-| KT03 | 1 / 10 | 15 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=6&turn=1) |
-| LT05 | 0 / 9 | 23 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=7&turn=1) |
-| PT02 | 0 / 8 | 12 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=8&turn=1) |
-| SE02 | 0 / 6 | 13 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=9&turn=1) |
-| SS01 | 0 / 8 | 65 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=10&turn=1) |
-| ST02 | 0 / 8 | 10 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=11&turn=1) |
-| TE02 | 0 / 8 | 17 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=12&turn=1) |
-| WB03 | 0 / 8 | 18 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=13&turn=1) |
-| WF03 | 0 / 8 | 31 | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/qwen-competition/viewer.html#run=qwen30&game=14&turn=1) |
-
-## Terra on outside games
-
-Terra played three selected games from [Red Blue Pill](https://github.com/theredbluepill/arc-interactive) and all native homemade games in the pinned [Simon Ouellette collection](https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data), using the same 15-minute setup as the featured games. SO01–SO22 are opaque aliases for the Simon games; their rules were unchanged. The Run Inspectors contain the recorded reasoning notes, Python calls, results, and frames. The original game code and revisions are identified by the [provenance record](docs/replays/external-terra/provenance.json).
-
-SO04–SO06 ran concurrently; the earlier outside batch used two workers. The remaining batch ran sequentially. A fresh inventory found 22 native homemade implementations, correcting the earlier chat count of 21; six had already been attempted, leaving 16, all included here. Third-party adapters and short-code official derivatives are excluded. The [inventory](docs/replays/external-terra/simon-inventory.json) records the exact roster.
-
-The runs did not have per-level human baselines, so use the levels and moves below rather than the stored zero score. Simon recordings use Terra's actual input actions with the saved frames.
-
-| Source | Game | Levels cleared | Moves | Ended by | Replay |
-| --- | --- | ---: | ---: | --- | --- |
-| Red Blue Pill | MM01 | 7 / 7 | 131 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=mm01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/mm01.jsonl.gz) |
-| Red Blue Pill | SK01 | 5 / 5 | 157 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=sk01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/sk01.jsonl.gz) |
-| Red Blue Pill | RS01 | 5 / 5 | 600 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=rs01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/rs01.jsonl.gz) |
-| Simon Ouellette | SO01 | 6 / 7 | 222 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so01&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so01.jsonl.gz) |
-| Simon Ouellette | SO02 | 4 / 7 | 855 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so02&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so02.jsonl.gz) |
-| Simon Ouellette | SO03 | 1 / 7 | 157 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so03&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so03.jsonl.gz) |
-| Simon Ouellette | SO04 | 1 / 7 | 341 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so04&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so04.jsonl.gz) |
-| Simon Ouellette | SO05 | 7 / 7 | 1002 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so05&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so05.jsonl.gz) |
-| Simon Ouellette | SO06 | 6 / 6 | 70 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so06&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so06.jsonl.gz) |
-| Simon Ouellette | SO07 — Badge Placement | 7 / 7 | 426 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so07&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so07.jsonl.gz) |
-| Simon Ouellette | SO08 — Ball Sifting | 6 / 6 | 537 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so08&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so08.jsonl.gz) |
-| Simon Ouellette | SO09 — Flood | 7 / 7 | 440 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so09&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so09.jsonl.gz) |
-| Simon Ouellette | SO10 — Ice Rink Stars | 7 / 7 | 137 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so10&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so10.jsonl.gz) |
-| Simon Ouellette | SO11 — Klotski | 7 / 7 | 121 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so11&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so11.jsonl.gz) |
-| Simon Ouellette | SO12 — Maze | 7 / 7 | 794 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so12&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so12.jsonl.gz) |
-| Simon Ouellette | SO13 — One Step Tetris | 8 / 8 | 77 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so13&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so13.jsonl.gz) |
-| Simon Ouellette | SO14 — Paired Pieces | 4 / 7 | 119 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so14&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so14.jsonl.gz) |
-| Simon Ouellette | SO15 — Potion Brewer | 6 / 7 | 487 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so15&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so15.jsonl.gz) |
-| Simon Ouellette | SO16 — Projectile Dodge | 7 / 7 | 189 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so16&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so16.jsonl.gz) |
-| Simon Ouellette | SO17 — Rail Selector | 7 / 7 | 128 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so17&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so17.jsonl.gz) |
-| Simon Ouellette | SO18 — Sheep Herder | 4 / 7 | 479 | Inference timeout | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so18&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so18.jsonl.gz) |
-| Simon Ouellette | SO19 — Sokoban | 7 / 7 | 341 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so19&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so19.jsonl.gz) |
-| Simon Ouellette | SO20 — Symmetric Maze | 7 / 7 | 117 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so20&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so20.jsonl.gz) |
-| Simon Ouellette | SO21 — Tile Rotation | 7 / 7 | 121 | Completed | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so21&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so21.jsonl.gz) |
-| Simon Ouellette | SO22 — Toy Train | 6 / 7 | 1025 | Time limit | [Run Inspector](https://82deutschmark.github.io/arc3-synthetic-games/replays/external-terra/viewer.html#run=so22&game=0&turn=1) · [Frame recording](docs/replays/external-terra/so22.jsonl.gz) |
-
-Terra finished all three selected Red Blue Pill games and cleared 129 of 153 levels across the Simon collection. It cleared 17 of 121 levels across the featured games. The [showcase analysis](docs/reviews/2026-11-12-model-showcase-analysis.md) explains the human comparison, model differences, and game-publication dates.
-
-[Labeled starting-frame previews](docs/replays/external-terra/previews/simon-remaining.png) · [Machine-readable remaining-batch results](docs/replays/external-terra/simon-remaining-results.json)
+GPT-6.1 Terra, GPT-6.1 Sol and Qwen Flash-Next (the model in our competition entry) played the fifteen featured games, and Terra also played games from Red Blue Pill and Simon Ouellette. The results, with a replay of every run, are on the [models page](https://82deutschmark.github.io/arc3-synthetic-games/models.html). The raw frame recordings are in `docs/replays/`.
 
 ## What's in here
 
@@ -180,6 +60,8 @@ Terra finished all three selected Red Blue Pill games and cleared 129 of 153 lev
 | `games/` | The games, one `.py` each. Hashes are in the catalog, so don't edit them. |
 | `docs/catalog.json` | The list of games: id, class, path, hash, levels, inputs, and the write-ups the page shows. |
 | `docs/index.html` | The browse page. |
+| `docs/models.html` | How AI models played the games, with a replay of every run. |
+| `docs/replays/` | The runs behind the models page: Run Inspector replays and frame recordings. |
 | `docs/previews/` | Real engine frames: each game's opening screen, plus a strip of the opening of every level. Redrawn by `tools/make_media.py` (needs Pillow, which `requirements.txt` installs); `validate.py` fails if one is out of date. |
 | `tools/runtime.py` | Loads a game, serialises observations. |
 | `tools/validate.py` | The smoke check. Writes `docs/validation.json`. |
