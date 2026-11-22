@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ARC3 Run Inspector</title>
+  <title>Replay · ARC-3 Synthetic Games</title>
   <link rel="stylesheet" href="./static/css/theme.css?v=20260823-scroll" />
   <link rel="stylesheet" href="./static/css/app.css?v=20261031-anim" />
   <link rel="stylesheet" href="./static/css/trace-votes.css?v=20261002-votes" />
@@ -13,7 +13,7 @@
   <script defer src="./static/js/theme-toggle.js"></script>
 </head>
 <body>
-<nav class="runtabs"><a class="rt-home" href="https://github.com/82deutschmark/arc3-synthetic-games#gpt-61-sol-replays">&larr; runs</a><a class="rt-tab active" id="rt-viewer">Viewer</a><button data-theme-toggle class="theme-toggle" style="margin-left:auto;align-self:center"></button></nav>
+<nav class="runtabs sitebar"><a class="sb-mark" href="../../">ARC-3 SYNTHETIC GAMES</a><span class="sb-links"><a href="../../">Games</a><a href="../../why.html">Why</a><a href="../../models.html#these">Models</a></span><button data-theme-toggle class="theme-toggle"></button></nav>
 <style>
 .sitetabs { display: flex; gap: 6px; align-items: center; padding: 10px 16px;
   border-bottom: 1px solid var(--wash-line); font: 13px system-ui, sans-serif; background: var(--bg); }
@@ -40,22 +40,29 @@
 .mode-seg button.on { background: var(--wash-2); opacity: 1; font-weight: 600; }
 .overview-filter { padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--chrome); }
 .overview-filter .mode-seg { margin-left: 0; }
+/* 22-Nov-2026, Claude Opus 5.5: the games site's own header bar, in the site's colours, so a replay is part of the site
+   and always leads back to the games and the models page. The viewer below keeps its own look. */
+.runtabs.sitebar { align-items: center; gap: 0; padding: 0 16px; min-height: 46px; background: #f5f1e8; color: #182b29;
+  border-bottom: 1px solid #c7c9bb; font: 14px Arial, sans-serif; }
+.sitebar .sb-mark { font: 700 15px/1 'Courier New', monospace; letter-spacing: .08em; text-decoration: none; color: #182b29; }
+.sitebar .sb-links { margin-left: auto; display: flex; gap: 26px; }
+.sitebar .sb-links a { color: #182b29; text-underline-offset: 5px; white-space: nowrap; }
+.sitebar a:hover { color: #b33f24; }
+.sitebar .theme-toggle { margin-left: 18px; background: none; border: 1px solid #c7c9bb; color: #182b29; border-radius: 6px; cursor: pointer; }
+/* The bar sits above the viewer instead of floating over its top row: the page is the bar plus the viewer, one screen tall. */
+body { display: flex; flex-direction: column; height: 100vh; margin: 0; }
+.runtabs.sitebar { position: static; flex: none; }
+#app { flex: 1 1 auto; min-height: 0; height: auto; }
+@media (max-width: 600px) { .runtabs.sitebar { flex-wrap: wrap; padding: 6px 12px; gap: 4px 0; }
+  .sitebar .sb-mark { font-size: 12px; } .sitebar .sb-links { gap: 14px; font-size: 12px; } }
 </style>
-<script>
-(function(){
-  const sync = () => {
-    document.getElementById("rt-viewer").href = "./viewer.html" + location.hash;
-  };
-  sync(); window.addEventListener("hashchange", sync);
-})();
-</script>
 
   <div id="app">
     <header class="topbar">
       <span class="brand">ARC3 RUN INSPECTOR</span>
       <button id="back" hidden>← All games</button>
       <select id="run-select" aria-label="Run"></select>
-      <a class="runs-link" href="https://github.com/82deutschmark/arc3-synthetic-games#gpt-61-sol-replays">all runs →</a>
+      <a class="runs-link" href="../../models.html#these">all runs →</a>
       <span class="crumb" id="crumb">Loading…</span>
       <span class="spacer"></span>
       <span class="crumb">←/→ step · ⇧←/→ turn · space play</span>

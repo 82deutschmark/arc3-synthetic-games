@@ -21,7 +21,7 @@ SRP/DRY check: Pass - the results were moved, not copied; the README and front p
 <h1>How the models played</h1>
 <p class="deck">We gave AI models the fifteen games with no instructions, the same way ARC-AGI-3 does, and recorded every move. Click a result to open its replay: the board, the model's notes, its Python calls and every frame.</p>
 
-<h2>On these games</h2>
+<h2 id="these">On these games</h2>
 <p>GPT-6.1 Terra cleared 17 of 121 levels and finished one game, Shared Supply. Terra and Sol ran at medium reasoning with 15 minutes a game. Qwen Flash-Next, the model in our competition entry, had 30 minutes with all fifteen games sharing one GPU.</p>
 <div class="table-wrap"><table class="results">
 <thead><tr><th>Game</th><th>GPT-6.1 Terra</th><th>GPT-6.1 Sol</th><th>Qwen, 30 min</th></tr></thead>
@@ -47,7 +47,7 @@ SRP/DRY check: Pass - the results were moved, not copied; the README and front p
 <h2>Against people</h2>
 <p>On Shared Supply (SS01), Terra completed all eight levels in 229 actions; the recorded human completed them in 484. Eroding Horizons (EH02) is the only featured game with per-level human baselines in the team records: on level one the human used 25 actions, Terra used 27, and Sol used 10. Using ARC&#x27;s squared efficiency formula and per-level cap, that is about 86% for Terra and 115% for Sol on that level. EH02&#x27;s baseline comes from one recorded player; SS01 has only a game-wide human total, so its per-level score cannot be worked out from that record.</p>
 
-<h2>On other people's games</h2>
+<h2 id="other">On other people's games</h2>
 <p>Terra also played three games from <a href="https://github.com/theredbluepill/arc-interactive">Red Blue Pill</a> and all of the homemade games in <a href="https://github.com/SimonOuellette35/ARC-AGI-3-Training-Data">Simon Ouellette's collection</a>, with the same 15-minute setup. It finished all three Red Blue Pill games and cleared 129 of 153 levels across Simon's. Their rules were not changed; the codes are our short names for them.</p>
 <div class="table-wrap"><table class="results">
 <thead><tr><th>Game</th><th>From</th><th>GPT-6.1 Terra</th></tr></thead>
