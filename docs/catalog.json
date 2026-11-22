@@ -1,5 +1,5 @@
 {
-  "version": "0.9.18",
+  "version": "0.9.22",
   "snapshot_date": "2026-11-02",
   "featured": [
     "eh02",
@@ -20,10 +20,10 @@
   ],
   "highlight": {
     "games": [
-      "es01",
-      "lt03"
+      "es02",
+      "lt05"
     ],
-    "text": "Two of these touch what has been in the news lately. In ES01 you spread an outbreak through a city, person to person, while doctors try to cure it and guards shoot back. In LT03 you fire air strikes into a crowded city, where a careless shot hits bystanders, ambulances, schools and hospitals. We hit no guardrails building either one."
+    "text": "Two of these touch what has been in the news lately. In ES02 you spread an outbreak through a city, person to person, while doctors try to cure it and guards shoot back. In LT05 you fire air strikes into a crowded city, where a careless shot hits bystanders, ambulances, schools and hospitals. We hit no guardrails building either one."
   },
   "games": [
     {
@@ -1340,6 +1340,7 @@
     },
     {
       "id": "ss01",
+      "name": "Shared Supply",
       "class_name": "Ss01",
       "path": "games/ss01.py",
       "sha256": "873333058bd54b0209c581aa0ce60c93d6997465c61d31ee17c59804a08a9dca",
@@ -1460,6 +1461,7 @@
     },
     {
       "id": "wb03",
+      "name": "Windy Boats",
       "class_name": "Wb03",
       "path": "games/wb03.py",
       "sha256": "b53e99ad1ee6d4e48bf4aee523496eb34deb896fc6ee2f6050e6912917d9b738",
@@ -1541,6 +1543,7 @@
     },
     {
       "id": "pt02",
+      "name": "Perfect Target",
       "class_name": "Pt02",
       "path": "games/pt02.py",
       "sha256": "58f0415741646ef9da138a947282fe23d884e6b8c2b3f57a58397b8cc8e10ae3",
@@ -1578,6 +1581,7 @@
     },
     {
       "id": "te02",
+      "name": "Tethered Extraction",
       "class_name": "Te02",
       "path": "games/te02.py",
       "sha256": "c4db215471c976d6b170dcfb14e6f1adae783da7c1bbec103d8c2447b662786a",
@@ -1655,6 +1659,7 @@
     },
     {
       "id": "dz03",
+      "name": "Dig Zone",
       "class_name": "Dz03",
       "path": "games/dz03.py",
       "sha256": "a45b84abb37a92d06e09b0873b838a12898dd264becc9520b02683ac56a9f9a4",
@@ -1732,6 +1737,7 @@
     },
     {
       "id": "lt05",
+      "name": "Lock Target",
       "class_name": "Lt05",
       "path": "games/lt05.py",
       "sha256": "f15a0a7888f39921d2ed1f77e5eddfdfb99f24adf10b16f264bcfc2b6c6ba730",
@@ -1772,6 +1778,7 @@
     },
     {
       "id": "es02",
+      "name": "Extreme Sneeze",
       "class_name": "Es02",
       "path": "games/es02.py",
       "sha256": "4345e8bb1206abb25660758c6c047762511533ae0d9de0e3965e9acdc9d9bf81",
@@ -1810,6 +1817,7 @@
     },
     {
       "id": "eh02",
+      "name": "Eroding Horizons",
       "class_name": "Eh02",
       "path": "games/eh02.py",
       "sha256": "0219316f1011f537bfc6e489601508d7ec75ca587caebf73500de12109499593",
@@ -1847,6 +1855,7 @@
     },
     {
       "id": "ff02",
+      "name": "Feeding Frenzy",
       "class_name": "Ff02",
       "path": "games/ff02.py",
       "sha256": "2cfe653e9a4639401f61a52d18ef251b249f1ec2cfad8a929a1fd1ba2e37501b",
@@ -1883,6 +1892,7 @@
     },
     {
       "id": "se02",
+      "name": "Shrine Exploration",
       "was": [
         "xb02"
       ],
@@ -1922,6 +1932,7 @@
     },
     {
       "id": "bs02",
+      "name": "Bell Stealth",
       "class_name": "Bs02",
       "path": "games/bs02.py",
       "sha256": "dbe68e8e32b5610bd20dac261cae10998806958b6d5acac4bc5eb2ea5f3f4698",
@@ -1958,6 +1969,7 @@
     },
     {
       "id": "wf03",
+      "name": "Water Flip",
       "class_name": "Wf03",
       "path": "games/wf03.py",
       "sha256": "a6f56b0b0bacf6ec5143e747dde62727ab7b49d6ea5ac9b22ee3a633a8d1b052",
@@ -1992,6 +2004,7 @@
     },
     {
       "id": "st02",
+      "name": "Shadow Topple",
       "was": [
         "hc01"
       ],
@@ -2031,6 +2044,7 @@
     },
     {
       "id": "bl02",
+      "name": "Basket Lift",
       "class_name": "Bl02",
       "path": "games/bl02.py",
       "sha256": "caffa078542bcc6e01024ff3813017543b24596f9b39d51645ee93a021b17ea5",
@@ -2107,6 +2121,7 @@
     },
     {
       "id": "kt03",
+      "name": "Knot Tying",
       "class_name": "Kt03",
       "path": "games/kt03.py",
       "sha256": "068c87ce39f0088db592ab3721acf434b5651f92ca5410c260505f80482a839d",

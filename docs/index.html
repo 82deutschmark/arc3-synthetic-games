@@ -10,6 +10,7 @@ Updated: 02-November-2026, Claude Opus 5.5 High — a dense card grid with one d
 Updated: 05-November-2026, Claude Sonnet 5.5 — says the picks are Mark's hand-picked best from everything the team made, the ones he liked most and thinks a person can play; the footer no longer implies the repository holds every game. The script link's cache version moves with catalog.js.
 Updated: 12-November-2026, GPT-6.1 — add the model results and links to their full replays.
 Updated: 22-November-2026, Claude Opus 5.5 Medium — the games lead again. The model results moved below the grid and cover only these games; the runs on other people's games live in the README, not on this page.
+Updated: 22-November-2026, Claude Opus 5.5 — the model results moved to their own page (models.html); the front page is only the games, and each card leads with the game's name.
 SRP/DRY check: Pass — catalog.json is the only game registry.
 -->
 <!doctype html>
@@ -18,10 +19,10 @@ SRP/DRY check: Pass — catalog.json is the only game registry.
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="The best ARC-AGI-3 style games by Team Turducken, with their rules and what makes each one special. Spoilers.">
 <title>ARC-3 Synthetic Games</title>
-<link rel="stylesheet" href="style.css?v=0.7.8"><script src="catalog.js?v=0.8.2" defer></script>
+<link rel="stylesheet" href="style.css?v=0.7.9"><script src="catalog.js?v=0.8.3" defer></script>
 </head>
 <body>
-<header><a class="wordmark" href="./">ARC-3 SYNTHETIC GAMES</a><nav aria-label="Primary"><a href="why.html">Why</a><a href="catalog.json">Catalog</a><a href="https://github.com/82deutschmark/arc3-synthetic-games">GitHub<span aria-hidden="true">&nbsp;↗</span></a></nav></header>
+<header><a class="wordmark" href="./">ARC-3 SYNTHETIC GAMES</a><nav aria-label="Primary"><a href="./" aria-current="page">Games</a><a href="why.html">Why</a><a href="models.html">Models</a><a href="https://github.com/82deutschmark/arc3-synthetic-games">GitHub<span aria-hidden="true">&nbsp;↗</span></a></nav></header>
 <main>
 <p class="lead-line"><b id="count">The games</b> by <a href="https://arc.markbarney.net/news#2026-10-18-special-turducken-takes-third">Team Turducken</a>, directed by Mark Barney. Hand-picked by Mark from everything the team made: the ones he liked most and thinks a person can play. ARC-AGI-3 style, Python on the ARC engine, MIT: fork them for your own training. Built to be hard for AI in ways a person finds easy; several borrow tricks from the Slippery Seven, the seven public games our agents fail most. Click a card for why (spoilers). <code class="clone">git clone https://github.com/82deutschmark/arc3-synthetic-games</code> <a href="https://github.com/82deutschmark/arc3-synthetic-games#quick-start">Quick start</a></p>
 <p id="error" role="alert" hidden></p>
@@ -30,11 +31,7 @@ SRP/DRY check: Pass — catalog.json is the only game registry.
 <dialog id="panel" aria-labelledby="panel-title"><div class="panel-top"><h2 class="panel-title" id="panel-title"></h2><form method="dialog"><button class="close" aria-label="Close">✕</button></form></div><div class="panel-body"></div></dialog>
 <noscript><p>JavaScript is needed to show the games. <a href="catalog.json">Read the catalog</a>.</p></noscript>
 <p class="fine">Pictures are real engine frames. Every game in this repository is in <a href="https://github.com/82deutschmark/arc3-synthetic-games/tree/main/games">games/</a>, listed in <a href="catalog.json">catalog.json</a>.</p>
-<section id="results" class="release-note" aria-labelledby="results-title">
-<h2 id="results-title">How the models played these games</h2>
-<p>GPT-6.1 Terra cleared 17 of 121 levels across these games and finished SS01, with a 15-minute limit on each game. GPT-6.1 Sol cleared PT02 2/8, DZ03 1/8 and EH02 1/8. Qwen Flash-Next cleared KT03 1/10 and no levels in the other 14 games during a 30-minute run. Each replay opens the full Run Inspector: the board, the model's notes, its tool calls and every frame.</p>
-<p><a href="https://github.com/82deutschmark/arc3-synthetic-games#gpt-61-terra-replays">Terra replays</a> · <a href="https://github.com/82deutschmark/arc3-synthetic-games#gpt-61-sol-replays">Sol replays</a> · <a href="replays/qwen-competition/viewer.html#run=qwen30&amp;game=6&amp;turn=1">Qwen on KT03</a> · <a href="https://github.com/82deutschmark/arc3-synthetic-games#qwen-30-minute-run">All Qwen replays</a> · <a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/docs/reviews/2026-11-12-model-showcase-analysis.md">Analysis and human comparison</a></p>
-</section>
+<p class="models-line"><a href="models.html">How AI models played these games</a> · GPT-6.1 Terra, GPT-6.1 Sol and Qwen, every move replayable.</p>
 </main>
 <footer><a href="https://github.com/82deutschmark/arc3-synthetic-games#quick-start">Run them</a><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/CREDITS.md">Credits</a><a href="https://github.com/82deutschmark/arc3-synthetic-games/blob/main/LICENSE">MIT license</a><span>Not affiliated with ARC Prize.</span></footer>
 </body></html>

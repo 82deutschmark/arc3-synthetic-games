@@ -15,6 +15,8 @@
 // Updated: 04-November-2026, Claude Opus 5.5 High — each card face shows the game's short teaser (catalog "spoiler.teaser").
 // Updated: 05-November-2026, Claude Sonnet 5.5 — the count line says "N best games", with no "of M": the catalog is only the games
 //   in this repository, not everything the team made, and Mark's picks are a hand-picked few from far more.
+// Updated: 22-November-2026, Claude Opus 5.5 — each card and panel leads with the game's name from catalog.json ("name"), with
+//   the code and level count under it; the card line drops the name it would otherwise repeat.
 // PURPOSE: Render the highlighted games using safe DOM APIs.
 // SRP/DRY check: Pass — catalog.json is authoritative; one card builder.
 'use strict';
@@ -54,6 +56,11 @@ function hook(text) {
 function keys(game) {
   return (game.inputs || []).map(i => INPUTS[i]).join(' ');
 }
+// Most teasers open with the game's name ("Knot Tying. Lay a cord..."); the card already shows the name, so drop it there.
+function withoutName(game, text) {
+  const lead = game.name ? `${game.name}. ` : '';
+  return lead && text.startsWith(lead) ? text.slice(lead.length) : text;
+}
 // The full write-up for one game, shown in the page's one <dialog>.
 function openPanel(game) {
   const dialog = document.querySelector('#panel');
@@ -86,7 +93,7 @@ function openPanel(game) {
   if (notes.look) full.append(section('THE LOOK', el('p', '', notes.look)));
   text.append(full);
   if (notes.markSaid) text.append(el('blockquote', 'said', `“${notes.markSaid}” — Mark`));
-  dialog.querySelector('.panel-title').textContent = game.id.toUpperCase();
+  dialog.querySelector('.panel-title').textContent = game.name ? `${game.name} · ${game.id.toUpperCase()}` : game.id.toUpperCase();
   body.replaceChildren(side, text);
   dialog.showModal();
   dialog.scrollTop = 0;
@@ -95,7 +102,7 @@ function openPanel(game) {
 function card(game) {
   const node = el('button', 'pick');
   node.type = 'button';
-  node.setAttribute('aria-label', `${game.id.toUpperCase()}: rules and details`);
+  node.setAttribute('aria-label', `${game.name || game.id.toUpperCase()}: rules and details`);
   const image = el('img');
   image.src = game.media.play;
   image.alt = '';
@@ -106,7 +113,9 @@ function card(game) {
   head.append(el('b', '', game.id.toUpperCase()), el('span', '', `${game.levels} LV`));
   const notes = game.spoiler || {};
   // Mark's short teaser leads the card; the first sentence of "what is special" covers a game without one.
-  node.append(image, head, el('span', 'keys', keys(game)), el('span', 'hook', notes.teaser || hook(notes.special)));
+  const line = withoutName(game, notes.teaser || hook(notes.special));
+  if (game.name) node.append(image, el('span', 'name', game.name), head, el('span', 'keys', keys(game)), el('span', 'hook', line));
+  else node.append(image, head, el('span', 'keys', keys(game)), el('span', 'hook', line));
   if (HIGHLIGHT && HIGHLIGHT.games.includes(game.id)) node.classList.add('flagged');
   node.addEventListener('click', () => openPanel(game));
   return node;
