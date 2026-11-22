@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.25 — 22 November 2026 — The out-of-distribution experiment, designed
+
+Claude Opus 5.5, at the Boss's call: `docs/22-Nov-2026-out-of-distribution-experiment-plan.md` designs the experiment that asks whether our games are out of distribution and learnable, or just too hard, for a model that saturates ARC-AGI-3. It is written for a GPT agent to run. The Models page now says both sets are meant as training data (the earlier wording implied only Simon's was).
+
 ## 0.9.24 — 22 November 2026 — What the comparison shows
 
 Claude Opus 5.5, at the Boss's call (be respectful to Simon's work): the Models page says plainly that Simon Ouellette's collection is training data, much of it classic puzzles, while ours were picked to be hard for AI, so the gap shows how hard each set is for one model on one run, not which games are better, and nothing yet about how easy either is for people.
