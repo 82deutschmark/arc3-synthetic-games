@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.24 — 22 November 2026 — What the comparison shows
+
+Claude Opus 5.5, at the Boss's call (be respectful to Simon's work): the Models page says plainly that Simon Ouellette's collection is training data, much of it classic puzzles, while ours were picked to be hard for AI, so the gap shows how hard each set is for one model on one run, not which games are better, and nothing yet about how easy either is for people.
+
 ## 0.9.23 — 22 November 2026 — One look across the site
 
 Claude Opus 5.5, at the Boss's call (make everything look uniform): the replay viewer now opens under the games site's own header bar, in the site's colours, with Games, Why and Models links, so a replay is part of the site instead of a separate grey app. Its "all runs" links went to README sections that no longer exist; they now go to the Models page. The bar sits above the viewer instead of floating over it, which also uncovers the viewer's own top row (the game picker and "All games"), hidden under the old tab bar until now. The Why page's pictures showed older builds (EH01, PT01 and so on); they now show the versions on the front page, with their names in the captions and play links to those versions. The Why page's writing is unchanged.
