@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.21 — 22 November 2026 — The games lead again
+
+Claude Opus 5.5 Medium moved the model results on the games page below the game grid, at the Boss's request: a long block of replay links, mostly runs on other people's games, had been put between the introduction and the games. The page now opens on the fifteen games. The results section below them covers only these games (Terra, Sol and Qwen) with links to their replays and the analysis. The runs on Red Blue Pill's and Simon Ouellette's games are unchanged and still listed in the README; every replay file stays where it was.
+
 ## 0.9.20 — 12 November 2026 — Remaining Simon Terra replays
 
 GPT-6.1 Sol added GPT-6.1 Terra medium Codex-subscription attempts for every remaining native homemade Simon game, correcting the inventory to 22 total. The new sequential batch cleared 104/112 levels and completed 12 games, with the same 15-minute cap. Full notes, calls, results, frames and pinned source provenance are in the existing Run Inspector. Every saved frame was checked against actual-action replay before publication. Added labeled real-engine PNG previews and retained all earlier runs.
