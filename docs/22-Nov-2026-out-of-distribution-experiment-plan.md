@@ -1,6 +1,7 @@
 # Are our games out of distribution, or just too hard?
 
 Author: Claude Opus 5.5, 22 November 2026, for a GPT agent to run
+Revised the same day: Simon's set is the harness check, the genre probe runs first, rules sheets never see level layouts, and verdicts name "too hard to be useful training data".
 Asked for by: Mark Barney (the Boss)
 
 ## The question
@@ -20,8 +21,11 @@ The experiment separates these, for each game and for the set as a whole.
 
 The earlier runs (`docs/models.html`, raw runs on `/Volumes/Team 4TB/data/arc3-terra-showcase-20261111/` and
 `.../arc3-external-showcase-20261112/`) ran each game **once**, with a **15-minute cap**, and several of ours ended on
-**inference timeouts** rather than the model being stuck. There was no positive control, no rules-given condition and almost
+**inference timeouts** rather than the model being stuck. There was no harness check, no rules-given condition and almost
 no human data. One run per game cannot close anything.
+
+On the Boss's own goal (learnable training data), a game whose first level no model beats gives no training data at all.
+That is the outcome the experiment most needs to catch.
 
 ## Design
 
@@ -30,9 +34,9 @@ no human data. One run per game cannot close anything.
 | Set | Games | Role |
 | --- | --- | --- |
 | Ours | The 15 featured games in `docs/catalog.json` `featured`, at the hashes in the catalog | The thing being tested |
-| Simon Ouellette | The 22 native homemade games in `docs/replays/external-terra/simon-inventory.json`, pinned as in `provenance.json` | Reference set made by a person, also meant as training data |
+| Simon Ouellette | The 22 native homemade games in `docs/replays/external-terra/simon-inventory.json`, pinned as in `provenance.json` | Reference set made by a person, also meant as training data. **Also the harness check:** an older model already cleared most of it in this harness, so a stronger model failing it means the harness or budget is broken. |
 | Red Blue Pill | MM01, SK01, RS01 as pinned in `provenance.json` | Small second reference set |
-| ARC-AGI-3 public 25 | The official public games | **Positive control.** A model that saturates ARC-3 should clear these in our harness. If it does not, the harness or the budget is the bottleneck and nothing else can be read. |
+| ARC-AGI-3 public 25 | The official public games | **Seen-games reference.** They are certainly in the model's training data, so clearing them shows memory plus a working harness, not skill on new games. Useful as the top of the scale, not as the harness check. |
 
 Every game gets an opaque alias in the prompts, as before. No titles, no file names and no source code reach the model.
 
@@ -42,14 +46,15 @@ Every game gets an opaque alias in the prompts, as before. No titles, no file na
 - **B. Rules given.** The same, plus a short rules sheet at the start of each game: what the pieces are, what the controls do,
   what wins and what loses. **No level solutions.** Run B on every game where A cleared level one in fewer than two of its
   three runs; skip it where A already cleared level one reliably.
-- **C. Genre probe** (no play). Show the model the first three frames of level one and the list of available actions, and
+- **C. Genre probe** (no play; run this first, see Running it). Show the model the first three frames of level one and the list of available actions, and
   ask two separate questions in two separate calls: "Does this look like any existing game or puzzle? Name it, or say none."
   and "What do you think the goal is?" Run on every game in every set, three times each.
 
 Rules sheets must be written the same way for every set, so no set gets better instructions. Use one fixed prompt: a model
-reads the game's source and writes at most 120 words covering pieces, controls, win and loss, with no level-specific
-advice. Store every sheet in the run folder. The Boss reads the sheets for our fifteen only to confirm they are not wrong;
-he does not rewrite them.
+reads the game's mechanics code **with every level layout removed** (so it cannot see a solution) and writes at most 120
+words covering pieces, controls, win and loss, with no level-specific advice. Store every sheet in the run folder. The Boss
+reads the sheets for our fifteen only to confirm they agree with the published rules in the catalog; he does not rewrite
+them.
 
 ### Model and budget
 
@@ -102,16 +107,18 @@ Write these readings down before looking. They are readings, not pass marks.
 
 | What we see | What it means | What to do |
 | --- | --- | --- |
-| Public 25: the model clears most levels cold | The harness and budget are fine; the rest can be read | Continue |
-| Public 25: the model does not | The harness or budget is the bottleneck | Stop and fix the harness. Do not interpret the other sets. |
+| Simon's set: the model clears most of it cold, as the older model did | The harness and budget are fine; the rest can be read | Continue |
+| Simon's set: it does not | The harness or budget is the bottleneck | Stop and fix the harness. Do not interpret the other sets. |
+| Genre probe: the model names a known game far more often for Simon's and the public 25 than for ours | **Our rules are new to it**, whatever the play results say. The play results then measure difficulty on new rules. | Report this first |
+| Genre probe: it names known games for ours about as often | Our rules are not especially new to it; any play gap is difficulty, not novelty | Say so plainly |
 | Ours: low cold, much higher with rules | **Out of distribution, and learnable.** The hard part is discovering the rule. | Keep. Consider an easier first level that teaches the rule by playing. |
 | Ours: low cold, still low with rules, and people clear level one | Too hard to execute: levels too long or too fiddly | Shorten the early levels or add a ramp level |
 | Ours: low in both, and people also get lost | Too hard or unclear | Fix the game, not the model |
+| Ours: level one never cleared in any condition | **Too hard to be useful training data**, whatever else is true: no clear, no training example | Give it an easier first level, or drop it from the training set |
 | Ours: high cold | Not out of distribution for this model; the earlier gap came from the older model or the 15-minute cap | Say so plainly |
-| Genre probe: the model names a known game far more often for Simon's and the public 25 than for ours | Direct evidence our games are new to it | Report it alongside the play results |
 
-Give every one of our fifteen games its own short verdict in plain words: out of distribution and learnable, too hard to
-execute, unclear, or easy for this model.
+Give every one of our fifteen games its own short verdict in plain words: new and learnable, too hard to execute, too hard
+to be useful training data, unclear, or easy for this model.
 
 ## Things that could fool us
 
@@ -139,8 +146,10 @@ them easy as a criticism. Being learnable is the point of a training set. Credit
   stop and say so; do not fall back to the internal drive.
 - **Machine limits.** Run at most two games at once on the Mac Mini. Use `python3.13`. No Kaggle submissions, and nothing
   sent to Son's machines.
-- **Run in stages.** First do one pass of condition A on all four sets and look at the public 25 before spending more. Then
-  run the remaining passes, then condition B, then the probe. A single pass of A is enough to catch a broken harness.
+- **Run in stages.** Stage 0: the genre probe on every game. It needs no play runs and answers the out-of-distribution half of
+  the question by itself; report it to the Boss before spending more. Stage 1: one pass of condition A on all four sets, and
+  check Simon's set (the harness check). Stage 2: the remaining passes of A. Stage 3: condition B. Do not run a newer model
+  on the play conditions before the probe is reported.
 - **Output.** Write `docs/reviews/<date>-out-of-distribution-results.md` (plain words, per-game verdicts, the reading from the
   table above) and a machine-readable results JSON next to it. Do not change the front page. Do not publish replays or
   results on the site until the Boss has read the report.
@@ -149,12 +158,12 @@ them easy as a criticism. Being learnable is the point of a training set. Credit
 ## TODO
 
 - [ ] Pin all four sets by hash; write the alias map
-- [ ] Write the rules sheets with the fixed prompt; Boss checks ours
+- [ ] Genre probe, all games, three times; report to the Boss
+- [ ] Write the rules sheets with the fixed prompt, level layouts removed; Boss checks ours against the catalog
 - [ ] Adapt the runner: model, effort, 30-minute cap, longer call timeout, rules-sheet option, per-action timing
-- [ ] Condition A, pass one, all sets; check the public 25 control
+- [ ] Condition A, pass one, all sets; check Simon's set (the harness check)
 - [ ] Condition A, passes two and three
 - [ ] Condition B on games that qualify, three passes
-- [ ] Genre probe, all games, three times
 - [ ] Classify the failures; spot-check ten
 - [ ] Human level-one check (Boss and team)
 - [ ] Analysis, per-game verdicts and report; hand to the Boss
