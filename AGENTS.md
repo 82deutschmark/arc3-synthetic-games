@@ -2,7 +2,7 @@
 
 Guidance for AI coding agents working in this repo. Humans: start with [README.md](README.md).
 
-**How to work here is in [CODING_STANDARDS.md](CODING_STANDARDS.md). Read it first and follow it.** That includes the plan-before-code rule, the file headers, the changelog, and not committing unless asked. This file only covers what is specific to this repo.
+**How to work here is in [CODING_STANDARDS.md](CODING_STANDARDS.md). Read it first and follow it.** That includes the plan-before-code rule, the file headers, the changelog, and committing and pushing finished work without being asked. This file only covers what is specific to this repo.
 
 ## What this repo is for
 
